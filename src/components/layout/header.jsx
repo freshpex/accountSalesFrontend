@@ -22,7 +22,7 @@ import {
   MdOutlineMail,
   MdOutlineSearch,
 } from "react-icons/md";
-import { userData } from "../data";
+import { userData } from "./data";
 
 const Header = ({ toggleSidebar, isSidebarOpen }) => {
   const bgColor = useColorModeValue("white", "gray.100");

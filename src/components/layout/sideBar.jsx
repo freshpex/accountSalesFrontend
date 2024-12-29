@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Box,
   Flex,
@@ -19,8 +20,8 @@ import {
   Switch,
 } from "@chakra-ui/react";
 import { ChevronDownIcon } from "@chakra-ui/icons";
-import { sidebarData, userData, company } from "../data";
-import SidebarCloseButton from "../assets/icons/SidebarCloseButton";
+import { sidebarData, userData, company } from "./data";
+import SidebarCloseButton from "../../assets/icons/SidebarCloseButton";
 
 const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
   const [isCollapsed, setCollapsed] = useState(false);
@@ -37,9 +38,57 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
       {/* Mobile Drawer */}
       <Drawer isOpen={isSidebarOpen} placement="left" onClose={toggleSidebar}>
         <DrawerOverlay />
-        <DrawerContent>
+        <DrawerContent bg={bgColor}>
           <DrawerCloseButton />
-          <SidebarContent isCollapsed={false} />
+          <VStack align="stretch" w="full">
+            {/* Logo Section for Mobile */}
+            <Flex align="center" p={4}>
+              <Box
+                as="img"
+                src="/logo.svg"
+                alt="Culters"
+                h="6"
+                w="auto"
+                mr={2}
+              />
+              <Text fontSize="lg" fontWeight="bold" color={textColor}>
+                Culters
+              </Text>
+            </Flex>
+
+            {/* Company Section for Mobile */}
+            <Flex
+              mx={4}
+              p={2}
+              borderRadius="md"
+              border="1px"
+              borderColor={borderColor}
+              align="center"
+              mb={4}
+            >
+              <Box
+                as="img"
+                src={company.logo}
+                alt={company.name}
+                boxSize="6"
+                mr={2}
+              />
+              <Box>
+                <Text fontSize="xs" color={textColor}>
+                  Company
+                </Text>
+                <Text fontSize="sm" fontWeight="medium" color={textColor}>
+                  {company.name}
+                </Text>
+              </Box>
+            </Flex>
+
+            <SidebarContent
+              isCollapsed={false}
+              activeColor={activeColor}
+              textColor={textColor}
+            />
+          </VStack>
         </DrawerContent>
       </Drawer>
 
@@ -164,9 +213,18 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
 
 const SidebarContent = ({ isCollapsed, activeColor, textColor }) => {
   const [expandedSection, setExpandedSection] = useState("Product");
+  const navigate = useNavigate();
 
-  const handleSectionClick = (title) => {
+  const handleSectionClick = (title, route) => {
     setExpandedSection(expandedSection === title ? null : title);
+    if (route) {
+      // If it's the main product route, navigate to default tab
+      if (route === '/product') {
+        navigate('/product/instagram');
+      } else {
+        navigate(route);
+      }
+    }
   };
 
   return (
@@ -195,7 +253,7 @@ const SidebarContent = ({ isCollapsed, activeColor, textColor }) => {
                 borderRadius="md"
                 bg={expandedSection === item.title ? activeColor : "transparent"}
                 _hover={{ bg: activeColor }}
-                onClick={() => handleSectionClick(item.title)}
+                onClick={() => handleSectionClick(item.title, item.route)}
               >
                 <Box as={item.icon} fontSize="20px" color={textColor} />
                 {!isCollapsed && (
@@ -226,6 +284,7 @@ const SidebarContent = ({ isCollapsed, activeColor, textColor }) => {
                       py={1}
                       _hover={{ color: "blue.500" }}
                       cursor="pointer"
+                      onClick={() => navigate(subItem.route)}
                     >
                       {subItem.name}
                     </Text>

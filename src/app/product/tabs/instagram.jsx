@@ -13,7 +13,7 @@ import {
   Text,
 } from '@chakra-ui/react';
 import { ViewIcon, EditIcon, DeleteIcon } from '@chakra-ui/icons';
-import { socialData } from './data';
+import { socialData } from '../data';
 
 const Instagram = ({ searchQuery }) => {
   const data = socialData.instagram;
