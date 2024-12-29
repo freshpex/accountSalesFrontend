@@ -34,7 +34,7 @@ const Login = () => {
       <Stack spacing={8} alignItems="center">
         {/* Logo */}
         <Stack align="center" spacing={2}>
-          <Image src="/culters-logo.png" alt="Culters Logo" h="40px" />
+          <Image src="/logo.svg" alt="Culters Logo" h="40px" />
         </Stack>
 
         {/* Sign In Form */}

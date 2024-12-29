@@ -1,9 +1,9 @@
 export const transactionData = {
   stats: {
-    all: 441,
-    shipping: 100,
-    completed: 300,
-    cancelled: 41
+    all: 100,
+    shipping: 25,
+    completed: 45,
+    cancelled: 30,
   },
   transactions: [
     {
@@ -50,23 +50,20 @@ export const transactionData = {
 };
 
 export const getStatusColor = (status) => {
-  switch (status.toLowerCase()) {
-    case 'shipping':
-      return { bg: 'purple.100', color: 'purple.700' };
-    case 'cancelled':
-      return { bg: 'red.100', color: 'red.700' };
-    default:
-      return { bg: 'gray.100', color: 'gray.700' };
-  }
+  const statusColors = {
+    completed: { bg: 'green.100', color: 'green.800' },
+    pending: { bg: 'orange.100', color: 'orange.800' },
+    cancelled: { bg: 'red.100', color: 'red.800' },
+    shipping: { bg: 'blue.100', color: 'blue.800' },
+  };
+  return statusColors[status.toLowerCase()] || { bg: 'gray.100', color: 'gray.800' };
 };
 
 export const getPaymentColor = (payment) => {
-  switch (payment.toLowerCase()) {
-    case 'paid':
-      return { bg: 'green.100', color: 'green.700' };
-    case 'unpaid':
-      return { bg: 'orange.100', color: 'orange.700' };
-    default:
-      return { bg: 'gray.100', color: 'gray.700' };
-  }
+  const paymentColors = {
+    paid: { bg: 'green.100', color: 'green.800' },
+    unpaid: { bg: 'red.100', color: 'red.800' },
+    pending: { bg: 'orange.100', color: 'orange.800' },
+  };
+  return paymentColors[payment.toLowerCase()] || { bg: 'gray.100', color: 'gray.800' };
 };

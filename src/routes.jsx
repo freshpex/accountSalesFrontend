@@ -8,7 +8,7 @@ import AccountSettings from './app/accountSettings.jsx';
 import Products from './app/product';
 import Transaction from './app/transaction';
 // import Customers from './app/customers';
-// import SalesReport from './app/salesReport';
+import SalesReport from './app/salesReport';
 
 const AppRoutes = () => {
   return (
@@ -70,7 +70,7 @@ const AppRoutes = () => {
             <Customers />
           </Layout>
         }
-      />
+      /> */}
       <Route
         path="/sales-report"
         element={
@@ -78,7 +78,7 @@ const AppRoutes = () => {
             <SalesReport />
           </Layout>
         }
-      /> */}
+      />
     </Routes>
   );
 };

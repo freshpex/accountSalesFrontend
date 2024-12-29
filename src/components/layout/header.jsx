@@ -112,10 +112,10 @@ const Header = ({ toggleSidebar, isSidebarOpen }) => {
         {/* User Avatar */}
         <Menu>
           <MenuButton>
-            <Flex align="center">
-              <Avatar borderRadius="10px" name={userData.name} src={userData.avatar} size="md" />
+            <Flex align="center" textAlign="right">
+              <Avatar borderRadius="10px" name={userData.name} src={userData.avatar} size="sm" />
               <Box ml={2} display={{ base: "none", md: "block" }}>
-                <Text fontSize="sm" fontWeight="bold">
+                <Text fontSize="sm" color="gray.700">
                   {userData.name}
                 </Text>
                 <Text fontSize="xs" color="gray.500">

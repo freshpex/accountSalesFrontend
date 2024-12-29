@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import {
   Table,
   Thead,
@@ -11,19 +12,55 @@ import {
   HStack,
   Box,
   Text,
+  Select,
+  Button,
 } from '@chakra-ui/react';
-import { ViewIcon, EditIcon, DeleteIcon } from '@chakra-ui/icons';
+import { ViewIcon, EditIcon, DeleteIcon, ChevronLeftIcon, ChevronRightIcon } from '@chakra-ui/icons';
 import { socialData } from '../data';
 
-const Instagram = ({ searchQuery }) => {
-  const data = socialData.instagram;
+const Instagram = ({ searchQuery, filters, onDataFiltered, applyFilters, onViewPost, onEditPost, onDeletePost }) => {
+  const [selectedItems, setSelectedItems] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [filteredPosts, setFilteredPosts] = useState([]);
+  const itemsPerPage = 10;
+
+  useEffect(() => {
+    const filtered = applyFilters(socialData.instagram);
+    setFilteredPosts(filtered);
+    onDataFiltered(filtered);
+    setCurrentPage(1);
+  }, [searchQuery, filters, applyFilters, onDataFiltered]);
+
+  const pageCount = Math.ceil(filteredPosts.length / itemsPerPage);
+  const paginatedData = filteredPosts.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
+  const handleSelectAll = (e) => {
+    if (e.target.checked) {
+      setSelectedItems(paginatedData.map(post => post.id));
+    } else {
+      setSelectedItems([]);
+    }
+  };
+
+  const handleSelectItem = (id) => {
+    setSelectedItems(prev => 
+      prev.includes(id) 
+        ? prev.filter(item => item !== id)
+        : [...prev, id]
+    );
+  };
 
   const getStatusColor = (status) => {
-    switch (status) {
-      case 'Active':
+    switch (status.toLowerCase()) {
+      case 'active':
         return 'green';
-      case 'Scheduled':
+      case 'scheduled':
         return 'blue';
+      case 'inactive':
+        return 'gray';
       default:
         return 'gray';
     }
@@ -35,12 +72,16 @@ const Instagram = ({ searchQuery }) => {
   };
 
   return (
-    <Box overflowX="auto">
+    <Box>
       <Table variant="simple">
         <Thead>
           <Tr>
             <Th w="40px">
-              <Checkbox />
+              <Checkbox
+                isChecked={selectedItems.length === paginatedData.length}
+                isIndeterminate={selectedItems.length > 0 && selectedItems.length < paginatedData.length}
+                onChange={handleSelectAll}
+              />
             </Th>
             <Th>Post ID</Th>
             <Th>Content</Th>
@@ -51,10 +92,13 @@ const Instagram = ({ searchQuery }) => {
           </Tr>
         </Thead>
         <Tbody>
-          {data.map((post) => (
+          {paginatedData.map((post) => (
             <Tr key={post.id}>
               <Td>
-                <Checkbox />
+                <Checkbox
+                  isChecked={selectedItems.includes(post.id)}
+                  onChange={() => handleSelectItem(post.id)}
+                />
               </Td>
               <Td>{post.postId}</Td>
               <Td maxW="300px" isTruncated>{post.content}</Td>
@@ -66,43 +110,70 @@ const Instagram = ({ searchQuery }) => {
                 </Badge>
               </Td>
               <Td>
-                <HStack spacing={2}>
-                  <IconButton
-                    aria-label="View post"
-                    icon={<ViewIcon />}
-                    size="sm"
-                    variant="ghost"
-                  />
-                  <IconButton
-                    aria-label="Edit post"
-                    icon={<EditIcon />}
-                    size="sm"
-                    variant="ghost"
-                  />
-                  <IconButton
-                    aria-label="Delete post"
-                    icon={<DeleteIcon />}
-                    size="sm"
-                    variant="ghost"
-                  />
-                </HStack>
+              <HStack spacing={2}>
+                <IconButton
+                  aria-label="View post"
+                  icon={<ViewIcon />}
+                  size="sm"
+                  variant="ghost"
+                  onClick={() => onViewPost(post)}
+                />
+                <IconButton
+                  aria-label="Edit post"
+                  icon={<EditIcon />}
+                  size="sm"
+                  variant="ghost"
+                  onClick={() => onEditPost(post)}
+                />
+                <IconButton
+                  aria-label="Delete post"
+                  icon={<DeleteIcon />}
+                  size="sm"
+                  variant="ghost"
+                  onClick={() => onDeletePost(post)}
+                />
+              </HStack>
               </Td>
             </Tr>
           ))}
         </Tbody>
       </Table>
       
-      <Box mt={4} display="flex" justifyContent="space-between" alignItems="center">
-        <Text>1-10 of 50 Pages</Text>
+      <HStack mt={4} justify="space-between">
+        <Text>
+          Showing {(currentPage - 1) * itemsPerPage + 1} to {Math.min(currentPage * itemsPerPage, filteredPosts.length)} of {filteredPosts.length} entries
+        </Text>
         <HStack spacing={2}>
-          <Text>The page on</Text>
-          <select style={{ border: '1px solid #E2E8F0', padding: '0 8px' }}>
-            <option>1</option>
-            <option>2</option>
-            <option>3</option>
-          </select>
+          <Button
+            size="sm"
+            onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+            disabled={currentPage === 1}
+            leftIcon={<ChevronLeftIcon />}
+          >
+            Previous
+          </Button>
+          <Select
+            size="sm"
+            value={currentPage}
+            onChange={(e) => setCurrentPage(Number(e.target.value))}
+            w="70px"
+          >
+            {Array.from({ length: pageCount }, (_, i) => (
+              <option key={i + 1} value={i + 1}>
+                {i + 1}
+              </option>
+            ))}
+          </Select>
+          <Button
+            size="sm"
+            onClick={() => setCurrentPage(prev => Math.min(pageCount, prev + 1))}
+            disabled={currentPage === pageCount}
+            rightIcon={<ChevronRightIcon />}
+          >
+            Next
+          </Button>
         </HStack>
-      </Box>
+      </HStack>
     </Box>
   );
 };

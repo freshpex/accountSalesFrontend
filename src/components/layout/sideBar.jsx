@@ -189,7 +189,7 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
                 />
                 {!isCollapsed && (
                   <Box flex="1" textAlign="left">
-                    <Text fontSize="sm" fontWeight="medium">
+                    <Text fontSize="sm" color="gray.700">
                       {userData.name}
                     </Text>
                     <Text fontSize="xs" color={textColor}>
