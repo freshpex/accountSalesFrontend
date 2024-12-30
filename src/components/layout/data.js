@@ -21,7 +21,7 @@ export const sidebarData = [
           { name: "Instagram", route: "/product/instagram" },
           { name: "Twitter(X)", route: "/product/twitter" },
           { name: "Facebook", route: "/product/facebook" },
-          { name: "WhatsApp", route: "/product/whatsApp" },
+          { name: "WhatsApp", route: "/product/whatsapp" },
         ],
       },
       { title: "Transaction", icon: HiOutlineDocumentText, route: "/transaction" },
