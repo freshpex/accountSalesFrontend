@@ -1,33 +1,24 @@
+import TransactionModal from './modal/TransactionModal';
+import TransactionTable from './components/tables';
 import {
   Box,
   Button,
-  Checkbox,
   Container,
   Flex,
   HStack,
-  Image,
   Input,
   InputGroup,
   InputLeftElement,
-  Table,
-  Tbody,
-  Td,
   Text,
-  Th,
-  Thead,
-  Tr,
-  IconButton,
-  Badge,
   Menu,
   MenuButton,
   MenuList,
   MenuItem,
-  Select,
   Breadcrumb,
   BreadcrumbItem,
   BreadcrumbLink,
 } from '@chakra-ui/react';
-import { SearchIcon, ChevronDownIcon, ViewIcon, EditIcon, DeleteIcon } from '@chakra-ui/icons';
+import { SearchIcon, ChevronDownIcon } from '@chakra-ui/icons';
 import { transactionData, getStatusColor, getPaymentColor } from './data';
 import { useState, useCallback, useEffect } from 'react';
 import { useFilters } from '../../context/FilterContext';
@@ -40,6 +31,31 @@ const Transaction = () => {
   const [page, setPage] = useState(1);
   const [itemsPerPage] = useState(10);
   const { filters, updateFilters } = useFilters();
+
+  const [modalData, setModalData] = useState(null);
+  const [modalAction, setModalAction] = useState(null);
+
+  const handleModalOpen = (action, data = null) => {
+    setModalAction(action);
+    setModalData(data);
+  };
+
+  const handleModalClose = () => {
+    setModalAction(null);
+    setModalData(null);
+  };
+
+  const handleSaveTransaction = (data) => {
+    // Implement save logic here
+    console.log('Saving transaction:', data);
+    handleModalClose();
+  };
+
+  const handleDeleteTransaction = (data) => {
+    // Implement delete logic here
+    console.log('Deleting transaction:', data);
+    handleModalClose();
+  };
 
   const tabs = [
     { key: 'all', label: 'All Transactions', count: transactionData.stats.all },
@@ -183,7 +199,11 @@ const Transaction = () => {
             Export
           </Button>
 
-          <Button colorScheme="blue" leftIcon={<ChevronDownIcon />}>
+          <Button 
+            colorScheme="blue" 
+            leftIcon={<ChevronDownIcon />}
+            onClick={() => handleModalOpen('add')}
+          >
             New Transaction
           </Button>
         </HStack>
@@ -213,126 +233,31 @@ const Transaction = () => {
         ))}
       </Flex>
 
-      {/* Table */}
-      <Box overflowX="auto">
-        <Table variant="simple">
-          <Thead>
-            <Tr>
-              <Th px={4} py={4}>
-                <Checkbox />
-              </Th>
-              <Th>Transaction</Th>
-              <Th>Customer</Th>
-              <Th>Price</Th>
-              <Th>Date</Th>
-              <Th>Payment</Th>
-              <Th>Status</Th>
-              <Th>Action</Th>
-            </Tr>
-          </Thead>
-          <Tbody>
-            {currentData.map((transaction) => (
-              <Tr key={transaction.id}>
-                <Td px={4}>
-                  <Checkbox />
-                </Td>
-                <Td>
-                  <HStack spacing={3}>
-                    <Image
-                      src={transaction.productImage}
-                      alt={transaction.productName}
-                      boxSize="40px"
-                      objectFit="cover"
-                      borderRadius="md"
-                    />
-                    <Box>
-                      <Text color="blue.500" fontWeight="medium">
-                        {transaction.id}
-                      </Text>
-                      <Text fontSize="sm" color="gray.600">
-                        {transaction.productName}
-                      </Text>
-                    </Box>
-                  </HStack>
-                </Td>
-                <Td>{transaction.customer}</Td>
-                <Td>${transaction.price}</Td>
-                <Td>{transaction.date}</Td>
-                <Td>
-                  <Badge
-                    px={2}
-                    py={1}
-                    borderRadius="full"
-                    {...getPaymentColor(transaction.payment)}
-                  >
-                    {transaction.payment}
-                  </Badge>
-                </Td>
-                <Td>
-                  <Badge
-                    px={2}
-                    py={1}
-                    borderRadius="full"
-                    {...getStatusColor(transaction.status)}
-                  >
-                    {transaction.status}
-                  </Badge>
-                </Td>
-                <Td>
-                  <HStack spacing={2}>
-                    <IconButton
-                      icon={<ViewIcon />}
-                      variant="ghost"
-                      aria-label="View"
-                      size="sm"
-                    />
-                    <IconButton
-                      icon={<EditIcon />}
-                      variant="ghost"
-                      aria-label="Edit"
-                      size="sm"
-                    />
-                    <IconButton
-                      icon={<DeleteIcon />}
-                      variant="ghost"
-                      aria-label="Delete"
-                      size="sm"
-                    />
-                  </HStack>
-                </Td>
-              </Tr>
-            ))}
-          </Tbody>
-        </Table>
-      </Box>
+      <TransactionTable
+        data={currentData}
+        selectedItems={[]} // Add selected items state if needed
+        onSelectAll={(e) => {/* Add select all handler */}}
+        onSelectItem={(id) => {/* Add select item handler */}}
+        currentPage={page}
+        totalPages={totalPages}
+        pageSize={itemsPerPage}
+        totalItems={filteredData.length}
+        onPageChange={setPage}
+        onView={handleModalOpen}
+        onDelete={handleModalOpen}
+        getStatusColor={getStatusColor}
+        getPaymentColor={getPaymentColor}
+      />
 
-      {/* Pagination */}
-      <Flex justify="space-between" align="center" mt={6}>
-        <Text color="gray.600">
-          {`${(page - 1) * itemsPerPage + 1} - ${Math.min(page * itemsPerPage, filteredData.length)} of ${filteredData.length} Transactions`}
-        </Text>
-        <HStack spacing={2}>
-          <Button
-            variant="ghost"
-            isDisabled={page === 1}
-            onClick={() => setPage(page - 1)}
-          >
-            Previous
-          </Button>
-          <Select value={page} onChange={(e) => setPage(Number(e.target.value))} w="70px">
-            {Array.from({ length: totalPages }, (_, i) => (
-              <option key={i + 1} value={i + 1}>{i + 1}</option>
-            ))}
-          </Select>
-          <Button
-            variant="ghost"
-            isDisabled={page === totalPages}
-            onClick={() => setPage(page + 1)}
-          >
-            Next
-          </Button>
-        </HStack>
-      </Flex>
+      {/* Modal */}
+      <TransactionModal
+        isOpen={!!modalAction}
+        onClose={handleModalClose}
+        data={modalData}
+        action={modalAction}
+        onSave={handleSaveTransaction}
+        onDelete={handleDeleteTransaction}
+      />
     </Container>
   );
 };

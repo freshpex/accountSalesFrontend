@@ -14,7 +14,9 @@ export const transactionData = {
       price: 21.78,
       date: "04/17/23",
       payment: "Paid",
-      status: "Shipping"
+      status: "Shipping",
+      createdDate: "2023-04-17T10:30:00",
+      updatedDate: "2023-04-17T10:30:00"
     },
     {
       id: "021232",
@@ -24,7 +26,9 @@ export const transactionData = {
       price: 21.78,
       date: "04/17/23",
       payment: "Unpaid",
-      status: "Cancelled"
+      status: "Cancelled",
+      createdDate: "2023-04-17T11:45:00",
+      updatedDate: "2023-04-17T11:45:00"
     },
     {
       id: "021233",
@@ -34,7 +38,9 @@ export const transactionData = {
       price: 21.78,
       date: "04/17/23",
       payment: "Paid",
-      status: "Shipping"
+      status: "Shipping",
+      createdDate: "2023-04-17T14:20:00",
+      updatedDate: "2023-04-17T14:20:00"
     },
     {
       id: "021234",
@@ -44,7 +50,9 @@ export const transactionData = {
       price: 21.78,
       date: "04/17/23",
       payment: "Unpaid",
-      status: "Cancelled"
+      status: "Cancelled",
+      createdDate: "2023-04-17T16:15:00",
+      updatedDate: "2023-04-17T16:15:00"
     }
   ]
 };
