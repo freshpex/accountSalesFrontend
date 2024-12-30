@@ -28,6 +28,7 @@ import { tabCounts } from './data';
 import { useFilters } from '../../context/FilterContext';
 import { exportToCSV } from '../../utils/export';
 import AddProduct from './modal/addProduct';
+import { image } from 'framer-motion/client';
 
 const Product = () => {
     const [tabIndex, setTabIndex] = useState(0);
@@ -95,20 +96,25 @@ const Product = () => {
   };
 
   const applyFilters = useCallback((data) => {
+    if (!data) return [];
+    
     return data.filter(item => {
-      const searchLower = searchQuery.toLowerCase();
+      const searchLower = searchQuery?.toLowerCase() || '';
+      const itemUsername = item?.username?.toLowerCase() || '';
+      const itemContent = item?.about?.toLowerCase() || '';
+      
       const matchesSearch = 
-        item.postId?.toLowerCase().includes(searchLower) ||
-        item.content.toLowerCase().includes(searchLower);
+        itemUsername.includes(searchLower) ||
+        itemContent.includes(searchLower);
       
       const matchesStatus = !filters.status || 
-        item.status.toLowerCase() === filters.status.toLowerCase();
+        (item?.status?.toLowerCase() || '') === filters.status.toLowerCase();
       
       const matchesType = !filters.type || 
-        item.type.toLowerCase() === filters.type.toLowerCase();
+        (item?.type?.toLowerCase() || '') === filters.type.toLowerCase();
       
       const matchesDate = !filters.date || 
-        new Date(item.date) >= new Date(filters.date);
+        (item?.date && new Date(item.date) >= new Date(filters.date));
       
       return matchesSearch && matchesStatus && matchesType && matchesDate;
     });
@@ -131,12 +137,17 @@ const Product = () => {
     const filename = `${currentTab}-export-${timestamp}`;
     
     const dataToExport = filteredData.map(item => ({
-      'Post ID': item.postId,
-      'Content': item.content,
-      'Engagement': item.engagement,
-      'Date': new Date(item.date).toLocaleString(),
+      'Username': item.Username,
+      'Images': item.about,
+      'Type': item.type,
+      'Engagement': item.status,
+      'Followers': item.follower,
+      'Age': item.age,
       'Status': item.status,
-      'Type': item.type
+      'About': item.about,
+      'Price': item.price,
+      'images': item.images.join(', '),
+      'Region': item.region,
     }));
     
     exportToCSV(dataToExport, filename);
@@ -190,9 +201,8 @@ const Product = () => {
                   <MenuButton w="full">Status</MenuButton>
                 </Menu>
               </MenuItem>
-              <MenuItem onClick={() => handleFilter('status', 'Active')}>Active</MenuItem>
-                    <MenuItem onClick={() => handleFilter('status', 'Scheduled')}>Scheduled</MenuItem>
-                    <MenuItem onClick={() => handleFilter('status', 'Inactive')}>Inactive</MenuItem>
+              <MenuItem onClick={() => handleFilter('status', 'sold')}>Sold</MenuItem>
+              <MenuItem onClick={() => handleFilter('status', 'available')}>Available</MenuItem>
               <MenuItem>
                 <Input
                   type="date"

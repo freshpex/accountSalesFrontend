@@ -4,7 +4,6 @@ import {
   FormControl,
   FormLabel,
   Input,
-  Textarea,
   Select,
   Button,
   HStack,
@@ -15,30 +14,47 @@ import {
   Modal,
   ModalOverlay,
   ModalContent,
-  ModalCloseButton,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
 } from "@chakra-ui/react";
+import { FaImage } from "react-icons/fa";
 
 const AddProduct = ({ isOpen, onClose, data, action, onSave, onDelete }) => {
-  const [postId, setPostId] = useState("");
-  const [content, setContent] = useState("");
-  const [status, setStatus] = useState("Active");
-  const [date, setDate] = useState("");
+  const [username, setUsername] = useState("");
+  const [type, setType] = useState("");
+  const [age, setAge] = useState("");
+  const [follower, setFollower] = useState("");
+  const [status, setStatus] = useState("");
+  const [price, setPrice] = useState("");
+  const [region, setRegion] = useState("");
+  const [about, setAbout] = useState("");
   const [engagement, setEngagement] = useState("");
   const [images, setImages] = useState(["", "", "", ""]);
 
+  const isReadOnly = action === 'view';
+
   useEffect(() => {
     if (data) {
-      setPostId(data.postId || "");
-      setContent(data.content || "");
-      setStatus(data.status || "Active");
-      setDate(data.date || "");
-      setEngagement(data.engagement || "");
-      setImages(data.images || ["", "", "", ""]);
+      setUsername(data.username);
+      setType(data.type);
+      setAge(data.age);
+      setFollower(data.follower);
+      setStatus(data.status);
+      setPrice(data.price);
+      setRegion(data.region);
+      setAbout(data.about);
+      setEngagement(data.engagement);
+      setImages(data.images);
     } else {
-      setPostId("");
-      setContent("");
-      setStatus("Active");
-      setDate("");
+      setUsername("");
+      setType("");
+      setAge("");
+      setFollower("");
+      setStatus("");
+      setPrice("");
+      setRegion("");
+      setAbout("");
       setEngagement("");
       setImages(["", "", "", ""]);
     }
@@ -46,137 +62,260 @@ const AddProduct = ({ isOpen, onClose, data, action, onSave, onDelete }) => {
 
   const handleSave = () => {
     const updatedPost = {
-      postId,
-      content,
+      username,
+      type,
+      age,
+      follower,
       status,
-      date,
+      price,
+      region,
+      about,
       engagement,
-      images,
+      images
     };
     onSave(updatedPost);
   };
+  
+    const handleImageChange = (index, file) => {
+      const newImages = [...images];
+      newImages[index] = file ? URL.createObjectURL(file) : "";
+      setImages(newImages);
+    };
 
-  const handleImageChange = (index, file) => {
-    const newImages = [...images];
-    newImages[index] = file;
-    setImages(newImages);
-  };
+  if (!isOpen) return null;
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} size="xl">
+    <Modal isOpen={isOpen} onClose={onClose} size="6xl">
       <ModalOverlay />
-      <ModalContent maxW="800px">
-        <ModalCloseButton />
-        <Box p={6}>
-          <Text fontSize="xl" fontWeight="bold" mb={4}>
-            {action === "add" && "Add Post"}
-            {action === "view" && "View Post"}
-            {action === "edit" && "Edit Post"}
-          </Text>
+      <ModalContent maxW="1200px" maxH="90vh" overflowY="auto">
+        <ModalHeader>
+          {action === "add" && "Add"}
+          {action === "view" && "View"}
+          {action === "edit" && "Edit"}
+          {" Product"}
+        </ModalHeader>
+        <ModalBody>
+          <Box display="flex" flexDirection={["column", "column", "row"]} gap={8}>
+            {/* Left Section */}
+            <VStack spacing={4} align="stretch" flex={1}>
+              <FormControl>
+                <FormLabel>Username</FormLabel>
+                <Input
+                  placeholder="Input the Account Username"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  isReadOnly={isReadOnly}
+                  bg={isReadOnly ? "gray.100" : "white"}
+                />
+              </FormControl>
+          
+              <FormControl>
+                <FormLabel>Product type </FormLabel>
+                <Input
+                  placeholder="Input product name (Instagram/Twitter/Facebook/Whatsapp"
+                  value={type}
+                  onChange={(e) => setType(e.target.value)}
+                  isReadOnly={isReadOnly}
+                  bg={isReadOnly ? "gray.100" : "white"}
+                />
+                <Select
+                  placeholder="Select product category"
+                  value={type}
+                  onChange={(e) => setType(e.target.value)}
+                  isDisabled={isReadOnly}
+                  bg={isReadOnly ? "gray.100" : "white"}
+                >
+                  <option value="instagram">Instagram</option>
+                  <option value="twitter">Twitter</option>
+                  <option value="facebook">Facebook</option>
+                  <option value="whatsapp">Whatsapp</option>
+                </Select>
+              </FormControl>
+          
+              <HStack spacing={4}>
+                <FormControl flex={1}>
+                  <FormLabel>Age</FormLabel>
+                  <Input
+                    placeholder="Input How old the account is"
+                    value={age}
+                    onChange={(e) => setAge(e.target.value)}
+                    isReadOnly={isReadOnly}
+                    bg={isReadOnly ? "gray.100" : "white"}
+                  />
+                </FormControl>
+                <FormControl flex={1}>
+                  <FormLabel>Follower</FormLabel>
+                  <Input
+                    placeholder="Input The number of followers"
+                    value={follower}
+                    onChange={(e) => setFollower(e.target.value)}
+                    isReadOnly={isReadOnly}
+                    bg={isReadOnly ? "gray.100" : "white"}
+                  />
+                </FormControl>
+              </HStack>
+          
+              <HStack spacing={4}>
+                <FormControl flex={1}>
+                  <FormLabel>Status</FormLabel>
+                  <Select
+                    placeholder="Select product category"
+                    value={status}
+                    onChange={(e) => setStatus(e.target.value)}
+                    isDisabled={isReadOnly}
+                    bg={isReadOnly ? "gray.100" : "white"}
+                  >
+                    <option value="sold">Sold</option>
+                    <option value="available">Available</option>
+                  </Select>
+                </FormControl>
+                <FormControl flex={1}>
+                  <FormLabel>Price</FormLabel>
+                  <Input
+                    placeholder="Input price"
+                    value={price}
+                    onChange={(e) => setPrice(e.target.value)}
+                    isReadOnly={isReadOnly}
+                    bg={isReadOnly ? "gray.100" : "white"}
+                  />
+                </FormControl>
+              </HStack>
+          
+              <FormControl>
+                <FormLabel>Region</FormLabel>
+                <Input
+                  placeholder="Input the account location"
+                  value={region}
+                  onChange={(e) => setRegion(e.target.value)}
+                  isReadOnly={isReadOnly}
+                  bg={isReadOnly ? "gray.100" : "white"}
+                />
+              </FormControl>
 
-          <VStack spacing={4} align="stretch">
-            <FormControl>
-              <FormLabel>Post ID</FormLabel>
-              <Input
-                value={postId}
-                isReadOnly={action === "view"}
-                onChange={(e) => setPostId(e.target.value)}
-                placeholder="Enter Post ID"
-              />
-            </FormControl>
+              <FormControl>
+                <FormLabel>About </FormLabel>
+                <Input
+                  placeholder="Input any additional or new thing about the account"
+                  value={about}
+                  onChange={(e) => setAbout(e.target.value)}
+                  isReadOnly={isReadOnly}
+                  bg={isReadOnly ? "gray.100" : "white"}
+                />
+              </FormControl>
+            </VStack>
 
-            <FormControl>
-              <FormLabel>Content</FormLabel>
-              <Textarea
-                value={content}
-                isReadOnly={action === "view"}
-                onChange={(e) => setContent(e.target.value)}
-                placeholder="Enter Post Content"
-              />
-            </FormControl>
-
-            <FormControl>
-              <FormLabel>Status</FormLabel>
-              <Select
-                value={status}
-                isReadOnly={action === "view"}
-                onChange={(e) => setStatus(e.target.value)}
-              >
-                <option value="Active">Active</option>
-                <option value="Scheduled">Scheduled</option>
-                <option value="Inactive">Inactive</option>
-              </Select>
-            </FormControl>
-
-            <FormControl>
-              <FormLabel>Date</FormLabel>
-              <Input
-                type="datetime-local"
-                value={date}
-                isReadOnly={action === "view"}
-                onChange={(e) => setDate(e.target.value)}
-              />
-            </FormControl>
-
-            <FormControl>
-              <FormLabel>Engagement</FormLabel>
-              <Input
-                value={engagement}
-                isReadOnly={action === "view"}
-                onChange={(e) => setEngagement(e.target.value)}
-                placeholder="Enter Engagement"
-              />
-            </FormControl>
-
-            <FormControl>
-              <FormLabel>Images</FormLabel>
-              <SimpleGrid columns={4} spacing={2}>
+            {/* Right Section: Image Upload */}
+            <Box flex={1}>
+              <Text fontWeight="bold" mb={2}>
+                Image Product
+              </Text>
+              <Text fontSize="sm" color="gray.500" mb={4}>
+                Note: Format photos SVG, PNG, or JPG (Max size 4MB)
+              </Text>
+          
+              {/* Image Grid */}
+              <SimpleGrid columns={4} spacing={4} mb={6}>
                 {images.map((image, index) => (
                   <Box
                     key={index}
-                    border="1px dashed gray"
-                    rounded="md"
+                    border="2px dashed #007bff"
+                    borderRadius="md"
+                    bg="gray.50"
                     p={2}
+                    display="flex"
+                    flexDirection="column"
+                    alignItems="center"
+                    justifyContent="center"
+                    height="100px"
                     textAlign="center"
+                    position="relative"
+                    onClick={isReadOnly ? undefined : () => document.getElementById(`fileInput-${index}`).click()}
+                    cursor={isReadOnly ? "default" : "pointer"}
                   >
                     {image ? (
-                      <Image
-                        src={image}
-                        alt={`Image ${index + 1}`}
-                        objectFit="cover"
-                        boxSize="80px"
-                      />
+                      <>
+                        <Image
+                          src={image}
+                          alt={`Image ${index + 1}`}
+                          objectFit="contain"
+                          boxSize="60px"
+                          height="100px"
+                        />
+                        {!isReadOnly && (
+                          <Button
+                            size="xs"
+                            colorScheme="red"
+                            position="absolute"
+                            top="2"
+                            right="2"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleImageChange(index, null);
+                            }}
+                          >
+                            X
+                          </Button>
+                        )}
+                      </>
                     ) : (
-                      <Text fontSize="sm" color="gray.500">
-                        Photo {index + 1}
-                      </Text>
+                      <Box>
+                        <FaImage color="#007bff" size={24} />
+                        <Text fontSize="xs" color="gray.600" fontWeight="bold" mt={2}>
+                          Photo {index + 1}
+                        </Text>
+                      </Box>
                     )}
-                    {action !== "view" && (
+                    {!isReadOnly && (
                       <Input
+                        id={`fileInput-${index}`}
                         type="file"
-                        mt={2}
-                        onChange={(e) =>
-                          handleImageChange(index, URL.createObjectURL(e.target.files[0]))
-                        }
+                        display="none"
+                        onChange={(e) => handleImageChange(index, e.target.files[0])}
                       />
                     )}
                   </Box>
                 ))}
               </SimpleGrid>
-            </FormControl>
-
-            {action !== "view" && (
-              <HStack spacing={4} justifyContent="flex-end">
-                <Button colorScheme="gray" onClick={() => onDelete(postId)}>
-                  Cancel
-                </Button>
-                <Button colorScheme="blue" onClick={handleSave}>
-                  Save Post
-                </Button>
+              <HStack spacing={4} justifyContent="space-between" mt={4}>
+                {action === 'view' ? (
+                  <Button
+                    colorScheme="blue"
+                    onClick={onClose}
+                  >
+                    Close
+                  </Button>
+                ) : (
+                  <>
+                    <Button
+                      colorScheme="blue"
+                      variant="outline"
+                      onClick={onClose}
+                      mr={3}
+                    >
+                      Discard Changes
+                    </Button>
+                    {action === 'delete' ? (
+                      <Button
+                        colorScheme="red"
+                        onClick={() => onDelete && onDelete(data)}
+                        mr={3}
+                      >
+                        Delete
+                      </Button>
+                    ) :
+                    <Button
+                      colorScheme="blue"
+                      onClick={handleSave}
+                    >
+                      {action === 'add' ? 'Create' : 'Save Changes'}
+                    </Button>
+                    }
+                  </>
+                )}
               </HStack>
-            )}
-          </VStack>
-        </Box>
+            </Box>
+          </Box>
+        </ModalBody>
       </ModalContent>
     </Modal>
   );
