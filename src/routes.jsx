@@ -7,7 +7,7 @@ import Help from './app/help';
 import AccountSettings from './app/accountSettings.jsx';
 import Products from './app/product';
 import Transaction from './app/transaction';
-// import Customers from './app/customers';
+import Customers from './app/customer';
 import SalesReport from './app/salesReport';
 
 const AppRoutes = () => {
@@ -63,14 +63,14 @@ const AppRoutes = () => {
           </Layout>
         }
       />
-      {/* <Route
+      <Route
         path="/customers"
         element={
           <Layout>
             <Customers />
           </Layout>
         }
-      /> */}
+      />
       <Route
         path="/sales-report"
         element={
