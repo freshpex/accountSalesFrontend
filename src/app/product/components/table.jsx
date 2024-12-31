@@ -36,7 +36,6 @@ import { ViewIcon, EditIcon, DeleteIcon, ChevronLeftIcon, ChevronRightIcon, Chev
 import { motion } from 'framer-motion';
 
 const MotionBox = motion(Box);
-const MotionFlex = motion(Flex);
 
 const DataTable = ({
   data,
@@ -203,7 +202,7 @@ const DataTable = ({
         </Thead>
         <Tbody>
           {data.map((item) => (
-            <MotionFlex
+            <Tr
               key={item.id}
               as="tr"
               initial={{ opacity: 0 }}
@@ -273,7 +272,7 @@ const DataTable = ({
                   </Tooltip>
                 </HStack>
               </Td>
-            </MotionFlex>
+            </Tr>
           ))}
         </Tbody>
       </Table>

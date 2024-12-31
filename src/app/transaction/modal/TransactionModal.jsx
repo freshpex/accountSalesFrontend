@@ -14,15 +14,22 @@ import {
   HStack,
   Image,
   Text,
+  useBreakpointValue,
 } from '@chakra-ui/react';
 
 const TransactionModal = ({ isOpen, onClose, data, action, onSave, onDelete }) => {
-  const isReadOnly = action === 'view';
+    const isReadOnly = action === 'view';
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} size="2xl">
+    <Modal 
+      isOpen={isOpen} 
+      onClose={onClose}
+      size="6xl"
+    >
       <ModalOverlay />
-      <ModalContent>
+      <ModalContent 
+      maxW="1200px" maxH="90vh" overflowY="auto"
+      >
         <ModalHeader>
           {action === 'add' && 'New Transaction'}
           {action === 'view' && 'View Transaction'}

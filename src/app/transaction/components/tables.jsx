@@ -24,7 +24,6 @@ import { ViewIcon, DeleteIcon, ChevronLeftIcon, ChevronRightIcon } from '@chakra
 import { motion } from 'framer-motion';
 
 const MotionBox = motion(Box);
-const MotionFlex = motion(Flex);
 
 const TransactionTable = ({
   data,
@@ -186,7 +185,7 @@ const TransactionTable = ({
         </Thead>
         <Tbody>
           {data.map((transaction) => (
-            <MotionFlex
+            <Tr
               key={transaction.id}
               as="tr"
               initial={{ opacity: 0 }}
@@ -267,7 +266,7 @@ const TransactionTable = ({
                   </Tooltip>
                 </HStack>
               </Td>
-            </MotionFlex>
+            </Tr>
           ))}
         </Tbody>
       </Table>
