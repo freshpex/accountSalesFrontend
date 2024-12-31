@@ -25,6 +25,7 @@ import {
   YAxis,
   CartesianGrid,
   Tooltip as RechartsTooltip,
+  ResponsiveContainer,
   AreaChart,
   Area
 } from 'recharts';
@@ -40,28 +41,27 @@ import {
 import { dashboardData } from './data';
 import DashboardCard from '../../components/cards/DashboardCard';
 import MetricCard from '../../components/cards/MetricCard';
-import ResponsiveContainer from '../../components/cards/ResponsiveContainer';
 
 const Dashboard = () => {
   const [timeRange, setTimeRange] = useState('weekly');
   const bgColor = useColorModeValue('gray.50', 'gray.900');
   
   return (
-      <Container maxW="container.xl" bg={bgColor} py={8}>
-      {/* Header */}
-      <Flex
-        px={8}
-        py={4}
-        bg={useColorModeValue('white', 'gray.800')}
-        borderBottom="1px solid"
-        borderColor={useColorModeValue('gray.100', 'gray.700')}
-        justify="space-between"
-        align="center"
-      >
-        <Flex align="center">
-          <Text fontSize="xl" fontWeight="bold">Dashboard</Text>
-        </Flex>
-      </Flex>
+    <Container maxW="container.xl" bg={bgColor} py={8}>
+    {/* Header */}
+    <Flex
+      px={8}
+      py={4}
+      bg={useColorModeValue('white', 'gray.800')}
+      borderBottom="1px solid"
+      borderColor={useColorModeValue('gray.100', 'gray.700')}
+      justify="space-between"
+      align="center"
+    >
+      <Text fontSize="xl" fontWeight="bold">
+        Dashboard
+      </Text>
+    </Flex>
 
       {/* Main Content */}
       <Box p={8}>
@@ -104,56 +104,56 @@ const Dashboard = () => {
           />
         </Grid>
 
-        <Grid templateColumns={{ base: '1fr', lg: '2fr 1fr' }} gap={2} mb={8}>
-          {/* Sales Chart */}
-          <DashboardCard>
-            <Flex justify="space-between" align="center" mb={6}>
-              <Text fontSize="lg" fontWeight="medium">Sales Overview</Text>
-              <Flex gap={2}>
-                <Button
-                  size="sm"
-                  variant={timeRange === 'weekly' ? 'solid' : 'ghost'}
-                  onClick={() => setTimeRange('weekly')}
-                >
-                  Weekly
-                </Button>
-                <Button
-                  size="sm"
-                  variant={timeRange === 'monthly' ? 'solid' : 'ghost'}
-                  onClick={() => setTimeRange('monthly')}
-                >
-                  Monthly
-                </Button>
+        {/* Sales Chart */}
+            <Grid templateColumns={{ base: '1fr', lg: '2fr 1fr' }} gap={2} mb={8}>
+              <DashboardCard>
+                <Flex justify="space-between" align="center" mb={6}>
+                  <Text fontSize="lg" fontWeight="medium">
+                    Sales Overview
+                  </Text>
+                  <Flex gap={2}>
+                  {['weekly', 'monthly'].map((range) => (
+                    <Button
+                      key={range}
+                      size="sm"
+                      variant={timeRange === range ? 'solid' : 'ghost'}
+                      onClick={() => setTimeRange(range)}
+                    >
+                      {range.charAt(0).toUpperCase() + range.slice(1)}
+                    </Button>
+                  ))}
+                </Flex>
               </Flex>
-            </Flex>
             
-            <ResponsiveContainer>
-              <AreaChart
-                data={timeRange === 'weekly' ? dashboardData.salesTrends.weekly : dashboardData.salesTrends.monthly}
-                margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
-              >
-                <defs>
-                  <linearGradient id="salesGradient" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#3182CE" stopOpacity={0.8}/>
-                    <stop offset="95%" stopColor="#3182CE" stopOpacity={0}/>
-                  </linearGradient>
-                </defs>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis 
-                  dataKey={timeRange === 'weekly' ? 'day' : 'month'} 
-                  stroke={useColorModeValue('#718096', '#A0AEC0')}
-                />
-                <YAxis stroke={useColorModeValue('#718096', '#A0AEC0')} />
-                <RechartsTooltip />
-                <Area
-                  type="monotone"
-                  dataKey={timeRange === 'weekly' ? 'sales' : 'value'}
-                  stroke="#3182CE"
-                  fillOpacity={1}
-                  fill="url(#salesGradient)"
-                />
-              </AreaChart>
-            </ResponsiveContainer>
+            <Box height={{ base: "200px", md: "300px" }}>
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart
+                  data={timeRange === 'weekly' ? dashboardData.salesTrends.weekly : dashboardData.salesTrends.monthly}
+                  margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
+                >
+                  <defs>
+                    <linearGradient id="salesGradient" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#3182CE" stopOpacity={0.8}/>
+                      <stop offset="95%" stopColor="#3182CE" stopOpacity={0}/>
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis 
+                    dataKey={timeRange === 'weekly' ? 'day' : 'month'} 
+                    stroke={useColorModeValue('#718096', '#A0AEC0')}
+                  />
+                  <YAxis stroke={useColorModeValue('#718096', '#A0AEC0')} />
+                  <RechartsTooltip />
+                  <Area
+                    type="monotone"
+                    dataKey={timeRange === 'weekly' ? 'sales' : 'value'}
+                    stroke="#3182CE"
+                    fillOpacity={1}
+                    fill="url(#salesGradient)"
+                  />
+                </AreaChart>
+              </ResponsiveContainer>
+            </Box>
           </DashboardCard>
 
           {/* Recent Activities */}
@@ -184,7 +184,7 @@ const Dashboard = () => {
                       }
                       mr={4}
                     >
-                      <FiActivity size={20} />
+                      <FiActivity />
                     </Circle>
                     <Box>
                       <Text fontSize="sm" fontWeight="medium">{activity.message}</Text>
@@ -202,9 +202,10 @@ const Dashboard = () => {
 
         {/* Popular Products */}
         <DashboardCard>
-          <Flex justify="space-between" align="center" mb={6}>
+          <Flex justify="space-between" align="center" mb={6} flexWrap="wrap" gap={4}>
             <Text fontSize="lg" fontWeight="medium">Popular Products</Text>
-            <Button leftIcon={<FiDownload />}
+            <Button
+              leftIcon={<FiDownload />}
               size="sm"
               variant="outline"
             >
@@ -213,7 +214,7 @@ const Dashboard = () => {
           </Flex>
 
           <Box overflowX="auto">
-            <Table variant="simple">
+            <Table variant="simple" size="sm">
               <Thead>
                 <Tr>
                   <Th>Product</Th>
@@ -253,7 +254,7 @@ const Dashboard = () => {
                         <Progress
                           value={(product.inventory / 2000) * 100}
                           size="sm"
-                          w="100px"
+                          w="70px"
                           colorScheme={product.inventory < 1000 ? "orange" : "green"}
                           mr={2}
                         />
@@ -284,7 +285,7 @@ const Dashboard = () => {
         </DashboardCard>
 
         {/* Regional Growth */}
-        <Grid templateColumns={{ base: '1fr', md: 'repeat(3, 1fr)' }} gap={6} mt={8}>
+        <Grid templateColumns={{ base: '1fr', md: 'repeat(2, 1fr)', lg: 'repeat(3, 1fr)' }} gap={6} mt={8}>
           {dashboardData.customerGrowth.map((region) => (
             <DashboardCard key={region.region}>
               <Flex justify="space-between" align="center" mb={4}>

@@ -1,23 +1,25 @@
 import {
+  Flex,
   Box,
   Text,
-  Flex,
   Stat,
   StatArrow,
   Circle,
-  useColorModeValue
+  useColorModeValue,
 } from '@chakra-ui/react';
 import DashboardCard from './DashboardCard';
 
 const MetricCard = ({ title, value, growth, icon: Icon, secondaryValue, secondaryLabel }) => {
   const textColor = useColorModeValue('gray.600', 'gray.300');
   const iconBg = useColorModeValue('blue.50', 'blue.900');
-  
+
   return (
     <DashboardCard>
       <Flex justify="space-between" align="flex-start">
         <Box>
-          <Text color={textColor} fontSize="sm">{title}</Text>
+          <Text color={textColor} fontSize="sm">
+            {title}
+          </Text>
           <Text fontSize="2xl" fontWeight="bold" mt={2}>
             {typeof value === 'number' ? value.toLocaleString() : value}
           </Text>
@@ -34,10 +36,15 @@ const MetricCard = ({ title, value, growth, icon: Icon, secondaryValue, secondar
           <Icon size={20} color={useColorModeValue('blue.500', 'blue.200')} />
         </Circle>
       </Flex>
-      {secondaryValue && (
+        {/* Secondary Info */}
+        {secondaryValue && (
         <Flex mt={4} justify="space-between" align="center">
-          <Text fontSize="sm" color={textColor}>{secondaryLabel}</Text>
-          <Text fontSize="sm" fontWeight="medium">{secondaryValue}</Text>
+          <Text fontSize="sm" color={textColor}>
+            {secondaryLabel}
+          </Text>
+          <Text fontSize="sm" fontWeight="medium">
+            {secondaryValue}
+          </Text>
         </Flex>
       )}
     </DashboardCard>
