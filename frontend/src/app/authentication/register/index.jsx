@@ -1,4 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { register_user } from './redux/reducer';
+import { getLoading, getError, getSuccess } from './redux/selector';
 import {
   Box,
   Button,
@@ -24,6 +27,10 @@ import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons';
 import { FcGoogle } from 'react-icons/fc';
 
 const Register = () => {
+  const dispatch = useDispatch();
+  const loading = useSelector(getLoading);
+  const error = useSelector(getError);
+  const success = useSelector(getSuccess);
   const toast = useToast();
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
@@ -70,17 +77,46 @@ const Register = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (validateForm()) {
-      // Handle registration logic here
-      console.log('Registration data:', formData);
+      const registrationData = {
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        email: formData.email,
+        password: formData.password,
+        phoneNumber: formData.phoneNumber,
+        businessName: formData.businessName,
+        businessType: formData.businessType,
+        address: formData.address,
+        city: formData.city,
+        country: formData.country
+      };
+      
+      dispatch(register_user(registrationData));
+    }
+  };
+
+  useEffect(() => {
+    if (error) {
       toast({
-        title: 'Account created.',
-        description: "We've created your account for you.",
-        status: 'success',
+        title: 'Registration Error',
+        description: error,
+        status: 'error',
         duration: 5000,
         isClosable: true,
       });
     }
-  };
+  }, [error, toast]);
+
+  useEffect(() => {
+    if (success) {
+      toast({
+        title: 'Registration Successful',
+        description: "You'll be redirected to login shortly",
+        status: 'success',
+        duration: 3000,
+        isClosable: true,
+      });
+    }
+  }, [success, toast]);
 
   return (
     <Container maxW="md" py={12}>
@@ -212,7 +248,8 @@ const Register = () => {
               color="white"
               _hover={{ bg: 'blue.600' }}
               onClick={handleSubmit}
-              isDisabled={!formData.agreeToTerms}
+              isDisabled={!formData.agreeToTerms || loading}
+              isLoading={loading}
             >
               Create Account
             </Button>

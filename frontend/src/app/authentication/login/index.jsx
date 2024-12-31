@@ -1,4 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { login_user } from './redux/reducer';
+import { getLoading, getError, getSuccess } from './redux/selector';
 import {
   Box,
   Button,
@@ -19,14 +22,51 @@ import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons';
 import { FcGoogle } from 'react-icons/fc';
 
 const Login = () => {
+  const dispatch = useDispatch();
+  const loading = useSelector(getLoading);
+  const error = useSelector(getError);
+  const success = useSelector(getSuccess);
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
+  useEffect(() => {
+    if (error) {
+      toast({
+        title: 'Login Error',
+        description: error,
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      });
+    }
+  }, [error, toast]);
+
+  useEffect(() => {
+    if (success) {
+      toast({
+        title: 'Login Successful',
+        description: 'Redirecting to dashboard...',
+        status: 'success',
+        duration: 3000,
+        isClosable: true,
+      });
+    }
+  }, [success, toast]);
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Handle login logic here
-    console.log('Login attempt:', { email, password });
+    if (!email || !password) {
+      toast({
+        title: 'Validation Error',
+        description: 'Please fill in all required fields',
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+      });
+      return;
+    }
+    dispatch(login_user({ email, password }));
   };
 
   return (
@@ -102,6 +142,8 @@ const Login = () => {
               color="white"
               _hover={{ bg: 'blue.600' }}
               onClick={handleSubmit}
+              isLoading={loading}
+              isDisabled={loading}
             >
               Sign In
             </Button>
