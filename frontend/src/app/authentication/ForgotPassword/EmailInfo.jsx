@@ -1,5 +1,4 @@
 import { Container, Box, Text, Button, Center } from "@chakra-ui/react";
-import { colors } from "src/constants/colors";
 import { Link } from "react-router-dom";
 
 const EmailInfo = () => {
@@ -7,13 +6,13 @@ const EmailInfo = () => {
     <Container maxW="container.xl">
       <Box h="100vh" display={"grid"} placeItems={"center"}>
         <Box>
-          <Text textAlign={"center"} textStyle={"heading"} color={colors.text}>
+          <Text textAlign={"center"} textStyle={"heading"} color="teal.500">
             Password Reset Link Sent!
           </Text>
           <Text
             fontSize={"16px"}
             fontWeight={400}
-            color={colors.sub}
+            color="gray.600"
             mt="16px"
             textAlign={"center"}
           >

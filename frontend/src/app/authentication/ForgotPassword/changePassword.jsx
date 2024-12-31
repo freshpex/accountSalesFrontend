@@ -7,9 +7,8 @@ import {
   Button,
   useToast,
 } from "@chakra-ui/react";
-import { colors } from "src/constants/colors";
 import { Form, Formik } from "formik";
-import { PasswordInput, TextInput } from "src/components/inputs";
+import { PasswordInput, TextInput } from "../../../components/inputs";
 import * as Yup from "yup";
 import { useDispatch, useSelector } from "react-redux";
 import { getLoading, getError } from "./redux/selector";
@@ -62,12 +61,12 @@ const ChangePassword = () => {
           w={{ base: "full", md: "400px" }}
           borderRadius={"10px"}
         >
-          <Text textStyle={"heading"} color={colors.text} textAlign={"center"}>
+          <Text textStyle={"heading"} color={"teal.500"} textAlign={"center"}>
             Set New Password
           </Text>
           <Text
             textStyle={"md"}
-            color={colors.sub}
+            color={"gray.600"}
             textAlign={"center"}
             mt="8px"
           >
@@ -87,7 +86,7 @@ const ChangePassword = () => {
                     <FormLabel
                       fontSize={"10px"}
                       fontWeight={"500"}
-                      color={colors.text}
+                      color={"gray.600"}
                     >
                       Email Address
                     </FormLabel>
@@ -102,7 +101,7 @@ const ChangePassword = () => {
                     <FormLabel
                       fontSize={"10px"}
                       fontWeight={"500"}
-                      color={colors.text}
+                      color={"gray.600"}
                     >
                       New Password
                     </FormLabel>
@@ -124,7 +123,7 @@ const ChangePassword = () => {
                     <FormLabel
                       fontSize={"10px"}
                       fontWeight={"500"}
-                      color={colors.text}
+                      color={"gray.600"}
                     >
                       Confirm Password
                     </FormLabel>

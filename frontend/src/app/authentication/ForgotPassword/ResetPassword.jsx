@@ -8,9 +8,8 @@ import {
   Button,
   useToast,
 } from "@chakra-ui/react";
-import { colors } from "src/constants/colors";
 import { Form, Formik } from "formik";
-import { TextInput } from "src/components/inputs";
+import { TextInput } from "../../../components/inputs";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { getLoading, getError } from "./redux/selector";
@@ -57,12 +56,12 @@ const ResetPassword = () => {
           w={{ base: "full", md: "400px" }}
           borderRadius={"10px"}
         >
-          <Text textStyle={"heading"} color={colors.text} textAlign={"center"}>
+          <Text textStyle={"heading"} color={"gray.600"} textAlign={"center"}>
             Reset Password
           </Text>
           <Text
             textStyle={"md"}
-            color={colors.sub}
+            color={"gray.600"}
             textAlign={"center"}
             mt="8px"
           >
@@ -81,7 +80,7 @@ const ResetPassword = () => {
                     <FormLabel
                       fontSize={"10px"}
                       fontWeight={"500"}
-                      color={colors.text}
+                      color={"gray.600"}
                     >
                       Email Address
                     </FormLabel>
@@ -112,7 +111,7 @@ const ResetPassword = () => {
                     textAlign={"center"}
                     mt="16px"
                     textStyle={"sm"}
-                    color={colors.secondary}
+                    color={"gray.600"}
                   >
                     <Link to="/login">Back To Sign In</Link>
                   </Text>
