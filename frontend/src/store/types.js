@@ -48,9 +48,16 @@ export const ActionTypes = {
   
   // Help Ticket actions.
   FETCH_TICKETS: 'help/fetch_tickets',
+  FETCH_TICKETS_SUCCESS: 'help/fetch_tickets_success',
+  FETCH_TICKETS_ERROR: 'help/fetch_tickets_error',
   CREATE_TICKET: 'help/create_ticket',
-  UPDATE_TICKET: 'help/update_ticket',
+  CREATE_TICKET_SUCCESS: 'help/create_ticket_success',
+  CREATE_TICKET_ERROR: 'help/create_ticket_error',
   ADD_RESPONSE: 'help/add_response',
+  ADD_RESPONSE_SUCCESS: 'help/add_response_success',
+  ADD_RESPONSE_ERROR: 'help/add_response_error',
+  UPDATE_TICKET_STATUS: 'help/update_ticket_status',
+  MARK_NOTIFICATION_READ: 'help/mark_notification_read',
   
   // Dashboard actions.
   FETCH_DASHBOARD_DATA: 'dashboard/fetch_dashboard_data',

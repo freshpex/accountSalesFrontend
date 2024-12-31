@@ -2,9 +2,9 @@ import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   Box, Container, Flex, Heading, Tab, TabList, TabPanel, TabPanels,
-  Tabs, Text, VStack, HStack, Badge, Input, Select, useDisclosure, useToast
+  Tabs, Text, HStack, Badge, Input, Select, Button, useDisclosure
 } from '@chakra-ui/react';
-import { SearchIcon } from '@chakra-ui/icons';
+import { SearchIcon, AddIcon } from '@chakra-ui/icons';
 import { ticketPriorityColors, ticketStatusColors } from './data';
 import EmptyStatePage from '../../components/emptyState';
 import NewTicketModal from './components/NewTicketModal';
@@ -95,7 +95,7 @@ const Help = () => {
                   maxW="400px"
                   value={filters.search}
                   onChange={(e) => setFilters(prev => ({ ...prev, search: e.target.value }))}
-                  leftElement={<SearchIcon color="gray.400" />}
+                  leftelement={<SearchIcon color="gray.400" />}
                 />
                 <Select
                   maxW="200px"
@@ -118,118 +118,59 @@ const Help = () => {
                 statusColors={ticketStatusColors}
                 priorityColors={ticketPriorityColors}
               />
-                      />
-                      <Box>
-                        <HStack spacing={2}>
-                          <Text fontWeight="bold">{ticket.subject}</Text>
-                          <Badge {...ticketStatusColors[ticket.status]}>
-                            {ticket.status}
-                          </Badge>
-                          <Badge {...ticketPriorityColors[ticket.priority]}>
-                            {ticket.priority}
-                          </Badge>
-                        </HStack>
-                        <Text color="gray.600" fontSize="sm">
-                          {ticket.customer.name} - {ticket.createdAt}
-                        </Text>
-                        <Text noOfLines={2} mt={2}>
-                          {ticket.message}
-                        </Text>
-                      </Box>
-                    </HStack>
-                    <ChevronRightIcon boxSize={6} color="gray.400" />
-                  </Flex>
-                </Box>
-              ))}
-            </VStack>
+            ) : (
+              <EmptyStatePage
+                title="No Tickets Found"
+                sub={filters.search ? "No tickets match your search criteria" : "You haven't created any support tickets yet"}
+                icon={<FiInbox size={50} />}
+                btnText="Create New Ticket"
+                handleClick={onOpen}
+              />
+            )}
           </TabPanel>
 
           <TabPanel>
-            <VStack spacing={4} align="stretch">
-              {helpData.notifications.map((notification) => (
-                <Box
-                  key={notification.id}
-                  p={4}
-                  borderWidth={1}
-                  borderRadius="lg"
-                  bg={notification.read ? "white" : "blue.50"}
-                >
-                  <Flex justify="space-between" align="center">
-                    <HStack spacing={4}>
-                      <Icon
-                        as={notification.type === 'ticket' ? EmailIcon : BellIcon}
-                        boxSize={5}
-                        color={notification.type === 'ticket' ? "blue.500" : "purple.500"}
-                      />
-                      <Box>
-                        <Text>{notification.message}</Text>
-                        <Text color="gray.600" fontSize="sm">
-                          {notification.timestamp}
-                        </Text>
-                      </Box>
-                    </HStack>
-                    {!notification.read && (
-                      <Badge colorScheme="blue">New</Badge>
-                    )}
-                  </Flex>
-                </Box>
-              ))}
-            </VStack>
+            {notifications.length > 0 ? (
+              <NotificationList
+                notifications={notifications}
+                onNotificationRead={handleNotificationRead}
+              />
+            ) : (
+              <EmptyStatePage
+                title="No Notifications"
+                sub="You're all caught up! No new notifications"
+                icon={<FiMail size={50} />}
+              />
+            )}
           </TabPanel>
         </TabPanels>
       </Tabs>
+    );
+  };
 
-      {/* New Ticket Modal */}
-      <Modal isOpen={isOpen} onClose={onClose} size="xl">
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Create New Support Ticket</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            <VStack spacing={4}>
-              <FormControl>
-                <FormLabel>Subject</FormLabel>
-                <Input
-                  value={newTicket.subject}
-                  onChange={(e) => setNewTicket({...newTicket, subject: e.target.value})}
-                  placeholder="Brief description of your issue"
-                />
-              </FormControl>
+  return (
+    <Container maxW="container.xl" py={8}>
+      <Flex justify="space-between" align="center" mb={8}>
+        <Box>
+          <Heading size="lg">Help & Support</Heading>
+          <Text color="gray.600">Get help with your account and transactions</Text>
+        </Box>
+        <Button
+          leftIcon={<AddIcon />}
+          colorScheme="blue"
+          onClick={onOpen}
+        >
+          New Ticket
+        </Button>
+      </Flex>
 
-              <FormControl>
-                <FormLabel>Priority</FormLabel>
-                <Select
-                  value={newTicket.priority}
-                  onChange={(e) => setNewTicket({...newTicket, priority: e.target.value})}
-                >
-                  <option value="low">Low</option>
-                  <option value="medium">Medium</option>
-                  <option value="high">High</option>
-                </Select>
-              </FormControl>
+      {renderContent()}
 
-              <FormControl>
-                <FormLabel>Message</FormLabel>
-                <Textarea
-                  value={newTicket.message}
-                  onChange={(e) => setNewTicket({...newTicket, message: e.target.value})}
-                  placeholder="Describe your issue in detail"
-                  rows={5}
-                />
-              </FormControl>
-            </VStack>
-          </ModalBody>
-
-          <ModalFooter>
-            <Button variant="ghost" mr={3} onClick={onClose}>
-              Cancel
-            </Button>
-            <Button colorScheme="blue" onClick={handleNewTicket}>
-              Submit Ticket
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
+      <NewTicketModal
+        isOpen={isOpen}
+        onClose={onClose}
+        onSubmit={handleCreateTicket}
+      />
     </Container>
   );
 };

@@ -1,6 +1,5 @@
-import React from "react";
 import { Center, Container, Image, Box } from "@chakra-ui/react";
-import logo from "src/assets/logo.png";
+import logo from "/logo.svg";
 
 const SuspenseLoadingUI = () => {
   return (
