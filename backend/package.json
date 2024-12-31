@@ -1,0 +1,32 @@
+{
+  "name": "online-bank-of-bd-server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "start-dev": "nodemon index.js",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "vercel-start": "node index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^1.7.9",
+    "bcrypt": "^5.1.1",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.1",
+    "express": "^4.18.1",
+    "jsonwebtoken": "^8.5.1",
+    "mongodb": "^4.8.0",
+    "mongoose": "^8.8.4",
+    "node-mailjet": "^3.4.1",
+    "stripe": "^10.2.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.19",
+    "sendgrid": "^5.2.3"
+  }
+}
