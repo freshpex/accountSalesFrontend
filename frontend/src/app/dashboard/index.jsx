@@ -5,8 +5,6 @@ import {
   Text,
   Progress,
   Grid,
-  Stat,
-  StatArrow,
   Table,
   Thead,
   Tbody,
@@ -27,7 +25,6 @@ import {
   YAxis,
   CartesianGrid,
   Tooltip as RechartsTooltip,
-  ResponsiveContainer,
   AreaChart,
   Area
 } from 'recharts';
@@ -41,59 +38,9 @@ import {
   FiActivity
 } from 'react-icons/fi';
 import { dashboardData } from './data';
-
-// Custom Card Component
-const DashboardCard = ({ children, ...props }) => (
-  <Box
-    bg={useColorModeValue('white', 'gray.800')}
-    p={6}
-    borderRadius="xl"
-    shadow="sm"
-    border="1px solid"
-    borderColor={useColorModeValue('gray.100', 'gray.700')}
-    transition="all 0.2s"
-    _hover={{ shadow: 'md' }}
-    {...props}
-  >
-    {children}
-  </Box>
-);
-
-// Metric Card Component
-const MetricCard = ({ title, value, growth, icon: Icon, secondaryValue, secondaryLabel }) => {
-  const textColor = useColorModeValue('gray.600', 'gray.300');
-  const iconBg = useColorModeValue('blue.50', 'blue.900');
-  
-  return (
-    <DashboardCard>
-      <Flex justify="space-between" align="flex-start">
-        <Box>
-          <Text color={textColor} fontSize="sm">{title}</Text>
-          <Text fontSize="2xl" fontWeight="bold" mt={2}>
-            {typeof value === 'number' ? value.toLocaleString() : value}
-          </Text>
-          <Stat>
-            <Flex align="center" mt={2}>
-              <StatArrow type={growth >= 0 ? 'increase' : 'decrease'} />
-              <Text fontSize="sm" color={growth >= 0 ? 'green.500' : 'red.500'}>
-                {Math.abs(growth)}%
-              </Text>
-            </Flex>
-          </Stat>
-        </Box>
-        <Circle size="40px" bg={iconBg}>
-          <Icon size={20} color={useColorModeValue('blue.500', 'blue.200')} />
-        </Circle>
-      </Flex>
-      {secondaryValue && (
-        <Flex mt={4} justify="space-between" align="center">
-          <Text fontSize="sm" color={textColor}>{secondaryLabel}</Text>
-          <Text fontSize="sm" fontWeight="medium">{secondaryValue}</Text>
-        </Flex>
-      )}
-    </DashboardCard>
-  );
-};
+import DashboardCard from '../../components/cards/DashboardCard';
+import MetricCard from '../../components/cards/MetricCard';
+import ResponsiveContainer from '../../components/cards/ResponsiveContainer';
 
 const Dashboard = () => {
   const [timeRange, setTimeRange] = useState('weekly');
@@ -180,35 +127,33 @@ const Dashboard = () => {
               </Flex>
             </Flex>
             
-            <Box h="300px">
-              <ResponsiveContainer width="100%" height="100%">
-                <AreaChart
-                  data={timeRange === 'weekly' ? dashboardData.salesTrends.weekly : dashboardData.salesTrends.monthly}
-                  margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
-                >
-                  <defs>
-                    <linearGradient id="salesGradient" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#3182CE" stopOpacity={0.8}/>
-                      <stop offset="95%" stopColor="#3182CE" stopOpacity={0}/>
-                    </linearGradient>
-                  </defs>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis 
-                    dataKey={timeRange === 'weekly' ? 'day' : 'month'} 
-                    stroke={useColorModeValue('#718096', '#A0AEC0')}
-                  />
-                  <YAxis stroke={useColorModeValue('#718096', '#A0AEC0')} />
-                  <RechartsTooltip />
-                  <Area
-                    type="monotone"
-                    dataKey={timeRange === 'weekly' ? 'sales' : 'value'}
-                    stroke="#3182CE"
-                    fillOpacity={1}
-                    fill="url(#salesGradient)"
-                  />
-                </AreaChart>
-              </ResponsiveContainer>
-            </Box>
+            <ResponsiveContainer>
+              <AreaChart
+                data={timeRange === 'weekly' ? dashboardData.salesTrends.weekly : dashboardData.salesTrends.monthly}
+                margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
+              >
+                <defs>
+                  <linearGradient id="salesGradient" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#3182CE" stopOpacity={0.8}/>
+                    <stop offset="95%" stopColor="#3182CE" stopOpacity={0}/>
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis 
+                  dataKey={timeRange === 'weekly' ? 'day' : 'month'} 
+                  stroke={useColorModeValue('#718096', '#A0AEC0')}
+                />
+                <YAxis stroke={useColorModeValue('#718096', '#A0AEC0')} />
+                <RechartsTooltip />
+                <Area
+                  type="monotone"
+                  dataKey={timeRange === 'weekly' ? 'sales' : 'value'}
+                  stroke="#3182CE"
+                  fillOpacity={1}
+                  fill="url(#salesGradient)"
+                />
+              </AreaChart>
+            </ResponsiveContainer>
           </DashboardCard>
 
           {/* Recent Activities */}
