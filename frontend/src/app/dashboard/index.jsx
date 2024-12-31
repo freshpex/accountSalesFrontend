@@ -1,15 +1,11 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import {
   Box,
   Flex,
   Text,
   Progress,
   Grid,
-  GridItem,
   Stat,
-  StatLabel,
-  StatNumber,
-  StatHelpText,
   StatArrow,
   Table,
   Thead,
@@ -20,33 +16,13 @@ import {
   Image,
   Badge,
   IconButton,
-  Menu,
-  MenuButton,
-  MenuList,
-  MenuItem,
   useColorModeValue,
   Button,
-  Drawer,
-  DrawerBody,
-  DrawerHeader,
-  DrawerOverlay,
-  DrawerContent,
-  useDisclosure,
-  Input,
-  InputGroup,
-  InputLeftElement,
+  Container,
   Stack,
-  Tabs,
-  TabList,
-  Tab,
-  TabPanels,
-  TabPanel,
   Circle,
-  Tooltip,
 } from '@chakra-ui/react';
 import {
-  LineChart,
-  Line,
   XAxis,
   YAxis,
   CartesianGrid,
@@ -55,17 +31,11 @@ import {
   AreaChart,
   Area
 } from 'recharts';
-import { 
-  FiMenu, 
-  FiSearch, 
-  FiTrendingUp, 
-  FiTrendingDown, 
+import {
   FiDollarSign, 
   FiUsers, 
   FiShoppingBag,
   FiPackage,
-  FiBell,
-  FiCalendar,
   FiFilter,
   FiDownload,
   FiActivity
@@ -127,11 +97,10 @@ const MetricCard = ({ title, value, growth, icon: Icon, secondaryValue, secondar
 
 const Dashboard = () => {
   const [timeRange, setTimeRange] = useState('weekly');
-  const { isOpen, onOpen, onClose } = useDisclosure();
   const bgColor = useColorModeValue('gray.50', 'gray.900');
   
   return (
-    <Box minH="100vh" bg={bgColor}>
+      <Container maxW="container.xl" bg={bgColor} py={8}>
       {/* Header */}
       <Flex
         px={8}
@@ -143,30 +112,7 @@ const Dashboard = () => {
         align="center"
       >
         <Flex align="center">
-          <IconButton
-            icon={<FiMenu />}
-            variant="ghost"
-            onClick={onOpen}
-            display={{ base: 'flex', lg: 'none' }}
-            mr={4}
-          />
           <Text fontSize="xl" fontWeight="bold">Dashboard</Text>
-        </Flex>
-        
-        <Flex align="center" gap={4}>
-          <InputGroup w="300px" display={{ base: 'none', md: 'flex' }}>
-            <InputLeftElement>
-              <FiSearch />
-            </InputLeftElement>
-            <Input placeholder="Search..." />
-          </InputGroup>
-          
-          <IconButton
-            icon={<FiBell />}
-            variant="ghost"
-            isRound
-            aria-label="Notifications"
-          />
         </Flex>
       </Flex>
 
@@ -174,7 +120,7 @@ const Dashboard = () => {
       <Box p={8}>
         <Grid
           templateColumns={{ base: 'repeat(1, 1fr)', md: 'repeat(2, 1fr)', lg: 'repeat(4, 1fr)' }}
-          gap={6}
+          gap={2}
           mb={8}
         >
           <MetricCard
@@ -211,7 +157,7 @@ const Dashboard = () => {
           />
         </Grid>
 
-        <Grid templateColumns={{ base: '1fr', lg: '2fr 1fr' }} gap={6} mb={8}>
+        <Grid templateColumns={{ base: '1fr', lg: '2fr 1fr' }} gap={2} mb={8}>
           {/* Sales Chart */}
           <DashboardCard>
             <Flex justify="space-between" align="center" mb={6}>
@@ -277,7 +223,7 @@ const Dashboard = () => {
               />
             </Flex>
             
-            <Stack spacing={4}>
+            <Stack spacing={2}>
               {dashboardData.recentActivities.map((activity) => (
                 <Flex key={activity.id} align="center" justify="space-between">
                   <Flex align="center">
@@ -424,34 +370,7 @@ const Dashboard = () => {
           ))}
         </Grid>
       </Box>
-
-      {/* Mobile Navigation Drawer */}
-      <Drawer isOpen={isOpen} placement="left" onClose={onClose}>
-        <DrawerOverlay />
-        <DrawerContent>
-          <DrawerHeader borderBottomWidth="1px">Navigation</DrawerHeader>
-          <DrawerBody>
-            <Stack spacing={4}>
-              <Button leftIcon={<FiActivity />} variant="ghost" justifyContent="start">
-                Dashboard
-              </Button>
-              <Button leftIcon={<FiShoppingBag />} variant="ghost" justifyContent="start">
-                Orders
-              </Button>
-              <Button leftIcon={<FiUsers />} variant="ghost" justifyContent="start">
-                Customers
-              </Button>
-              <Button leftIcon={<FiPackage />} variant="ghost" justifyContent="start">
-                Products
-              </Button>
-              <Button leftIcon={<FiDollarSign />} variant="ghost" justifyContent="start">
-                Revenue
-              </Button>
-            </Stack>
-          </DrawerBody>
-        </DrawerContent>
-      </Drawer>
-    </Box>
+    </Container>
   );
 };
 

@@ -26,9 +26,7 @@ import {
   ModalBody,
   ModalCloseButton,
   useDisclosure,
-  SimpleGrid,
   Icon,
-  Divider,
   useToast,
   FormControl,
   FormLabel
