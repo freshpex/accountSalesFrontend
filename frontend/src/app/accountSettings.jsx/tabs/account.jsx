@@ -1,29 +1,49 @@
-import { useState } from 'react';
+import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import {
-  Box,
-  Button,
-  Flex,
-  FormControl,
-  FormLabel,
-  Grid,
-  Input,
-  Stack,
-  Text,
-  Image,
-  IconButton,
-  useToast,
+  Box, Button, Flex, FormControl, FormLabel, Grid, Input,
+  Stack, Text, Image, IconButton, useToast
 } from '@chakra-ui/react';
 import { EditIcon } from '@chakra-ui/icons';
-import { userData } from '../data';
+import { FiUser } from 'react-icons/fi';
+import EmptyStatePage from '../../../components/emptyState';
+import {
+  getProfile,
+  getLoading
+} from '../redux/selector';
+import {
+  fetch_profile,
+  update_profile,
+  upload_profile_picture
+} from '../redux/reducer';
 
 const Account = () => {
-  const [profileData, setProfileData] = useState(userData.profileInfo);
-  const [contactData, setContactData] = useState(userData.contactDetails);
-  const [isEditing, setIsEditing] = useState(false);
+  const dispatch = useDispatch();
+  const profile = useSelector(getProfile);
+  const loading = useSelector(getLoading);
+
+  useEffect(() => {
+    dispatch(fetch_profile());
+  }, [dispatch]);
+
+  if (loading) {
+    return <Box p={8}>Loading...</Box>;
+  }
+
+  if (!profile) {
+    return (
+      <EmptyStatePage
+        title="No Profile Data"
+        sub="Your profile information will appear here"
+        icon={<FiUser size={50} />}
+      />
+    );
+  }
+
   const toast = useToast();
 
   const handleProfileUpdate = () => {
-    setIsEditing(false);
+    dispatch(update_profile(profile));
     toast({
       title: "Profile updated",
       status: "success",
@@ -41,7 +61,7 @@ const Account = () => {
         <Flex mb={6} alignItems="center">
           <Box position="relative">
             <Image
-              src={profileData.profilePicture}
+              src={profile.profilePicture}
               alt="Profile"
               boxSize="100px"
               borderRadius="full"
@@ -56,6 +76,7 @@ const Account = () => {
               colorScheme="blue"
               rounded="full"
               aria-label="Change picture"
+              onClick={() => dispatch(upload_profile_picture())}
             />
           </Box>
         </Flex>
@@ -64,44 +85,40 @@ const Account = () => {
           <FormControl>
             <FormLabel>First Name</FormLabel>
             <Input
-              value={profileData.firstName}
+              value={profile.firstName}
               onChange={(e) =>
-                setProfileData({ ...profileData, firstName: e.target.value })
+                dispatch(update_profile({ ...profile, firstName: e.target.value }))
               }
-              isDisabled={!isEditing}
             />
           </FormControl>
 
           <FormControl>
             <FormLabel>Last Name</FormLabel>
             <Input
-              value={profileData.lastName}
+              value={profile.lastName}
               onChange={(e) =>
-                setProfileData({ ...profileData, lastName: e.target.value })
+                dispatch(update_profile({ ...profile, lastName: e.target.value }))
               }
-              isDisabled={!isEditing}
             />
           </FormControl>
 
           <FormControl>
             <FormLabel>Gender</FormLabel>
             <Input
-              value={profileData.gender}
+              value={profile.gender}
               onChange={(e) =>
-                setProfileData({ ...profileData, gender: e.target.value })
+                dispatch(update_profile({ ...profile, gender: e.target.value }))
               }
-              isDisabled={!isEditing}
             />
           </FormControl>
 
           <FormControl>
             <FormLabel>Date Birthday</FormLabel>
             <Input
-              value={profileData.birthDate}
+              value={profile.birthDate}
               onChange={(e) =>
-                setProfileData({ ...profileData, birthDate: e.target.value })
+                dispatch(update_profile({ ...profile, birthDate: e.target.value }))
               }
-              isDisabled={!isEditing}
             />
           </FormControl>
         </Grid>
@@ -110,14 +127,12 @@ const Account = () => {
           <Button
             colorScheme="blue"
             onClick={handleProfileUpdate}
-            isDisabled={!isEditing}
           >
             Update
           </Button>
           <Button
             variant="ghost"
-            onClick={() => setIsEditing(false)}
-            isDisabled={!isEditing}
+            onClick={() => dispatch(fetch_profile())}
           >
             Cancel
           </Button>
@@ -133,7 +148,7 @@ const Account = () => {
           <IconButton
             icon={<EditIcon />}
             variant="ghost"
-            onClick={() => setIsEditing(true)}
+            onClick={() => dispatch(fetch_profile())}
             aria-label="Edit contact details"
           />
         </Flex>
@@ -142,7 +157,7 @@ const Account = () => {
           <FormControl>
             <FormLabel>Phone Number</FormLabel>
             <Input
-              value={contactData.phoneNumber}
+              value={profile.phoneNumber}
               isReadOnly
               bg="gray.100"
             />
@@ -151,7 +166,7 @@ const Account = () => {
           <FormControl>
             <FormLabel>Country</FormLabel>
             <Input
-              value={contactData.country}
+              value={profile.country}
               isReadOnly
               bg="gray.100"
             />
@@ -160,7 +175,7 @@ const Account = () => {
           <FormControl>
             <FormLabel>Address</FormLabel>
             <Input
-              value={contactData.address}
+              value={profile.address}
               isReadOnly
               bg="gray.100"
             />

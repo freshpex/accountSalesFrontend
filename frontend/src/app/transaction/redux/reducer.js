@@ -19,6 +19,14 @@ const initialState = {
       totalPages: 1,
       totalItems: 0
     }
+  },
+  filters: {
+    search: '',
+    payment: null,
+    date: null,
+    status: 'all',
+    page: 1,
+    limit: 10
   }
 };
 
@@ -80,6 +88,16 @@ export const transactionSlice = createSlice({
     delete_transaction_error: (state, action) => {
       state.ui.loading = false;
       state.ui.error = action.payload;
+    },
+    update_filters: (state, action) => {
+      state.filters = { ...state.filters, ...action.payload };
+      state.filters.page = 1; // Reset to first page when filters change
+    },
+    reset_filters: (state) => {
+      state.filters = initialState.filters;
+    },
+    set_page: (state, action) => {
+      state.filters.page = action.payload;
     }
   }
 });
@@ -96,7 +114,10 @@ export const {
   update_transaction_error,
   delete_transaction,
   delete_transaction_success,
-  delete_transaction_error
+  delete_transaction_error,
+  update_filters,
+  reset_filters,
+  set_page
 } = transactionSlice.actions;
 
 export default transactionSlice.reducer;

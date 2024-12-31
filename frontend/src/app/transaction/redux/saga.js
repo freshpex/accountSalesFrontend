@@ -1,4 +1,4 @@
-import { put, takeLatest, call } from "redux-saga/effects";
+import { put, takeLatest, call, select } from "redux-saga/effects";
 import {
   fetch_transactions,
   fetch_transactions_success,
@@ -19,7 +19,16 @@ import toast from "react-hot-toast";
 
 function* fetchTransactionsSaga({ payload }) {
   try {
-    const response = yield call(api.get, ApiEndpoints.TRANSACTIONS, { params: payload });
+    const state = yield select(state => state.transaction.filters);
+    const params = { ...state, ...payload };
+    
+    const response = yield call(api.get, ApiEndpoints.TRANSACTIONS, { 
+      params: {
+        ...params,
+        status: params.status === 'all' ? undefined : params.status
+      }
+    });
+
     yield put(fetch_transactions_success(response.data));
   } catch (error) {
     const errorMessage = error.response?.data?.error || "Failed to fetch transactions";

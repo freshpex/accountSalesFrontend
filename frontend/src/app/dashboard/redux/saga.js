@@ -5,7 +5,10 @@ import {
   fetch_dashboard_error,
   fetch_sales_metrics,
   fetch_sales_metrics_success,
-  fetch_sales_metrics_error
+  fetch_sales_metrics_error,
+  fetch_sales_report,
+  fetch_sales_report_success,
+  fetch_sales_report_error
 } from "./reducer";
 import { ApiEndpoints } from "../../../store/types";
 import api from "../../../services/DataService";
@@ -43,9 +46,25 @@ function* fetchSalesMetricsSaga({ payload }) {
   }
 }
 
+function* fetchSalesReportSaga({ payload }) {
+  try {
+    const response = yield call(api.get, ApiEndpoints.SALES_REPORT, {
+      params: payload
+    });
+    yield put(fetch_sales_report_success(response.data));
+  } catch (error) {
+    const errorMessage = error.response?.data?.error || "Failed to fetch sales report";
+    toast.error(errorMessage);
+    yield put(fetch_sales_report_error(errorMessage));
+  }
+}
+
 function* dashboardSagas() {
-  yield takeLatest(fetch_dashboard_data.type, fetchDashboardDataSaga);
-  yield takeLatest(fetch_sales_metrics.type, fetchSalesMetricsSaga);
+  yield all([
+    takeLatest(fetch_dashboard_data.type, fetchDashboardDataSaga),
+    takeLatest(fetch_sales_metrics.type, fetchSalesMetricsSaga),
+    takeLatest(fetch_sales_report.type, fetchSalesReportSaga)
+  ]);
 }
 
 export default dashboardSagas;
