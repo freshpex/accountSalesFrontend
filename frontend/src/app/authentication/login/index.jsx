@@ -17,12 +17,15 @@ import {
   Text,
   Image,
   IconButton,
+  useToast,
 } from '@chakra-ui/react';
 import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons';
 import { FcGoogle } from 'react-icons/fc';
+import { Link as RouterLink } from 'react-router-dom';
 
 const Login = () => {
   const dispatch = useDispatch();
+  const toast = useToast();
   const loading = useSelector(getLoading);
   const error = useSelector(getError);
   const success = useSelector(getSuccess);
@@ -132,7 +135,12 @@ const Login = () => {
 
             <Stack direction="row" justify="space-between" align="center">
               <Checkbox>Remember me?</Checkbox>
-              <Link color="blue.500" href="#" fontSize="sm">
+              <Link 
+                as={RouterLink} 
+                to="/forgot-password" 
+                color="blue.500" 
+                fontSize="sm"
+              >
                 Forgot Password?
               </Link>
             </Stack>

@@ -1,4 +1,3 @@
-import React from "react";
 import { Container, Box, Text, Button, Center } from "@chakra-ui/react";
 import { colors } from "src/constants/colors";
 import { Link } from "react-router-dom";

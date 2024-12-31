@@ -2,10 +2,10 @@
   "name": "online-bank-of-bd-server",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "src/index.js",
   "scripts": {
-    "start": "node index.js",
-    "start-dev": "nodemon index.js",
+    "start": "node src/index.js",
+    "start-dev": "nodemon src/index.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "vercel-start": "node index.js"
   },

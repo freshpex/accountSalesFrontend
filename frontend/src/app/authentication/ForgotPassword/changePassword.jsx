@@ -5,25 +5,41 @@ import {
   FormControl,
   FormLabel,
   Button,
+  useToast,
 } from "@chakra-ui/react";
 import { colors } from "src/constants/colors";
 import { Form, Formik } from "formik";
 import { PasswordInput, TextInput } from "src/components/inputs";
 import * as Yup from "yup";
 import { useDispatch, useSelector } from "react-redux";
-import { getLoading } from "./redux/selector";
+import { getLoading, getError } from "./redux/selector";
 import { change_password } from "./redux/reducer";
 import { useParams } from "react-router-dom";
+import { useEffect } from "react";
 
 const ChangePassword = () => {
   const dispatch = useDispatch();
   const loading = useSelector(getLoading);
+  const error = useSelector(getError);
+  const toast = useToast();
   const params = useParams();
   const passwordRegex = /[!@#$%^&*(),.?":{}|<>]/;
 
   const handleSubmit = (doc) => {
     dispatch(change_password({ id: params.id, data: doc }));
   };
+
+  useEffect(() => {
+    if (error) {
+      toast({
+        title: "Error",
+        description: error,
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
+    }
+  }, [error, toast]);
 
   const Schema = Yup.object().shape({
     newPassword: Yup.string()

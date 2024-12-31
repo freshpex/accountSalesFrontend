@@ -1,4 +1,4 @@
-import { put, takeLatest, call } from "@redux-saga/core/effects";
+import { put, takeLatest, call, delay } from "@redux-saga/core/effects";
 import {
   forgot_password,
   forgot_password_error,
@@ -12,23 +12,22 @@ import toast from "react-hot-toast";
 
 function* forgotPasswordSaga({ payload }) {
   try {
-    const requestRes = yield call(
+    const response = yield call(
       api.patch,
       `/api/v1/user/forgot-password`,
-      payload,
+      payload
     );
-    const responseData = requestRes.data;
-    const response = responseData.data;
     yield put({
       type: forgot_password_success.type,
-      payload: response,
+      payload: response.data
     });
-    window.location.href = "/email_check";
+    window.location.href = '/email-check';
   } catch (error) {
-    toast.error(error?.response?.data?.error);
-
+    const errorMessage = error?.response?.data?.error || 'Failed to send reset link';
+    toast.error(errorMessage);
     yield put({
       type: forgot_password_error.type,
+      payload: errorMessage
     });
   }
 }
@@ -36,24 +35,24 @@ function* forgotPasswordSaga({ payload }) {
 function* resetPasswordSaga({ payload }) {
   try {
     const { id, data } = payload;
-    const requestRes = yield call(
+    const response = yield call(
       api.patch,
       `/api/v1/user/reset-password/${id}`,
-      data,
+      data
     );
-    const responseData = requestRes.data;
-    const response = responseData.data;
     yield put({
       type: change_password_success.type,
-      payload: response,
+      payload: response.data
     });
-    setTimeout(() => {
-      window.location.href = "/login";
-    }, 1000);
+    toast.success('Password changed successfully');
+    yield delay(1000);
+    window.location.href = '/login';
   } catch (error) {
-    toast.error(error.response.data.error);
+    const errorMessage = error?.response?.data?.error || 'Failed to reset password';
+    toast.error(errorMessage);
     yield put({
       type: change_password_error.type,
+      payload: errorMessage
     });
   }
 }

@@ -32,7 +32,7 @@ export const loginReducerSlice = createSlice({
       state.ui.error = action.payload;
       state.ui.success = false;
     },
-    logout: (state) => {
+    logout: () => {
       return initialState;
     }
   },

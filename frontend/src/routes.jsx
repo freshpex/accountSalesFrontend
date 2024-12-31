@@ -2,19 +2,25 @@ import { Routes, Route } from 'react-router-dom';
 import Layout from './components/layout';
 import Login from './app/authentication/login';
 import Register from './app/authentication/register';
-import Dashboard from './app/Dashboard';
+import Dashboard from './app/dashboard';
 import Help from './app/help';
 import AccountSettings from './app/accountSettings.jsx';
 import Products from './app/product';
 import Transaction from './app/transaction';
 import Customers from './app/customer';
 import SalesReport from './app/salesReport';
+import ResetPassword from './app/authentication/ForgotPassword/ResetPassword.jsx';
+import EmailInfo from './app/authentication/ForgotPassword/EmailInfo.jsx';
+import ChangePassword from './app/authentication/ForgotPassword/changePassword.jsx';
 
 const AppRoutes = () => {
   return (
     <Routes>
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
+      <Route path="/forgot-password" element={<ResetPassword />} />
+      <Route path="/email-check" element={<EmailInfo />} />
+      <Route path="/reset-password/:id" element={<ChangePassword />} />
       <Route
         path="/"
         element={
