@@ -19,7 +19,8 @@ const persistConfig = {
     'customer',
     'help',
     'transaction'
-  ]
+  ],
+  blacklist: ['ui', 'filters']
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

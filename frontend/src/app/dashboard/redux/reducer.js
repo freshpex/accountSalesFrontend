@@ -52,26 +52,37 @@ export const dashboardSlice = createSlice({
   reducers: {
     fetch_dashboard_data: (state) => {
       state.ui.loading = true;
+      state.ui.error = null;
     },
     fetch_dashboard_success: (state, action) => {
       state.ui.loading = false;
       state.ui.success = true;
-      state.data = { ...state.data, ...action.payload };
+      state.data = {
+        ...state.data,
+        salesTrends: action.payload.salesTrends,
+        customerGrowth: action.payload.customerGrowth,
+        recentActivities: action.payload.recentActivities,
+        productPopular: action.payload.productPopular
+      };
     },
     fetch_dashboard_error: (state, action) => {
       state.ui.loading = false;
       state.ui.error = action.payload;
+      state.ui.success = false;
     },
     fetch_sales_metrics: (state) => {
       state.ui.loading = true;
+      state.ui.error = null;
     },
     fetch_sales_metrics_success: (state, action) => {
       state.ui.loading = false;
+      state.ui.success = true;
       state.data.metrics = action.payload;
     },
     fetch_sales_metrics_error: (state, action) => {
       state.ui.loading = false;
       state.ui.error = action.payload;
+      state.ui.success = false;
     },
     update_sales_target: (state, action) => {
       state.data.metrics.salesTarget = action.payload;

@@ -1,5 +1,5 @@
 import { put, takeLatest, call, all } from "redux-saga/effects";
-import {
+import { 
   fetch_dashboard_data,
   fetch_dashboard_success,
   fetch_dashboard_error,
@@ -9,44 +9,36 @@ import {
 } from "./reducer";
 import { ApiEndpoints } from "../../../store/types";
 import api from "../../../services/DataService";
+import toast from "react-hot-toast";
 
 function* fetchDashboardDataSaga() {
   try {
-    const [
-      salesResponse,
-      customerResponse,
-      activityResponse,
-      productsResponse
-    ] = yield all([
-      call(api.get, `${ApiEndpoints.SALES_REPORT}/overview`),
-      call(api.get, `${ApiEndpoints.CUSTOMERS}/growth`),
-      call(api.get, `${ApiEndpoints.SALES_REPORT}/activities`),
-      call(api.get, `${ApiEndpoints.PRODUCTS}/popular`)
+    const [overview, metrics] = yield all([
+      call(api.get, ApiEndpoints.DASHBOARD_OVERVIEW),
+      call(api.get, ApiEndpoints.DASHBOARD_METRICS)
     ]);
 
     yield put(fetch_dashboard_success({
-      salesTrends: salesResponse.data,
-      customerGrowth: customerResponse.data,
-      recentActivities: activityResponse.data,
-      productPopular: productsResponse.data
+      ...overview.data,
+      metrics: metrics.data
     }));
   } catch (error) {
     const errorMessage = error.response?.data?.error || "Failed to fetch dashboard data";
+    toast.error(errorMessage);
     yield put(fetch_dashboard_error(errorMessage));
   }
 }
 
 function* fetchSalesMetricsSaga({ payload }) {
   try {
-    const { timeRange } = payload || {};
-    const response = yield call(
-      api.get,
-      `${ApiEndpoints.SALES_REPORT}/metrics`,
-      { params: { timeRange } }
-    );
+    const { timeRange } = payload;
+    const response = yield call(api.get, ApiEndpoints.DASHBOARD_METRICS, {
+      params: { timeRange }
+    });
     yield put(fetch_sales_metrics_success(response.data));
   } catch (error) {
     const errorMessage = error.response?.data?.error || "Failed to fetch sales metrics";
+    toast.error(errorMessage);
     yield put(fetch_sales_metrics_error(errorMessage));
   }
 }

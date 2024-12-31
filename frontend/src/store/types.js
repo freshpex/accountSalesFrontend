@@ -36,14 +36,30 @@ export const ActionTypes = {
   
   // Product actions.
   FETCH_PRODUCTS: 'product/fetch_products',
+  FETCH_PRODUCTS_SUCCESS: 'product/fetch_products_success',
+  FETCH_PRODUCTS_ERROR: 'product/fetch_products_error',
   ADD_PRODUCT: 'product/add_product',
+  ADD_PRODUCT_SUCCESS: 'product/add_product_success',
+  ADD_PRODUCT_ERROR: 'product/add_product_error',
   UPDATE_PRODUCT: 'product/update_product',
+  UPDATE_PRODUCT_SUCCESS: 'product/update_product_success',
+  UPDATE_PRODUCT_ERROR: 'product/update_product_error',
   DELETE_PRODUCT: 'product/delete_product',
+  DELETE_PRODUCT_SUCCESS: 'product/delete_product_success',
+  DELETE_PRODUCT_ERROR: 'product/delete_product_error',
   
   // Customer actions.
   FETCH_CUSTOMERS: 'customer/fetch_customers',
+  FETCH_CUSTOMERS_SUCCESS: 'customer/fetch_customers_success',
+  FETCH_CUSTOMERS_ERROR: 'customer/fetch_customers_error',
   ADD_CUSTOMER: 'customer/add_customer',
+  ADD_CUSTOMER_SUCCESS: 'customer/add_customer_success',
+  ADD_CUSTOMER_ERROR: 'customer/add_customer_error',
   UPDATE_CUSTOMER: 'customer/update_customer',
+  UPDATE_CUSTOMER_SEGMENT: 'customer/update_customer_segment',
+  FETCH_CUSTOMER_ACTIVITY: 'customer/fetch_customer_activity',
+  FETCH_CUSTOMER_ACTIVITY_SUCCESS: 'customer/fetch_customer_activity_success',
+  FETCH_CUSTOMER_ACTIVITY_ERROR: 'customer/fetch_customer_activity_error',
   DELETE_CUSTOMER: 'customer/delete_customer',
   
   // Help Ticket actions.
@@ -61,7 +77,12 @@ export const ActionTypes = {
   
   // Dashboard actions.
   FETCH_DASHBOARD_DATA: 'dashboard/fetch_dashboard_data',
+  FETCH_DASHBOARD_SUCCESS: 'dashboard/fetch_dashboard_success',
+  FETCH_DASHBOARD_ERROR: 'dashboard/fetch_dashboard_error',
   FETCH_SALES_METRICS: 'dashboard/fetch_sales_metrics',
+  FETCH_SALES_METRICS_SUCCESS: 'dashboard/fetch_sales_metrics_success',
+  FETCH_SALES_METRICS_ERROR: 'dashboard/fetch_sales_metrics_error',
+  UPDATE_SALES_TARGET: 'dashboard/update_sales_target',
   
   // Sales Report actions - updating to match reducer
   FETCH_SALES_REPORT: 'salesReport/fetch_sales_report',
@@ -79,6 +100,8 @@ export const ApiEndpoints = {
   TRANSACTIONS: '/api/v1/transactions',
   PRODUCTS: '/api/v1/products',
   CUSTOMERS: '/api/v1/customers',
+  CUSTOMER_ACTIVITY: '/api/v1/customers/:id/activity',
+  CUSTOMER_SEGMENTS: '/api/v1/customers/segments',
   HELP_TICKETS: '/api/v1/help-tickets',
   SALES_REPORT: '/api/v1/sales-report',
   PROFILE: '/api/v1/user/profile',
@@ -89,4 +112,6 @@ export const ApiEndpoints = {
   SALES_ANALYTICS: '/api/v1/sales-report/analytics',
   REGIONAL_DATA: '/api/v1/sales-report/regional',
   PRODUCT_STATS: '/api/v1/products/stats',
+  DASHBOARD_OVERVIEW: '/api/v1/dashboard/overview',
+  DASHBOARD_METRICS: '/api/v1/dashboard/metrics',
 };
