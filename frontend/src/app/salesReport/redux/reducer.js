@@ -13,7 +13,11 @@ const initialState = {
       totalRevenue: 0,
       revenueGrowth: 0,
       totalTransactions: 0,
-      transactionGrowth: 0
+      transactionGrowth: 0,
+      totalCustomers: 0, // Added missing field
+      customerGrowth: 0, // Added missing field
+      totalProducts: 0,  // Added missing field
+      productGrowth: 0   // Added missing field
     },
     monthlySales: [],
     regionalData: [],
@@ -56,6 +60,10 @@ export const salesReportSlice = createSlice({
     fetch_regional_data_success: (state, action) => {
       state.ui.loading = false;
       state.data.regionalData = action.payload;
+    },
+    fetch_regional_data_error: (state, action) => {
+      state.ui.loading = false;
+      state.ui.error = action.payload;
     }
   }
 });
@@ -66,7 +74,8 @@ export const {
   fetch_sales_report_error,
   update_filters,
   fetch_regional_data,
-  fetch_regional_data_success
+  fetch_regional_data_success,
+  fetch_regional_data_error  // Export the new action
 } = salesReportSlice.actions;
 
 export default salesReportSlice.reducer;

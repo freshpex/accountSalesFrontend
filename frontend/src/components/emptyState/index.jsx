@@ -1,4 +1,4 @@
-import { Box, Text, Center, Button } from "@chakra-ui/react";
+import { Box, Text, Center, Button, Icon } from "@chakra-ui/react";
 import { Link } from "react-router-dom";
 import { IoAddCircleOutline } from "react-icons/io5";
 
@@ -11,8 +11,33 @@ const EmptyStatePage = ({
   isLink,
   handleClick,
 }) => {
+  const renderButton = () => {
+    if (!btnText) return null;
+
+    const buttonContent = (
+      <Button
+        mt="16px"
+        _hover={{ opacity: 0.8 }}
+        textTransform="capitalize"
+        onClick={handleClick}
+        _active={{
+          opacity: 0.8,
+        }}
+      >
+        <Icon as={IoAddCircleOutline} mr={2} />
+        {btnText}
+      </Button>
+    );
+
+    return (
+      <Center>
+        {isLink ? <Link to={link}>{buttonContent}</Link> : buttonContent}
+      </Center>
+    );
+  };
+
   return (
-    <Box display={"grid"} placeItems="center" h="70vh">
+    <Box display="grid" placeItems="center" h="70vh">
       <Box>
         {icon && (
           <Center>
@@ -22,51 +47,25 @@ const EmptyStatePage = ({
 
         <Text
           textStyle="xlx"
-          color={"gray.600"}
-          textAlign={"center"}
-          textTransform={"capitalize"}
+          color="gray.600"
+          textAlign="center"
+          textTransform="capitalize"
         >
           {title}
         </Text>
         <Center>
           <Text
             textStyle="lgg"
-            color={"gray.400"}
+            color="gray.400"
             mt="16px"
-            textAlign={"center"}
+            textAlign="center"
             w={{ base: "full", md: "293px" }}
           >
             {sub}
           </Text>
         </Center>
 
-        {btnText && (
-          <Center>
-            {!isLink ? (
-              <Button
-                mt="16px"
-                _hover={{ opacity: 0.8 }}
-                textTransform={"capitalize"}
-                leftIcon={<IoAddCircleOutline />}
-                onClick={handleClick}
-                _active={{
-                  opacity: 0.8,
-                }}
-              >
-                {btnText}
-              </Button>
-            ) : (
-              <Button
-                mt="16px"
-                _hover={{ opacity: 0.8 }}
-                textTransform={"capitalize"}
-                leftIcon={<IoAddCircleOutline />}
-              >
-                <Link to={link}>{btnText}</Link>
-              </Button>
-            )}
-          </Center>
-        )}
+        {renderButton()}
       </Box>
     </Box>
   );

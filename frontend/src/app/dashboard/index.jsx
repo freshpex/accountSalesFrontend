@@ -205,7 +205,7 @@ const Dashboard = () => {
           <Flex justify="space-between" align="center" mb={6} flexWrap="wrap" gap={4}>
             <Text fontSize="lg" fontWeight="medium">Popular Products</Text>
             <Button
-              leftIcon={<FiDownload />}
+              lefticon={<FiDownload />}
               size="sm"
               variant="outline"
             >

@@ -1,123 +1,123 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import {
-  Box,
-  Button,
-  Container,
-  Flex,
-  Heading,
-  Tab,
-  TabList,
-  TabPanel,
-  TabPanels,
-  Tabs,
-  Text,
-  VStack,
-  HStack,
-  Avatar,
-  Badge,
-  Input,
-  Textarea,
-  Select,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalFooter,
-  ModalBody,
-  ModalCloseButton,
-  useDisclosure,
-  Icon,
-  useToast,
-  FormControl,
-  FormLabel
+  Box, Container, Flex, Heading, Tab, TabList, TabPanel, TabPanels,
+  Tabs, Text, VStack, HStack, Badge, Input, Select, useDisclosure, useToast
 } from '@chakra-ui/react';
+import { SearchIcon } from '@chakra-ui/icons';
+import { ticketPriorityColors, ticketStatusColors } from './data';
+import EmptyStatePage from '../../components/emptyState';
+import NewTicketModal from './components/NewTicketModal';
+import TicketList from './components/TicketList';
+import NotificationList from './components/NotificationList';
 import { 
-  ChevronRightIcon, 
-  EmailIcon, 
-  BellIcon, 
-  AddIcon,
-  SearchIcon
-} from '@chakra-ui/icons';
-import { helpData, ticketPriorityColors, ticketStatusColors } from './data';
+  getTickets, 
+  getTicketStats, 
+  getNotifications,
+  getLoading 
+} from './redux/selector';
+import { 
+  fetch_tickets,
+  create_ticket,
+  add_response,
+  update_ticket_status,
+  mark_notification_read 
+} from './redux/reducer';
+import { FiMail, FiInbox } from 'react-icons/fi';
 
 const Help = () => {
+  const dispatch = useDispatch();
+  const tickets = useSelector(getTickets);
+  const stats = useSelector(getTicketStats);
+  const notifications = useSelector(getNotifications);
+  const loading = useSelector(getLoading);
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const toast = useToast();
-  const [activeTab, setActiveTab] = useState(0);
-  const [newTicket, setNewTicket] = useState({
-    subject: '',
-    message: '',
-    priority: 'medium'
-  });
+  const [filters, setFilters] = useState({ status: 'all', search: '' });
 
-  const handleNewTicket = () => {
-    // Here you would typically make an API call to create a new ticket
-    toast({
-      title: "Ticket Created",
-      description: "We'll respond to your inquiry soon.",
-      status: "success",
-      duration: 3000
-    });
+  useEffect(() => {
+    dispatch(fetch_tickets());
+  }, [dispatch]);
+
+  const handleCreateTicket = (ticketData) => {
+    dispatch(create_ticket(ticketData));
     onClose();
-    setNewTicket({ subject: '', message: '', priority: 'medium' });
   };
 
-  return (
-    <Container maxW="container.xl" py={8}>
-      <Flex justify="space-between" align="center" mb={8}>
-        <Box>
-          <Heading size="lg">Help & Support</Heading>
-          <Text color="gray.600">Get help with your account and transactions</Text>
-        </Box>
-        <Button leftIcon={<AddIcon />} colorScheme="blue" onClick={onOpen}>
-          New Ticket
-        </Button>
-      </Flex>
+  const handleAddResponse = (ticketId, response) => {
+    dispatch(add_response({ ticketId, response }));
+  };
 
-      <Tabs variant="enclosed" onChange={(index) => setActiveTab(index)}>
+  const handleStatusUpdate = (ticketId, status) => {
+    dispatch(update_ticket_status({ ticketId, status }));
+  };
+
+  const handleNotificationRead = (notificationId) => {
+    dispatch(mark_notification_read(notificationId));
+  };
+
+  const filteredTickets = tickets.filter(ticket => {
+    if (filters.status !== 'all' && ticket.status !== filters.status) return false;
+    if (filters.search) {
+      const searchLower = filters.search.toLowerCase();
+      return (
+        ticket.subject.toLowerCase().includes(searchLower) ||
+        ticket.message.toLowerCase().includes(searchLower)
+      );
+    }
+    return true;
+  });
+
+  const renderContent = () => {
+    if (loading) {
+      return <Box p={8}>Loading...</Box>;
+    }
+
+    return (
+      <Tabs variant="enclosed">
         <TabList>
-          <Tab>Support Tickets</Tab>
+          <Tab>Support Tickets ({stats.total})</Tab>
           <Tab>
             Notifications
-            <Badge ml={2} colorScheme="red" borderRadius="full">
-              {helpData.notifications.filter(n => !n.read).length}
-            </Badge>
+            {notifications.filter(n => !n.read).length > 0 && (
+              <Badge ml={2} colorScheme="red" borderRadius="full">
+                {notifications.filter(n => !n.read).length}
+              </Badge>
+            )}
           </Tab>
         </TabList>
 
         <TabPanels>
           <TabPanel>
             <Box mb={4}>
-              <HStack spacing={4} mb={4}>
+              <HStack spacing={4}>
                 <Input
                   placeholder="Search tickets..."
                   maxW="400px"
-                  leftIcon={<SearchIcon />}
+                  value={filters.search}
+                  onChange={(e) => setFilters(prev => ({ ...prev, search: e.target.value }))}
+                  leftElement={<SearchIcon color="gray.400" />}
                 />
-                <Select maxW="200px" defaultValue="all">
+                <Select
+                  maxW="200px"
+                  value={filters.status}
+                  onChange={(e) => setFilters(prev => ({ ...prev, status: e.target.value }))}
+                >
                   <option value="all">All Status</option>
-                  <option value="open">Open</option>
-                  <option value="pending">Pending</option>
-                  <option value="closed">Closed</option>
+                  <option value="open">Open ({stats.open})</option>
+                  <option value="pending">Pending ({stats.pending})</option>
+                  <option value="resolved">Resolved ({stats.resolved})</option>
                 </Select>
               </HStack>
             </Box>
 
-            <VStack spacing={4} align="stretch">
-              {helpData.tickets.map((ticket) => (
-                <Box
-                  key={ticket.id}
-                  p={4}
-                  borderWidth={1}
-                  borderRadius="lg"
-                  _hover={{ shadow: "sm" }}
-                >
-                  <Flex justify="space-between" align="start">
-                    <HStack spacing={4}>
-                      <Avatar 
-                        size="md" 
-                        name={ticket.customer.name} 
-                        src={ticket.customer.avatar}
+            {filteredTickets.length > 0 ? (
+              <TicketList
+                tickets={filteredTickets}
+                onStatusUpdate={handleStatusUpdate}
+                onAddResponse={handleAddResponse}
+                statusColors={ticketStatusColors}
+                priorityColors={ticketPriorityColors}
+              />
                       />
                       <Box>
                         <HStack spacing={2}>

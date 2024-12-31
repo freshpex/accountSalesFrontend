@@ -9,7 +9,7 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import { Form, Formik } from "formik";
-import { TextInput } from "../../../components/inputs";
+import { TextInput } from "../../../components/Inputs";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { getLoading, getError } from "./redux/selector";

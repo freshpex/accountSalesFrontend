@@ -183,7 +183,7 @@ const Customers = () => {
           <Text color="gray.500">Manage and analyze your customer base</Text>
         </Box>
         <Button
-          leftIcon={<FiUserPlus />}
+          lefticon={<FiUserPlus />}
           colorScheme="blue"
           onClick={onOpen}
         >

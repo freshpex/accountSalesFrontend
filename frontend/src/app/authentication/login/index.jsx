@@ -91,7 +91,7 @@ const Login = () => {
             <Button
               w="full"
               variant="outline"
-              leftIcon={<FcGoogle />}
+              lefticon={<FcGoogle />}
               onClick={() => console.log('Google sign in')}
             >
               Sign in with Google

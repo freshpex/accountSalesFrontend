@@ -131,7 +131,7 @@ const Register = () => {
             <Button
               w="full"
               variant="outline"
-              leftIcon={<FcGoogle />}
+              lefticon={<FcGoogle />}
               onClick={() => console.log('Google sign up')}
             >
               Sign up with Google
