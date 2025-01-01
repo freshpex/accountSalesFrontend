@@ -1,20 +1,39 @@
 import { useState, useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import { Box } from '@chakra-ui/react';
+import { FiInstagram } from 'react-icons/fi';
 import DataTable from '../components/table';
-import { socialData } from '../data';
+import EmptyStatePage from '../../../components/emptyState';
+import { getInstagramProducts, getLoading } from '../redux/selector';
 
 const Instagram = ({ searchQuery, filters, onDataFiltered, applyFilters, onViewPost, onEditPost, onDeletePost }) => {
+  const instagramProducts = useSelector(getInstagramProducts);
+  const loading = useSelector(getLoading);
   const [selectedItems, setSelectedItems] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [filteredPosts, setFilteredPosts] = useState([]);
   const itemsPerPage = 10;
 
   useEffect(() => {
-    const filteredData = applyFilters(socialData.instagram || []);
+    const filteredData = applyFilters(instagramProducts);
     onDataFiltered(filteredData);
     setFilteredPosts(filteredData);
     setCurrentPage(1);
-  }, [searchQuery, filters, applyFilters, onDataFiltered]);
+  }, [searchQuery, filters, applyFilters, onDataFiltered, instagramProducts]);
+
+  if (loading) {
+    return <Box p={8}>Loading...</Box>;
+  }
+
+  if (!instagramProducts.length) {
+    return (
+      <EmptyStatePage
+        title="No Instagram Products"
+        sub="Start by adding your first Instagram product"
+        icon={<FiInstagram size={50} />}
+      />
+    );
+  }
 
   const columns = [
     { key: 'username', label: 'Username' },

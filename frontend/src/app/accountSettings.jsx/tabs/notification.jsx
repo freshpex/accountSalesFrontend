@@ -1,206 +1,144 @@
+import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import {
-  Box,
-  Divider,
-  Flex,
-  Heading,
-  Stack,
-  Switch,
-  Text,
-  VStack,
-  useToast,
+  Box, Divider, Flex, Heading, Stack, Switch, Text, VStack,
 } from '@chakra-ui/react';
-import { userData } from '../data';
+import { getNotificationSettings, getLoading } from '../redux/selector';
+import { fetch_notification_settings, toggle_notification_setting } from '../redux/reducer';
+
+const NotificationToggle = ({ title, description, isChecked, onChange }) => (
+  <Flex justify="space-between" align="center">
+    <Box>
+      <Text fontWeight="medium">{title}</Text>
+      <Text color="gray.600" fontSize="sm">{description}</Text>
+    </Box>
+    <Switch
+      isChecked={isChecked}
+      onChange={onChange}
+      colorScheme="blue"
+    />
+  </Flex>
+);
 
 const Notification = () => {
-  const toast = useToast();
+  const dispatch = useDispatch();
+  const notifications = useSelector(getNotificationSettings);
+  const loading = useSelector(getLoading);
+
+  useEffect(() => {
+    dispatch(fetch_notification_settings());
+  }, [dispatch]);
 
   const handleNotificationToggle = (type, setting) => {
-    toast({
-      title: `${type} notification settings updated`,
-      status: "success",
-      duration: 3000,
-    });
+    dispatch(toggle_notification_setting({ 
+      type, 
+      setting,
+      value: !notifications[type][setting]
+    }));
   };
+
+  if (loading) {
+    return <Box p={8}>Loading...</Box>;
+  }
 
   return (
     <Stack spacing={8}>
       <Box>
         <Heading size="md" mb={4}>Email Notifications</Heading>
         <VStack align="stretch" spacing={4}>
-          <Flex justify="space-between" align="center">
-            <Box>
-              <Text fontWeight="medium">News and Updates</Text>
-              <Text color="gray.600" fontSize="sm">
-                Receive news about features and updates
-              </Text>
-            </Box>
-            <Switch
-              defaultChecked={userData.notificationSettings.email.newsUpdates}
-              onChange={() => handleNotificationToggle('Email', 'news')}
-              colorScheme="blue"
-            />
-          </Flex>
-
-          <Flex justify="space-between" align="center">
-            <Box>
-              <Text fontWeight="medium">Account Activity</Text>
-              <Text color="gray.600" fontSize="sm">
-                Get important notifications about your account
-              </Text>
-            </Box>
-            <Switch
-              defaultChecked={userData.notificationSettings.email.accountActivity}
-              onChange={() => handleNotificationToggle('Email', 'activity')}
-              colorScheme="blue"
-            />
-          </Flex>
-
-          <Flex justify="space-between" align="center">
-            <Box>
-              <Text fontWeight="medium">Promotions</Text>
-              <Text color="gray.600" fontSize="sm">
-                Receive promotional offers and deals
-              </Text>
-            </Box>
-            <Switch
-              defaultChecked={userData.notificationSettings.email.promotions}
-              onChange={() => handleNotificationToggle('Email', 'promotions')}
-              colorScheme="blue"
-            />
-          </Flex>
+          <NotificationToggle
+            title="News and Updates"
+            description="Receive news about features and updates"
+            isChecked={notifications.email.newsUpdates}
+            onChange={() => handleNotificationToggle('email', 'newsUpdates')}
+          />
+          <NotificationToggle
+            title="Account Activity"
+            description="Get important notifications about your account"
+            isChecked={notifications.email.accountActivity}
+            onChange={() => handleNotificationToggle('email', 'accountActivity')}
+          />
+          <NotificationToggle
+            title="Promotions"
+            description="Receive promotional offers and deals"
+            isChecked={notifications.email.promotions}
+            onChange={() => handleNotificationToggle('email', 'promotions')}
+          />
         </VStack>
       </Box>
 
       <Divider />
 
+      {/* Push Notifications */}
       <Box>
         <Heading size="md" mb={4}>Push Notifications</Heading>
         <VStack align="stretch" spacing={4}>
-          <Flex justify="space-between" align="center">
-            <Box>
-              <Text fontWeight="medium">New Messages</Text>
-              <Text color="gray.600" fontSize="sm">
-                Get notified when you receive new messages
-              </Text>
-            </Box>
-            <Switch
-              defaultChecked={userData.notificationSettings.push.newMessages}
-              onChange={() => handleNotificationToggle('Push', 'messages')}
-              colorScheme="blue"
-            />
-          </Flex>
-
-          <Flex justify="space-between" align="center">
-            <Box>
-              <Text fontWeight="medium">Mentions</Text>
-              <Text color="gray.600" fontSize="sm">
-                Get notified when you`re mentioned
-              </Text>
-            </Box>
-            <Switch
-              defaultChecked={userData.notificationSettings.push.mentions}
-              onChange={() => handleNotificationToggle('Push', 'mentions')}
-              colorScheme="blue"
-            />
-          </Flex>
-
-          <Flex justify="space-between" align="center">
-            <Box>
-              <Text fontWeight="medium">Reminders</Text>
-              <Text color="gray.600" fontSize="sm">
-                Get reminders about unread notifications
-              </Text>
-            </Box>
-            <Switch
-              defaultChecked={userData.notificationSettings.push.reminders}
-              onChange={() => handleNotificationToggle('Push', 'reminders')}
-              colorScheme="blue"
-            />
-          </Flex>
+        <NotificationToggle
+            title="New Messages"
+            description="Get notified when you receive new messages"
+            isChecked={notifications.email.promotions}
+            onChange={() => handleNotificationToggle('push', 'messages')}
+          />
+          <NotificationToggle
+            title="Mentions"
+            description="Get notified when you`re mentioned"
+            isChecked={notifications.email.promotions}
+            onChange={() => handleNotificationToggle('Push', 'mentions')}
+          />
+          <NotificationToggle
+            title="Reminders"
+            description="Get reminders about unread notifications"
+            isChecked={notifications.email.promotions}
+            onChange={() => handleNotificationToggle('Push', 'reminders')}
+          />
         </VStack>
       </Box>
 
       <Divider />
 
+      {/* SMS Notifications */}
       <Box>
         <Heading size="md" mb={4}>SMS Notifications</Heading>
         <VStack align="stretch" spacing={4}>
-          <Flex justify="space-between" align="center">
-            <Box>
-              <Text fontWeight="medium">Security Alerts</Text>
-              <Text color="gray.600" fontSize="sm">
-                Get SMS alerts for suspicious activities
-              </Text>
-            </Box>
-            <Switch
-              defaultChecked={false}
-              onChange={() => handleNotificationToggle('SMS', 'security')}
-              colorScheme="blue"
-            />
-          </Flex>
-
-          <Flex justify="space-between" align="center">
-            <Box>
-              <Text fontWeight="medium">Order Updates</Text>
-              <Text color="gray.600" fontSize="sm">
-                Receive order status updates via SMS
-              </Text>
-            </Box>
-            <Switch
-              defaultChecked={false}
-              onChange={() => handleNotificationToggle('SMS', 'orders')}
-              colorScheme="blue"
-            />
-          </Flex>
+        <NotificationToggle
+            title="Security Alerts"
+            description="Get SMS alerts for suspicious activities"
+            isChecked={notifications.email.promotions}
+            onChange={() => handleNotificationToggle('SMS', 'security')}
+          />
+          <NotificationToggle
+            title="Order Updates"
+            description="Receive order status updates via SMS"
+            isChecked={notifications.email.promotions}
+            onChange={() => handleNotificationToggle('SMS', 'orders')}
+          />
         </VStack>
       </Box>
 
       <Divider />
 
+      {/* Browser Notifications */}
       <Box>
         <Heading size="md" mb={4}>Browser Notifications</Heading>
         <VStack align="stretch" spacing={4}>
-          <Flex justify="space-between" align="center">
-            <Box>
-              <Text fontWeight="medium">Desktop Alerts</Text>
-              <Text color="gray.600" fontSize="sm">
-                Show desktop notifications when browser is open
-              </Text>
-            </Box>
-            <Switch
-              defaultChecked={true}
-              onChange={() => handleNotificationToggle('Browser', 'desktop')}
-              colorScheme="blue"
-            />
-          </Flex>
-
-          <Flex justify="space-between" align="center">
-            <Box>
-              <Text fontWeight="medium">Sound Notifications</Text>
-              <Text color="gray.600" fontSize="sm">
-                Play a sound for important notifications
-              </Text>
-            </Box>
-            <Switch
-              defaultChecked={true}
-              onChange={() => handleNotificationToggle('Browser', 'sound')}
-              colorScheme="blue"
-            />
-          </Flex>
-
-          <Flex justify="space-between" align="center">
-            <Box>
-              <Text fontWeight="medium">Background Notifications</Text>
-              <Text color="gray.600" fontSize="sm">
-                Receive notifications when browser is in background
-              </Text>
-            </Box>
-            <Switch
-              defaultChecked={false}
-              onChange={() => handleNotificationToggle('Browser', 'background')}
-              colorScheme="blue"
-            />
-          </Flex>
+        <NotificationToggle
+            title="Desktop Alerts"
+            description="Show desktop notifications when browser is open"
+            isChecked={notifications.email.promotions}
+            onChange={() => handleNotificationToggle('Browser', 'desktop')}
+          />
+          <NotificationToggle
+            title="Sound Notifications"
+            description="Play a sound for important notifications"
+            isChecked={notifications.email.promotions}
+            onChange={() => handleNotificationToggle('Browser', 'sound')}
+          />
+          <NotificationToggle
+            title="Background Notifications"
+            description="Receive notifications when browser is in background"
+            isChecked={notifications.email.promotions}
+            onChange={() => handleNotificationToggle('Browser', 'background')}
+          />
         </VStack>
       </Box>
     </Stack>

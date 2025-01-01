@@ -1,20 +1,39 @@
 import { useState, useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import { Box } from '@chakra-ui/react';
+import { FiFacebook } from 'react-icons/fi';
 import DataTable from '../components/table';
-import { socialData } from '../data';
+import EmptyStatePage from '../../../components/emptyState';
+import { getWhatsappProducts, getLoading } from '../redux/selector';
 
 const Whatsapp = ({ searchQuery, filters, onDataFiltered, applyFilters, onViewPost, onEditPost, onDeletePost }) => {
+  const WhatsappProducts = useSelector(getWhatsappProducts);
+  const loading = useSelector(getLoading);
   const [selectedItems, setSelectedItems] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [filteredPosts, setFilteredPosts] = useState([]);
   const itemsPerPage = 10;
 
   useEffect(() => {
-    const filteredData = applyFilters(socialData.whatsapp || []);
+    const filteredData = applyFilters(WhatsappProducts);
     onDataFiltered(filteredData);
     setFilteredPosts(filteredData);
     setCurrentPage(1);
-  }, [searchQuery, filters, applyFilters, onDataFiltered]);
+  }, [searchQuery, filters, applyFilters, onDataFiltered, WhatsappProducts]);
+
+  if (loading) {
+    return <Box p={8}>Loading...</Box>;
+  }
+
+  if (!WhatsappProducts.length) {
+    return (
+      <EmptyStatePage
+        title="No Whatsapp Products"
+        sub="Start by adding your first Whatsapp product"
+        icon={<FiFacebook size={50} />}
+      />
+    );
+  }
 
   const columns = [
     { key: 'username', label: 'Username' },

@@ -52,3 +52,45 @@ export const getWhatsappProducts = createSelector(
   getProducts,
   (products) => products.filter(p => p.type === 'whatsapp')
 );
+
+export const getTableSettings = createSelector(
+  productState,
+  (state) => state.tableSettings
+);
+
+export const getSelectedItems = createSelector(
+  getTableSettings,
+  (settings) => settings.selectedItems
+);
+
+export const getCurrentPage = createSelector(
+  getTableSettings,
+  (settings) => settings.currentPage
+);
+
+export const getPageSize = createSelector(
+  getTableSettings,
+  (settings) => settings.pageSize
+);
+
+export const getSelectedProduct = createSelector(
+  productState,
+  (state) => state.selectedProduct
+);
+
+// Platform-specific filtered selectors
+export const getFilteredProducts = createSelector(
+  [getProducts, (_, filters) => filters],
+  (products, filters) => {
+    return products.filter(product => {
+      const matchesSearch = !filters.search || 
+        product.username.toLowerCase().includes(filters.search.toLowerCase()) ||
+        product.about.toLowerCase().includes(filters.search.toLowerCase());
+        
+      const matchesStatus = !filters.status || product.status === filters.status;
+      const matchesType = !filters.type || product.type === filters.type;
+      
+      return matchesSearch && matchesStatus && matchesType;
+    });
+  }
+);

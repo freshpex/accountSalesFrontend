@@ -20,6 +20,16 @@ const initialState = {
       totalPages: 1,
       totalItems: 0
     }
+  },
+  selectedProduct: null,
+  tableSettings: {
+    currentPage: 1,
+    pageSize: 10,
+    totalPages: 1,
+    totalItems: 0,
+    selectedItems: [],
+    sortBy: null,
+    sortOrder: 'asc'
   }
 };
 
@@ -37,6 +47,12 @@ export const productSlice = createSlice({
       state.data.products = action.payload.items;
       state.data.stats = action.payload.stats;
       state.data.meta = action.payload.meta;
+      state.tableSettings = {
+        ...state.tableSettings,
+        currentPage: action.payload.meta.currentPage,
+        totalPages: action.payload.meta.totalPages,
+        totalItems: action.payload.meta.totalItems
+      };
     },
     fetch_products_error: (state, action) => {
       state.ui.loading = false;
@@ -96,6 +112,18 @@ export const productSlice = createSlice({
     delete_product_error: (state, action) => {
       state.ui.loading = false;
       state.ui.error = action.payload;
+    },
+    set_selected_product: (state, action) => {
+      state.selectedProduct = action.payload;
+    },
+    update_table_settings: (state, action) => {
+      state.tableSettings = {
+        ...state.tableSettings,
+        ...action.payload
+      };
+    },
+    select_table_items: (state, action) => {
+      state.tableSettings.selectedItems = action.payload;
     }
   }
 });
@@ -112,7 +140,10 @@ export const {
   update_product_error,
   delete_product,
   delete_product_success,
-  delete_product_error
+  delete_product_error,
+  set_selected_product,
+  update_table_settings,
+  select_table_items
 } = productSlice.actions;
 
 export default productSlice.reducer;

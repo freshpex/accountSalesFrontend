@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   Box, Button, Flex, FormControl, FormLabel, Grid, Input,
@@ -18,13 +18,47 @@ import {
 } from '../redux/reducer';
 
 const Account = () => {
+  const toast = useToast(); // Move hook to top
   const dispatch = useDispatch();
   const profile = useSelector(getProfile);
   const loading = useSelector(getLoading);
+  const [isEditing, setIsEditing] = useState(false);
 
   useEffect(() => {
     dispatch(fetch_profile());
   }, [dispatch]);
+
+  const handleProfileUpdate = () => {
+    dispatch(update_profile(profile));
+    setIsEditing(false);
+    toast({
+      title: "Profile updated successfully",
+      status: "success",
+      duration: 3000,
+    });
+  };
+
+  const handlePictureUpload = (event) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      dispatch(upload_profile_picture(file));
+      toast({
+        title: "Profile picture uploading",
+        status: "info",
+        duration: 2000,
+      });
+    }
+  };
+
+  const handleCancel = () => {
+    dispatch(fetch_profile());
+    setIsEditing(false);
+    toast({
+      title: "Changes cancelled",
+      status: "info",
+      duration: 2000,
+    });
+  };
 
   if (loading) {
     return <Box p={8}>Loading...</Box>;
@@ -40,17 +74,6 @@ const Account = () => {
     );
   }
 
-  const toast = useToast();
-
-  const handleProfileUpdate = () => {
-    dispatch(update_profile(profile));
-    toast({
-      title: "Profile updated",
-      status: "success",
-      duration: 3000,
-    });
-  };
-
   return (
     <Stack spacing={8}>
       {/* Profile Information Section */}
@@ -61,13 +84,22 @@ const Account = () => {
         <Flex mb={6} alignItems="center">
           <Box position="relative">
             <Image
-              src={profile.profilePicture}
+              src={profile.profilePicture || 'default-avatar.png'}
               alt="Profile"
               boxSize="100px"
               borderRadius="full"
               objectFit="cover"
             />
+            <Input
+              type="file"
+              accept="image/*"
+              display="none"
+              id="profile-picture"
+              onChange={handlePictureUpload}
+            />
             <IconButton
+              as="label"
+              htmlFor="profile-picture"
               icon={<EditIcon />}
               size="sm"
               position="absolute"
@@ -75,8 +107,8 @@ const Account = () => {
               right={0}
               colorScheme="blue"
               rounded="full"
+              cursor="pointer"
               aria-label="Change picture"
-              onClick={() => dispatch(upload_profile_picture())}
             />
           </Box>
         </Flex>
@@ -127,12 +159,14 @@ const Account = () => {
           <Button
             colorScheme="blue"
             onClick={handleProfileUpdate}
+            isDisabled={!isEditing}
           >
             Update
           </Button>
           <Button
             variant="ghost"
-            onClick={() => dispatch(fetch_profile())}
+            onClick={handleCancel}
+            isDisabled={!isEditing}
           >
             Cancel
           </Button>

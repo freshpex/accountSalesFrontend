@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useSelector } from 'react-redux';
 import {
   Box,
   FormControl,
@@ -19,8 +20,10 @@ import {
   ModalFooter,
 } from "@chakra-ui/react";
 import { FaImage } from "react-icons/fa";
+import { getLoading } from '../redux/selector';
 
 const AddProduct = ({ isOpen, onClose, data, action, onSave, onDelete }) => {
+  const loading = useSelector(getLoading);
   const [username, setUsername] = useState("");
   const [type, setType] = useState("");
   const [age, setAge] = useState("");
@@ -61,7 +64,8 @@ const AddProduct = ({ isOpen, onClose, data, action, onSave, onDelete }) => {
   }, [data]);
 
   const handleSave = () => {
-    const updatedPost = {
+    const formData = new FormData();
+    const productData = {
       username,
       type,
       age,
@@ -73,14 +77,31 @@ const AddProduct = ({ isOpen, onClose, data, action, onSave, onDelete }) => {
       engagement,
       images
     };
-    onSave(updatedPost);
+
+    // Handle file uploads
+    if (images) {
+      images.forEach((image, index) => {
+        if (image instanceof File) {
+          formData.append('images', image);
+        }
+      });
+    }
+
+    // Add rest of the data
+    Object.keys(productData).forEach(key => {
+      if (key !== 'images') {
+        formData.append(key, productData[key]);
+      }
+    });
+
+    onSave(formData);
   };
-  
-    const handleImageChange = (index, file) => {
-      const newImages = [...images];
-      newImages[index] = file ? URL.createObjectURL(file) : "";
-      setImages(newImages);
-    };
+
+  const handleImageChange = (index, file) => {
+    const newImages = [...images];
+    newImages[index] = file ? URL.createObjectURL(file) : "";
+    setImages(newImages);
+  };
 
   if (!isOpen) return null;
 

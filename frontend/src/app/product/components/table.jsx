@@ -1,3 +1,4 @@
+import { useDispatch, useSelector } from 'react-redux';
 import {
   Table,
   Thead,
@@ -6,7 +7,6 @@ import {
   Th,
   Td,
   Checkbox,
-  Badge,
   IconButton,
   HStack,
   Box,
@@ -20,8 +20,6 @@ import {
   useColorModeValue,
   Circle,
   Tooltip,
-  useDisclosure,
-  Collapse,
   MenuButton,
   MenuList,
   MenuItem,
@@ -30,33 +28,75 @@ import {
   Tag,
   TagLabel,
   TagLeftIcon,
-  Icon,  // Add this import
+  Icon,
 } from '@chakra-ui/react';
 import { ViewIcon, EditIcon, DeleteIcon, ChevronLeftIcon, ChevronRightIcon, ChevronDownIcon, TimeIcon, CheckIcon, WarningIcon } from '@chakra-ui/icons';
 import { motion } from 'framer-motion';
+import { 
+  getTableSettings, 
+  getSelectedItems,
+  getCurrentPage 
+} from '../redux/selector';
+import { 
+  update_table_settings,
+  select_table_items 
+} from '../redux/reducer';
+import { FiPackage } from 'react-icons/fi';
+import EmptyStatePage from '../../../components/emptyState';
+import { getLoading } from '../redux/selector';
 
 const MotionBox = motion(Box);
 
 const DataTable = ({
   data,
   columns,
-  selectedItems,
-  onSelectAll,
-  onSelectItem,
-  currentPage,
-  totalPages,
-  pageSize,
-  totalItems,
-  onPageChange,
   onView,
   onEdit,
   onDelete,
   getStatusColor
 }) => {
+  const dispatch = useDispatch();
+  const tableSettings = useSelector(getTableSettings);
+  const selectedItems = useSelector(getSelectedItems);
+  const currentPage = useSelector(getCurrentPage);
+  const loading = useSelector(getLoading);
   const isMobile = useBreakpointValue({ base: true, md: false });
   const bgCard = useColorModeValue('white', 'gray.800');
   const borderColor = useColorModeValue('gray.200', 'gray.700');
   const hoverBg = useColorModeValue('gray.50', 'gray.700');
+  const theadBgColor = useColorModeValue('white', 'gray.800');
+
+  if (loading) {
+    return <Box p={8}>Loading...</Box>;
+  }
+
+  if (!data?.length) {
+    return (
+      <EmptyStatePage
+        title="No Data Available"
+        sub="There are no items to display"
+        icon={<FiPackage size={50} />}
+      />
+    );
+  }
+
+  const handleSelectAll = (e) => {
+    dispatch(select_table_items(
+      e.target.checked ? data.map(item => item.id) : []
+    ));
+  };
+
+  const handleSelectItem = (id) => {
+    dispatch(select_table_items(
+      selectedItems.includes(id)
+        ? selectedItems.filter(item => item !== id)
+        : [...selectedItems, id]
+    ));
+  };
+
+  const handlePageChange = (page) => {
+    dispatch(update_table_settings({ currentPage: page }));
+  };
 
   const renderMobileCard = (item) => (
     <MotionBox
@@ -134,7 +174,7 @@ const DataTable = ({
         <HStack>
           <Checkbox
             isChecked={selectedItems.includes(item.id)}
-            onChange={() => onSelectItem(item.id)}
+            onChange={() => handleSelectItem(item.id)}
             colorScheme="blue"
           />
           <Text fontSize="sm" color="gray.500">
@@ -180,17 +220,16 @@ const DataTable = ({
         'thead': {
           position: 'sticky',
           top: 0,
-          zIndex: 1,
-          backgroundColor: useColorModeValue('white', 'gray.800'),
+          backgroundColor: theadBgColor,
         }
       }}>
-        <Thead bg={useColorModeValue('gray.50', 'gray.800')}>
+        <Thead bg={bgCard}>
           <Tr>
             <Th w="40px">
               <Checkbox
                 isChecked={selectedItems.length === data.length}
                 isIndeterminate={selectedItems.length > 0 && selectedItems.length < data.length}
-                onChange={onSelectAll}
+                onChange={handleSelectAll}
                 colorScheme="blue"
               />
             </Th>
@@ -213,7 +252,7 @@ const DataTable = ({
               <Td>
                 <Checkbox
                   isChecked={selectedItems.includes(item.id)}
-                  onChange={() => onSelectItem(item.id)}
+                  onChange={() => handleSelectItem(item.id)}
                   colorScheme="blue"
                 />
               </Td>
@@ -299,12 +338,12 @@ const DataTable = ({
           shadow="sm"
         >
           <Text color="gray.600" fontSize="sm">
-            Showing {(currentPage - 1) * pageSize + 1} to {Math.min(currentPage * pageSize, totalItems)} of {totalItems} entries
+            Showing {(currentPage - 1) * tableSettings.pageSize + 1} to {Math.min(currentPage * tableSettings.pageSize, tableSettings.totalItems)} of {tableSettings.totalItems} entries
           </Text>
           <HStack spacing={2}>
             <Button
               size="sm"
-              onClick={() => onPageChange(currentPage - 1)}
+              onClick={() => handlePageChange(currentPage - 1)}
               isDisabled={currentPage === 1}
               leftIcon={<ChevronLeftIcon />}
               variant="outline"
@@ -315,18 +354,18 @@ const DataTable = ({
             <Select
               size="sm"
               value={currentPage}
-              onChange={(e) => onPageChange(Number(e.target.value))}
+              onChange={(e) => handlePageChange(Number(e.target.value))}
               w="70px"
               borderRadius="md"
             >
-              {Array.from({ length: totalPages }, (_, i) => (
+              {Array.from({ length: tableSettings.totalPages }, (_, i) => (
                 <option key={i + 1} value={i + 1}>{i + 1}</option>
               ))}
             </Select>
             <Button
               size="sm"
-              onClick={() => onPageChange(currentPage + 1)}
-              isDisabled={currentPage === totalPages}
+              onClick={() => handlePageChange(currentPage + 1)}
+              isDisabled={currentPage === tableSettings.totalPages}
               rightIcon={<ChevronRightIcon />}
               variant="outline"
               colorScheme="blue"

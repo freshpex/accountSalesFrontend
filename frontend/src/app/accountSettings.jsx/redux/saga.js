@@ -15,7 +15,22 @@ import {
   update_notification_preferences_error,
   upload_profile_picture,
   upload_profile_picture_success,
-  upload_profile_picture_error
+  upload_profile_picture_error,
+  toggle_two_factor,
+  toggle_two_factor_success,
+  toggle_two_factor_error,
+  update_password,
+  update_password_success,
+  update_password_error,
+  fetch_login_history,
+  fetch_login_history_success,
+  fetch_login_history_error,
+  toggle_notification_setting,
+  toggle_notification_setting_success,
+  toggle_notification_setting_error,
+  fetch_notification_settings,
+  fetch_notification_settings_success,
+  fetch_notification_settings_error
 } from "./reducer";
 import api from "../../../services/DataService";
 import toast from "react-hot-toast";
@@ -85,12 +100,79 @@ function* uploadProfilePictureSaga({ payload }) {
   }
 }
 
+function* toggleTwoFactorSaga({ payload }) {
+  try {
+    const response = yield call(api.post, `${ApiEndpoints.SECURITY}/2fa/toggle`, payload);
+    yield put(toggle_two_factor_success(response.data));
+    toast.success("Two-factor authentication settings updated");
+  } catch (error) {
+    const errorMessage = error.response?.data?.error || "Failed to update 2FA settings";
+    toast.error(errorMessage);
+    yield put(toggle_two_factor_error(errorMessage));
+  }
+}
+
+function* updatePasswordSaga({ payload }) {
+  try {
+    const response = yield call(api.post, `${ApiEndpoints.SECURITY}/password`, payload);
+    yield put(update_password_success(response.data));
+    toast.success("Password updated successfully");
+  } catch (error) {
+    const errorMessage = error.response?.data?.error || "Failed to update password";
+    toast.error(errorMessage);
+    yield put(update_password_error(errorMessage));
+  }
+}
+
+function* fetchLoginHistorySaga() {
+  try {
+    const response = yield call(api.get, `${ApiEndpoints.SECURITY}/login-history`);
+    yield put(fetch_login_history_success(response.data));
+  } catch (error) {
+    const errorMessage = error.response?.data?.error || "Failed to fetch login history";
+    toast.error(errorMessage);
+    yield put(fetch_login_history_error(errorMessage));
+  }
+}
+
+function* toggleNotificationSettingSaga({ payload }) {
+  try {
+    const response = yield call(
+      api.post, 
+      `${ApiEndpoints.NOTIFICATIONS}/toggle`,
+      payload
+    );
+    yield put(toggle_notification_setting_success(response.data));
+    toast.success("Notification setting updated");
+  } catch (error) {
+    const errorMessage = error.response?.data?.error || "Failed to update notification setting";
+    toast.error(errorMessage);
+    yield put(toggle_notification_setting_error(errorMessage));
+  }
+}
+
+function* fetchNotificationSettingsSaga() {
+  try {
+    const response = yield call(api.get, ApiEndpoints.NOTIFICATIONS);
+    yield put(fetch_notification_settings_success(response.data));
+  } catch (error) {
+    const errorMessage = error.response?.data?.error || "Failed to fetch notification settings";
+    toast.error(errorMessage);
+    yield put(fetch_notification_settings_error(errorMessage));
+  }
+}
+
 function* accountSettingsSagas() {
   yield takeLatest(fetch_profile.type, fetchProfileSaga);
   yield takeLatest(update_profile.type, updateProfileSaga);
   yield takeLatest(update_security_settings.type, updateSecuritySettingsSaga);
   yield takeLatest(update_notification_preferences.type, updateNotificationPreferencesSaga);
   yield takeLatest(upload_profile_picture.type, uploadProfilePictureSaga);
+  yield takeLatest(toggle_two_factor.type, toggleTwoFactorSaga);
+  yield takeLatest(update_password.type, updatePasswordSaga);
+  yield takeLatest(fetch_login_history.type, fetchLoginHistorySaga);
+  yield takeLatest(toggle_notification_setting.type, toggleNotificationSettingSaga);
+  yield takeLatest(fetch_notification_settings.type, fetchNotificationSettingsSaga);
 }
 
 export default accountSettingsSagas;

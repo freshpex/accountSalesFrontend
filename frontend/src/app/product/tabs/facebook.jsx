@@ -1,20 +1,39 @@
 import { useState, useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import { Box } from '@chakra-ui/react';
+import { FiFacebook } from 'react-icons/fi';
 import DataTable from '../components/table';
-import { socialData } from '../data';
+import EmptyStatePage from '../../../components/emptyState';
+import { getFacebookProducts, getLoading } from '../redux/selector';
 
 const Facebook = ({ searchQuery, filters, onDataFiltered, applyFilters, onViewPost, onEditPost, onDeletePost }) => {
+  const FacebookProducts = useSelector(getFacebookProducts);
+  const loading = useSelector(getLoading);
   const [selectedItems, setSelectedItems] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [filteredPosts, setFilteredPosts] = useState([]);
   const itemsPerPage = 10;
 
   useEffect(() => {
-    const filteredData = applyFilters(socialData.instagram || []);
+    const filteredData = applyFilters(FacebookProducts);
     onDataFiltered(filteredData);
     setFilteredPosts(filteredData);
     setCurrentPage(1);
-  }, [searchQuery, filters, applyFilters, onDataFiltered]);
+  }, [searchQuery, filters, applyFilters, onDataFiltered, FacebookProducts]);
+
+  if (loading) {
+    return <Box p={8}>Loading...</Box>;
+  }
+
+  if (!FacebookProducts.length) {
+    return (
+      <EmptyStatePage
+        title="No Facebook Products"
+        sub="Start by adding your first Facebook product"
+        icon={<FiFacebook size={50} />}
+      />
+    );
+  }
 
   const columns = [
     { key: 'username', label: 'Username' },

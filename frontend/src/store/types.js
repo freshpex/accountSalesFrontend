@@ -19,6 +19,9 @@ export const ActionTypes = {
   UPDATE_PROFILE: 'accountSettings/update_profile',
   UPDATE_SECURITY: 'accountSettings/update_security',
   UPDATE_NOTIFICATIONS: 'accountSettings/update_notifications',
+  FETCH_NOTIFICATION_SETTINGS: 'accountSettings/fetch_notification_settings',
+  FETCH_NOTIFICATION_SETTINGS_SUCCESS: 'accountSettings/fetch_notification_settings_success',
+  FETCH_NOTIFICATION_SETTINGS_ERROR: 'accountSettings/fetch_notification_settings_error',
   
   // Transaction actions
   FETCH_TRANSACTIONS: 'transaction/fetch_transactions',
@@ -114,4 +117,5 @@ export const ApiEndpoints = {
   PRODUCT_STATS: '/api/v1/products/stats',
   DASHBOARD_OVERVIEW: '/api/v1/dashboard/overview',
   DASHBOARD_METRICS: '/api/v1/dashboard/metrics',
+  NOTIFICATION_SETTINGS: '/api/v1/user/notification-settings',
 };

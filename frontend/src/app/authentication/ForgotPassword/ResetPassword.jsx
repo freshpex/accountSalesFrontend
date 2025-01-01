@@ -10,7 +10,7 @@ import {
 } from "@chakra-ui/react";
 import { Form, Formik } from "formik";
 import { TextInput } from "../../../components/Inputs";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { getLoading, getError } from "./redux/selector";
 import { forgot_password } from "./redux/reducer";
@@ -20,7 +20,6 @@ const ResetPassword = () => {
   const dispatch = useDispatch();
   const loading = useSelector(getLoading);
   const error = useSelector(getError);
-  const navigate = useNavigate();
   const toast = useToast();
 
   const validationSchema = Yup.object().shape({
@@ -73,7 +72,7 @@ const ResetPassword = () => {
             validationSchema={validationSchema}
             onSubmit={handleSubmit}
           >
-            {({ values, handleChange, dirty, isSubmitting }) => (
+            {({ values, handleChange, isSubmitting }) => (
               <Form>
                 <Box mt="40px">
                   <FormControl isRequired>

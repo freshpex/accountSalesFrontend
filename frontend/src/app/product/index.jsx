@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
 import {
   Box,
@@ -29,15 +30,37 @@ import { useFilters } from '../../context/FilterContext';
 import { exportToCSV } from '../../utils/export';
 import AddProduct from './modal/addProduct';
 import { image } from 'framer-motion/client';
+import { 
+  getProducts, 
+  getLoading,
+  getError,
+  getCurrentPage,
+  getPageSize
+} from './redux/selector';
+import {
+  fetch_products,
+  add_product,
+  update_product,
+  delete_product,
+  update_table_settings
+} from './redux/reducer';
+import EmptyStatePage from '../../components/emptyState';
+import { FiPackage } from 'react-icons/fi';
 
 const Product = () => {
-    const [tabIndex, setTabIndex] = useState(0);
-    const [searchQuery, setSearchQuery] = useState('');
-    const [filteredData, setFilteredData] = useState([]);
-    const location = useLocation();
-    const navigate = useNavigate();
-    const { filters, updateFilters } = useFilters();
-    const [isModalOpen, setIsModalOpen] = useState(false);
+  const dispatch = useDispatch();
+  const products = useSelector(getProducts);
+  const loading = useSelector(getLoading);
+  const error = useSelector(getError);
+  const currentPage = useSelector(getCurrentPage);
+  const pageSize = useSelector(getPageSize);
+  const [tabIndex, setTabIndex] = useState(0);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filteredData, setFilteredData] = useState([]);
+  const location = useLocation();
+  const navigate = useNavigate();
+  const { filters, updateFilters } = useFilters();
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalAction, setModalAction] = useState('');
   const [selectedPost, setSelectedPost] = useState(null);
   const toast = useToast();
@@ -54,24 +77,17 @@ const Product = () => {
     setModalAction('');
   };
 
-  const handleSavePost = (updatedPost) => {
-    const message = modalAction === 'add' ? 'Post created successfully!' : 'Post updated successfully!';
-    toast({
-      title: 'Success',
-      description: message,
-      status: 'success',
-      duration: 3000,
-    });
+  const handleSavePost = (productData) => {
+    if (modalAction === 'add') {
+      dispatch(add_product(productData));
+    } else {
+      dispatch(update_product({ id: selectedPost.id, data: productData }));
+    }
     handleModalClose();
   };
 
-  const handleDeletePost = (postId) => {
-    toast({
-      title: 'Success',
-      description: 'Post deleted successfully!',
-      status: 'success',
-      duration: 3000,
-    });
+  const handleDeletePost = (productId) => {
+    dispatch(delete_product(productId));
     handleModalClose();
   };
 
@@ -85,6 +101,15 @@ const Product = () => {
     };
     setTabIndex(tabMap[path] || 0);
   }, [location]);
+
+  useEffect(() => {
+    dispatch(fetch_products({
+      platform: location.pathname.split('/').pop(),
+      status: filters.status,
+      page: currentPage,
+      limit: pageSize
+    }));
+  }, [dispatch, location.pathname, filters, currentPage, pageSize]);
 
   const components = [Instagram, Facebook, Twitter, Whatsapp];
   const ActiveComponent = components[tabIndex];
@@ -159,6 +184,32 @@ const Product = () => {
     { key: 'twitter', label: 'Twitter', count: tabCounts.twitter },
     { key: 'whatsapp', label: 'Whatsapp', count: tabCounts.whatsapp },
   ];
+
+  if (loading) {
+    return <Box p={8}>Loading...</Box>;
+  }
+
+  if (error) {
+    return (
+      <EmptyStatePage
+        title="Error Loading Products"
+        sub={error}
+        icon={<FiPackage size={50} />}
+      />
+    );
+  }
+
+  if (!products.length) {
+    return (
+      <EmptyStatePage
+        title="No Products Found"
+        sub="Start by adding your first product"
+        icon={<FiPackage size={50} />}
+        btnText="Add Product"
+        handleClick={() => handleModalOpen('add')}
+      />
+    );
+  }
 
   return (
     <Container maxW="container.xl" py={8}>
@@ -267,6 +318,9 @@ const Product = () => {
         onViewPost={(post) => handleModalOpen('view', post)}
         onEditPost={(post) => handleModalOpen('edit', post)}
         onDeletePost={(post) => handleModalOpen('delete', post)}
+        currentPage={currentPage}
+        pageSize={pageSize}
+        onPageChange={handlePageChange}
       />
 
     <AddProduct

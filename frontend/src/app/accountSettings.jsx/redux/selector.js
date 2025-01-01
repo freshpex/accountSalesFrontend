@@ -42,3 +42,23 @@ export const getLoginHistory = createSelector(
   getSecuritySettings,
   (security) => security.loginHistory || []
 );
+
+export const getNotificationSettings = createSelector(
+  accountSettingsState,
+  (state) => state.data.notifications
+);
+
+export const getNotificationsByType = createSelector(
+  getNotificationSettings,
+  (notifications) => (type) => notifications[type] || {}
+);
+
+export const getTwoFactorEnabled = createSelector(
+  getSecuritySettings,
+  (security) => security.twoFactorEnabled
+);
+
+export const getPasswordRequirements = createSelector(
+  getSecuritySettings,
+  (security) => security.passwordRequirements
+);

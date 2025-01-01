@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
-  Box, Flex, Text, Grid, Button, Container, useColorModeValue
+  Box, Flex, Text, Grid, Container, useColorModeValue
 } from '@chakra-ui/react';
 import {
   FiDollarSign, FiUsers, FiShoppingBag, FiPackage, FiActivity
@@ -38,6 +38,8 @@ const Dashboard = () => {
   
   const [timeRange, setTimeRange] = useState('weekly');
   const bgColor = useColorModeValue('gray.50', 'gray.900');
+  const headerBgColor = useColorModeValue('white', 'gray.800');
+  const borderColor = useColorModeValue('gray.100', 'gray.700');
 
   useEffect(() => {
     dispatch(fetch_dashboard_data());
@@ -123,10 +125,8 @@ const Dashboard = () => {
     <Container maxW="container.xl" bg={bgColor} py={8}>
       <Flex
         px={8}
-        py={4}
-        bg={useColorModeValue('white', 'gray.800')}
-        borderBottom="1px solid"
-        borderColor={useColorModeValue('gray.100', 'gray.700')}
+        bg={headerBgColor}
+        borderColor={borderColor}
         justify="space-between"
         align="center"
       >

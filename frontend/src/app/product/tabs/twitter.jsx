@@ -1,20 +1,39 @@
 import { useState, useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import { Box } from '@chakra-ui/react';
+import { FiFacebook } from 'react-icons/fi';
 import DataTable from '../components/table';
-import { socialData } from '../data';
+import EmptyStatePage from '../../../components/emptyState';
+import { getTwitterProducts, getLoading } from '../redux/selector';
 
 const Twitter = ({ searchQuery, filters, onDataFiltered, applyFilters, onViewPost, onEditPost, onDeletePost }) => {
+  const TwitterProducts = useSelector(getTwitterProducts);
+  const loading = useSelector(getLoading);
   const [selectedItems, setSelectedItems] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [filteredPosts, setFilteredPosts] = useState([]);
   const itemsPerPage = 10;
 
   useEffect(() => {
-    const filteredData = applyFilters(socialData.twitter || []);
+    const filteredData = applyFilters(TwitterProducts);
     onDataFiltered(filteredData);
     setFilteredPosts(filteredData);
     setCurrentPage(1);
-  }, [searchQuery, filters, applyFilters, onDataFiltered]);
+  }, [searchQuery, filters, applyFilters, onDataFiltered, TwitterProducts]);
+
+  if (loading) {
+    return <Box p={8}>Loading...</Box>;
+  }
+
+  if (!TwitterProducts.length) {
+    return (
+      <EmptyStatePage
+        title="No Twitter Products"
+        sub="Start by adding your first Instagram Twitter"
+        icon={<FiFacebook size={50} />}
+      />
+    );
+  }
 
   const columns = [
     { key: 'username', label: 'Username' },
