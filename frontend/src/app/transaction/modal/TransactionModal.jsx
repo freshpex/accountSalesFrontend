@@ -16,9 +16,11 @@ import {
   Text,
   useBreakpointValue,
 } from '@chakra-ui/react';
+import { useColors } from '../../../utils/colors';
 
 const TransactionModal = ({ isOpen, onClose, data, action, onSave, onDelete }) => {
     const isReadOnly = action === 'view';
+    const colors = useColors();
 
   return (
     <Modal 
@@ -29,6 +31,7 @@ const TransactionModal = ({ isOpen, onClose, data, action, onSave, onDelete }) =
       <ModalOverlay />
       <ModalContent 
       maxW="1200px" maxH="90vh" overflowY="auto"
+      bg={colors.bgColor} color={colors.textColor}
       >
         <ModalHeader>
           {action === 'add' && 'New Transaction'}
@@ -65,7 +68,7 @@ const TransactionModal = ({ isOpen, onClose, data, action, onSave, onDelete }) =
                 <Input
                   value={data?.productName || ''}
                   isReadOnly={isReadOnly}
-                  bg={isReadOnly ? "gray.100" : "white"}
+                  bg={isReadOnly ? "gray.100" : colors.bgColor}
                 />
               </FormControl>
 
@@ -74,7 +77,7 @@ const TransactionModal = ({ isOpen, onClose, data, action, onSave, onDelete }) =
                 <Input
                   value={data?.customer || ''}
                   isReadOnly={isReadOnly}
-                  bg={isReadOnly ? "gray.100" : "white"}
+                  bg={isReadOnly ? "gray.100" : colors.bgColor}
                 />
               </FormControl>
 
@@ -85,7 +88,7 @@ const TransactionModal = ({ isOpen, onClose, data, action, onSave, onDelete }) =
                     value={data?.price || ''}
                     type="number"
                     isReadOnly={isReadOnly}
-                    bg={isReadOnly ? "gray.100" : "white"}
+                    bg={isReadOnly ? "gray.100" : colors.bgColor}
                   />
                 </FormControl>
 
@@ -95,7 +98,7 @@ const TransactionModal = ({ isOpen, onClose, data, action, onSave, onDelete }) =
                     type="date"
                     value={data?.date || ''}
                     isReadOnly={isReadOnly}
-                    bg={isReadOnly ? "gray.100" : "white"}
+                    bg={isReadOnly ? "gray.100" : colors.bgColor}
                   />
                 </FormControl>
               </HStack>
@@ -106,7 +109,7 @@ const TransactionModal = ({ isOpen, onClose, data, action, onSave, onDelete }) =
                   <Select
                     value={data?.payment || ''}
                     isDisabled={isReadOnly}
-                    bg={isReadOnly ? "gray.100" : "white"}
+                    bg={isReadOnly ? "gray.100" : colors.bgColor}
                   >
                     <option value="Paid">Paid</option>
                     <option value="Unpaid">Unpaid</option>
@@ -119,7 +122,7 @@ const TransactionModal = ({ isOpen, onClose, data, action, onSave, onDelete }) =
                   <Select
                     value={data?.status || ''}
                     isDisabled={isReadOnly}
-                    bg={isReadOnly ? "gray.100" : "white"}
+                    bg={isReadOnly ? "gray.100" : colors.bgColor}
                   >
                     <option value="Completed">Completed</option>
                     <option value="Shipping">Shipping</option>

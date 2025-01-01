@@ -28,6 +28,7 @@ import {
   update_filters,
   reset_filters
 } from './redux/reducer';
+import { useColors } from '../../utils/colors';
 
 const Transaction = () => {
   const dispatch = useDispatch();
@@ -41,6 +42,7 @@ const Transaction = () => {
   const [page, setPage] = useState(1);
   const [itemsPerPage] = useState(10);
   const { filters } = useFilters();
+  const colors = useColors();
 
   const [modalData, setModalData] = useState(null);
   const [modalAction, setModalAction] = useState(null);
@@ -148,6 +150,8 @@ const Transaction = () => {
               placeholder="Search transactions..."
               value={searchQuery}
               onChange={(e) => handleSearch(e.target.value)}
+              bg={colors.bgColor}
+              color={colors.textColor}
             />
           </InputGroup>
 
@@ -172,6 +176,8 @@ const Transaction = () => {
                   <Input
                     type="date"
                     onChange={(e) => handleFilter('date', e.target.value)}
+                    bg={colors.bgColor}
+                    color={colors.textColor}
                   />
                 </MenuItem>
                 <MenuItem onClick={handleClearFilters}>
@@ -202,7 +208,7 @@ const Transaction = () => {
         <Flex
           overflowX="auto"
           borderBottom="1px"
-          borderColor="gray.200"
+          borderColor={colors.borderColor}
           mb={6}
           whiteSpace="nowrap"
         >
@@ -214,7 +220,7 @@ const Transaction = () => {
               cursor="pointer"
               borderBottom="2px"
               borderColor={selectedTab === tab.key ? 'blue.500' : 'transparent'}
-              color={selectedTab === tab.key ? 'blue.500' : 'gray.600'}
+              color={selectedTab === tab.key ? 'blue.500' : colors.textColor}
               onClick={() => setSelectedTab(tab.key)}
             >
               {tab.label} ({stats[tab.key] || 0})
@@ -239,7 +245,7 @@ const Transaction = () => {
   };
 
   return (
-    <Container maxW="container.xl" py={8}>
+    <Container maxW="container.xl" py={8} bg={colors.bgColor} color={colors.textColor}>
       {/* Header */}
       <Box mb={6}>
         <Text fontSize="2xl" mb={2}>

@@ -14,15 +14,18 @@ import {
 import Account from './tabs/account';
 import Security from './tabs/security';
 import Notification from './tabs/notification';
+import { useColors } from '../../utils/colors';
 
 const AccountSettings = () => {
+  const colors = useColors();
+
   return (
-    <Container maxW="container.xl" py={8}>
+    <Container maxW="container.xl" py={8} bg={colors.bgColor} color={colors.textColor}>
       <Box mb={6}>
-        <Heading size="lg" mb={4}>Account & Settings</Heading>
+        <Heading size="lg" mb={4} >Account & Settings</Heading>
         <Breadcrumb>
           <BreadcrumbItem>
-            <BreadcrumbLink href="#">Dashboard</BreadcrumbLink>
+            <BreadcrumbLink href="#" >Dashboard</BreadcrumbLink>
           </BreadcrumbItem>
           <BreadcrumbItem isCurrentPage>
             <BreadcrumbLink href="#">Profile</BreadcrumbLink>
@@ -30,9 +33,9 @@ const AccountSettings = () => {
         </Breadcrumb>
       </Box>
 
-      <Box bg="white" borderRadius="lg" shadow="sm">
+      <Box bg={colors.bgColor} borderRadius="lg" shadow="sm">
         <Tabs>
-          <TabList px={4} borderBottom="1px solid" borderColor="gray.200">
+          <TabList px={4} borderBottom="1px solid" borderColor={colors.borderColor}>
             <Tab 
               _selected={{ color: 'blue.500', borderBottom: '2px solid' }}
               _focus={{ boxShadow: 'none' }}

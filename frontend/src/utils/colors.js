@@ -1,6 +1,6 @@
 import { useColorModeValue } from "@chakra-ui/react";
 
-export const getColors = () => {
+export const useColors = () => {
     return {
         bgColor: useColorModeValue("white", "gray.900"),
         textColor: useColorModeValue("gray.600", "gray.200"),

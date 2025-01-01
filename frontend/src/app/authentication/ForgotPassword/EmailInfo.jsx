@@ -1,18 +1,21 @@
 import { Container, Box, Text, Button, Center } from "@chakra-ui/react";
 import { Link } from "react-router-dom";
+import { useColors } from '../../../utils/colors';
+
 
 const EmailInfo = () => {
+  const colors = useColors();
   return (
-    <Container maxW="container.xl">
+    <Container maxW="container.xl" bg={colors.bgColor} color={colors.textColor}>
       <Box h="100vh" display={"grid"} placeItems={"center"}>
         <Box>
-          <Text textAlign={"center"} textStyle={"heading"} color="teal.500">
+          <Text textAlign={"center"} textStyle={"heading"} color={colors.textColor}>
             Password Reset Link Sent!
           </Text>
           <Text
             fontSize={"16px"}
             fontWeight={400}
-            color="gray.600"
+            color={colors.textColor}
             mt="16px"
             textAlign={"center"}
           >

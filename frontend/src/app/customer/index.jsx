@@ -27,6 +27,7 @@ import {
   update_customer_segment
 } from './redux/reducer';
 import LoadingSpinner from '../../components/LoadingSpinner';
+import { useColors } from '../../utils/colors';
 
 const Customers = () => {
   const dispatch = useDispatch();
@@ -38,7 +39,7 @@ const Customers = () => {
   
   const [filters, setFilters] = useState({ status: 'all', search: '', segment: 'all' });
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const bgColor = useColorModeValue('gray.50', 'gray.900');
+  const colors = useColors();
 
   useEffect(() => {
     dispatch(fetch_customers(filters));
@@ -139,7 +140,7 @@ const Customers = () => {
         </Grid>
 
         {/* Customer List */}
-        <Box bg={useColorModeValue('white', 'gray.800')} borderRadius="lg" shadow="sm">
+        <Box bg={colors.bgColor} borderRadius="lg" shadow="sm">
           <Flex p={6} justify="space-between" align="center">
             <InputGroup maxW="320px">
               <InputLeftElement><FiSearch color="gray.400" /></InputLeftElement>
@@ -147,6 +148,8 @@ const Customers = () => {
                 placeholder="Search customers..."
                 value={filters.search}
                 onChange={(e) => handleFilterChange('search', e.target.value)}
+                bg={colors.bgColor}
+                color={colors.textColor}
               />
             </InputGroup>
             <Flex align="center" gap={4}>
@@ -154,6 +157,8 @@ const Customers = () => {
                 maxW="200px"
                 value={filters.status}
                 onChange={(e) => handleFilterChange('status', e.target.value)}
+                bg={colors.bgColor}
+                color={colors.textColor}
               >
                 <option value="all">All Status</option>
                 <option value="active">Active</option>
@@ -163,6 +168,8 @@ const Customers = () => {
                 maxW="200px"
                 value={filters.segment}
                 onChange={(e) => handleFilterChange('segment', e.target.value)}
+                bg={colors.bgColor}
+                color={colors.textColor}
               >
                 <option value="all">All Segments</option>
                 <option value="platinum">Platinum</option>
@@ -241,7 +248,7 @@ const Customers = () => {
   };
 
   return (
-    <Box minH="100vh" bg={bgColor} p={8}>
+    <Box minH="100vh" bg={colors.bgColor} p={8}>
       <Flex justify="space-between" align="center" mb={8}>
         <Box>
           <Text fontSize="2xl" fontWeight="bold">Customers</Text>

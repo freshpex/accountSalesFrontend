@@ -20,6 +20,7 @@ import {
 } from "@chakra-ui/react";
 import { FaImage } from "react-icons/fa";
 import { getLoading } from '../redux/selector';
+import { useColors } from '../../../utils/colors';
 
 const AddProduct = ({ isOpen, onClose, data, action, onSave, onDelete }) => {
   const loading = useSelector(getLoading);
@@ -35,6 +36,7 @@ const AddProduct = ({ isOpen, onClose, data, action, onSave, onDelete }) => {
   const [images, setImages] = useState(["", "", "", ""]);
 
   const isReadOnly = action === 'view';
+  const colors = useColors();
 
   useEffect(() => {
     if (data) {
@@ -107,7 +109,7 @@ const AddProduct = ({ isOpen, onClose, data, action, onSave, onDelete }) => {
   return (
     <Modal isOpen={isOpen} onClose={onClose} size="6xl">
       <ModalOverlay />
-      <ModalContent maxW="1200px" maxH="90vh" overflowY="auto">
+      <ModalContent maxW="1200px" maxH="90vh" overflowY="auto" bg={colors.bgColor} color={colors.textColor}>
         <ModalHeader>
           {action === "add" && "Add"}
           {action === "view" && "View"}
@@ -125,7 +127,7 @@ const AddProduct = ({ isOpen, onClose, data, action, onSave, onDelete }) => {
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
                   isReadOnly={isReadOnly}
-                  bg={isReadOnly ? "gray.100" : "white"}
+                  bg={isReadOnly ? "gray.100" : colors.bgColor}
                 />
               </FormControl>
           
@@ -136,14 +138,14 @@ const AddProduct = ({ isOpen, onClose, data, action, onSave, onDelete }) => {
                   value={type}
                   onChange={(e) => setType(e.target.value)}
                   isReadOnly={isReadOnly}
-                  bg={isReadOnly ? "gray.100" : "white"}
+                  bg={isReadOnly ? "gray.100" : colors.bgColor}
                 />
                 <Select
                   placeholder="Select product category"
                   value={type}
                   onChange={(e) => setType(e.target.value)}
                   isDisabled={isReadOnly}
-                  bg={isReadOnly ? "gray.100" : "white"}
+                  bg={isReadOnly ? "gray.100" : colors.bgColor}
                 >
                   <option value="instagram">Instagram</option>
                   <option value="twitter">Twitter</option>
@@ -160,7 +162,7 @@ const AddProduct = ({ isOpen, onClose, data, action, onSave, onDelete }) => {
                     value={age}
                     onChange={(e) => setAge(e.target.value)}
                     isReadOnly={isReadOnly}
-                    bg={isReadOnly ? "gray.100" : "white"}
+                    bg={isReadOnly ? "gray.100" : colors.bgColor}
                   />
                 </FormControl>
                 <FormControl flex={1}>
@@ -170,7 +172,7 @@ const AddProduct = ({ isOpen, onClose, data, action, onSave, onDelete }) => {
                     value={follower}
                     onChange={(e) => setFollower(e.target.value)}
                     isReadOnly={isReadOnly}
-                    bg={isReadOnly ? "gray.100" : "white"}
+                    bg={isReadOnly ? "gray.100" : colors.bgColor}
                   />
                 </FormControl>
               </HStack>
@@ -183,7 +185,7 @@ const AddProduct = ({ isOpen, onClose, data, action, onSave, onDelete }) => {
                     value={status}
                     onChange={(e) => setStatus(e.target.value)}
                     isDisabled={isReadOnly}
-                    bg={isReadOnly ? "gray.100" : "white"}
+                    bg={isReadOnly ? "gray.100" : colors.bgColor}
                   >
                     <option value="sold">Sold</option>
                     <option value="available">Available</option>
@@ -196,7 +198,7 @@ const AddProduct = ({ isOpen, onClose, data, action, onSave, onDelete }) => {
                     value={price}
                     onChange={(e) => setPrice(e.target.value)}
                     isReadOnly={isReadOnly}
-                    bg={isReadOnly ? "gray.100" : "white"}
+                    bg={isReadOnly ? "gray.100" : colors.bgColor}
                   />
                 </FormControl>
               </HStack>
@@ -208,7 +210,7 @@ const AddProduct = ({ isOpen, onClose, data, action, onSave, onDelete }) => {
                   value={region}
                   onChange={(e) => setRegion(e.target.value)}
                   isReadOnly={isReadOnly}
-                  bg={isReadOnly ? "gray.100" : "white"}
+                  bg={isReadOnly ? "gray.100" : colors.bgColor}
                 />
               </FormControl>
 
@@ -219,7 +221,7 @@ const AddProduct = ({ isOpen, onClose, data, action, onSave, onDelete }) => {
                   value={about}
                   onChange={(e) => setAbout(e.target.value)}
                   isReadOnly={isReadOnly}
-                  bg={isReadOnly ? "gray.100" : "white"}
+                  bg={isReadOnly ? "gray.100" : colors.bgColor}
                 />
               </FormControl>
             </VStack>

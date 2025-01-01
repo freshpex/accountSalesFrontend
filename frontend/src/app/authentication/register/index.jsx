@@ -25,6 +25,7 @@ import {
 } from '@chakra-ui/react';
 import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons';
 import { FcGoogle } from 'react-icons/fc';
+import { useColors } from '../../../utils/colors';
 
 const Register = () => {
   const dispatch = useDispatch();
@@ -32,6 +33,7 @@ const Register = () => {
   const error = useSelector(getError);
   const success = useSelector(getSuccess);
   const toast = useToast();
+  const colors = useColors();
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     firstName: '',
@@ -119,14 +121,14 @@ const Register = () => {
   }, [success, toast]);
 
   return (
-    <Container maxW="md" py={12}>
+    <Container maxW="md" py={12} bg={colors.bgColor} color={colors.textColor}>
       <Stack spacing={8} alignItems="center">
         <Stack align="center" spacing={2}>
           <Image src="/logo.svg" alt="Logo" h="40px" />
           <Text fontSize="2xl" fontWeight="bold">Create your account</Text>
         </Stack>
 
-        <Box w="full" p={8} borderRadius="lg" bg="white" boxShadow="sm">
+        <Box w="full" p={8} borderRadius="lg" bg={colors.bgColor} color={colors.textColor} boxShadow="sm">
           <Stack spacing={4}>
             <Button
               w="full"
@@ -139,7 +141,7 @@ const Register = () => {
 
             <Stack direction="row" align="center">
               <Divider />
-              <Text px={2} color="gray.500">Or</Text>
+              <Text px={2} color={colors.textColor}>Or</Text>
               <Divider />
             </Stack>
 
@@ -245,7 +247,7 @@ const Register = () => {
 
             <Button
               bg="blue.500"
-              color="white"
+              color={colors.textColor}
               _hover={{ bg: 'blue.600' }}
               onClick={handleSubmit}
               isDisabled={!formData.agreeToTerms || loading}
@@ -254,7 +256,7 @@ const Register = () => {
               Create Account
             </Button>
 
-            <Text textAlign="center">
+            <Text textAlign="center" bg={colors.bgColor} color={colors.textColor}>
               Already have an account?{' '}
               <Link color="blue.500" href="/login">
                 Sign In

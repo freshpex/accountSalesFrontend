@@ -11,6 +11,7 @@ import {
 import { ChevronRightIcon } from '@chakra-ui/icons';
 import TicketDetail from '../tabs/ticketDetail';
 import { useState } from 'react';
+import { useColors } from '../../../utils/colors';
 
 const TicketList = ({ 
   tickets, 
@@ -21,6 +22,7 @@ const TicketList = ({
 }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [selectedTicket, setSelectedTicket] = useState(null);
+  const colors = useColors();
 
   const handleTicketClick = (ticket) => {
     setSelectedTicket(ticket);
@@ -38,6 +40,8 @@ const TicketList = ({
             borderRadius="lg"
             _hover={{ shadow: "sm", cursor: "pointer" }}
             onClick={() => handleTicketClick(ticket)}
+            bg={colors.bgColor}
+            color={colors.textColor}
           >
             <Flex justify="space-between" align="start">
               <HStack spacing={4}>

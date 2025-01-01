@@ -38,6 +38,7 @@ import {
   delete_product
 } from './redux/reducer';
 import LoadingSpinner from '../../components/LoadingSpinner';
+import { useColors } from '../../utils/colors';
 
 const Product = () => {
   const dispatch = useDispatch();
@@ -53,6 +54,7 @@ const Product = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalAction, setModalAction] = useState('');
   const [selectedPost, setSelectedPost] = useState(null);
+  const colors = useColors();
 
   const handleModalOpen = (action, post = null) => {
     setModalAction(action);
@@ -179,7 +181,7 @@ const Product = () => {
   }
 
   return (
-    <Container maxW="container.xl" py={8}>
+    <Container maxW="container.xl" py={8} bg={colors.bgColor} color={colors.textColor}>
       {/* Header */}
       <Box mb={6}>
         <Text fontSize="2xl" mb={2}>
@@ -205,6 +207,8 @@ const Product = () => {
             placeholder="Search transactions..."
             value={searchQuery}
             onChange={(e) => handleSearch(e.target.value)}
+            bg={colors.bgColor}
+            color={colors.textColor}
           />
         </InputGroup>
 
@@ -225,6 +229,8 @@ const Product = () => {
                 <Input
                   type="date"
                   onChange={(e) => handleFilter('date', e.target.value)}
+                  bg={colors.bgColor}
+                  color={colors.textColor}
                 />
               </MenuItem>
               <MenuItem onClick={() => {
@@ -257,7 +263,7 @@ const Product = () => {
       <Flex
         overflowX="auto"
         borderBottom="1px"
-        borderColor="gray.200"
+        borderColor={colors.borderColor}
         mb={6}
         whiteSpace="nowrap"
       >
@@ -269,7 +275,7 @@ const Product = () => {
             cursor="pointer"
             borderBottom="2px"
             borderColor={tab.key === location.pathname.split('/').pop() ? 'blue.500' : 'transparent'}
-            color={tab.key === location.pathname.split('/').pop() ? 'blue.500' : 'gray.600'}
+            color={tab.key === location.pathname.split('/').pop() ? 'blue.500' : colors.textColor}
             onClick={() => handleTabChange(tabs.findIndex(t => t.key === tab.key))}
           >
             {tab.label} ({tab.count})

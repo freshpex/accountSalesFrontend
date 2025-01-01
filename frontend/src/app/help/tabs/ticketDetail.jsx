@@ -18,6 +18,7 @@ import {
   Select,
 } from '@chakra-ui/react';
 import { ticketStatusColors, ticketPriorityColors } from '../data';
+import { useColors } from '../../../utils/colors';
 
 const TicketDetail = ({ 
   isOpen, 
@@ -28,6 +29,7 @@ const TicketDetail = ({
 }) => {
   const [reply, setReply] = useState('');
   const [status, setStatus] = useState(ticket?.status);
+  const colors = useColors();
 
   const handleReply = () => {
     onAddResponse(ticket.id, {
@@ -46,7 +48,7 @@ const TicketDetail = ({
   return (
     <Modal isOpen={isOpen} onClose={onClose} size="xl" scrollBehavior="inside">
       <ModalOverlay />
-      <ModalContent>
+      <ModalContent bg={colors.bgColor} color={colors.textColor}>
         <ModalHeader>
           <HStack justify="space-between">
             <Text>Ticket Details</Text>
@@ -87,7 +89,7 @@ const TicketDetail = ({
               </Box>
             </HStack>
 
-            <Box bg="gray.50" p={4} borderRadius="md">
+            <Box bg={colors.activeColor} p={4} borderRadius="md">
               <Text>{ticket?.message}</Text>
             </Box>
 

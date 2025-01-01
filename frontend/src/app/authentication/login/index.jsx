@@ -22,6 +22,7 @@ import {
 import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons';
 import { FcGoogle } from 'react-icons/fc';
 import { Link as RouterLink } from 'react-router-dom';
+import { useColors } from '../../../utils/colors';
 
 const Login = () => {
   const dispatch = useDispatch();
@@ -32,6 +33,7 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const colors = useColors();
 
   useEffect(() => {
     if (error) {
@@ -80,8 +82,8 @@ const Login = () => {
           <Image src="/logo.svg" alt="Culters Logo" h="40px" />
         </Stack>
 
-        {/* Sign In Form */}
-        <Box w="full" p={8} borderRadius="lg" bg="white" boxShadow="sm">
+        {/* Sign In Form */}bg={colors.bgColor} color={colors.textColor}
+        <Box w="full" p={8} borderRadius="lg" bg={colors.bgColor} color={colors.textColor} boxShadow="sm">
           <Stack spacing={4}>
             <Text fontSize="2xl" fontWeight="bold" textAlign="center">
               Sign In
@@ -99,7 +101,7 @@ const Login = () => {
 
             <Stack direction="row" align="center" justify="center">
               <Divider />
-              <Text px={2} color="gray.500">
+              <Text px={2} color={colors.textColor}>
                 Or
               </Text>
               <Divider />
@@ -147,7 +149,7 @@ const Login = () => {
 
             <Button
               bg="blue.500"
-              color="white"
+              color={colors.textColor}
               _hover={{ bg: 'blue.600' }}
               onClick={handleSubmit}
               isLoading={loading}
@@ -156,7 +158,7 @@ const Login = () => {
               Sign In
             </Button>
 
-            <Text textAlign="center">
+            <Text textAlign="center" bg={colors.bgColor} color={colors.textColor}>
               Do not have an account?{' '}
               <Link color="blue.500" href="/register">
                 Sign Up

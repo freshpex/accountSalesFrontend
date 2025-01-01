@@ -15,12 +15,14 @@ import { useDispatch, useSelector } from "react-redux";
 import { getLoading, getError } from "./redux/selector";
 import { forgot_password } from "./redux/reducer";
 import * as Yup from "yup";
+import { useColors } from '../../../utils/colors';
 
 const ResetPassword = () => {
   const dispatch = useDispatch();
   const loading = useSelector(getLoading);
   const error = useSelector(getError);
   const toast = useToast();
+  const colors = useColors();
 
   const validationSchema = Yup.object().shape({
     email: Yup.string()
@@ -46,7 +48,7 @@ const ResetPassword = () => {
   }, [error, toast]);
 
   return (
-    <Container maxW="container.xl">
+    <Container maxW="container.xl" bg={colors.bgColor} color={colors.textColor}>
       <Box h="100vh" display={"grid"} placeItems="center">
         <Box
           px="24px"
@@ -55,12 +57,12 @@ const ResetPassword = () => {
           w={{ base: "full", md: "400px" }}
           borderRadius={"10px"}
         >
-          <Text textStyle={"heading"} color={"gray.600"} textAlign={"center"}>
+          <Text textStyle={"heading"} olor={colors.textColor} textAlign={"center"}>
             Reset Password
           </Text>
           <Text
             textStyle={"md"}
-            color={"gray.600"}
+            color={colors.textColor}
             textAlign={"center"}
             mt="8px"
           >
@@ -110,7 +112,7 @@ const ResetPassword = () => {
                     textAlign={"center"}
                     mt="16px"
                     textStyle={"sm"}
-                    color={"gray.600"}
+                    color={colors.textColor}
                   >
                     <Link to="/login">Back To Sign In</Link>
                   </Text>

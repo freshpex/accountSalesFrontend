@@ -15,6 +15,7 @@ import { getLoading, getError } from "./redux/selector";
 import { change_password } from "./redux/reducer";
 import { useParams } from "react-router-dom";
 import { useEffect } from "react";
+import { useColors } from '../../utils/colors';
 
 const ChangePassword = () => {
   const dispatch = useDispatch();
@@ -23,6 +24,7 @@ const ChangePassword = () => {
   const toast = useToast();
   const params = useParams();
   const passwordRegex = /[!@#$%^&*(),.?":{}|<>]/;
+  const colors = useColors();
 
   const handleSubmit = (doc) => {
     dispatch(change_password({ id: params.id, data: doc }));
@@ -52,7 +54,7 @@ const ChangePassword = () => {
   });
 
   return (
-    <Container maxW="container.xl">
+    <Container maxW="container.xl" bg={colors.bgColor} color={colors.textColor}>
       <Box h="100vh" display={"grid"} placeItems="center">
         <Box
           px="24px"
@@ -61,12 +63,12 @@ const ChangePassword = () => {
           w={{ base: "full", md: "400px" }}
           borderRadius={"10px"}
         >
-          <Text textStyle={"heading"} color={"teal.500"} textAlign={"center"}>
+          <Text textStyle={"heading"} color={colors.textColor}textAlign={"center"}>
             Set New Password
           </Text>
           <Text
             textStyle={"md"}
-            color={"gray.600"}
+            color={colors.textColor}
             textAlign={"center"}
             mt="8px"
           >

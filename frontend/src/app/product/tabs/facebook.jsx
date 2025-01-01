@@ -6,6 +6,7 @@ import DataTable from '../components/table';
 import EmptyStatePage from '../../../components/emptyState';
 import { getFacebookProducts, getLoading } from '../redux/selector';
 import LoadingSpinner from '../../../components/LoadingSpinner';
+import { useColors } from '../../../utils/colors';
 
 const Facebook = ({ searchQuery, filters, onDataFiltered, applyFilters, onViewPost, onEditPost, onDeletePost }) => {
   const FacebookProducts = useSelector(getFacebookProducts);
@@ -14,6 +15,7 @@ const Facebook = ({ searchQuery, filters, onDataFiltered, applyFilters, onViewPo
   const [currentPage, setCurrentPage] = useState(1);
   const [filteredPosts, setFilteredPosts] = useState([]);
   const itemsPerPage = 10;
+  const colors = useColors();
 
   useEffect(() => {
     const filteredData = applyFilters(FacebookProducts);

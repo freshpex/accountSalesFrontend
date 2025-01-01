@@ -15,6 +15,7 @@ import {
   Textarea
 } from '@chakra-ui/react';
 import { useState } from 'react';
+import { useColors } from '../../../utils/colors';
 
 const NewTicketModal = ({ isOpen, onClose, onSubmit }) => {
   const [ticket, setTicket] = useState({
@@ -22,6 +23,8 @@ const NewTicketModal = ({ isOpen, onClose, onSubmit }) => {
     message: '',
     priority: 'medium'
   });
+
+  const colors = useColors();
 
   const handleSubmit = () => {
     onSubmit(ticket);
@@ -31,7 +34,7 @@ const NewTicketModal = ({ isOpen, onClose, onSubmit }) => {
   return (
     <Modal isOpen={isOpen} onClose={onClose} size="xl">
       <ModalOverlay />
-      <ModalContent>
+      <ModalContent bg={colors.bgColor} color={colors.textColor}>
         <ModalHeader>Create New Support Ticket</ModalHeader>
         <ModalCloseButton />
         <ModalBody>

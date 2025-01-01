@@ -22,6 +22,7 @@ import {
 } from '@chakra-ui/react';
 import { ViewIcon, DeleteIcon, ChevronLeftIcon, ChevronRightIcon } from '@chakra-ui/icons';
 import { motion } from 'framer-motion';
+import { useColors } from '../../../utils/colors';
 
 const MotionBox = motion(Box);
 
@@ -41,9 +42,7 @@ const TransactionTable = ({
   getPaymentColor
 }) => {
   const isMobile = useBreakpointValue({ base: true, md: false });
-  const bgCard = useColorModeValue('white', 'gray.800');
-  const borderColor = useColorModeValue('gray.200', 'gray.700');
-  const hoverBg = useColorModeValue('gray.50', 'gray.700');
+  const colors = useColors();
 
   const renderMobileCard = (transaction) => (
     <MotionBox
@@ -51,11 +50,11 @@ const TransactionTable = ({
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
-      bg={bgCard}
+      bg={colors.bgColor}
       p={4}
       borderRadius="xl"
       borderWidth="1px"
-      borderColor={borderColor}
+      borderColor={colors.borderColor}
       shadow="sm"
       _hover={{
         transform: 'translateY(-2px)',
@@ -149,7 +148,7 @@ const TransactionTable = ({
       overflowX="auto"
       borderWidth="1px"
       borderRadius="lg"
-      borderColor={borderColor}
+      borderColor={colors.borderColor}
     >
       <Table variant="simple" sx={{
         'th, td': {
@@ -159,10 +158,10 @@ const TransactionTable = ({
           position: 'sticky',
           top: 0,
           zIndex: 1,
-          backgroundColor: useColorModeValue('white', 'gray.800'),
+          backgroundColor: colors.bgColor,
         }
       }}>
-        <Thead bg={useColorModeValue('gray.50', 'gray.800')}>
+        <Thead bg={colors.bgColor}>
           <Tr>
             <Th w="40px">
               <Checkbox
@@ -191,7 +190,7 @@ const TransactionTable = ({
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.2 }}
-              _hover={{ bg: hoverBg }}
+              _hover={{ bg: colors.activeColor }}
             >
               <Td>
                 <Checkbox
@@ -288,7 +287,7 @@ const TransactionTable = ({
           justify="space-between"
           align="center"
           p={4}
-          bg={bgCard}
+          bg={colors.bgColor}
           borderRadius="lg"
           shadow="sm"
         >

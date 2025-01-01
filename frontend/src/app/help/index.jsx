@@ -25,6 +25,7 @@ import {
 } from './redux/reducer';
 import { FiMail, FiInbox } from 'react-icons/fi';
 import LoadingSpinner from '../../components/LoadingSpinner';
+import { useColors } from '../../utils/colors';
 
 const Help = () => {
   const dispatch = useDispatch();
@@ -34,6 +35,7 @@ const Help = () => {
   const loading = useSelector(getLoading);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [filters, setFilters] = useState({ status: 'all', search: '' });
+  const colors = useColors();
 
   useEffect(() => {
     dispatch(fetch_tickets());
@@ -97,11 +99,15 @@ const Help = () => {
                   value={filters.search}
                   onChange={(e) => setFilters(prev => ({ ...prev, search: e.target.value }))}
                   leftelement={<SearchIcon color="gray.400" />}
+                  bg={colors.bgColor}
+                  color={colors.textColor}
                 />
                 <Select
                   maxW="200px"
                   value={filters.status}
                   onChange={(e) => setFilters(prev => ({ ...prev, status: e.target.value }))}
+                  bg={colors.bgColor}
+                  color={colors.textColor}
                 >
                   <option value="all">All Status</option>
                   <option value="open">Open ({stats.open})</option>
@@ -150,7 +156,7 @@ const Help = () => {
   };
 
   return (
-    <Container maxW="container.xl" py={8}>
+    <Container maxW="container.xl" py={8} bg={colors.bgColor} color={colors.textColor}>
       <Flex justify="space-between" align="center" mb={8}>
         <Box>
           <Heading size="lg">Help & Support</Heading>
