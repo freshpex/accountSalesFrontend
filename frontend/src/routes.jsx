@@ -1,17 +1,19 @@
 import { Routes, Route } from 'react-router-dom';
+import { lazy } from 'react';
 import Layout from './components/layout';
-import Login from './app/authentication/login';
-import Register from './app/authentication/register';
-import Dashboard from './app/dashboard';
-import Help from './app/help';
-import AccountSettings from './app/accountSettings.jsx';
-import Products from './app/product';
-import Transaction from './app/transaction';
-import Customers from './app/customer';
-import SalesReport from './app/salesReport';
-import ResetPassword from './app/authentication/ForgotPassword/ResetPassword.jsx';
-import EmailInfo from './app/authentication/ForgotPassword/EmailInfo.jsx';
-import ChangePassword from './app/authentication/ForgotPassword/changePassword.jsx';
+
+const Login = lazy(() => import('./app/authentication/login'));
+const Register = lazy(() => import('./app/authentication/register'));
+const Dashboard = lazy(() => import('./app/dashboard'));
+const Help = lazy(() => import('./app/help'));
+const AccountSettings = lazy(() => import('./app/accountSettings.jsx'));
+const Products = lazy(() => import('./app/product'));
+const Transaction = lazy(() => import('./app/transaction'));
+const Customers = lazy(() => import('./app/customer'));
+const SalesReport = lazy(() => import('./app/salesReport'));
+const ResetPassword = lazy(() => import('./app/authentication/ForgotPassword/ResetPassword.jsx'));
+const EmailInfo = lazy(() => import('./app/authentication/ForgotPassword/EmailInfo.jsx'));
+const ChangePassword = lazy(() => import('./app/authentication/ForgotPassword/changePassword.jsx'));
 
 const AppRoutes = () => {
   return (

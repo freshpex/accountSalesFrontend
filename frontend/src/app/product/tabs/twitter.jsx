@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { Box } from '@chakra-ui/react';
-import { FiFacebook } from 'react-icons/fi';
+import { FiTwitter } from 'react-icons/fi';
 import DataTable from '../components/table';
 import EmptyStatePage from '../../../components/emptyState';
 import { getTwitterProducts, getLoading } from '../redux/selector';
@@ -29,8 +29,8 @@ const Twitter = ({ searchQuery, filters, onDataFiltered, applyFilters, onViewPos
     return (
       <EmptyStatePage
         title="No Twitter Products"
-        sub="Start by adding your first Instagram Twitter"
-        icon={<FiFacebook size={50} />}
+        sub="Start by adding your first Twitter Product"
+        icon={<FiTwitter size={50} color="#1DA1F2" />}
       />
     );
   }

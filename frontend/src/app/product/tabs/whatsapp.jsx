@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { Box } from '@chakra-ui/react';
-import { FiFacebook } from 'react-icons/fi';
+import { FaWhatsapp } from 'react-icons/fa';
 import DataTable from '../components/table';
 import EmptyStatePage from '../../../components/emptyState';
 import { getWhatsappProducts, getLoading } from '../redux/selector';
@@ -30,7 +30,7 @@ const Whatsapp = ({ searchQuery, filters, onDataFiltered, applyFilters, onViewPo
       <EmptyStatePage
         title="No Whatsapp Products"
         sub="Start by adding your first Whatsapp product"
-        icon={<FiFacebook size={50} />}
+        icon={<FaWhatsapp size={50} color="#25D366" />}
       />
     );
   }

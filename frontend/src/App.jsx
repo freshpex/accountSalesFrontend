@@ -1,13 +1,18 @@
 import { BrowserRouter as Router } from 'react-router-dom';
 import { FilterProvider } from './context/FilterContext';
+import { Suspense, lazy } from 'react';
+import SuspenseLoadingUI from './UI';
 import './App.css';
-import AppRoutes from './routes';
+
+const AppRoutes = lazy(() => import('./routes'));
 
 function App() {
   return (
     <Router>
       <FilterProvider>
-        <AppRoutes />
+        <Suspense fallback={<SuspenseLoadingUI />}>
+          <AppRoutes />
+        </Suspense>
       </FilterProvider>
     </Router>
   );

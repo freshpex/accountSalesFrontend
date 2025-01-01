@@ -1,14 +1,24 @@
-import { Center, Container, Image, Box } from "@chakra-ui/react";
+import { Container, Image, Box, Spinner, Text, VStack } from "@chakra-ui/react";
+import { motion } from "framer-motion";
 import logo from "/logo.svg";
+
+const MotionBox = motion(Box);
 
 const SuspenseLoadingUI = () => {
   return (
-    <Container maxW="container.xl">
-      <Box display="grid" placeItems="center" h="100vh">
-        <Center>
-          <Image src={logo} alt="logo_png" h="70px" objectFit={"contain"} />
-        </Center>
-      </Box>
+    <Container maxW="container.xl" h="100vh" display="flex" alignItems="center" justifyContent="center">
+      <VStack spacing={6}>
+        <MotionBox
+          animate={{ scale: [1, 1.2, 1] }}
+          transition={{ duration: 1, ease: "easeInOut", repeat: Infinity }}
+        >
+          <Image src={logo} alt="logo_png" h="70px" objectFit="contain" />
+        </MotionBox>
+        <Spinner size="xl" thickness="4px" speed="0.65s" color="blue.500" />
+        <Text fontSize="lg" color="gray.600">
+          Loading, please wait...
+        </Text>
+      </VStack>
     </Container>
   );
 };

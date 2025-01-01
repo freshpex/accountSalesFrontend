@@ -7,6 +7,11 @@ export const getProfile = createSelector(
   (state) => state.data.profile
 );
 
+export const selectProfile = createSelector(
+  accountSettingsState,
+  (state) => state.data.profile
+);
+
 export const getSecuritySettings = createSelector(
   accountSettingsState,
   (state) => state.data.security

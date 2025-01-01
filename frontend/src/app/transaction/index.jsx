@@ -9,7 +9,7 @@ import { SearchIcon, ChevronDownIcon } from '@chakra-ui/icons';
 import { FiArchive } from 'react-icons/fi';
 import TransactionModal from './modal/TransactionModal';
 import TransactionTable from './components/tables';
-import { getStatusColor, getPaymentColor } from './utils';
+import { getStatusColor, getPaymentColor } from '../../utils/utils';
 import { useFilters } from '../../context/FilterContext';
 import { exportToCSV } from '../../utils/export';
 import EmptyStatePage from '../../components/emptyState';

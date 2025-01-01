@@ -30,7 +30,7 @@ const Facebook = ({ searchQuery, filters, onDataFiltered, applyFilters, onViewPo
       <EmptyStatePage
         title="No Facebook Products"
         sub="Start by adding your first Facebook product"
-        icon={<FiFacebook size={50} />}
+        icon={<FiFacebook size={50} color="#1877F2" />}
       />
     );
   }

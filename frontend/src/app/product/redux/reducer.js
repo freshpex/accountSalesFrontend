@@ -49,9 +49,9 @@ export const productSlice = createSlice({
       state.data.meta = action.payload.meta;
       state.tableSettings = {
         ...state.tableSettings,
-        currentPage: action.payload.meta.currentPage,
-        totalPages: action.payload.meta.totalPages,
-        totalItems: action.payload.meta.totalItems
+        currentPage: action.payload.meta.currentPage || 1,
+        totalPages: action.payload.meta.totalPages || 1,
+        totalItems: action.payload.meta.totalItems || 0
       };
     },
     fetch_products_error: (state, action) => {

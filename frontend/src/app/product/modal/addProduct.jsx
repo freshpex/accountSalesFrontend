@@ -17,7 +17,6 @@ import {
   ModalContent,
   ModalHeader,
   ModalBody,
-  ModalFooter,
 } from "@chakra-ui/react";
 import { FaImage } from "react-icons/fa";
 import { getLoading } from '../redux/selector';

@@ -33,16 +33,13 @@ import { image } from 'framer-motion/client';
 import { 
   getProducts, 
   getLoading,
-  getError,
-  getCurrentPage,
-  getPageSize
+  getError
 } from './redux/selector';
 import {
   fetch_products,
   add_product,
   update_product,
-  delete_product,
-  update_table_settings
+  delete_product
 } from './redux/reducer';
 import EmptyStatePage from '../../components/emptyState';
 import { FiPackage } from 'react-icons/fi';
@@ -52,8 +49,8 @@ const Product = () => {
   const products = useSelector(getProducts);
   const loading = useSelector(getLoading);
   const error = useSelector(getError);
-  const currentPage = useSelector(getCurrentPage);
-  const pageSize = useSelector(getPageSize);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize] = useState(10);
   const [tabIndex, setTabIndex] = useState(0);
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredData, setFilteredData] = useState([]);
@@ -189,27 +186,27 @@ const Product = () => {
     return <Box p={8}>Loading...</Box>;
   }
 
-  if (error) {
-    return (
-      <EmptyStatePage
-        title="Error Loading Products"
-        sub={error}
-        icon={<FiPackage size={50} />}
-      />
-    );
-  }
+  // if (error) {
+  //   return (
+  //     <EmptyStatePage
+  //       title="Error Loading Products"
+  //       sub={error}
+  //       icon={<FiPackage size={50} />}
+  //     />
+  //   );
+  // }
 
-  if (!products.length) {
-    return (
-      <EmptyStatePage
-        title="No Products Found"
-        sub="Start by adding your first product"
-        icon={<FiPackage size={50} />}
-        btnText="Add Product"
-        handleClick={() => handleModalOpen('add')}
-      />
-    );
-  }
+  // if (!products.length) {
+  //   return (
+  //     <EmptyStatePage
+  //       title="No Products Found"
+  //       sub="Start by adding your first product"
+  //       icon={<FiPackage size={50} />}
+  //       btnText="Add Product"
+  //       handleClick={() => handleModalOpen('add')}
+  //     />
+  //   );
+  // }
 
   return (
     <Container maxW="container.xl" py={8}>
@@ -320,7 +317,7 @@ const Product = () => {
         onDeletePost={(post) => handleModalOpen('delete', post)}
         currentPage={currentPage}
         pageSize={pageSize}
-        onPageChange={handlePageChange}
+        onPageChange={setCurrentPage}
       />
 
     <AddProduct

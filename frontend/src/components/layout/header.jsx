@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useSelector } from "react-redux";
 import {
   Flex,
   IconButton,
@@ -22,9 +23,10 @@ import {
   MdOutlineMail,
   MdOutlineSearch,
 } from "react-icons/md";
-import { userData } from "./data";
+import { selectProfile } from "../../app/accountSettings.jsx/redux/selector";
 
 const Header = ({ toggleSidebar, isSidebarOpen }) => {
+  const profile = useSelector(selectProfile);
   const bgColor = useColorModeValue("white", "gray.100");
   const textColor = useColorModeValue("gray.800", "gray.200");
   const borderColor = useColorModeValue("gray.200", "gray.700");
@@ -113,13 +115,18 @@ const Header = ({ toggleSidebar, isSidebarOpen }) => {
         <Menu>
           <MenuButton>
             <Flex align="center" textAlign="right">
-              <Avatar borderRadius="10px" name={userData.name} src={userData.avatar} size="sm" />
+              <Avatar
+                borderRadius="10px"
+                name={profile?.name || "User"}
+                src={profile?.profilePicture || "https://via.placeholder.com/150"}
+                size="sm"
+              />
               <Box ml={2} display={{ base: "none", md: "block" }}>
                 <Text fontSize="sm" color="gray.700">
-                  {userData.name}
+                  {profile?.name || "User"}
                 </Text>
                 <Text fontSize="xs" color="gray.500">
-                  {userData.role}
+                  {profile?.role || "Role"}
                 </Text>
               </Box>
             </Flex>

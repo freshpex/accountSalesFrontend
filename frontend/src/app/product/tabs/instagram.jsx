@@ -30,7 +30,7 @@ const Instagram = ({ searchQuery, filters, onDataFiltered, applyFilters, onViewP
       <EmptyStatePage
         title="No Instagram Products"
         sub="Start by adding your first Instagram product"
-        icon={<FiInstagram size={50} />}
+        icon={<FiInstagram size={50} color="#E1306C" />}
       />
     );
   }

@@ -65,12 +65,12 @@ export const getSelectedItems = createSelector(
 
 export const getCurrentPage = createSelector(
   getTableSettings,
-  (settings) => settings.currentPage
+  (settings) => settings.currentPage || 1
 );
 
 export const getPageSize = createSelector(
   getTableSettings,
-  (settings) => settings.pageSize
+  (settings) => settings.pageSize || 10
 );
 
 export const getSelectedProduct = createSelector(

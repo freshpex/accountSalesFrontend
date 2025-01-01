@@ -9,6 +9,7 @@ import productReducer from '../app/product/redux/reducer';
 import customerReducer from '../app/customer/redux/reducer';
 import helpReducer from '../app/help/redux/reducer';
 import transactionReducer from '../app/transaction/redux/reducer';
+import layoutReducer from '../components/layout/redux/reducer';
 
 const rootReducer = combineReducers({
   register: registerReducer,
@@ -20,7 +21,8 @@ const rootReducer = combineReducers({
   product: productReducer,
   customer: customerReducer,
   help: helpReducer,
-  transaction: transactionReducer
+  transaction: transactionReducer,
+  layout: layoutReducer
 });
 
 export default rootReducer;
@@ -34,3 +36,4 @@ export const selectProductState = (state) => state.product;
 export const selectCustomerState = (state) => state.customer;
 export const selectTransactionState = (state) => state.transaction;
 export const selectHelpState = (state) => state.help;
+export const selectLayoutState = (state) => state.layout;

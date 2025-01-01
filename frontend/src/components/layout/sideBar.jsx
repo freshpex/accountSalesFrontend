@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import {
   Box,
@@ -20,10 +21,12 @@ import {
   Switch,
 } from "@chakra-ui/react";
 import { ChevronDownIcon } from "@chakra-ui/icons";
-import { sidebarData, userData, company } from "./data";
+import { sidebarData, company } from "./data";
 import SidebarCloseButton from "../../assets/icons/SidebarCloseButton";
+import { selectProfile } from "../../app/accountSettings.jsx/redux/selector";
 
 const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
+  const profile = useSelector(selectProfile);
   const [isCollapsed, setCollapsed] = useState(false);
   const { colorMode, toggleColorMode } = useColorMode();
   const bgColor = useColorModeValue("white", "gray.900");
@@ -183,17 +186,17 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
             <MenuButton w="full">
               <Flex align="center" gap={3}>
                 <Avatar
-                  src={userData.avatar}
-                  name={userData.name}
+                  src={profile?.profilePicture || "https://via.placeholder.com/150"}
+                  name={profile?.name || "User"}
                   size="sm"
                 />
                 {!isCollapsed && (
                   <Box flex="1" textAlign="left">
                     <Text fontSize="sm" color="gray.700">
-                      {userData.name}
+                      {profile?.name || "User"}
                     </Text>
                     <Text fontSize="xs" color={textColor}>
-                      {userData.role}
+                      {profile?.role || "Role"}
                     </Text>
                   </Box>
                 )}
