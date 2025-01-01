@@ -16,9 +16,10 @@ import {
   update_profile,
   upload_profile_picture
 } from '../redux/reducer';
+import LoadingSpinner from '../../../components/LoadingSpinner';
 
 const Account = () => {
-  const toast = useToast(); // Move hook to top
+  const toast = useToast();
   const dispatch = useDispatch();
   const profile = useSelector(getProfile);
   const loading = useSelector(getLoading);
@@ -61,7 +62,7 @@ const Account = () => {
   };
 
   if (loading) {
-    return <Box p={8}>Loading...</Box>;
+    return <LoadingSpinner />;
   }
 
   if (!profile) {

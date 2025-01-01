@@ -24,6 +24,7 @@ import {
   mark_notification_read 
 } from './redux/reducer';
 import { FiMail, FiInbox } from 'react-icons/fi';
+import LoadingSpinner from '../../components/LoadingSpinner';
 
 const Help = () => {
   const dispatch = useDispatch();
@@ -69,7 +70,7 @@ const Help = () => {
 
   const renderContent = () => {
     if (loading) {
-      return <Box p={8}>Loading...</Box>;
+      return <LoadingSpinner />;
     }
 
     return (

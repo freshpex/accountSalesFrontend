@@ -18,7 +18,6 @@ import {
   Breadcrumb,
   BreadcrumbItem,
   BreadcrumbLink,
-  useToast,
 } from '@chakra-ui/react';
 import { SearchIcon, ChevronDownIcon } from '@chakra-ui/icons';
 import Instagram from './tabs/instagram';
@@ -29,11 +28,8 @@ import { tabCounts } from './data';
 import { useFilters } from '../../context/FilterContext';
 import { exportToCSV } from '../../utils/export';
 import AddProduct from './modal/addProduct';
-import { image } from 'framer-motion/client';
-import { 
-  getProducts, 
+import {
   getLoading,
-  getError
 } from './redux/selector';
 import {
   fetch_products,
@@ -41,14 +37,11 @@ import {
   update_product,
   delete_product
 } from './redux/reducer';
-import EmptyStatePage from '../../components/emptyState';
-import { FiPackage } from 'react-icons/fi';
+import LoadingSpinner from '../../components/LoadingSpinner';
 
 const Product = () => {
   const dispatch = useDispatch();
-  const products = useSelector(getProducts);
   const loading = useSelector(getLoading);
-  const error = useSelector(getError);
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize] = useState(10);
   const [tabIndex, setTabIndex] = useState(0);
@@ -60,7 +53,6 @@ const Product = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalAction, setModalAction] = useState('');
   const [selectedPost, setSelectedPost] = useState(null);
-  const toast = useToast();
 
   const handleModalOpen = (action, post = null) => {
     setModalAction(action);
@@ -183,30 +175,8 @@ const Product = () => {
   ];
 
   if (loading) {
-    return <Box p={8}>Loading...</Box>;
+    return <LoadingSpinner />;
   }
-
-  // if (error) {
-  //   return (
-  //     <EmptyStatePage
-  //       title="Error Loading Products"
-  //       sub={error}
-  //       icon={<FiPackage size={50} />}
-  //     />
-  //   );
-  // }
-
-  // if (!products.length) {
-  //   return (
-  //     <EmptyStatePage
-  //       title="No Products Found"
-  //       sub="Start by adding your first product"
-  //       icon={<FiPackage size={50} />}
-  //       btnText="Add Product"
-  //       handleClick={() => handleModalOpen('add')}
-  //     />
-  //   );
-  // }
 
   return (
     <Container maxW="container.xl" py={8}>

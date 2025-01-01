@@ -26,6 +26,7 @@ import {
   add_customer,
   update_customer_segment
 } from './redux/reducer';
+import LoadingSpinner from '../../components/LoadingSpinner';
 
 const Customers = () => {
   const dispatch = useDispatch();
@@ -74,7 +75,7 @@ const Customers = () => {
   });
 
   if (loading) {
-    return <Box p={8}>Loading...</Box>;
+    return <LoadingSpinner />;
   }
 
   const renderContent = () => {

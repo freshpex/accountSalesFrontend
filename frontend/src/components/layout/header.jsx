@@ -27,9 +27,10 @@ import { selectProfile } from "../../app/accountSettings.jsx/redux/selector";
 
 const Header = ({ toggleSidebar, isSidebarOpen }) => {
   const profile = useSelector(selectProfile);
-  const bgColor = useColorModeValue("white", "gray.100");
-  const textColor = useColorModeValue("gray.800", "gray.200");
-  const borderColor = useColorModeValue("gray.200", "gray.700");
+  const bgColor = useColorModeValue("white", "gray.900");
+  const textColor = useColorModeValue("gray.600", "gray.200");
+  const activeColor = useColorModeValue("blue.50", "blue.800");
+  const borderColor = useColorModeValue("gray.100", "gray.700");
 
   // Dummy data for notifications and messages
   const [notifications] = useState(3);
@@ -60,7 +61,7 @@ const Header = ({ toggleSidebar, isSidebarOpen }) => {
           type="text"
           placeholder="Search product"
           borderRadius="md"
-          bg="white"
+          bg={bgColor}
           color={textColor}
           _placeholder={{ color: textColor }}
           focusBorderColor="blue.400"

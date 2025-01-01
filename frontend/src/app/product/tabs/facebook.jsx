@@ -5,6 +5,7 @@ import { FiFacebook } from 'react-icons/fi';
 import DataTable from '../components/table';
 import EmptyStatePage from '../../../components/emptyState';
 import { getFacebookProducts, getLoading } from '../redux/selector';
+import LoadingSpinner from '../../../components/LoadingSpinner';
 
 const Facebook = ({ searchQuery, filters, onDataFiltered, applyFilters, onViewPost, onEditPost, onDeletePost }) => {
   const FacebookProducts = useSelector(getFacebookProducts);
@@ -22,7 +23,7 @@ const Facebook = ({ searchQuery, filters, onDataFiltered, applyFilters, onViewPo
   }, [searchQuery, filters, applyFilters, onDataFiltered, FacebookProducts]);
 
   if (loading) {
-    return <Box p={8}>Loading...</Box>;
+    return <LoadingSpinner />;
   }
 
   if (!FacebookProducts.length) {

@@ -5,6 +5,7 @@ import { FiInstagram } from 'react-icons/fi';
 import DataTable from '../components/table';
 import EmptyStatePage from '../../../components/emptyState';
 import { getInstagramProducts, getLoading } from '../redux/selector';
+import LoadingSpinner from '../../../components/LoadingSpinner';
 
 const Instagram = ({ searchQuery, filters, onDataFiltered, applyFilters, onViewPost, onEditPost, onDeletePost }) => {
   const instagramProducts = useSelector(getInstagramProducts);
@@ -22,7 +23,7 @@ const Instagram = ({ searchQuery, filters, onDataFiltered, applyFilters, onViewP
   }, [searchQuery, filters, applyFilters, onDataFiltered, instagramProducts]);
 
   if (loading) {
-    return <Box p={8}>Loading...</Box>;
+    return <LoadingSpinner />;
   }
 
   if (!instagramProducts.length) {

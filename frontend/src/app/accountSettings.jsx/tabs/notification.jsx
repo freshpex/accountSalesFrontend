@@ -5,6 +5,7 @@ import {
 } from '@chakra-ui/react';
 import { getNotificationSettings, getLoading } from '../redux/selector';
 import { fetch_notification_settings, toggle_notification_setting } from '../redux/reducer';
+import LoadingSpinner from '../../../components/LoadingSpinner';
 
 const NotificationToggle = ({ title, description, isChecked, onChange }) => (
   <Flex justify="space-between" align="center">
@@ -38,7 +39,7 @@ const Notification = () => {
   };
 
   if (loading) {
-    return <Box p={8}>Loading...</Box>;
+    return <LoadingSpinner />;
   }
 
   return (

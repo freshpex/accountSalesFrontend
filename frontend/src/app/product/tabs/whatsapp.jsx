@@ -5,6 +5,7 @@ import { FaWhatsapp } from 'react-icons/fa';
 import DataTable from '../components/table';
 import EmptyStatePage from '../../../components/emptyState';
 import { getWhatsappProducts, getLoading } from '../redux/selector';
+import LoadingSpinner from '../../../components/LoadingSpinner';
 
 const Whatsapp = ({ searchQuery, filters, onDataFiltered, applyFilters, onViewPost, onEditPost, onDeletePost }) => {
   const WhatsappProducts = useSelector(getWhatsappProducts);
@@ -22,7 +23,7 @@ const Whatsapp = ({ searchQuery, filters, onDataFiltered, applyFilters, onViewPo
   }, [searchQuery, filters, applyFilters, onDataFiltered, WhatsappProducts]);
 
   if (loading) {
-    return <Box p={8}>Loading...</Box>;
+    return <LoadingSpinner />;
   }
 
   if (!WhatsappProducts.length) {

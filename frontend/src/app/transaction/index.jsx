@@ -13,6 +13,7 @@ import { getStatusColor, getPaymentColor } from '../../utils/utils';
 import { useFilters } from '../../context/FilterContext';
 import { exportToCSV } from '../../utils/export';
 import EmptyStatePage from '../../components/emptyState';
+import LoadingSpinner from '../../components/LoadingSpinner';
 import {
   getTransactions,
   getTransactionStats,
@@ -119,7 +120,7 @@ const Transaction = () => {
   };
 
   if (loading) {
-    return <Box p={8}>Loading...</Box>;
+    return <LoadingSpinner />;
   }
 
   const renderContent = () => {

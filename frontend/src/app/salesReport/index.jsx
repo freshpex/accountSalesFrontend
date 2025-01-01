@@ -17,6 +17,7 @@ import {
   getFilters
 } from './redux/selector';
 import { fetch_sales_report, update_filters } from './redux/reducer';
+import LoadingSpinner from '../../components/LoadingSpinner';
 
 const SalesReport = () => {
   const dispatch = useDispatch();
@@ -38,9 +39,9 @@ const SalesReport = () => {
   };
 
   if (loading) {
-    return <Box p={8}>Loading...</Box>;
+    return <LoadingSpinner />;
   }
-
+  
   const renderContent = () => {
     if (!summary.totalRevenue && !monthlySales.length) {
       return (

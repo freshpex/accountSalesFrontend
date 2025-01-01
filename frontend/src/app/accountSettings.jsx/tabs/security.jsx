@@ -39,6 +39,7 @@ import {
   update_password,
   fetch_login_history
 } from '../redux/reducer';
+import LoadingSpinner from '../../../components/LoadingSpinner';
 
 const Security = () => {
   const dispatch = useDispatch();
@@ -114,7 +115,7 @@ const Security = () => {
   };
 
   if (loading) {
-    return <Box p={8}>Loading...</Box>;
+    return <LoadingSpinner />;
   }
 
   if (!securitySettings) {

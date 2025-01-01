@@ -5,6 +5,7 @@ import { FiTwitter } from 'react-icons/fi';
 import DataTable from '../components/table';
 import EmptyStatePage from '../../../components/emptyState';
 import { getTwitterProducts, getLoading } from '../redux/selector';
+import LoadingSpinner from '../../../components/LoadingSpinner';
 
 const Twitter = ({ searchQuery, filters, onDataFiltered, applyFilters, onViewPost, onEditPost, onDeletePost }) => {
   const TwitterProducts = useSelector(getTwitterProducts);
@@ -22,7 +23,7 @@ const Twitter = ({ searchQuery, filters, onDataFiltered, applyFilters, onViewPos
   }, [searchQuery, filters, applyFilters, onDataFiltered, TwitterProducts]);
 
   if (loading) {
-    return <Box p={8}>Loading...</Box>;
+    return <LoadingSpinner />;
   }
 
   if (!TwitterProducts.length) {

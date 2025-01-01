@@ -25,6 +25,7 @@ import {
   fetch_dashboard_data, 
   fetch_sales_metrics 
 } from './redux/reducer';
+import LoadingSpinner from '../../components/LoadingSpinner';
 
 const Dashboard = () => {
   const dispatch = useDispatch();
@@ -50,7 +51,7 @@ const Dashboard = () => {
   }, [dispatch, timeRange]);
 
   if (loading) {
-    return <Box p={8}>Loading...</Box>;
+    return <LoadingSpinner />;
   }
 
   const renderContent = () => {
