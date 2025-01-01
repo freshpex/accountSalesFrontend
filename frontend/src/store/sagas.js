@@ -9,6 +9,7 @@ import productSagas from '../app/product/redux/saga';
 import customerSagas from '../app/customer/redux/saga';
 import helpSagas from '../app/help/redux/saga';
 import transactionSagas from '../app/transaction/redux/saga';
+import layoutSagas from '../components/layout/redux/saga';
 
 export default function* rootSaga() {
   yield all([
@@ -22,6 +23,7 @@ export default function* rootSaga() {
     fork(customerSagas),
     fork(helpSagas),
     fork(transactionSagas),
+    fork(layoutSagas),
     // Add other sagas here
   ]);
 }

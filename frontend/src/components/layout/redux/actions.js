@@ -1,5 +1,5 @@
-export const TOGGLE_SIDEBAR = 'layout/toggle_sidebar';
+import { ActionTypes } from '../../../store/types';
 
 export const toggleSidebar = () => ({
-  type: TOGGLE_SIDEBAR,
+  type: ActionTypes.TOGGLE_SIDEBAR,
 });

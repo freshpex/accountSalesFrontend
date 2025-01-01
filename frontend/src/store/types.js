@@ -94,6 +94,9 @@ export const ActionTypes = {
   UPDATE_FILTERS: 'salesReport/update_filters',
   FETCH_REGIONAL_DATA: 'salesReport/fetch_regional_data',
   FETCH_REGIONAL_DATA_SUCCESS: 'salesReport/fetch_regional_data_success',
+
+  // Layout actions
+  TOGGLE_SIDEBAR: 'layout/toggle_sidebar',
 };
 
 export const ApiEndpoints = {

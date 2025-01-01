@@ -1,4 +1,4 @@
-import { TOGGLE_SIDEBAR } from './actions';
+import { ActionTypes } from '../../../store/types';
 
 const initialState = {
   isSidebarOpen: false,
@@ -6,7 +6,7 @@ const initialState = {
 
 const layoutReducer = (state = initialState, action) => {
   switch (action.type) {
-    case TOGGLE_SIDEBAR:
+    case ActionTypes.TOGGLE_SIDEBAR:
       return {
         ...state,
         isSidebarOpen: !state.isSidebarOpen,
