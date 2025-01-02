@@ -2,6 +2,7 @@ import { Routes, Route } from 'react-router-dom';
 import { lazy } from 'react';
 import Layout from './components/layout';
 
+const Home = lazy(() => import('./app/home'));
 const Login = lazy(() => import('./app/authentication/login'));
 const Register = lazy(() => import('./app/authentication/register'));
 const Dashboard = lazy(() => import('./app/dashboard'));
@@ -17,20 +18,15 @@ const ChangePassword = lazy(() => import('./app/authentication/ForgotPassword/ch
 
 const AppRoutes = () => {
   return (
-    <Routes>
+    <Routes>      
+      <Route
+        path="/"
+        element={ <Home />}/>
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
       <Route path="/forgot-password" element={<ResetPassword />} />
       <Route path="/email-check" element={<EmailInfo />} />
       <Route path="/reset-password/:id" element={<ChangePassword />} />
-      <Route
-        path="/"
-        element={
-          <Layout>
-            <Dashboard />
-          </Layout>
-        }
-      />
       <Route
         path="/dashboard"
         element={
