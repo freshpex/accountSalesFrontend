@@ -1,6 +1,7 @@
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import { lazy } from 'react';
 import Layout from './components/layout';
+import ProtectedRoute from './components/protectedRoute';
 
 const Home = lazy(() => import('./app/home'));
 const Login = lazy(() => import('./app/authentication/login'));
@@ -18,71 +19,28 @@ const ChangePassword = lazy(() => import('./app/authentication/ForgotPassword/ch
 
 const AppRoutes = () => {
   return (
-    <Routes>      
-      <Route
-        path="/"
-        element={ <Home />}/>
+    <Routes>
+      {/* Public Routes */}
+      <Route path="/" element={<Home />} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
       <Route path="/forgot-password" element={<ResetPassword />} />
       <Route path="/email-check" element={<EmailInfo />} />
       <Route path="/reset-password/:id" element={<ChangePassword />} />
-      <Route
-        path="/dashboard"
-        element={
-          <Layout>
-            <Dashboard />
-          </Layout>
-        }
-      />
-      <Route
-        path="/help"
-        element={
-          <Layout>
-            <Help />
-          </Layout>
-        }
-      />
-      <Route
-        path="/settings"
-        element={
-          <Layout>
-            <AccountSettings />
-          </Layout>
-        }
-      />
-      <Route
-        path="/product/*"
-        element={
-          <Layout>
-            <Products />
-          </Layout>
-        }
-      />
-      <Route
-        path="/transaction"
-        element={
-          <Layout>
-            <Transaction />
-          </Layout>
-        }
-      />
-      <Route
-        path="/customers"
-        element={
-          <Layout>
-            <Customers />
-          </Layout>
-        }
-      />
-      <Route
-        path="/sales-report"
-        element={
-          <Layout>
-            <SalesReport />
-          </Layout>
-        }
-      />
+
+      {/* Protected Routes Group */}
+      <Route element={<ProtectedRoute><Layout /></ProtectedRoute>}>
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/help" element={<Help />} />
+        <Route path="/settings" element={<AccountSettings />} />
+        <Route path="/product/*" element={<Products />} />
+        <Route path="/transaction" element={<Transaction />} />
+        <Route path="/customers" element={<Customers />} />
+        <Route path="/sales-report" element={<SalesReport />} />
+      </Route>
+
+      {/* Catch all route */}
+      <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
 };

@@ -1,4 +1,4 @@
-import { put, takeLatest, call } from "redux-saga/effects";
+import { put, takeLatest, call, select } from "redux-saga/effects";
 import {
   fetch_products,
   fetch_products_success,
@@ -19,11 +19,30 @@ import toast from "react-hot-toast";
 
 function* fetchProductsSaga({ payload }) {
   try {
-    const { platform, status, sort, page = 1, limit = 10 } = payload || {};
-    const params = { platform, status, sort, page, limit };
+    // Get current filters from state
+    const filters = yield select(state => state.product.filters);
+    const tableSettings = yield select(state => state.product.tableSettings);
+
+    const params = {
+      ...filters,
+      ...payload,
+      type: payload?.platform || filters.type, // Add type/platform filter
+      sort: tableSettings.sortBy ? `${tableSettings.sortOrder === 'desc' ? '-' : ''}${tableSettings.sortBy}` : undefined,
+      page: payload?.page || tableSettings.currentPage,
+      limit: tableSettings.pageSize
+    };
+
+    console.log('Fetching products with params:', params); // Debug log
+
     const response = yield call(api.get, ApiEndpoints.PRODUCTS, { params });
-    yield put(fetch_products_success(response.data));
+    
+    if (response.data.items) {
+      yield put(fetch_products_success(response.data));
+    } else {
+      throw new Error('Invalid response format');
+    }
   } catch (error) {
+    console.error('Product fetch error:', error);
     const errorMessage = error.response?.data?.error || "Failed to fetch products";
     toast.error(errorMessage);
     yield put(fetch_products_error(errorMessage));

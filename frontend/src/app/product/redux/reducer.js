@@ -124,6 +124,17 @@ export const productSlice = createSlice({
     },
     select_table_items: (state, action) => {
       state.tableSettings.selectedItems = action.payload;
+    },
+    clear_product_error: (state) => {
+      state.ui.error = null;
+    },
+    reset_product_state: () => initialState,
+    set_product_filter: (state, action) => {
+      state.filters = { ...state.filters, ...action.payload };
+    },
+    set_product_sort: (state, action) => {
+      state.tableSettings.sortBy = action.payload.sortBy;
+      state.tableSettings.sortOrder = action.payload.sortOrder;
     }
   }
 });
@@ -143,7 +154,11 @@ export const {
   delete_product_error,
   set_selected_product,
   update_table_settings,
-  select_table_items
+  select_table_items,
+  clear_product_error,
+  reset_product_state,
+  set_product_filter,
+  set_product_sort
 } = productSlice.actions;
 
 export default productSlice.reducer;

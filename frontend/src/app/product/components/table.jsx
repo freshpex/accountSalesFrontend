@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import PropTypes from 'prop-types';
 import {
   Table,
   Thead,
@@ -222,13 +223,13 @@ const DataTable = ({
         </Thead>
         <Tbody>
           {data.map((item) => (
-            <Tr
+            <motion.tr
               key={item.id}
-              as="tr"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.2 }}
-              _hover={{ bg: hoverBg }}
+              style={{ backgroundColor: 'transparent' }}
+              whileHover={{ backgroundColor: hoverBg }}
             >
               <Td>
                 <Checkbox
@@ -292,7 +293,7 @@ const DataTable = ({
                   </Tooltip>
                 </HStack>
               </Td>
-            </Tr>
+            </motion.tr>
           ))}
         </Tbody>
       </Table>
@@ -358,6 +359,23 @@ const DataTable = ({
       </Stack>
     </Box>
   );
+};
+DataTable.propTypes = {
+  data: PropTypes.arrayOf(PropTypes.shape({
+    id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+    status: PropTypes.string
+  })).isRequired,
+  columns: PropTypes.arrayOf(PropTypes.shape({
+    key: PropTypes.string.isRequired,
+    label: PropTypes.string.isRequired
+  })).isRequired,
+  onView: PropTypes.func.isRequired,
+  onEdit: PropTypes.func.isRequired,
+  onDelete: PropTypes.func.isRequired,
+  getStatusColor: PropTypes.func.isRequired,
+  currentPage: PropTypes.number.isRequired,
+  pageSize: PropTypes.number.isRequired,
+  onPageChange: PropTypes.func.isRequired
 };
 
 export default DataTable;

@@ -100,9 +100,11 @@ export const ActionTypes = {
 };
 
 export const ApiEndpoints = {
-  REGISTER: '/api/v1/user/signup',
+  // Auth endpoints
   LOGIN: '/api/v1/user/signin',
+  REGISTER: '/api/v1/user/signup',
   FORGOT_PASSWORD: '/api/v1/user/forgot-password',
+  RESET_PASSWORD: '/api/v1/user/reset-password',
   TRANSACTIONS: '/api/v1/transactions',
   PRODUCTS: '/api/v1/products',
   CUSTOMERS: '/api/v1/customers',

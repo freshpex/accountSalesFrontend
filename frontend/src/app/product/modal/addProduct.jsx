@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useSelector } from 'react-redux';
 import {
   Box,
@@ -17,10 +17,21 @@ import {
   ModalContent,
   ModalHeader,
   ModalBody,
+  useDisclosure,
+  AlertDialog,
+  AlertDialogBody,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogContent,
+  AlertDialogOverlay,
+  FormErrorMessage,
 } from "@chakra-ui/react";
 import { FaImage } from "react-icons/fa";
 import { getLoading } from '../redux/selector';
 import { useColors } from '../../../utils/colors';
+import toast from "react-hot-toast";
+import { useProductActions } from '../hooks/useProductActions';
+import { validateImage, validateProductData } from '../redux/actions';
 
 const AddProduct = ({ isOpen, onClose, data, action, onSave, onDelete }) => {
   const loading = useSelector(getLoading);
@@ -37,6 +48,27 @@ const AddProduct = ({ isOpen, onClose, data, action, onSave, onDelete }) => {
 
   const isReadOnly = action === 'view';
   const colors = useColors();
+
+  // Add delete confirmation dialog
+  const { isOpen: isDeleteOpen, onOpen: onDeleteOpen, onClose: onDeleteClose } = useDisclosure();
+  const cancelRef = useRef();
+
+  // Form validation state
+  const [formErrors, setFormErrors] = useState({});
+
+  const validateForm = () => {
+    const errors = {};
+    if (!username) errors.username = 'Username is required';
+    if (!type) errors.type = 'Product type is required';
+    if (!age) errors.age = 'Account age is required';
+    if (!follower) errors.follower = 'Follower count is required';
+    if (!price) errors.price = 'Price is required';
+    if (!region) errors.region = 'Region is required';
+    if (!about) errors.about = 'Description is required';
+    
+    setFormErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
 
   useEffect(() => {
     if (data) {
@@ -64,282 +96,324 @@ const AddProduct = ({ isOpen, onClose, data, action, onSave, onDelete }) => {
     }
   }, [data]);
 
-  const handleSave = () => {
-    const formData = new FormData();
+  const { handleAddProduct, handleUpdateProduct, handleDeleteProduct } = useProductActions();
+
+  const handleSave = async () => {
     const productData = {
       username,
       type,
-      age,
-      follower,
-      status,
-      price,
+      age: Number(age),
+      followers: Number(follower),
+      status: status || 'available',
+      price: Number(price),
       region,
       about,
-      engagement,
-      images
+      engagement: Number(engagement) || 0,
+      images: images.filter(Boolean)
     };
 
-    // Handle file uploads
-    if (images) {
-      images.forEach((image, index) => {
-        if (image instanceof File) {
-          formData.append('images', image);
-        }
+    let success;
+    if (action === 'add') {
+      success = await handleAddProduct(productData);
+    } else if (action === 'edit') {
+      success = await handleUpdateProduct(data.id, {
+        ...productData,
+        existingImages: images.filter(img => typeof img === 'string'),
+        newImages: images.filter(img => img instanceof File)
       });
     }
 
-    // Add rest of the data
-    Object.keys(productData).forEach(key => {
-      if (key !== 'images') {
-        formData.append(key, productData[key]);
-      }
-    });
-
-    onSave(formData);
+    if (success) {
+      onClose();
+      toast.success(`Product ${action === 'add' ? 'added' : 'updated'} successfully`);
+    }
   };
 
   const handleImageChange = (index, file) => {
+    if (file) {
+      const { isValid, error } = validateImage(file);
+      if (!isValid) {
+        toast.error(error);
+        return;
+      }
+    }
+
     const newImages = [...images];
-    newImages[index] = file ? URL.createObjectURL(file) : "";
+    newImages[index] = file || "";
     setImages(newImages);
+  };
+
+  const handleDeleteConfirm = () => {
+    onDelete(data.id);
+    onDeleteClose();
+  };
+
+  const renderActionButtons = () => {
+    if (action === 'view') {
+      return (
+        <Button colorScheme="blue" onClick={onClose}>
+          Close
+        </Button>
+      );
+    }
+
+    return (
+      <>
+        <Button variant="outline" onClick={onClose} mr={3}>
+          Cancel
+        </Button>
+        {action === 'delete' ? (
+          <Button colorScheme="red" onClick={onDeleteOpen}>
+            Delete
+          </Button>
+        ) : (
+          <Button
+            colorScheme="blue"
+            onClick={handleSave}
+            isLoading={loading}
+          >
+            {action === 'add' ? 'Create Product' : 'Save Changes'}
+          </Button>
+        )}
+      </>
+    );
   };
 
   if (!isOpen) return null;
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} size="6xl">
-      <ModalOverlay />
-      <ModalContent maxW="1200px" maxH="90vh" overflowY="auto" bg={colors.bgColor} color={colors.textColor}>
-        <ModalHeader>
-          {action === "add" && "Add"}
-          {action === "view" && "View"}
-          {action === "edit" && "Edit"}
-          {" Product"}
-        </ModalHeader>
-        <ModalBody>
-          <Box display="flex" flexDirection={["column", "column", "row"]} gap={8}>
-            {/* Left Section */}
-            <VStack spacing={4} align="stretch" flex={1}>
-              <FormControl>
-                <FormLabel>Username</FormLabel>
-                <Input
-                  placeholder="Input the Account Username"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
-                  isReadOnly={isReadOnly}
-                  bg={isReadOnly ? "gray.100" : colors.bgColor}
-                />
-              </FormControl>
-          
-              <FormControl>
-                <FormLabel>Product type </FormLabel>
-                <Input
-                  placeholder="Input product name (Instagram/Twitter/Facebook/Whatsapp"
-                  value={type}
-                  onChange={(e) => setType(e.target.value)}
-                  isReadOnly={isReadOnly}
-                  bg={isReadOnly ? "gray.100" : colors.bgColor}
-                />
-                <Select
-                  placeholder="Select product category"
-                  value={type}
-                  onChange={(e) => setType(e.target.value)}
-                  isDisabled={isReadOnly}
-                  bg={isReadOnly ? "gray.100" : colors.bgColor}
-                >
-                  <option value="instagram">Instagram</option>
-                  <option value="twitter">Twitter</option>
-                  <option value="facebook">Facebook</option>
-                  <option value="whatsapp">Whatsapp</option>
-                </Select>
-              </FormControl>
-          
-              <HStack spacing={4}>
-                <FormControl flex={1}>
-                  <FormLabel>Age</FormLabel>
+    <>
+      <Modal isOpen={isOpen} onClose={onClose} size="6xl">
+        <ModalOverlay />
+        <ModalContent maxW="1200px" maxH="90vh" overflowY="auto" bg={colors.bgColor} color={colors.textColor}>
+          <ModalHeader>
+            {action === "add" && "Add"}
+            {action === "view" && "View"}
+            {action === "edit" && "Edit"}
+            {" Product"}
+          </ModalHeader>
+          <ModalBody>
+            <Box display="flex" flexDirection={["column", "column", "row"]} gap={8}>
+              {/* Left Section */}
+              <VStack spacing={4} align="stretch" flex={1}>
+                <FormControl isInvalid={!!formErrors.username}>
+                  <FormLabel>Username</FormLabel>
                   <Input
-                    placeholder="Input How old the account is"
-                    value={age}
-                    onChange={(e) => setAge(e.target.value)}
+                    placeholder="Input the Account Username"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
                     isReadOnly={isReadOnly}
                     bg={isReadOnly ? "gray.100" : colors.bgColor}
                   />
+                  <FormErrorMessage>{formErrors.username}</FormErrorMessage>
                 </FormControl>
-                <FormControl flex={1}>
-                  <FormLabel>Follower</FormLabel>
+            
+                <FormControl isInvalid={!!formErrors.type}>
+                  <FormLabel>Product type </FormLabel>
                   <Input
-                    placeholder="Input The number of followers"
-                    value={follower}
-                    onChange={(e) => setFollower(e.target.value)}
+                    placeholder="Input product name (Instagram/Twitter/Facebook/Whatsapp"
+                    value={type}
+                    onChange={(e) => setType(e.target.value)}
                     isReadOnly={isReadOnly}
                     bg={isReadOnly ? "gray.100" : colors.bgColor}
                   />
-                </FormControl>
-              </HStack>
-          
-              <HStack spacing={4}>
-                <FormControl flex={1}>
-                  <FormLabel>Status</FormLabel>
                   <Select
                     placeholder="Select product category"
-                    value={status}
-                    onChange={(e) => setStatus(e.target.value)}
+                    value={type}
+                    onChange={(e) => setType(e.target.value)}
                     isDisabled={isReadOnly}
                     bg={isReadOnly ? "gray.100" : colors.bgColor}
                   >
-                    <option value="sold">Sold</option>
-                    <option value="available">Available</option>
+                    <option value="instagram">Instagram</option>
+                    <option value="twitter">Twitter</option>
+                    <option value="facebook">Facebook</option>
+                    <option value="whatsapp">Whatsapp</option>
                   </Select>
+                  <FormErrorMessage>{formErrors.type}</FormErrorMessage>
                 </FormControl>
-                <FormControl flex={1}>
-                  <FormLabel>Price</FormLabel>
+            
+                <HStack spacing={4}>
+                  <FormControl flex={1} isInvalid={!!formErrors.age}>
+                    <FormLabel>Age</FormLabel>
+                    <Input
+                      placeholder="Input How old the account is"
+                      value={age}
+                      onChange={(e) => setAge(e.target.value)}
+                      isReadOnly={isReadOnly}
+                      bg={isReadOnly ? "gray.100" : colors.bgColor}
+                    />
+                    <FormErrorMessage>{formErrors.age}</FormErrorMessage>
+                  </FormControl>
+                  <FormControl flex={1} isInvalid={!!formErrors.follower}>
+                    <FormLabel>Follower</FormLabel>
+                    <Input
+                      placeholder="Input The number of followers"
+                      value={follower}
+                      onChange={(e) => setFollower(e.target.value)}
+                      isReadOnly={isReadOnly}
+                      bg={isReadOnly ? "gray.100" : colors.bgColor}
+                    />
+                    <FormErrorMessage>{formErrors.follower}</FormErrorMessage>
+                  </FormControl>
+                </HStack>
+            
+                <HStack spacing={4}>
+                  <FormControl flex={1}>
+                    <FormLabel>Status</FormLabel>
+                    <Select
+                      placeholder="Select product category"
+                      value={status}
+                      onChange={(e) => setStatus(e.target.value)}
+                      isDisabled={isReadOnly}
+                      bg={isReadOnly ? "gray.100" : colors.bgColor}
+                    >
+                      <option value="sold">Sold</option>
+                      <option value="available">Available</option>
+                    </Select>
+                  </FormControl>
+                  <FormControl flex={1} isInvalid={!!formErrors.price}>
+                    <FormLabel>Price</FormLabel>
+                    <Input
+                      placeholder="Input price"
+                      value={price}
+                      onChange={(e) => setPrice(e.target.value)}
+                      isReadOnly={isReadOnly}
+                      bg={isReadOnly ? "gray.100" : colors.bgColor}
+                    />
+                    <FormErrorMessage>{formErrors.price}</FormErrorMessage>
+                  </FormControl>
+                </HStack>
+            
+                <FormControl isInvalid={!!formErrors.region}>
+                  <FormLabel>Region</FormLabel>
                   <Input
-                    placeholder="Input price"
-                    value={price}
-                    onChange={(e) => setPrice(e.target.value)}
+                    placeholder="Input the account location"
+                    value={region}
+                    onChange={(e) => setRegion(e.target.value)}
                     isReadOnly={isReadOnly}
                     bg={isReadOnly ? "gray.100" : colors.bgColor}
                   />
+                  <FormErrorMessage>{formErrors.region}</FormErrorMessage>
                 </FormControl>
-              </HStack>
-          
-              <FormControl>
-                <FormLabel>Region</FormLabel>
-                <Input
-                  placeholder="Input the account location"
-                  value={region}
-                  onChange={(e) => setRegion(e.target.value)}
-                  isReadOnly={isReadOnly}
-                  bg={isReadOnly ? "gray.100" : colors.bgColor}
-                />
-              </FormControl>
 
-              <FormControl>
-                <FormLabel>About </FormLabel>
-                <Input
-                  placeholder="Input any additional or new thing about the account"
-                  value={about}
-                  onChange={(e) => setAbout(e.target.value)}
-                  isReadOnly={isReadOnly}
-                  bg={isReadOnly ? "gray.100" : colors.bgColor}
-                />
-              </FormControl>
-            </VStack>
+                <FormControl isInvalid={!!formErrors.about}>
+                  <FormLabel>About </FormLabel>
+                  <Input
+                    placeholder="Input any additional or new thing about the account"
+                    value={about}
+                    onChange={(e) => setAbout(e.target.value)}
+                    isReadOnly={isReadOnly}
+                    bg={isReadOnly ? "gray.100" : colors.bgColor}
+                  />
+                  <FormErrorMessage>{formErrors.about}</FormErrorMessage>
+                </FormControl>
+              </VStack>
 
-            {/* Right Section: Image Upload */}
-            <Box flex={1}>
-              <Text fontWeight="bold" mb={2}>
-                Image Product
-              </Text>
-              <Text fontSize="sm" color="gray.500" mb={4}>
-                Note: Format photos SVG, PNG, or JPG (Max size 4MB)
-              </Text>
-          
-              {/* Image Grid */}
-              <SimpleGrid columns={4} spacing={4} mb={6}>
-                {images.map((image, index) => (
-                  <Box
-                    key={index}
-                    border="2px dashed #007bff"
-                    borderRadius="md"
-                    bg="gray.50"
-                    p={2}
-                    display="flex"
-                    flexDirection="column"
-                    alignItems="center"
-                    justifyContent="center"
-                    height="100px"
-                    textAlign="center"
-                    position="relative"
-                    onClick={isReadOnly ? undefined : () => document.getElementById(`fileInput-${index}`).click()}
-                    cursor={isReadOnly ? "default" : "pointer"}
-                  >
-                    {image ? (
-                      <>
-                        <Image
-                          src={image}
-                          alt={`Image ${index + 1}`}
-                          objectFit="contain"
-                          boxSize="60px"
-                          height="100px"
+              {/* Right Section: Image Upload */}
+              <Box flex={1}>
+                <Text fontWeight="bold" mb={2}>
+                  Image Product
+                </Text>
+                <Text fontSize="sm" color="gray.500" mb={4}>
+                  Note: Format photos SVG, PNG, or JPG (Max size 4MB)
+                </Text>
+            
+                {/* Image Grid */}
+                <SimpleGrid columns={4} spacing={4} mb={6}>
+                  {images.map((image, index) => (
+                    <Box
+                      key={index}
+                      border="2px dashed #007bff"
+                      borderRadius="md"
+                      bg="gray.50"
+                      p={2}
+                      display="flex"
+                      flexDirection="column"
+                      alignItems="center"
+                      justifyContent="center"
+                      height="100px"
+                      textAlign="center"
+                      position="relative"
+                      onClick={isReadOnly ? undefined : () => document.getElementById(`fileInput-${index}`).click()}
+                      cursor={isReadOnly ? "default" : "pointer"}
+                    >
+                      {image ? (
+                        <>
+                          <Image
+                            src={image}
+                            alt={`Image ${index + 1}`}
+                            objectFit="contain"
+                            boxSize="60px"
+                            height="100px"
+                          />
+                          {!isReadOnly && (
+                            <Button
+                              size="xs"
+                              colorScheme="red"
+                              position="absolute"
+                              top="2"
+                              right="2"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleImageChange(index, null);
+                              }}
+                            >
+                              X
+                            </Button>
+                          )}
+                        </>
+                      ) : (
+                        <Box>
+                          <FaImage color="#007bff" size={24} />
+                          <Text fontSize="xs" color="gray.600" fontWeight="bold" mt={2}>
+                            Photo {index + 1}
+                          </Text>
+                        </Box>
+                      )}
+                      {!isReadOnly && (
+                        <Input
+                          id={`fileInput-${index}`}
+                          type="file"
+                          display="none"
+                          onChange={(e) => handleImageChange(index, e.target.files[0])}
                         />
-                        {!isReadOnly && (
-                          <Button
-                            size="xs"
-                            colorScheme="red"
-                            position="absolute"
-                            top="2"
-                            right="2"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleImageChange(index, null);
-                            }}
-                          >
-                            X
-                          </Button>
-                        )}
-                      </>
-                    ) : (
-                      <Box>
-                        <FaImage color="#007bff" size={24} />
-                        <Text fontSize="xs" color="gray.600" fontWeight="bold" mt={2}>
-                          Photo {index + 1}
-                        </Text>
-                      </Box>
-                    )}
-                    {!isReadOnly && (
-                      <Input
-                        id={`fileInput-${index}`}
-                        type="file"
-                        display="none"
-                        onChange={(e) => handleImageChange(index, e.target.files[0])}
-                      />
-                    )}
-                  </Box>
-                ))}
-              </SimpleGrid>
-              <HStack spacing={4} justifyContent="space-between" mt={4}>
-                {action === 'view' ? (
-                  <Button
-                    colorScheme="blue"
-                    onClick={onClose}
-                  >
-                    Close
-                  </Button>
-                ) : (
-                  <>
-                    <Button
-                      colorScheme="blue"
-                      variant="outline"
-                      onClick={onClose}
-                      mr={3}
-                    >
-                      Discard Changes
-                    </Button>
-                    {action === 'delete' ? (
-                      <Button
-                        colorScheme="red"
-                        onClick={() => onDelete && onDelete(data)}
-                        mr={3}
-                      >
-                        Delete
-                      </Button>
-                    ) :
-                    <Button
-                      colorScheme="blue"
-                      onClick={handleSave}
-                    >
-                      {action === 'add' ? 'Create' : 'Save Changes'}
-                    </Button>
-                    }
-                  </>
-                )}
-              </HStack>
+                      )}
+                    </Box>
+                  ))}
+                </SimpleGrid>
+                <HStack spacing={4} justifyContent="flex-end" mt={4}>
+                  {renderActionButtons()}
+                </HStack>
+              </Box>
             </Box>
-          </Box>
-        </ModalBody>
-      </ModalContent>
-    </Modal>
+          </ModalBody>
+        </ModalContent>
+      </Modal>
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog
+        isOpen={isDeleteOpen}
+        leastDestructiveRef={cancelRef}
+        onClose={onDeleteClose}
+      >
+        <AlertDialogOverlay>
+          <AlertDialogContent>
+            <AlertDialogHeader>Delete Product</AlertDialogHeader>
+            <AlertDialogBody>
+              Are you sure you want to delete this product? This action cannot be undone.
+            </AlertDialogBody>
+            <AlertDialogFooter>
+              <Button ref={cancelRef} onClick={onDeleteClose}>
+                Cancel
+              </Button>
+              <Button colorScheme="red" onClick={handleDeleteConfirm} ml={3}>
+                Delete
+              </Button>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialogOverlay>
+      </AlertDialog>
+    </>
   );
 };
 

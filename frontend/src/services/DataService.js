@@ -12,8 +12,9 @@ const api = axios.create({
 api.interceptors.request.use(
   async (config) => {
     const token = await getWithExpiry("x-access-token");
+    // console.log('Token:', token);
     if (token) {
-      config.headers.Authorization = `${token}`;
+      config.headers.Authorization = token.startsWith('Bearer ') ? token : `Bearer ${token}`;
     }
     return config;
   },
@@ -25,7 +26,6 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    // Handle errors globally here when needed
     return Promise.reject(error);
   }
 );

@@ -27,3 +27,8 @@ export const removeWithExpiry = (key) => {
   localStorage.removeItem(key);
   return true;
 };
+
+export const isAuthenticated = () => {
+  const token = getWithExpiry('x-access-token');
+  return !!token;
+};
