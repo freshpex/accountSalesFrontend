@@ -30,13 +30,50 @@ import {
   TagLabel,
   TagLeftIcon,
   Icon,
+  Wrap,
+  WrapItem,
 } from '@chakra-ui/react';
 import { ViewIcon, EditIcon, DeleteIcon, ChevronLeftIcon, ChevronRightIcon, ChevronDownIcon, TimeIcon, CheckIcon, WarningIcon } from '@chakra-ui/icons';
 import { motion } from 'framer-motion';
 import { FiPackage } from 'react-icons/fi';
 import EmptyStatePage from '../../../components/emptyState';
+import SupabaseImage from '../../../components/SupabaseImage';
 
 const MotionBox = motion(Box);
+
+// Helper function to check if a string is a valid image URL
+const isValidImageUrl = (str) => {
+  try {
+    return str.match(/\.(jpeg|jpg|gif|png)$/) != null;
+  } catch (err) {
+    return false;
+  }
+};
+
+// Update the ImageRenderer component
+const ImageRenderer = ({ images, size = { base: "100px", md: "50px" } }) => {
+  if (!images) return null;
+  
+  const imageArray = Array.isArray(images) ? images : [images];
+  
+  return (
+    <Wrap spacing={2}>
+      {imageArray.map((imageUrl, index) => (
+        imageUrl && (
+          <WrapItem key={index}>
+            <SupabaseImage
+              src={imageUrl}
+              alt={`Product ${index + 1}`}
+              boxSize={size}
+              objectFit="cover"
+              borderRadius="md"
+            />
+          </WrapItem>
+        )
+      ))}
+    </Wrap>
+  );
+};
 
 const DataTable = ({
   data,
@@ -56,6 +93,7 @@ const DataTable = ({
   const hoverBg = useColorModeValue('gray.50', 'gray.700');
   const theadBgColor = useColorModeValue('white', 'gray.800');
 
+  // Show empty state if no data
   if (!data?.length) {
     return (
       <EmptyStatePage
@@ -66,12 +104,14 @@ const DataTable = ({
     );
   }
 
+  // Handle selecting all items
   const handleSelectAll = (e) => {
     setSelectedItems(
       e.target.checked ? data.map(item => item.id) : []
     );
   };
 
+  // Handle selecting individual items
   const handleSelectItem = (id) => {
     setSelectedItems(
       selectedItems.includes(id)
@@ -80,6 +120,52 @@ const DataTable = ({
     );
   };
 
+  // Function to render cell content based on type (text, status, or image)
+  const renderCellContent = (item, column) => {
+    const value = item[column.key];
+
+    if (column.key === 'images') {
+      return <ImageRenderer images={value} />;
+    }
+
+    // Handle status column with tags
+    if (column.key === 'status') {
+      return (
+        <Tag
+          size="md"
+          variant="subtle"
+          colorScheme={
+            value?.toLowerCase() === 'available' ? 'green' :
+            value?.toLowerCase() === 'sold' ? 'gray' :
+            'yellow'
+          }
+        >
+          <TagLeftIcon boxSize="12px" as={
+            value?.toLowerCase() === 'available' ? CheckIcon :
+            value?.toLowerCase() === 'sold' ? TimeIcon :
+            WarningIcon
+          } />
+          <TagLabel>{value}</TagLabel>
+        </Tag>
+      );
+    }
+
+    // Handle image columns (single image or array of images)
+    if (value && (typeof value === 'string' || Array.isArray(value))) {
+      const hasImages = Array.isArray(value) 
+        ? value.some(url => isValidImageUrl(url))
+        : isValidImageUrl(value);
+
+      if (hasImages) {
+        return <ImageRenderer images={value} />;
+      }
+    }
+
+    // Default text rendering
+    return <Text>{value}</Text>;
+  };
+
+  // Render mobile card view
   const renderMobileCard = (item) => (
     <MotionBox
       key={item.id}
@@ -103,7 +189,7 @@ const DataTable = ({
           <Text fontSize="sm" fontWeight="medium" color="gray.500">
             {columns[0].label}
           </Text>
-          <Text fontWeight="semibold">{item[columns[0].key]}</Text>
+          {renderCellContent(item, columns[0])}
         </Flex>
 
         <Flex direction="column" gap={2} align="flex-end">
@@ -126,26 +212,7 @@ const DataTable = ({
             <Text fontSize="sm" color="gray.500">
               {column.label}
             </Text>
-            {column.key === 'status' ? (
-              <Tag
-                size="md"
-                variant="subtle"
-                colorScheme={
-                  (item[column.key]?.toLowerCase() === 'available' ? 'green' :
-                  item[column.key]?.toLowerCase() === 'sold' ? 'gray' :
-                  'yellow')
-                }
-              >
-                <TagLeftIcon boxSize="12px" as={
-                  item[column.key]?.toLowerCase() === 'available' ? CheckIcon :
-                  item[column.key]?.toLowerCase() === 'sold' ? TimeIcon :
-                  WarningIcon
-                } />
-                <TagLabel>{item[column.key]}</TagLabel>
-              </Tag>
-            ) : (
-              <Text fontWeight="medium">{item[column.key] || '-'}</Text>
-            )}
+            {renderCellContent(item, column)}
           </Flex>
         ))}
       </Grid>
@@ -187,6 +254,7 @@ const DataTable = ({
     </MotionBox>
   );
 
+  // Render desktop table view
   const renderDesktopTable = () => (
     <Box
       position="relative" 
@@ -197,12 +265,15 @@ const DataTable = ({
     >
       <Table variant="simple" sx={{
         'th, td': {
-          whiteSpace: 'nowrap',
+          whiteSpace: 'normal',
+          verticalAlign: 'top',
+          padding: '1rem',
         },
         'thead': {
           position: 'sticky',
           top: 0,
           backgroundColor: theadBgColor,
+          zIndex: 1,
         }
       }}>
         <Thead bg={bgCard}>
@@ -240,26 +311,7 @@ const DataTable = ({
               </Td>
               {columns.map((column) => (
                 <Td key={column.key}>
-                  {column.key === 'status' ? (
-                    <Tag
-                      size="md"
-                      variant="subtle"
-                      colorScheme={
-                        item[column.key].toLowerCase() === 'available' ? 'green' :
-                        item[column.key].toLowerCase() === 'sold' ? 'gray' :
-                        'yellow'
-                      }
-                    >
-                      <TagLeftIcon boxSize="12px" as={
-                        item[column.key].toLowerCase() === 'available' ? CheckIcon :
-                        item[column.key].toLowerCase() === 'sold' ? TimeIcon :
-                        WarningIcon
-                      } />
-                      <TagLabel>{item[column.key]}</TagLabel>
-                    </Tag>
-                  ) : (
-                    <Text>{item[column.key]}</Text>
-                  )}
+                  {renderCellContent(item, column)}
                 </Td>
               ))}
               <Td>
@@ -300,6 +352,7 @@ const DataTable = ({
     </Box>
   );
 
+  // Main render
   return (
     <Box>
       <Stack spacing={6}>
@@ -360,10 +413,15 @@ const DataTable = ({
     </Box>
   );
 };
+
 DataTable.propTypes = {
   data: PropTypes.arrayOf(PropTypes.shape({
     id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
-    status: PropTypes.string
+    status: PropTypes.string,
+    [PropTypes.string]: PropTypes.oneOfType([
+      PropTypes.string,
+      PropTypes.array
+    ])
   })).isRequired,
   columns: PropTypes.arrayOf(PropTypes.shape({
     key: PropTypes.string.isRequired,

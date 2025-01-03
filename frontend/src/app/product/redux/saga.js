@@ -26,13 +26,13 @@ function* fetchProductsSaga({ payload }) {
     const params = {
       ...filters,
       ...payload,
-      type: payload?.platform || filters.type, // Add type/platform filter
+      type: payload?.platform || filters.type,
       sort: tableSettings.sortBy ? `${tableSettings.sortOrder === 'desc' ? '-' : ''}${tableSettings.sortBy}` : undefined,
       page: payload?.page || tableSettings.currentPage,
       limit: tableSettings.pageSize
     };
 
-    console.log('Fetching products with params:', params); // Debug log
+    console.log('Fetching products with params:', params);
 
     const response = yield call(api.get, ApiEndpoints.PRODUCTS, { params });
     
@@ -52,20 +52,39 @@ function* fetchProductsSaga({ payload }) {
 function* addProductSaga({ payload }) {
   try {
     const formData = new FormData();
+    
+    // Add basic fields
     Object.keys(payload).forEach(key => {
-      if (key === 'images') {
-        payload[key].forEach(image => formData.append('images', image));
-      } else {
-        formData.append(key, payload[key]);
+      if (key !== 'images') {
+        formData.append(key, String(payload[key]));
       }
     });
 
+    // Handle images
+    if (payload.images?.length) {
+      payload.images.forEach(image => {
+        if (image instanceof File) {
+          formData.append('images', image);
+        }
+      });
+    }
+
+    console.log('Sending product data:', Object.fromEntries(formData.entries()));
+
     const response = yield call(api.post, ApiEndpoints.PRODUCTS, formData, {
-      headers: { 'Content-Type': 'multipart/form-data' }
+      headers: { 
+        'Content-Type': 'multipart/form-data',
+      }
     });
-    yield put(add_product_success(response.data));
-    toast.success("Product added successfully");
+
+    if (response.data) {
+      yield put(add_product_success(response.data));
+      toast.success("Product added successfully");
+    } else {
+      throw new Error('Invalid response from server');
+    }
   } catch (error) {
+    console.error('Add product error:', error.response || error);
     const errorMessage = error.response?.data?.error || "Failed to add product";
     toast.error(errorMessage);
     yield put(add_product_error(errorMessage));

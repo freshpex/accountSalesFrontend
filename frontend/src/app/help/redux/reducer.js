@@ -81,7 +81,7 @@ export const helpSlice = createSlice({
       }
     },
     mark_notification_read: (state, action) => {
-      const notification = state.data.notifications.find(n => n.id === action.payload);
+      const notification = state.data.notifications.find(n => n._id === action.payload);
       if (notification) {
         notification.read = true;
       }

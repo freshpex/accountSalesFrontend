@@ -58,7 +58,7 @@ const Help = () => {
     dispatch(mark_notification_read(notificationId));
   };
 
-  const filteredTickets = tickets.filter(ticket => {
+  const filteredTickets = tickets?.filter(ticket => {
     if (filters.status !== 'all' && ticket.status !== filters.status) return false;
     if (filters.search) {
       const searchLower = filters.search.toLowerCase();
@@ -78,7 +78,7 @@ const Help = () => {
     return (
       <Tabs variant="enclosed">
         <TabList>
-          <Tab>Support Tickets ({stats.total})</Tab>
+          <Tab>Support Tickets ({stats?.total})</Tab>
           <Tab>
             Notifications
             {notifications.filter(n => !n.read).length > 0 && (
@@ -110,14 +110,14 @@ const Help = () => {
                   color={colors.textColor}
                 >
                   <option value="all">All Status</option>
-                  <option value="open">Open ({stats.open})</option>
-                  <option value="pending">Pending ({stats.pending})</option>
-                  <option value="resolved">Resolved ({stats.resolved})</option>
+                  <option value="open">Open ({stats?.open})</option>
+                  <option value="pending">Pending ({stats?.pending})</option>
+                  <option value="resolved">Resolved ({stats?.resolved})</option>
                 </Select>
               </HStack>
             </Box>
 
-            {filteredTickets.length > 0 ? (
+            {filteredTickets?.length > 0 ? (
               <TicketList
                 tickets={filteredTickets}
                 onStatusUpdate={handleStatusUpdate}

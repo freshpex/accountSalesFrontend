@@ -13,6 +13,7 @@ import {
   clear_product_error,
   reset_product_state 
 } from '../redux/reducer';
+import api from '../../../services/DataService';
 import toast from 'react-hot-toast';
 
 export const useProductActions = () => {
@@ -20,9 +21,7 @@ export const useProductActions = () => {
 
   const handleAddProduct = async (productData) => {
     try {
-      dispatch(clear_product_error());
       const { isValid, errors } = validateProductData(productData);
-      
       if (!isValid) {
         Object.values(errors).forEach(error => toast.error(error));
         return false;
@@ -30,46 +29,37 @@ export const useProductActions = () => {
 
       const formData = new FormData();
 
-      // Add basic fields with proper type conversion
-      formData.append('username', productData.username);
-      formData.append('type', productData.type);
-      formData.append('age', String(productData.age));
-      formData.append('followers', String(productData.followers));
-      formData.append('price', String(productData.price));
-      formData.append('region', productData.region);
-      formData.append('about', productData.about);
-      formData.append('status', productData.status || 'available');
-      formData.append('engagement', String(productData.engagement || 0));
+      // Add basic fields
+      Object.keys(productData).forEach(key => {
+        if (key !== 'images') {
+          formData.append(key, productData[key]);
+        }
+      });
 
       // Handle images
       if (productData.images?.length) {
         productData.images.forEach(image => {
           if (image instanceof File) {
             const { isValid, error } = validateImage(image);
-            if (!isValid) {
-              throw new Error(error);
-            }
+            if (!isValid) throw new Error(error);
             formData.append('images', image);
           }
         });
       }
 
-      dispatch(add_product(formData));
-      const response = await fetch('/api/v1/products', {
-        method: 'POST',
-        body: formData
+      dispatch(add_product());
+      const response = await api.post('/api/v1/products', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
       });
-      
-      if (!response.ok) throw new Error('Failed to add product');
-      
-      const result = await response.json();
-      dispatch(add_product_success(result));
+
+      dispatch(add_product_success(response.data));
       toast.success('Product added successfully');
       return true;
     } catch (error) {
       console.error('Product addition error:', error);
-      toast.error(error.message || 'Failed to add product');
-      dispatch(add_product_error(error.message));
+      const errorMessage = error.response?.data?.error || error.message;
+      toast.error(errorMessage);
+      dispatch(add_product_error(errorMessage));
       return false;
     }
   };

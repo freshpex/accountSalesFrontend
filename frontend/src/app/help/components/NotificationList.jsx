@@ -13,7 +13,7 @@ import { useColors } from '../../../utils/colors';
 const NotificationList = ({ notifications, onNotificationRead }) => {
   const handleClick = (notification) => {
     if (!notification.read) {
-      onNotificationRead(notification.id);
+      onNotificationRead(notification._id);
     }
   };
 
@@ -23,7 +23,7 @@ const NotificationList = ({ notifications, onNotificationRead }) => {
     <VStack spacing={4} align="stretch">
       {notifications.map((notification) => (
         <Box
-          key={notification.id}
+          key={notification._id}
           p={4}
           borderWidth={1}
           borderRadius="lg"
@@ -43,7 +43,7 @@ const NotificationList = ({ notifications, onNotificationRead }) => {
               <Box>
                 <Text>{notification.message}</Text>
                 <Text color="gray.600" fontSize="sm">
-                  {new Date(notification.timestamp).toLocaleString()}
+                  {new Date(notification.createdAt).toLocaleString()}
                 </Text>
               </Box>
             </HStack>

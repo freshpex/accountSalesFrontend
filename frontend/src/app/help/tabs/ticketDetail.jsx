@@ -32,7 +32,7 @@ const TicketDetail = ({
   const colors = useColors();
 
   const handleReply = () => {
-    onAddResponse(ticket.id, {
+    onAddResponse(ticket._id, {
       message: reply,
       timestamp: new Date().toISOString()
     });
@@ -42,7 +42,7 @@ const TicketDetail = ({
   const handleStatusChange = (e) => {
     const newStatus = e.target.value;
     setStatus(newStatus);
-    onStatusUpdate(ticket.id, newStatus);
+    onStatusUpdate(ticket._id, newStatus);
   };
 
   return (

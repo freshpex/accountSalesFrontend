@@ -114,7 +114,7 @@ export const ApiEndpoints = {
   SALES_REPORT: '/api/v1/sales-report',
   PROFILE: '/api/v1/user/profile',
   SECURITY: '/api/v1/user/security',
-  NOTIFICATIONS: '/api/v1/user/notifications',
+  NOTIFICATIONS: '/api/v1/notifications',
   PROFILE_PICTURE: '/api/v1/user/profile-picture',
   SALES_SUMMARY: '/api/v1/sales-report/summary',
   SALES_ANALYTICS: '/api/v1/sales-report/analytics',

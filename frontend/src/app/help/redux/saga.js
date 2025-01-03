@@ -9,7 +9,8 @@ import {
   add_response,
   add_response_success,
   add_response_error,
-  update_ticket_status
+  update_ticket_status,
+  mark_notification_read
 } from "./reducer";
 import { ApiEndpoints } from "../../../store/types";
 import api from "../../../services/DataService";
@@ -34,6 +35,7 @@ function* createTicketSaga({ payload }) {
     yield put(create_ticket_success(response.data));
     toast.success("Support ticket created successfully");
   } catch (error) {
+    console.log("error", error);
     const errorMessage = error.response?.data?.error || "Failed to create ticket";
     toast.error(errorMessage);
     yield put(create_ticket_error(errorMessage));
@@ -75,11 +77,22 @@ function* updateTicketStatusSaga({ payload }) {
   }
 }
 
+function* markNotificationReadSaga({ payload }) {
+  try {
+    yield call(api.patch, `${ApiEndpoints.NOTIFICATIONS}/${payload}/read`);
+    yield put(mark_notification_read(payload));
+    toast.success("Notification marked as read");
+  } catch (error) {
+    toast.error("Failed to mark notification as read");
+  }
+}
+
 function* helpSagas() {
   yield takeLatest(fetch_tickets.type, fetchTicketsSaga);
   yield takeLatest(create_ticket.type, createTicketSaga);
   yield takeLatest(add_response.type, addResponseSaga);
   yield takeLatest(update_ticket_status.type, updateTicketStatusSaga);
+  yield takeLatest(mark_notification_read.type, markNotificationReadSaga);
 }
 
 export default helpSagas;

@@ -82,7 +82,7 @@ const ProductRow = ({ product }) => (
     </Td>
     <Td>${product.price.toFixed(2)}</Td>
     <Td>
-      <Text fontWeight="medium">{product.sales.toLocaleString()}</Text>
+      <Text fontWeight="medium">{product.sales?.toLocaleString()}</Text>
     </Td>
     <Td>
       <Flex align="center">

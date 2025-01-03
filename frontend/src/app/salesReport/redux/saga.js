@@ -14,8 +14,16 @@ import toast from "react-hot-toast";
 function* fetchSalesReportSaga({ payload }) {
   try {
     const { dateRange, startDate, endDate, region } = payload;
+    const params = { dateRange, startDate, endDate, region };
+
+    // Ensure valid date values
+    if (startDate) params.startDate = new Date(startDate).toISOString();
+    if (endDate) params.endDate = new Date(endDate).toISOString();
+
+    console.log('Fetching sales report with params:', params); // Add logging
+
     const response = yield call(api.get, ApiEndpoints.SALES_REPORT, {
-      params: { dateRange, startDate, endDate, region }
+      params
     });
 
     // Transform and validate the data
@@ -40,6 +48,7 @@ function* fetchSalesReportSaga({ payload }) {
 
     yield put(fetch_sales_report_success(transformedData));
   } catch (error) {
+    console.error('Error fetching sales report:', error); // Add logging
     const errorMessage = error.response?.data?.error || "Failed to fetch sales report";
     toast.error(errorMessage);
     yield put(fetch_sales_report_error(errorMessage));
