@@ -109,7 +109,7 @@ export const ApiEndpoints = {
   TRANSACTIONS: '/api/v1/transactions',
   PRODUCTS: '/api/v1/products',
   PRODUCTS_AVAILABLE: '/api/v1/products/available',
-  CUSTOMERS: '/api/v1/users',
+  CUSTOMERS: '/api/v1/user',
   CUSTOMER_ACTIVITY: '/api/v1/users/:id/activity',
   CUSTOMER_SEGMENT: '/api/v1/users/:id/segment',
   HELP_TICKETS: '/api/v1/help-tickets',

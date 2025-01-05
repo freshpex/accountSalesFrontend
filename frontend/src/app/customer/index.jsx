@@ -122,7 +122,7 @@ const Customers = () => {
           </Box>
         </Flex>
       </Td>
-      <Td>
+      <Td display={{ base: 'none', md: 'table-cell' }}>
         <Text>{customer.businessName}</Text>
         <Text fontSize="sm" color="gray.500">
           {customer.businessType}
@@ -134,11 +134,11 @@ const Customers = () => {
         </Badge>
       </Td>
       <Td>
-        <Badge colorScheme="purple">{customer.segment}</Badge>
+        <Badge colorScheme="purple">{customer.segment || 'Unknown'}</Badge>
       </Td>
-      <Td>{new Date(customer.createdAt).toLocaleDateString()}</Td>
-      <Td>{customer.metrics?.totalOrders || 0}</Td>
-      <Td>${customer.metrics?.totalSpent?.toLocaleString() || '0'}</Td>
+      <Td display={{ base: 'none', md: 'table-cell' }}>{new Date(customer.createdAt).toLocaleDateString()}</Td>
+      <Td display={{ base: 'none', md: 'table-cell' }}>{customer.metrics?.totalOrders || 0}</Td>
+      <Td display={{ base: 'none', md: 'table-cell' }}>${customer.metrics?.totalSpent?.toLocaleString() || '0'}</Td>
       <Td>
         <CustomerActionMenu
           customer={customer}
@@ -215,8 +215,8 @@ const Customers = () => {
 
         {/* Customer List */}
         <Box bg={colors.bgColor} borderRadius="lg" shadow="sm">
-          <Flex p={6} justify="space-between" align="center">
-            <InputGroup maxW="320px">
+          <Flex p={6} justify="space-between" align="center" flexDirection={{ base: 'column', md: 'row' }}>
+            <InputGroup maxW="320px" mb={{ base: 4, md: 0 }}>
               <InputLeftElement><FiSearch color="gray.400" /></InputLeftElement>
               <Input
                 placeholder="Search customers..."
@@ -259,11 +259,12 @@ const Customers = () => {
               <Thead>
                 <Tr>
                   <Th>Customer</Th>
+                  <Th display={{ base: 'none', md: 'table-cell' }}>Business</Th>
                   <Th>Status</Th>
                   <Th>Segment</Th>
-                  <Th>Joined</Th>
-                  <Th>Orders</Th>
-                  <Th>Spent</Th>
+                  <Th display={{ base: 'none', md: 'table-cell' }}>Joined</Th>
+                  <Th display={{ base: 'none', md: 'table-cell' }}>Orders</Th>
+                  <Th display={{ base: 'none', md: 'table-cell' }}>Spent</Th>
                   <Th></Th>
                 </Tr>
               </Thead>
@@ -285,8 +286,8 @@ const Customers = () => {
 
   return (
     <Box minH="100vh" bg={colors.bgColor} p={8}>
-      <Flex justify="space-between" align="center" mb={8}>
-        <Box>
+      <Flex justify="space-between" align="center" mb={8} flexDirection={{ base: 'column', md: 'row' }}>
+        <Box mb={{ base: 4, md: 0 }}>
           <Text fontSize="2xl" fontWeight="bold">Customers</Text>
           <Text color="gray.500">Manage and analyze your customer base</Text>
         </Box>

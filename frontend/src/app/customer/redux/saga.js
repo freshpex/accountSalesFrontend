@@ -27,7 +27,7 @@ function* fetchCustomersSaga({ payload }) {
       sort, 
       page, 
       limit,
-      role: 'user' // Ensure this is set to fetch non-admin users
+      role: 'user'
     };
     
     console.log('Fetching customers with params:', params);

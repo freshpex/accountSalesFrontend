@@ -20,7 +20,7 @@ const StatCard = ({ title, value, trend, icon: Icon, subtitle }) => {
       borderColor={borderColor}
       shadow="sm"
     >
-      <Flex justify="space-between" align="flex-start">
+      <Flex justify="space-between" align="flex-start" direction={{ base: 'column', md: 'row' }}>
         <Box>
           <Text color="gray.500" fontSize="sm">{title}</Text>
           <Text fontSize="2xl" fontWeight="bold" mt={2}>
@@ -32,7 +32,7 @@ const StatCard = ({ title, value, trend, icon: Icon, subtitle }) => {
             </Text>
           )}
         </Box>
-        <Box p={3} bg={iconBg} borderRadius="full" color="blue.500">
+        <Box p={3} bg={iconBg} borderRadius="full" color="blue.500" mt={{ base: 4, md: 0 }}>
           <Icon size={20} />
         </Box>
       </Flex>

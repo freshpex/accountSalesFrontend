@@ -8,23 +8,29 @@ import {
   useColorModeValue
 } from '@chakra-ui/react';
 
+const getSegmentColor = (segment) => {
+  if (!segment) return 'gray';
+  switch (segment.toLowerCase()) {
+    case 'platinum':
+      return 'purple';
+    case 'gold':
+      return 'yellow';
+    case 'silver':
+      return 'gray';
+    case 'bronze':
+      return 'orange';
+    default:
+      return 'gray';
+  }
+};
+
 const CustomerSegmentCard = ({ segment, onSegmentClick }) => {
   const bgColor = useColorModeValue('white', 'gray.800');
   const borderColor = useColorModeValue('gray.100', 'gray.700');
 
-  const getSegmentColor = (name) => {
-    const colors = {
-      platinum: 'purple',
-      gold: 'yellow',
-      silver: 'gray',
-      bronze: 'orange'
-    };
-    return colors[name.toLowerCase()] || 'blue';
-  };
-
   const handleClick = () => {
     if (onSegmentClick) {
-      onSegmentClick(segment.name.toLowerCase());
+      onSegmentClick(segment ? segment.name.toLowerCase() : 'unknown');
     }
   };
 
@@ -40,30 +46,30 @@ const CustomerSegmentCard = ({ segment, onSegmentClick }) => {
       onClick={handleClick}
     >
       <Flex justify="space-between" mb={4}>
-        <Text fontWeight="medium">{segment.name}</Text>
-        <Badge colorScheme={getSegmentColor(segment.name)}>
-          {segment.count} customers
+        <Text fontWeight="medium">{segment ? segment.name : 'Unknown'} Segment</Text>
+        <Badge colorScheme={getSegmentColor(segment ? segment.name : 'unknown')}>
+          {segment ? segment.count : 'Unknown'} customers
         </Badge>
       </Flex>
       <Stack spacing={4}>
         <Box>
           <Flex justify="space-between" mb={2}>
             <Text fontSize="sm" color="gray.500">Average Spend</Text>
-            <Text fontWeight="medium">${segment.averageSpend}</Text>
+            <Text fontWeight="medium">${segment ? segment.averageSpend : 'Unknown'}</Text>
           </Flex>
           <Progress
-            value={(segment.averageSpend / 2000) * 100}
+            value={segment ? (segment.averageSpend / 2000) * 100 : 0}
             size="sm"
-            colorScheme={getSegmentColor(segment.name)}
+            colorScheme={getSegmentColor(segment ? segment.name : 'unknown')}
           />
         </Box>
         <Box>
           <Flex justify="space-between" mb={2}>
             <Text fontSize="sm" color="gray.500">Retention Rate</Text>
-            <Text fontWeight="medium">{segment.retentionRate}%</Text>
+            <Text fontWeight="medium">{segment ? segment.retentionRate : 'Unknown'}%</Text>
           </Flex>
           <Progress
-            value={segment.retentionRate}
+            value={segment ? segment.retentionRate : 0}
             size="sm"
             colorScheme="green"
           />
