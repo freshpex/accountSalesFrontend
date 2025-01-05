@@ -8,7 +8,7 @@ import {
   useColorModeValue
 } from '@chakra-ui/react';
 
-const CustomerSegmentCard = ({ segment }) => {
+const CustomerSegmentCard = ({ segment, onSegmentClick }) => {
   const bgColor = useColorModeValue('white', 'gray.800');
   const borderColor = useColorModeValue('gray.100', 'gray.700');
 
@@ -22,6 +22,12 @@ const CustomerSegmentCard = ({ segment }) => {
     return colors[name.toLowerCase()] || 'blue';
   };
 
+  const handleClick = () => {
+    if (onSegmentClick) {
+      onSegmentClick(segment.name.toLowerCase());
+    }
+  };
+
   return (
     <Box
       bg={bgColor}
@@ -30,6 +36,8 @@ const CustomerSegmentCard = ({ segment }) => {
       border="1px solid"
       borderColor={borderColor}
       shadow="sm"
+      cursor="pointer"
+      onClick={handleClick}
     >
       <Flex justify="space-between" mb={4}>
         <Text fontWeight="medium">{segment.name}</Text>

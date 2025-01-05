@@ -6,40 +6,28 @@ import { setWithExpiry } from "../../../../utils/store";
 
 function* loginSaga({ payload }) {
   try {
-    console.log('Login request payload:', payload);
+    const response = yield call(api.post, `/api/v1/user/signin`, payload);
+    
+    if (response.data.success) {
+      const { data } = response.data;
+      setWithExpiry("x-access-token", `Bearer ${data.userToken}`);
+      setWithExpiry("email", data.user.email);
+      
+      yield put(login_success(data));
+      
+      toast.success('Login successful!');
 
-    const requestRes = yield call(api.post, `/api/v1/user/signin`, payload);
-    console.log('Login response:', requestRes.data);
-
-    const responseData = requestRes.data;
-    setWithExpiry("x-access-token", `Bearer ${responseData.data.userToken}`);
-    yield put({
-      type: login_success.type,
-      payload: responseData.data,
-    });
-
-    const result = responseData.data;
-    setWithExpiry("email", result.user.email);
-
-    if (result.user.role === "admin") {
+      // Redirect after success message
       setTimeout(() => {
-        window.location.href = "/adminDashboard";
+        window.location.href = data.user.role === "admin" ? "/adminDashboard" : "/dashboard";
       }, 1000);
     } else {
-      setTimeout(() => {
-        window.location.href = "/dashboard";
-      }, 1000);
+      throw new Error(response.data.error || 'Login failed');
     }
   } catch (error) {
-    console.error('Login error:', error.response?.data || error);
-    
-    const errorMessage = error.response?.data?.error || 'An error occurred during login';
-    toast.error(errorMessage);
-    
-    yield put({
-      type: login_error.type,
-      payload: errorMessage
-    });
+    console.error('Login error:', error);
+    toast.error(error.message);
+    yield put(login_error(error.message));
   }
 }
 

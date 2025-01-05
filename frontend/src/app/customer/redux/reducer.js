@@ -36,8 +36,30 @@ export const customerSlice = createSlice({
     fetch_customers: (state) => {
       state.ui.loading = true;
       state.ui.error = null;
+      if (!state.data) {
+        state.data = initialState.data;
+      }
     },
     fetch_customers_success: (state, action) => {
+      state.ui.loading = false;
+      state.ui.success = true;
+      // Handle the nested data structure from the API
+      if (action.payload.success && action.payload.data) {
+        state.data.customers = action.payload.data.items || [];
+        state.data.metrics = action.payload.data.metrics || initialState.data.metrics;
+        state.data.segments = action.payload.data.segments || initialState.data.segments;
+        state.data.meta = action.payload.data.meta || initialState.data.meta;
+      }
+    },
+    fetch_customers_error: (state, action) => {
+      state.ui.loading = false;
+      state.ui.error = action.payload;
+    },
+    search_customers: (state) => {
+      state.ui.loading = true;
+      state.ui.error = null;
+    },
+    search_customers_success: (state, action) => {
       state.ui.loading = false;
       state.ui.success = true;
       state.data.customers = action.payload.items;
@@ -45,7 +67,7 @@ export const customerSlice = createSlice({
       state.data.segments = action.payload.segments;
       state.data.meta = action.payload.meta;
     },
-    fetch_customers_error: (state, action) => {
+    search_customers_error: (state, action) => {
       state.ui.loading = false;
       state.ui.error = action.payload;
     },
@@ -66,10 +88,13 @@ export const customerSlice = createSlice({
     add_customer_success: (state, action) => {
       state.ui.loading = false;
       state.ui.success = true;
-      state.data.customers.unshift(action.payload);
-      state.data.metrics.totalCustomers++;
-      state.data.metrics.newCustomers++;
-      state.data.segments[action.payload.segment.toLowerCase()]++;
+      if (action.payload.success) {
+        const customerData = action.payload.data;
+        state.data.customers.unshift(customerData);
+        state.data.metrics.totalCustomers++;
+        state.data.metrics.newCustomers++;
+        state.data.segments[customerData.segment.toLowerCase()]++;
+      }
     },
     add_customer_error: (state, action) => {
       state.ui.loading = false;
@@ -97,7 +122,10 @@ export const {
   add_customer,
   add_customer_success,
   add_customer_error,
-  update_customer_segment
+  update_customer_segment,
+  search_customers,
+  search_customers_success,
+  search_customers_error
 } = customerSlice.actions;
 
 export default customerSlice.reducer;

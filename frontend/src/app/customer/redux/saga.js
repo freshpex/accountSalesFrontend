@@ -9,7 +9,10 @@ import {
   add_customer,
   add_customer_success,
   add_customer_error,
-  update_customer_segment
+  update_customer_segment,
+  search_customers,
+  search_customers_success,
+  search_customers_error
 } from "./reducer";
 import { ApiEndpoints } from "../../../store/types";
 import api from "../../../services/DataService";
@@ -18,19 +21,39 @@ import toast from "react-hot-toast";
 function* fetchCustomersSaga({ payload }) {
   try {
     const { segment, status, sort, page = 1, limit = 10 } = payload || {};
-    const params = { segment, status, sort, page, limit };
+    const params = { 
+      segment, 
+      status, 
+      sort, 
+      page, 
+      limit,
+      role: 'user'
+    };
+    
+    console.log('Fetching customers with params:', params);
     const response = yield call(api.get, ApiEndpoints.CUSTOMERS, { params });
-    yield put(fetch_customers_success(response.data));
+    console.log('Customers response:', response.data);
+    
+    if (response.data.success) {
+      yield put(fetch_customers_success(response.data));
+    } else {
+      throw new Error(response.data.error || 'Failed to fetch customers');
+    }
   } catch (error) {
-    const errorMessage = error.response?.data?.error || "Failed to fetch customers";
+    console.error('Fetch customers error:', error);
+    const errorMessage = error.response?.data?.error || error.message;
     toast.error(errorMessage);
     yield put(fetch_customers_error(errorMessage));
-    yield takeLatest(update_customer_segment.type, updateCustomerSegmentSaga);
   }
 }
 
 function* fetchCustomerActivitySaga({ payload }) {
   try {
+    if (!payload) {
+      console.warn('No customer ID provided for activity fetch');
+      return;
+    }
+    
     const response = yield call(api.get, `${ApiEndpoints.CUSTOMERS}/${payload}/activity`);
     yield put(fetch_customer_activity_success(response.data));
   } catch (error) {
@@ -41,11 +64,20 @@ function* fetchCustomerActivitySaga({ payload }) {
 
 function* addCustomerSaga({ payload }) {
   try {
-    const response = yield call(api.post, ApiEndpoints.CUSTOMERS, payload);
-    yield put(add_customer_success(response.data));
-    toast.success("Customer added successfully");
+    const response = yield call(api.post, ApiEndpoints.REGISTER, {
+      ...payload,
+      role: 'user'
+    });
+
+    if (response.data.success) {
+      yield put(add_customer_success(response.data.data));
+      toast.success('Customer added successfully');
+      yield put(fetch_customers());
+    } else {
+      throw new Error(response.data.error || 'Failed to add customer');
+    }
   } catch (error) {
-    const errorMessage = error.response?.data?.error || "Failed to add customer";
+    const errorMessage = error.response?.data?.error || error.message;
     toast.error(errorMessage);
     yield put(add_customer_error(errorMessage));
   }
@@ -53,18 +85,44 @@ function* addCustomerSaga({ payload }) {
 
 function* updateCustomerSegmentSaga({ payload }) {
   try {
-    const { customerId, segment } = payload;
-    yield call(api.patch, `${ApiEndpoints.CUSTOMERS}/${customerId}/segment`, { segment });
+    const { customerId, newSegment } = payload;
+    
+    // Call API to update segment
+    yield call(
+      api.patch, 
+      `${ApiEndpoints.CUSTOMERS}/${customerId}/segment`, 
+      { segment: newSegment }
+    );
+    
+    // Refresh customer list after update
+    yield put(fetch_customers());
+    
     toast.success("Customer segment updated successfully");
-  } catch {
-    toast.error("Failed to update customer segment");
+  } catch (error) {
+    const errorMessage = error.response?.data?.error || "Failed to update customer segment";
+    toast.error(errorMessage);
+  }
+}
+
+function* searchCustomersSaga({ payload }) {
+  try {
+    const response = yield call(
+      api.get, 
+      `${ApiEndpoints.CUSTOMERS}/search`, 
+      { params: { query: payload } }
+    );
+    yield put(search_customers_success(response.data));
+  } catch (error) {
+    yield put(search_customers_error(error.message));
   }
 }
 
 function* customerSagas() {
   yield takeLatest(fetch_customers.type, fetchCustomersSaga);
+  yield takeLatest(search_customers.type, searchCustomersSaga);
   yield takeLatest(fetch_customer_activity.type, fetchCustomerActivitySaga);
   yield takeLatest(add_customer.type, addCustomerSaga);
+  yield takeLatest(update_customer_segment.type, updateCustomerSegmentSaga);
 }
 
 export default customerSagas;

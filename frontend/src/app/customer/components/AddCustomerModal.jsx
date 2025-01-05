@@ -14,15 +14,22 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import { useState } from 'react';
+import toast from 'react-hot-toast';
 
 const AddCustomerModal = ({ isOpen, onClose, onSubmit }) => {
   const [formData, setFormData] = useState({
-    name: '',
     email: '',
-    phone: '',
+    password: '',
+    firstName: '',
+    lastName: '',
+    businessName: '',
+    businessType: 'retail',
+    phoneNumber: '',
     segment: 'bronze',
-    status: 'active'
+    status: 'active',
+    role: 'user'
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -32,15 +39,16 @@ const AddCustomerModal = ({ isOpen, onClose, onSubmit }) => {
     }));
   };
 
-  const handleSubmit = () => {
-    onSubmit(formData);
-    setFormData({
-      name: '',
-      email: '',
-      phone: '',
-      segment: 'bronze',
-      status: 'active'
-    });
+  const handleSubmit = async () => {
+    setIsSubmitting(true);
+    try {
+      await onSubmit(formData);
+      onClose();
+    } catch (error) {
+      toast.error(error.message);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -52,12 +60,22 @@ const AddCustomerModal = ({ isOpen, onClose, onSubmit }) => {
         <ModalBody>
           <VStack spacing={4}>
             <FormControl isRequired>
-              <FormLabel>Full Name</FormLabel>
+              <FormLabel>First Name</FormLabel>
               <Input
-                name="name"
-                value={formData.name}
+                name="firstName"
+                value={formData.firstName}
                 onChange={handleChange}
-                placeholder="Enter customer name"
+                placeholder="Enter first name"
+              />
+            </FormControl>
+
+            <FormControl isRequired>
+              <FormLabel>Last Name</FormLabel>
+              <Input
+                name="lastName"
+                value={formData.lastName}
+                onChange={handleChange}
+                placeholder="Enter last name"
               />
             </FormControl>
 
@@ -72,11 +90,46 @@ const AddCustomerModal = ({ isOpen, onClose, onSubmit }) => {
               />
             </FormControl>
 
-            <FormControl>
-              <FormLabel>Phone</FormLabel>
+            <FormControl isRequired>
+              <FormLabel>Password</FormLabel>
               <Input
-                name="phone"
-                value={formData.phone}
+                name="password"
+                type="password"
+                value={formData.password}
+                onChange={handleChange}
+                placeholder="Enter password"
+              />
+            </FormControl>
+
+            <FormControl isRequired>
+              <FormLabel>Business Name</FormLabel>
+              <Input
+                name="businessName"
+                value={formData.businessName}
+                onChange={handleChange}
+                placeholder="Enter business name"
+              />
+            </FormControl>
+
+            <FormControl>
+              <FormLabel>Business Type</FormLabel>
+              <Select
+                name="businessType"
+                value={formData.businessType}
+                onChange={handleChange}
+              >
+                <option value="retail">Retail</option>
+                <option value="wholesale">Wholesale</option>
+                <option value="service">Service</option>
+                <option value="other">Other</option>
+              </Select>
+            </FormControl>
+
+            <FormControl>
+              <FormLabel>Phone Number</FormLabel>
+              <Input
+                name="phoneNumber"
+                value={formData.phoneNumber}
                 onChange={handleChange}
                 placeholder="Enter phone number"
               />
@@ -117,7 +170,8 @@ const AddCustomerModal = ({ isOpen, onClose, onSubmit }) => {
           <Button
             colorScheme="blue"
             onClick={handleSubmit}
-            isDisabled={!formData.name || !formData.email}
+            isDisabled={!formData.firstName || !formData.lastName || !formData.email || !formData.password || !formData.businessName}
+            isLoading={isSubmitting}
           >
             Add Customer
           </Button>

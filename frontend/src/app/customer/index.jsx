@@ -3,9 +3,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
   Box, Flex, Grid, Text, Button, Input, InputGroup, InputLeftElement,
   Table, Thead, Tbody, Tr, Th, Td, Avatar, Badge, Menu, MenuButton,
-  MenuList, MenuItem, IconButton, useColorModeValue, Select, useDisclosure
+  MenuList, MenuItem, IconButton, Select, useDisclosure
 } from '@chakra-ui/react';
-import { FiSearch, FiFilter, FiMoreVertical, FiUser, FiUsers, 
+import { FiSearch, FiMoreVertical, FiUser, FiUsers, 
          FiUserPlus, FiUserCheck, FiUserX, FiMail, FiPhone } from 'react-icons/fi';
 import StatCard from './components/StatCard';
 import CustomerSegmentCard from './components/CustomerSegmentCard';
@@ -28,13 +28,25 @@ import {
 } from './redux/reducer';
 import LoadingSpinner from '../../components/LoadingSpinner';
 import { useColors } from '../../utils/colors';
+import CustomerActionMenu from './components/CustomerActionMenu';
 
 const Customers = () => {
   const dispatch = useDispatch();
-  const customers = useSelector(getCustomers);
-  const metrics = useSelector(getCustomerMetrics);
-  const segments = useSelector(getCustomerSegments);
-  const recentActivity = useSelector(getRecentActivity);
+  const customers = useSelector(getCustomers) || [];
+  const metrics = useSelector(getCustomerMetrics) || {
+    totalCustomers: 0,
+    activeCustomers: 0,
+    newCustomers: 0,
+    churnRate: 0,
+    trends: []
+  };
+  const segments = useSelector(getCustomerSegments) || {
+    platinum: 0,
+    gold: 0,
+    silver: 0,
+    bronze: 0
+  };
+  const recentActivity = useSelector(getRecentActivity) || [];
   const loading = useSelector(getLoading);
   
   const [filters, setFilters] = useState({ status: 'all', search: '', segment: 'all' });
@@ -45,9 +57,14 @@ const Customers = () => {
     dispatch(fetch_customers(filters));
   }, [dispatch, filters]);
 
+  // Only fetch activity when a customer is selected
+  const [selectedCustomerId, setSelectedCustomerId] = useState(null);
+  
   useEffect(() => {
-    dispatch(fetch_customer_activity());
-  }, [dispatch]);
+    if (selectedCustomerId) {
+      dispatch(fetch_customer_activity(selectedCustomerId));
+    }
+  }, [dispatch, selectedCustomerId]);
 
   const handleAddCustomer = (customerData) => {
     dispatch(add_customer(customerData));
@@ -55,32 +72,100 @@ const Customers = () => {
   };
 
   const handleSegmentUpdate = (customerId, oldSegment, newSegment) => {
-    dispatch(update_customer_segment({ customerId, oldSegment, newSegment }));
+    dispatch(update_customer_segment({ 
+      customerId, 
+      oldSegment: oldSegment.toLowerCase(), 
+      newSegment: newSegment.toLowerCase() 
+    }));
   };
 
   const handleFilterChange = (type, value) => {
     setFilters(prev => ({ ...prev, [type]: value }));
   };
 
-  const filteredCustomers = customers.filter(customer => {
+  const handleCustomerSelect = (customerId) => {
+    setSelectedCustomerId(customerId);
+    // Fetch customer activity when selected
+    if (customerId) {
+      dispatch(fetch_customer_activity(customerId));
+    }
+  };
+
+  const filteredCustomers = Array.isArray(customers) ? customers.filter(customer => {
+    if (!customer) return false;
     if (filters.status !== 'all' && customer.status !== filters.status) return false;
-    if (filters.segment !== 'all' && customer.segment.toLowerCase() !== filters.segment) return false;
+    if (filters.segment !== 'all' && customer.segment?.toLowerCase() !== filters.segment) return false;
     if (filters.search) {
       const searchLower = filters.search.toLowerCase();
       return (
-        customer.name.toLowerCase().includes(searchLower) ||
-        customer.email.toLowerCase().includes(searchLower)
+        customer.name?.toLowerCase().includes(searchLower) ||
+        customer.email?.toLowerCase().includes(searchLower)
       );
     }
     return true;
-  });
+  }) : [];
 
   if (loading) {
     return <LoadingSpinner />;
   }
 
+  const renderCustomerRow = (customer) => (
+    <Tr 
+      key={customer._id}
+      bg={selectedCustomerId === customer._id ? 'blue.50' : 'transparent'}
+      _hover={{ bg: 'gray.50' }}
+      onClick={() => handleCustomerSelect(customer._id)}
+    >
+      <Td>
+        <Flex align="center">
+          <Avatar 
+            size="sm" 
+            name={`${customer.firstName} ${customer.lastName}`} 
+            mr={3} 
+          />
+          <Box>
+            <Text fontWeight="medium">
+              {`${customer.firstName} ${customer.lastName}`}
+            </Text>
+            <Text fontSize="sm" color="gray.500">
+              {customer.email}
+            </Text>
+          </Box>
+        </Flex>
+      </Td>
+      <Td>
+        <Text>{customer.businessName}</Text>
+        <Text fontSize="sm" color="gray.500">
+          {customer.businessType}
+        </Text>
+      </Td>
+      <Td>
+        <Badge colorScheme={customer.status === 'active' ? 'green' : 'red'}>
+          {customer.status}
+        </Badge>
+      </Td>
+      <Td>
+        <Badge colorScheme="purple">{customer.segment}</Badge>
+      </Td>
+      <Td>{new Date(customer.createdAt).toLocaleDateString()}</Td>
+      <Td>{customer.metrics?.totalOrders || 0}</Td>
+      <Td>${customer.metrics?.totalSpent?.toLocaleString() || '0'}</Td>
+      <Td>
+        <CustomerActionMenu
+          customer={customer}
+          onView={handleCustomerSelect}
+          onUpdateSegment={handleSegmentUpdate}
+        />
+      </Td>
+    </Tr>
+  );
+
   const renderContent = () => {
-    if (!customers.length) {
+    if (loading) {
+      return <LoadingSpinner />;
+    }
+
+    if (!Array.isArray(customers) || customers.length === 0) {
       return (
         <EmptyStatePage
           title="No Customers Found"
@@ -194,45 +279,7 @@ const Customers = () => {
                 </Tr>
               </Thead>
               <Tbody>
-                {filteredCustomers.map((customer) => (
-                  <Tr key={customer.id}>
-                    <Td>
-                      <Flex align="center">
-                        <Avatar size="sm" src={customer.avatar} name={customer.name} mr={3} />
-                        <Box>
-                          <Text fontWeight="medium">{customer.name}</Text>
-                          <Text fontSize="sm" color="gray.500">{customer.email}</Text>
-                        </Box>
-                      </Flex>
-                    </Td>
-                    <Td>
-                      <Badge colorScheme={customer.status === 'active' ? 'green' : 'red'}>
-                        {customer.status}
-                      </Badge>
-                    </Td>
-                    <Td>
-                      <Badge colorScheme="purple">{customer.segment}</Badge>
-                    </Td>
-                    <Td>{new Date(customer.joinDate).toLocaleDateString()}</Td>
-                    <Td>{customer.totalOrders}</Td>
-                    <Td>${customer.totalSpent.toLocaleString()}</Td>
-                    <Td>
-                      <Menu>
-                        <MenuButton
-                          as={IconButton}
-                          icon={<FiMoreVertical />}
-                          variant="ghost"
-                          size="sm"
-                        />
-                        <MenuList>
-                          <MenuItem icon={<FiUser />}>View Profile</MenuItem>
-                          <MenuItem icon={<FiMail />}>Send Email</MenuItem>
-                          <MenuItem icon={<FiPhone />}>Call</MenuItem>
-                        </MenuList>
-                      </Menu>
-                    </Td>
-                  </Tr>
-                ))}
+                {filteredCustomers.map(renderCustomerRow)}
               </Tbody>
             </Table>
           ) : (

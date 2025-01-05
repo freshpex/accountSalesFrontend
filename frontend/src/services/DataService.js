@@ -2,7 +2,7 @@ import axios from "axios";
 import { getWithExpiry } from "../utils/store";
 
 const api = axios.create({
-  baseURL: 'http://localhost:5000',
+  baseURL: import.meta.env.VITE_APP_API_URL || "http://localhost:5000",
   headers: {
     'Content-Type': 'application/json',
     Accept: "application/json",
@@ -24,9 +24,16 @@ api.interceptors.request.use(
 );
 
 api.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    // Add success flag if not present
+    if (response.data && !('success' in response.data)) {
+      response.data = { success: true, data: response.data };
+    }
+    return response;
+  },
   (error) => {
-    return Promise.reject(error);
+    const errorMessage = error.response?.data?.error || error.message;
+    return Promise.reject({ ...error, message: errorMessage });
   }
 );
 
