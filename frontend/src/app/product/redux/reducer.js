@@ -30,7 +30,10 @@ const initialState = {
     selectedItems: [],
     sortBy: null,
     sortOrder: 'asc'
-  }
+  },
+  transactionProducts: [],
+  loading: false,
+  error: null
 };
 
 export const productSlice = createSlice({
@@ -40,6 +43,10 @@ export const productSlice = createSlice({
     fetch_products: (state) => {
       state.ui.loading = true;
       state.ui.error = null;
+    },
+    fetch_products_transaction: (state) => {
+      state.loading = true;
+      state.error = null;
     },
     fetch_products_success: (state, action) => {
       state.ui.loading = false;
@@ -113,6 +120,16 @@ export const productSlice = createSlice({
       state.ui.loading = false;
       state.ui.error = action.payload;
     },
+    fetch_products_transaction_success: (state, action) => {
+      state.loading = false;
+      state.products = action.payload;
+      state.error = null;
+    },
+    fetch_products_transaction_error: (state, action) => {
+      state.loading = false;
+      state.error = action.payload;
+      state.products = [];
+    },
     set_selected_product: (state, action) => {
       state.selectedProduct = action.payload;
     },
@@ -135,6 +152,20 @@ export const productSlice = createSlice({
     set_product_sort: (state, action) => {
       state.tableSettings.sortBy = action.payload.sortBy;
       state.tableSettings.sortOrder = action.payload.sortOrder;
+    },
+    fetch_transaction_products: (state) => {
+      state.loading = true;
+      state.error = null;
+    },
+    fetch_transaction_products_success: (state, action) => {
+      state.loading = false;
+      state.transactionProducts = action.payload;
+      state.error = null;
+    },
+    fetch_transaction_products_error: (state, action) => {
+      state.loading = false;
+      state.error = action.payload;
+      state.transactionProducts = [];
     }
   }
 });
@@ -143,6 +174,9 @@ export const {
   fetch_products,
   fetch_products_success,
   fetch_products_error,
+  fetch_products_transaction,
+  fetch_products_transaction_error,
+  fetch_products_transaction_success,
   add_product,
   add_product_success,
   add_product_error,
@@ -158,7 +192,10 @@ export const {
   clear_product_error,
   reset_product_state,
   set_product_filter,
-  set_product_sort
+  set_product_sort,
+  fetch_transaction_products,
+  fetch_transaction_products_success,
+  fetch_transaction_products_error
 } = productSlice.actions;
 
 export default productSlice.reducer;

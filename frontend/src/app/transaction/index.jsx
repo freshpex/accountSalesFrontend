@@ -36,6 +36,8 @@ const Transaction = () => {
   const stats = useSelector(getTransactionStats);
   const meta = useSelector(getTransactionMeta);
   const loading = useSelector(getLoading);
+  
+  const [selectedItems, setSelectedItems] = useState([]);
 
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedTab, setSelectedTab] = useState('all');
@@ -67,7 +69,11 @@ const Transaction = () => {
   };
 
   const handleDeleteTransaction = (data) => {
-    dispatch(delete_transaction(data.id));
+    if (!data?.id && !data?._id) {
+      return 'Invalid transaction ID';
+    }
+    
+    dispatch(delete_transaction(data.id || data._id));
     handleModalClose();
   };
 
@@ -79,15 +85,13 @@ const Transaction = () => {
   ];
 
   useEffect(() => {
-    if (!loading) {
-      dispatch(fetch_transactions({ 
-        status: selectedTab,
-        page,
-        limit: itemsPerPage,
-        search: searchQuery,
-        ...filters
-      }));
-    }
+    dispatch(fetch_transactions({ 
+      status: selectedTab,
+      page,
+      limit: itemsPerPage,
+      search: searchQuery,
+      ...filters
+    }));
   }, [dispatch, selectedTab, page, itemsPerPage, filters, searchQuery]);
 
   const handleSearch = (value) => {
@@ -236,6 +240,9 @@ const Transaction = () => {
 
         <TransactionTable
           data={transactions}
+          selectedItems={selectedItems}
+          onSelectAll={handleSelectAll}
+          onSelectItem={handleSelectItem}
           currentPage={page}
           totalPages={meta.totalPages}
           pageSize={itemsPerPage}
@@ -248,6 +255,23 @@ const Transaction = () => {
         />
       </>
     );
+  };
+
+  const handleSelectAll = () => {
+    if (selectedItems.length === transactions.length) {
+      setSelectedItems([]);
+    } else {
+      setSelectedItems(transactions.map(t => t.id || t._id));
+    }
+  };
+
+  const handleSelectItem = (id) => {
+    setSelectedItems(prev => {
+      if (prev.includes(id)) {
+        return prev.filter(item => item !== id);
+      }
+      return [...prev, id];
+    });
   };
 
   return (

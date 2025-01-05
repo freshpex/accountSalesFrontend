@@ -11,7 +11,13 @@ import {
   update_product_error,
   delete_product,
   delete_product_success,
-  delete_product_error
+  delete_product_error,
+  fetch_products_transaction,
+  fetch_products_transaction_success,
+  fetch_products_transaction_error,
+  fetch_transaction_products,
+  fetch_transaction_products_success,
+  fetch_transaction_products_error
 } from "./reducer";
 import { ApiEndpoints } from "../../../store/types";
 import api from "../../../services/DataService";
@@ -42,10 +48,31 @@ function* fetchProductsSaga({ payload }) {
       throw new Error('Invalid response format');
     }
   } catch (error) {
-    console.error('Product fetch error:', error);
-    const errorMessage = error.response?.data?.error || "Failed to fetch products";
-    toast.error(errorMessage);
+    const errorMessage = error.response?.data?.error || 'Failed to fetch products';
+    toast.error(`Product fetch error: ${errorMessage}`);
     yield put(fetch_products_error(errorMessage));
+  }
+}
+
+function* fetchProductsTransactionSaga() {
+  try {
+    const response = yield call(api.get, ApiEndpoints.PRODUCTS);
+    yield put(fetch_products_transaction_success(response.data));
+  } catch (error) {
+    const errorMessage = error.response?.data?.error || 'Failed to fetch products';
+    toast.error(`Product fetch error: ${errorMessage}`);
+    yield put(fetch_products_transaction_error(errorMessage));
+  }
+}
+
+function* fetchTransactionProductsSaga() {
+  try {
+    const response = yield call(api.get, ApiEndpoints.PRODUCTS_AVAILABLE);
+    yield put(fetch_transaction_products_success(response.data));
+  } catch (error) {
+    const errorMessage = error.response?.data?.error || 'Failed to fetch available products';
+    toast.error(errorMessage);
+    yield put(fetch_transaction_products_error(errorMessage));
   }
 }
 
@@ -129,6 +156,8 @@ function* deleteProductSaga({ payload }) {
 
 function* productSagas() {
   yield takeLatest(fetch_products.type, fetchProductsSaga);
+  yield takeLatest(fetch_products_transaction.type, fetchProductsTransactionSaga);
+  yield takeLatest(fetch_transaction_products.type, fetchTransactionProductsSaga);
   yield takeLatest(add_product.type, addProductSaga);
   yield takeLatest(update_product.type, updateProductSaga);
   yield takeLatest(delete_product.type, deleteProductSaga);

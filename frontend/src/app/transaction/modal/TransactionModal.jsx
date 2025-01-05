@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import {
   Modal,
   ModalOverlay,
@@ -17,13 +18,17 @@ import {
   Text,
 } from '@chakra-ui/react';
 import { useColors } from '../../../utils/colors';
+import { validateTransactionData } from '../../../utils/validation';
+import toast from 'react-hot-toast';
+import { fetch_transaction_products } from '../../product/redux/reducer';
 
 const TransactionModal = ({ isOpen, onClose, data, action, onSave, onDelete }) => {
+  const dispatch = useDispatch();
   const isReadOnly = action === 'view';
   const colors = useColors();
   
   const [formData, setFormData] = useState({
-    productId: '', // This is required by backend
+    productId: '',
     amount: '',
     quantity: 1,
     status: 'pending',
@@ -34,8 +39,18 @@ const TransactionModal = ({ isOpen, onClose, data, action, onSave, onDelete }) =
       productName: '',
       customerName: '',
     },
-    transactionId: '' // Add this for display purposes
+    transactionId: ''
   });
+
+  const [selectedProduct, setSelectedProduct] = useState(null);
+  const products = useSelector(state => state.product.transactionProducts || []);
+  const isLoading = useSelector(state => state.product.loading);
+
+  useEffect(() => {
+    if (isOpen) {
+      dispatch(fetch_transaction_products());
+    }
+  }, [isOpen, dispatch]);
 
   useEffect(() => {
     if (data) {
@@ -75,22 +90,36 @@ const TransactionModal = ({ isOpen, onClose, data, action, onSave, onDelete }) =
     });
   };
 
+  const handleProductSelect = (e) => {
+    const selectedProduct = products.find(p => p._id === e.target.value);
+    if (selectedProduct) {
+      setFormData(prev => ({
+        ...prev,
+        productId: selectedProduct._id,
+        amount: selectedProduct.price || 0,
+        metadata: {
+          ...prev.metadata,
+          productName: selectedProduct.name
+        }
+      }));
+    }
+  };
+
   // Validate form before submission
   const validateForm = () => {
     const errors = {};
     if (!formData.productId) errors.productId = 'Product ID is required';
-    if (!formData.amount) errors.amount = 'Amount is required';
+    if (!formData.amount || formData.amount <= 0) errors.amount = 'Valid amount is required';
     if (!formData.metadata.productName) errors.productName = 'Product name is required';
     if (!formData.metadata.customerName) errors.customerName = 'Customer name is required';
     return errors;
   };
 
   const handleSubmit = () => {
-    const errors = validateForm();
-    if (Object.keys(errors).length === 0) {
+    const { isValid, errors } = validateTransactionData(formData);
+    if (isValid) {
       onSave(formData);
     } else {
-      // Show validation errors
       toast.error(Object.values(errors).join('\n'));
     }
   };
@@ -131,13 +160,19 @@ const TransactionModal = ({ isOpen, onClose, data, action, onSave, onDelete }) =
               </HStack>
 
               <FormControl isRequired>
-                <FormLabel>Product ID</FormLabel>
-                <Input
+                <FormLabel>Select Product</FormLabel>
+                <Select
                   value={formData.productId}
-                  onChange={handleChange('productId')}
-                  isReadOnly={isReadOnly}
-                  bg={isReadOnly ? "gray.100" : colors.bgColor}
-                />
+                  onChange={handleProductSelect}
+                  isDisabled={isReadOnly || isLoading}
+                  placeholder={isLoading ? "Loading products..." : "Select a product"}
+                >
+                  {products?.map(product => (
+                    <option key={product._id} value={product._id}>
+                      {product.name} - ${product.price}
+                    </option>
+                  ))}
+                </Select>
               </FormControl>
 
               <FormControl>

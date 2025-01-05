@@ -94,3 +94,13 @@ export const getFilteredProducts = createSelector(
     });
   }
 );
+
+export const getTransactionProducts = createSelector(
+  productState,
+  state => state.transactionProducts
+);
+
+export const getProductsLoading = createSelector(
+  productState,
+  state => state.loading
+);

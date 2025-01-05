@@ -37,16 +37,19 @@ export const transactionSlice = createSlice({
   reducers: {
     fetch_transactions: (state) => {
       state.ui.loading = true;
+      state.ui.error = null;
     },
     fetch_transactions_success: (state, action) => {
       state.ui.loading = false;
       state.ui.success = true;
-      state.data.transactions = action.payload.items;
-      state.data.stats = action.payload.stats;
-      state.data.meta = action.payload.meta;
+      state.ui.error = null;
+      state.data.transactions = action.payload.items || [];
+      state.data.stats = action.payload.stats || initialState.data.stats;
+      state.data.meta = action.payload.meta || initialState.data.meta;
     },
     fetch_transactions_error: (state, action) => {
       state.ui.loading = false;
+      state.ui.success = false;
       state.ui.error = action.payload;
     },
     add_transaction: (state) => {

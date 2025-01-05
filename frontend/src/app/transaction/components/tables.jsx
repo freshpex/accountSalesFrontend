@@ -27,14 +27,14 @@ import { useColors } from '../../../utils/colors';
 const MotionBox = motion(Box);
 
 const TransactionTable = ({
-  data,
-  selectedItems,
-  onSelectAll,
-  onSelectItem,
-  currentPage,
-  totalPages,
-  pageSize,
-  totalItems,
+  data = [],
+  selectedItems = [],
+  onSelectAll = () => {},
+  onSelectItem = () => {},
+  currentPage = 1,
+  totalPages = 1,
+  pageSize = 10,
+  totalItems = 0,
   onPageChange,
   onView,
   onDelete,
@@ -43,6 +43,19 @@ const TransactionTable = ({
 }) => {
   const isMobile = useBreakpointValue({ base: true, md: false });
   const colors = useColors();
+
+  // Add these checks at the beginning
+  const handleSelectAll = () => {
+    if (typeof onSelectAll === 'function') {
+      onSelectAll();
+    }
+  };
+
+  const handleSelectItem = (id) => {
+    if (typeof onSelectItem === 'function') {
+      onSelectItem(id);
+    }
+  };
 
   const renderMobileCard = (transaction) => (
     <MotionBox
@@ -102,9 +115,9 @@ const TransactionTable = ({
             px={2}
             py={1}
             borderRadius="full"
-            {...getPaymentColor(transaction.payment)}
+            {...getPaymentColor(transaction?.payment || 'pending')}
           >
-            {transaction.payment}
+            {transaction?.payment || 'Pending'}
           </Badge>
         </Flex>
 
@@ -114,9 +127,9 @@ const TransactionTable = ({
             px={2}
             py={1}
             borderRadius="full"
-            {...getStatusColor(transaction.status)}
+            {...getStatusColor(transaction?.status || 'pending')}
           >
-            {transaction.status}
+            {transaction?.status || 'Pending'}
           </Badge>
         </Flex>
 
@@ -165,9 +178,9 @@ const TransactionTable = ({
           <Tr>
             <Th w="40px">
               <Checkbox
-                isChecked={selectedItems.length === data.length}
+                isChecked={data.length > 0 && selectedItems.length === data.length}
                 isIndeterminate={selectedItems.length > 0 && selectedItems.length < data.length}
-                onChange={onSelectAll}
+                onChange={handleSelectAll}
                 colorScheme="blue"
               />
             </Th>
@@ -183,9 +196,9 @@ const TransactionTable = ({
           </Tr>
         </Thead>
         <Tbody>
-          {data.map((transaction) => (
+          {(data || []).map((transaction) => (
             <Tr
-              key={transaction.id}
+              key={transaction.id || transaction._id}
               as="tr"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -194,33 +207,36 @@ const TransactionTable = ({
             >
               <Td>
                 <Checkbox
-                  isChecked={selectedItems.includes(transaction.id)}
-                  onChange={() => onSelectItem(transaction.id)}
+                  isChecked={selectedItems.includes(transaction.id || transaction._id)}
+                  onChange={() => handleSelectItem(transaction.id || transaction._id)}
                   colorScheme="blue"
                 />
               </Td>
               <Td>
                 <HStack spacing={3}>
-                  <Image
-                    src={transaction.productImage}
-                    alt={transaction.productName}
-                    boxSize="40px"
-                    objectFit="cover"
-                    borderRadius="md"
-                  />
+                  {transaction.productImage && (
+                    <Image
+                      src={transaction.productImage}
+                      alt={transaction.productName || 'Product'}
+                      boxSize="40px"
+                      objectFit="cover"
+                      borderRadius="md"
+                      fallbackSrc="/placeholder.png"
+                    />
+                  )}
                   <Box>
                     <Text color="blue.500" fontWeight="medium">
-                      {transaction.id}
+                      {transaction.transactionId || 'N/A'}
                     </Text>
                     <Text fontSize="sm" color="gray.600">
-                      {transaction.productName}
+                      {transaction.productName || 'N/A'}
                     </Text>
                   </Box>
                 </HStack>
               </Td>
-              <Td>{transaction.customer}</Td>
-              <Td>${transaction.price}</Td>
-              <Td>{transaction.date}</Td>
+              <Td>{transaction.customer || 'N/A'}</Td>
+              <Td>${transaction.price?.toFixed(2) || '0.00'}</Td>
+              <Td>{new Date(transaction.date).toLocaleDateString()}</Td>
               <Td>{new Date(transaction.createdDate).toLocaleString()}</Td>
               <Td>{new Date(transaction.updatedDate).toLocaleString()}</Td>
               <Td>
@@ -228,9 +244,9 @@ const TransactionTable = ({
                   px={2}
                   py={1}
                   borderRadius="full"
-                  {...getPaymentColor(transaction.payment)}
+                  {...getPaymentColor(transaction?.payment || 'pending')}
                 >
-                  {transaction.payment}
+                  {transaction?.payment || 'Pending'}
                 </Badge>
               </Td>
               <Td>
@@ -238,9 +254,9 @@ const TransactionTable = ({
                   px={2}
                   py={1}
                   borderRadius="full"
-                  {...getStatusColor(transaction.status)}
+                  {...getStatusColor(transaction?.status || 'pending')}
                 >
-                  {transaction.status}
+                  {transaction?.status || 'Pending'}
                 </Badge>
               </Td>
               <Td>

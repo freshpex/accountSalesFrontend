@@ -108,6 +108,7 @@ export const ApiEndpoints = {
   RESET_PASSWORD: '/api/v1/user/reset-password',
   TRANSACTIONS: '/api/v1/transactions',
   PRODUCTS: '/api/v1/products',
+  PRODUCTS_AVAILABLE: '/api/v1/products/available',
   CUSTOMERS: '/api/v1/customers',
   CUSTOMER_ACTIVITY: '/api/v1/customers/:id/activity',
   CUSTOMER_SEGMENTS: '/api/v1/customers/segments',
