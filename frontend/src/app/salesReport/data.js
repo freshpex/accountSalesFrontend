@@ -29,35 +29,50 @@ export const salesData = {
     ],
   
     regionalData: [
-      { region: 'East Java', growth: 50 },
-      { region: 'Kalimantan', growth: 50 },
-      { region: 'Bali', growth: 65 }
+      { region: 'usa', growth: 50 },
+      { region: 'london', growth: 50 },
+      { region: 'korea', growth: 65 }
     ],
   
     popularProducts: [
       { 
-        id: '021231',
-        name: 'Kanky Kitadakate (Green)',
-        price: 20.00,
-        sales: 3000,
-        status: 'Success',
-        image: '/shoes/green-kanky.png'
+        id: "101",
+        username: "FA34567",
+        about: "Special offer for our customers!",
+        type: "facebook",
+        status: "sold",
+        price: 1000,
+        images: ["photo1.png", "photo2.png", "photo3.png", "photo4.png"],
+        follower: 1000,
+        age: 18,
+        region: "usa",
+        engagement: 1000,
       },
       {
-        id: '021232',
-        name: 'Story Honzo (Cream)',
-        price: 20.00,
-        sales: 2311,
-        status: 'Success',
-        image: '/shoes/cream-story.png'
+        id: "002",
+        username: "IN34567",
+        about: "Special offer for our customers!",
+        type: "instagram",
+        status: "available",
+        price: 1000,
+        images: ["photo1.png", "photo2.png", "photo3.png", "photo4.png"],
+        follower: 1000,
+        age: 18,
+        region: "usa",        
+        engagement: 1000,
       },
       {
-        id: '021233',
-        name: 'Beige Coffe (Navy)',
-        price: 20.00,
-        sales: 2111,
-        status: 'Success',
-        image: '/shoes/navy-beige.png'
+        id: "001",
+        username: "IN34567",
+        about: "Special offer for our customers!",
+        type: "instagram",
+        status: "sold",
+        price: 1000,
+        images: ["photo1.png", "photo2.png", "photo3.png", "photo4.png"],
+        follower: 1000,
+        age: 18,
+        region: "usa",
+        engagement: 1000,
       }
     ]
   };

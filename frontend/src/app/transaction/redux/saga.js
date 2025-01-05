@@ -39,11 +39,32 @@ function* fetchTransactionsSaga({ payload }) {
 
 function* addTransactionSaga({ payload }) {
   try {
-    const response = yield call(api.post, ApiEndpoints.TRANSACTIONS, payload);
+    // Ensure all required fields are present
+    const formattedData = {
+      productId: payload.productId,
+      amount: Number(payload.amount),
+      quantity: Number(payload.quantity || 1),
+      status: payload.status.toLowerCase(),
+      paymentStatus: payload.paymentStatus.toLowerCase(),
+      paymentMethod: payload.paymentMethod,
+      notes: payload.notes,
+      metadata: {
+        productName: payload.metadata.productName,
+        customerName: payload.metadata.customerName
+      }
+    };
+
+    // Validate required fields before making the API call
+    if (!formattedData.productId || !formattedData.amount) {
+      throw new Error('Product ID and Amount are required');
+    }
+
+    const response = yield call(api.post, ApiEndpoints.TRANSACTIONS, formattedData);
     yield put(add_transaction_success(response.data));
     toast.success("Transaction created successfully");
+    
   } catch (error) {
-    const errorMessage = error.response?.data?.error || "Failed to create transaction";
+    const errorMessage = error.response?.data?.error || error.message || "Failed to create transaction";
     toast.error(errorMessage);
     yield put(add_transaction_error(errorMessage));
   }

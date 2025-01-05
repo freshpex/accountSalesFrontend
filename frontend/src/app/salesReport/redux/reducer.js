@@ -14,10 +14,10 @@ const initialState = {
       revenueGrowth: 0,
       totalTransactions: 0,
       transactionGrowth: 0,
-      totalCustomers: 0, // Added missing field
-      customerGrowth: 0, // Added missing field
-      totalProducts: 0,  // Added missing field
-      productGrowth: 0   // Added missing field
+      totalCustomers: 0,
+      customerGrowth: 0,
+      totalProducts: 0,
+      productGrowth: 0
     },
     monthlySales: [],
     regionalData: [],
@@ -75,7 +75,7 @@ export const {
   update_filters,
   fetch_regional_data,
   fetch_regional_data_success,
-  fetch_regional_data_error  // Export the new action
+  fetch_regional_data_error
 } = salesReportSlice.actions;
 
 export default salesReportSlice.reducer;

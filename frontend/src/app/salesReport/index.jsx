@@ -41,6 +41,10 @@ const SalesReport = () => {
   if (loading) {
     return <LoadingSpinner />;
   }
+
+  console.log('Sales summary:', summary); // Add logging
+  console.log('Monthly sales:', monthlySales); // Add logging
+  console.log('Popular products:', popularProducts); // Add logging
   
   const renderContent = () => {
     if (!summary.totalRevenue && !monthlySales.length) {

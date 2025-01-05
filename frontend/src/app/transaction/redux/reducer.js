@@ -12,7 +12,8 @@ const initialState = {
       all: 0,
       shipping: 0,
       completed: 0,
-      cancelled: 0
+      cancelled: 0,
+      pending: 0
     },
     meta: {
       currentPage: 1,

@@ -14,7 +14,7 @@ export const ActionTypes = {
   AUTH_SUCCESS: 'auth/auth_user_success',
   AUTH_FAILURE: 'auth/auth_user_error',
   
-  // Account Settings actions.
+  // Account Settings actions
   FETCH_PROFILE: 'accountSettings/fetch_profile',
   UPDATE_PROFILE: 'accountSettings/update_profile',
   UPDATE_SECURITY: 'accountSettings/update_security',
@@ -37,7 +37,7 @@ export const ActionTypes = {
   DELETE_TRANSACTION_SUCCESS: 'transaction/delete_transaction_success',
   DELETE_TRANSACTION_ERROR: 'transaction/delete_transaction_error',
   
-  // Product actions.
+  // Product actions
   FETCH_PRODUCTS: 'product/fetch_products',
   FETCH_PRODUCTS_SUCCESS: 'product/fetch_products_success',
   FETCH_PRODUCTS_ERROR: 'product/fetch_products_error',
@@ -51,7 +51,7 @@ export const ActionTypes = {
   DELETE_PRODUCT_SUCCESS: 'product/delete_product_success',
   DELETE_PRODUCT_ERROR: 'product/delete_product_error',
   
-  // Customer actions.
+  // Customer actions
   FETCH_CUSTOMERS: 'customer/fetch_customers',
   FETCH_CUSTOMERS_SUCCESS: 'customer/fetch_customers_success',
   FETCH_CUSTOMERS_ERROR: 'customer/fetch_customers_error',
@@ -65,7 +65,7 @@ export const ActionTypes = {
   FETCH_CUSTOMER_ACTIVITY_ERROR: 'customer/fetch_customer_activity_error',
   DELETE_CUSTOMER: 'customer/delete_customer',
   
-  // Help Ticket actions.
+  // Help Ticket actions
   FETCH_TICKETS: 'help/fetch_tickets',
   FETCH_TICKETS_SUCCESS: 'help/fetch_tickets_success',
   FETCH_TICKETS_ERROR: 'help/fetch_tickets_error',
@@ -78,7 +78,7 @@ export const ActionTypes = {
   UPDATE_TICKET_STATUS: 'help/update_ticket_status',
   MARK_NOTIFICATION_READ: 'help/mark_notification_read',
   
-  // Dashboard actions.
+  // Dashboard actions
   FETCH_DASHBOARD_DATA: 'dashboard/fetch_dashboard_data',
   FETCH_DASHBOARD_SUCCESS: 'dashboard/fetch_dashboard_success',
   FETCH_DASHBOARD_ERROR: 'dashboard/fetch_dashboard_error',
@@ -87,13 +87,14 @@ export const ActionTypes = {
   FETCH_SALES_METRICS_ERROR: 'dashboard/fetch_sales_metrics_error',
   UPDATE_SALES_TARGET: 'dashboard/update_sales_target',
   
-  // Sales Report actions - updating to match reducer
+  // Sales Report actions
   FETCH_SALES_REPORT: 'salesReport/fetch_sales_report',
   FETCH_SALES_REPORT_SUCCESS: 'salesReport/fetch_sales_report_success',
   FETCH_SALES_REPORT_ERROR: 'salesReport/fetch_sales_report_error',
   UPDATE_FILTERS: 'salesReport/update_filters',
   FETCH_REGIONAL_DATA: 'salesReport/fetch_regional_data',
   FETCH_REGIONAL_DATA_SUCCESS: 'salesReport/fetch_regional_data_success',
+  FETCH_REGIONAL_DATA_ERROR: 'salesReport/fetch_regional_data_error',
 
   // Layout actions
   TOGGLE_SIDEBAR: 'layout/toggle_sidebar',

@@ -72,20 +72,22 @@ const Transaction = () => {
   };
 
   const tabs = [
-    { key: 'all', label: 'All Transactions', count: stats.all },
-    { key: 'shipping', label: 'Shipping', count: stats.shipping },
-    { key: 'completed', label: 'Completed', count: stats.completed },
-    { key: 'cancelled', label: 'Cancel', count: stats.cancelled },
+    { key: 'all', label: 'All Transactions', count: stats?.all || 0 },
+    { key: 'shipping', label: 'Shipping', count: stats?.shipping || 0 },
+    { key: 'completed', label: 'Completed', count: stats?.completed || 0 },
+    { key: 'cancelled', label: 'Cancelled', count: stats?.cancelled || 0 },
   ];
 
   useEffect(() => {
-    dispatch(fetch_transactions({ 
-      status: selectedTab,
-      page,
-      limit: itemsPerPage,
-      search: searchQuery,
-      ...filters
-    }));
+    if (!loading) {
+      dispatch(fetch_transactions({ 
+        status: selectedTab,
+        page,
+        limit: itemsPerPage,
+        search: searchQuery,
+        ...filters
+      }));
+    }
   }, [dispatch, selectedTab, page, itemsPerPage, filters, searchQuery]);
 
   const handleSearch = (value) => {
@@ -122,6 +124,10 @@ const Transaction = () => {
   };
 
   if (loading) {
+    return <LoadingSpinner />;
+  }
+
+  if (!stats) {
     return <LoadingSpinner />;
   }
 

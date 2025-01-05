@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import {
   Modal,
   ModalOverlay,
@@ -14,25 +15,90 @@ import {
   HStack,
   Image,
   Text,
-  useBreakpointValue,
 } from '@chakra-ui/react';
 import { useColors } from '../../../utils/colors';
 
 const TransactionModal = ({ isOpen, onClose, data, action, onSave, onDelete }) => {
-    const isReadOnly = action === 'view';
-    const colors = useColors();
+  const isReadOnly = action === 'view';
+  const colors = useColors();
+  
+  const [formData, setFormData] = useState({
+    productId: '', // This is required by backend
+    amount: '',
+    quantity: 1,
+    status: 'pending',
+    paymentStatus: 'pending',
+    paymentMethod: 'card',
+    notes: '',
+    metadata: {
+      productName: '',
+      customerName: '',
+    },
+    transactionId: '' // Add this for display purposes
+  });
+
+  useEffect(() => {
+    if (data) {
+      setFormData({
+        productId: data.productId || '',
+        amount: data.amount || '',
+        quantity: data.quantity || 1,
+        status: data.status || 'pending',
+        paymentStatus: data.paymentStatus || 'pending',
+        paymentMethod: data.paymentMethod || 'card',
+        notes: data.notes || '',
+        metadata: {
+          productName: data.productName || '',
+          customerName: data.customer || ''
+        },
+        transactionId: data.transactionId || ''
+      });
+    }
+  }, [data]);
+
+  const handleChange = (field) => (e) => {
+    setFormData(prev => {
+      if (field.includes('metadata.')) {
+        const metadataField = field.split('.')[1];
+        return {
+          ...prev,
+          metadata: {
+            ...prev.metadata,
+            [metadataField]: e.target.value
+          }
+        };
+      }
+      return {
+        ...prev,
+        [field]: e.target.value
+      };
+    });
+  };
+
+  // Validate form before submission
+  const validateForm = () => {
+    const errors = {};
+    if (!formData.productId) errors.productId = 'Product ID is required';
+    if (!formData.amount) errors.amount = 'Amount is required';
+    if (!formData.metadata.productName) errors.productName = 'Product name is required';
+    if (!formData.metadata.customerName) errors.customerName = 'Customer name is required';
+    return errors;
+  };
+
+  const handleSubmit = () => {
+    const errors = validateForm();
+    if (Object.keys(errors).length === 0) {
+      onSave(formData);
+    } else {
+      // Show validation errors
+      toast.error(Object.values(errors).join('\n'));
+    }
+  };
 
   return (
-    <Modal 
-      isOpen={isOpen} 
-      onClose={onClose}
-      size="6xl"
-    >
+    <Modal isOpen={isOpen} onClose={onClose} size="6xl">
       <ModalOverlay />
-      <ModalContent 
-      maxW="1200px" maxH="90vh" overflowY="auto"
-      bg={colors.bgColor} color={colors.textColor}
-      >
+      <ModalContent maxW="1200px" maxH="90vh" overflowY="auto" bg={colors.bgColor} color={colors.textColor}>
         <ModalHeader>
           {action === 'add' && 'New Transaction'}
           {action === 'view' && 'View Transaction'}
@@ -47,26 +113,38 @@ const TransactionModal = ({ isOpen, onClose, data, action, onSave, onDelete }) =
                 {data?.productImage && (
                   <Image
                     src={data.productImage}
-                    alt={data.productName}
+                    alt={formData.metadata.productName}
                     boxSize="100px"
                     objectFit="cover"
                     borderRadius="md"
+                    fallbackSrc="/logo.svg"
                   />
                 )}
                 <FormControl>
                   <FormLabel>Transaction ID</FormLabel>
                   <Input
-                    value={data?.id || ''}
+                    value={formData.transactionId || 'Will be generated'}
                     isReadOnly={true}
                     bg="gray.100"
                   />
                 </FormControl>
               </HStack>
 
+              <FormControl isRequired>
+                <FormLabel>Product ID</FormLabel>
+                <Input
+                  value={formData.productId}
+                  onChange={handleChange('productId')}
+                  isReadOnly={isReadOnly}
+                  bg={isReadOnly ? "gray.100" : colors.bgColor}
+                />
+              </FormControl>
+
               <FormControl>
                 <FormLabel>Product Name</FormLabel>
                 <Input
-                  value={data?.productName || ''}
+                  value={formData.metadata.productName}
+                  onChange={handleChange('metadata.productName')}
                   isReadOnly={isReadOnly}
                   bg={isReadOnly ? "gray.100" : colors.bgColor}
                 />
@@ -75,7 +153,8 @@ const TransactionModal = ({ isOpen, onClose, data, action, onSave, onDelete }) =
               <FormControl>
                 <FormLabel>Customer</FormLabel>
                 <Input
-                  value={data?.customer || ''}
+                  value={formData.metadata.customerName}
+                  onChange={handleChange('metadata.customerName')}
                   isReadOnly={isReadOnly}
                   bg={isReadOnly ? "gray.100" : colors.bgColor}
                 />
@@ -85,7 +164,8 @@ const TransactionModal = ({ isOpen, onClose, data, action, onSave, onDelete }) =
                 <FormControl>
                   <FormLabel>Price</FormLabel>
                   <Input
-                    value={data?.price || ''}
+                    value={formData.amount}
+                    onChange={handleChange('amount')}
                     type="number"
                     isReadOnly={isReadOnly}
                     bg={isReadOnly ? "gray.100" : colors.bgColor}
@@ -96,7 +176,8 @@ const TransactionModal = ({ isOpen, onClose, data, action, onSave, onDelete }) =
                   <FormLabel>Date</FormLabel>
                   <Input
                     type="date"
-                    value={data?.date || ''}
+                    value={formData.date}
+                    onChange={handleChange('date')}
                     isReadOnly={isReadOnly}
                     bg={isReadOnly ? "gray.100" : colors.bgColor}
                   />
@@ -107,7 +188,8 @@ const TransactionModal = ({ isOpen, onClose, data, action, onSave, onDelete }) =
                 <FormControl>
                   <FormLabel>Payment Status</FormLabel>
                   <Select
-                    value={data?.payment || ''}
+                    value={formData.paymentStatus}
+                    onChange={handleChange('paymentStatus')}
                     isDisabled={isReadOnly}
                     bg={isReadOnly ? "gray.100" : colors.bgColor}
                   >
@@ -120,7 +202,8 @@ const TransactionModal = ({ isOpen, onClose, data, action, onSave, onDelete }) =
                 <FormControl>
                   <FormLabel>Status</FormLabel>
                   <Select
-                    value={data?.status || ''}
+                    value={formData.status}
+                    onChange={handleChange('status')}
                     isDisabled={isReadOnly}
                     bg={isReadOnly ? "gray.100" : colors.bgColor}
                   >
@@ -153,7 +236,7 @@ const TransactionModal = ({ isOpen, onClose, data, action, onSave, onDelete }) =
               <Button variant="ghost" mr={3} onClick={onClose}>
                 Cancel
               </Button>
-              <Button colorScheme="blue" onClick={onSave}>
+              <Button colorScheme="blue" onClick={handleSubmit}>
                 Save
               </Button>
             </>

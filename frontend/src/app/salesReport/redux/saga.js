@@ -14,17 +14,31 @@ import toast from "react-hot-toast";
 function* fetchSalesReportSaga({ payload }) {
   try {
     const { dateRange, startDate, endDate, region } = payload;
-    const params = { dateRange, startDate, endDate, region };
 
-    // Ensure valid date values
-    if (startDate) params.startDate = new Date(startDate).toISOString();
-    if (endDate) params.endDate = new Date(endDate).toISOString();
+    let finalStart = startDate ? new Date(startDate) : null;
+    let finalEnd = endDate ? new Date(endDate) : null;
 
-    console.log('Fetching sales report with params:', params); // Add logging
+    // Only fall back to dateRange if start/end are not provided
+    if (!finalStart && !finalEnd && dateRange === 'month') {
+      finalStart = new Date(2023, 0, 1);
+      finalEnd = new Date(2023, 0, 31);
+    }
 
-    const response = yield call(api.get, ApiEndpoints.SALES_REPORT, {
-      params
-    });
+    const params = {
+      dateRange,
+      startDate: finalStart ? finalStart.toISOString() : undefined,
+      endDate: finalEnd ? finalEnd.toISOString() : undefined,
+      region: region || 'all',
+    };
+
+    console.log('Fetching sales report with params:', params);
+
+    const response = yield call(api.get, `${ApiEndpoints.SALES_REPORT}/report`, { params });
+    console.log('Sales report response:', response);
+
+    if (!response.data) {
+      throw new Error('No sales report found.');
+    }
 
     // Transform and validate the data
     const transformedData = {
@@ -48,8 +62,8 @@ function* fetchSalesReportSaga({ payload }) {
 
     yield put(fetch_sales_report_success(transformedData));
   } catch (error) {
-    console.error('Error fetching sales report:', error); // Add logging
-    const errorMessage = error.response?.data?.error || "Failed to fetch sales report";
+    console.error('Error fetching sales report:', error); 
+    const errorMessage = error.message || "Failed to fetch sales report";
     toast.error(errorMessage);
     yield put(fetch_sales_report_error(errorMessage));
   }

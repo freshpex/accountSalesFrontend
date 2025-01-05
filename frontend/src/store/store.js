@@ -24,6 +24,7 @@ const persistConfig = {
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
+
 const sagaMiddleware = createSagaMiddleware();
 
 const store = configureStore({
@@ -33,11 +34,11 @@ const store = configureStore({
       thunk: false,
       serializableCheck: false,
     }).concat(sagaMiddleware),
-  devTools: typeof window !== 'undefined' && window.location.hostname === 'localhost'
+  devTools: import.meta.env.NODE_ENV !== 'production',
 });
 
-const persistor = persistStore(store);
+
 
 sagaMiddleware.run(rootSaga);
-
+const persistor = persistStore(store);
 export { store, persistor };
