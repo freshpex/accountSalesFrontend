@@ -20,14 +20,14 @@ import toast from "react-hot-toast";
 
 function* fetchCustomersSaga({ payload }) {
   try {
-    const { segment, status, sort, page = 1, limit = 10 } = payload || {};
+    const { segment, status, sort = '-createdAt', page = 1, limit = 10 } = payload || {};
     const params = { 
       segment, 
       status, 
       sort, 
       page, 
       limit,
-      role: 'user'
+      role: 'user' // Ensure this is set to fetch non-admin users
     };
     
     console.log('Fetching customers with params:', params);
@@ -35,7 +35,13 @@ function* fetchCustomersSaga({ payload }) {
     console.log('Customers response:', response.data);
     
     if (response.data.success) {
-      yield put(fetch_customers_success(response.data));
+      const transformedData = {
+        customers: response.data.data.items,
+        meta: response.data.data.meta,
+        metrics: response.data.data.metrics,
+        segments: response.data.data.segments
+      };
+      yield put(fetch_customers_success(transformedData));
     } else {
       throw new Error(response.data.error || 'Failed to fetch customers');
     }

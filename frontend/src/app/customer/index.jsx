@@ -32,20 +32,9 @@ import CustomerActionMenu from './components/CustomerActionMenu';
 
 const Customers = () => {
   const dispatch = useDispatch();
-  const customers = useSelector(getCustomers) || [];
-  const metrics = useSelector(getCustomerMetrics) || {
-    totalCustomers: 0,
-    activeCustomers: 0,
-    newCustomers: 0,
-    churnRate: 0,
-    trends: []
-  };
-  const segments = useSelector(getCustomerSegments) || {
-    platinum: 0,
-    gold: 0,
-    silver: 0,
-    bronze: 0
-  };
+  const customers = useSelector(getCustomers);
+  const metrics = useSelector(getCustomerMetrics);
+  const segments = useSelector(getCustomerSegments);
   const recentActivity = useSelector(getRecentActivity) || [];
   const loading = useSelector(getLoading);
   

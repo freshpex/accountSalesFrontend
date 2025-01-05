@@ -1,6 +1,6 @@
 import { createSelector } from "@reduxjs/toolkit";
 
-const customerState = state => state.user || { data: { customers: [] }, ui: {} };
+const customerState = state => state.customer || { data: { customers: [] }, ui: {} };
 
 export const getCustomers = createSelector(
   [customerState],

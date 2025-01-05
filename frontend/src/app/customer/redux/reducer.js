@@ -43,13 +43,13 @@ export const customerSlice = createSlice({
     fetch_customers_success: (state, action) => {
       state.ui.loading = false;
       state.ui.success = true;
-      // Handle the nested data structure from the API
-      if (action.payload.success && action.payload.data) {
-        state.data.customers = action.payload.data.items || [];
-        state.data.metrics = action.payload.data.metrics || initialState.data.metrics;
-        state.data.segments = action.payload.data.segments || initialState.data.segments;
-        state.data.meta = action.payload.data.meta || initialState.data.meta;
-      }
+      state.data = {
+        ...state.data,
+        customers: action.payload.customers || [],
+        metrics: action.payload.metrics || initialState.data.metrics,
+        segments: action.payload.segments || initialState.data.segments,
+        meta: action.payload.meta || initialState.data.meta
+      };
     },
     fetch_customers_error: (state, action) => {
       state.ui.loading = false;
