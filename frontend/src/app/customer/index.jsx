@@ -170,34 +170,38 @@ const Customers = () => {
       <>
         {/* Stats Grid */}
         <Grid templateColumns={{ base: '1fr', md: 'repeat(2, 1fr)', lg: 'repeat(4, 1fr)' }} gap={6} mb={8}>
-          <StatCard
-            title="Total Customers"
-            value={metrics.totalCustomers}
-            trend={metrics.totalGrowth}
-            icon={FiUsers}
-            subtitle="Active accounts"
-          />
-          <StatCard
-            title="New Customers"
-            value={metrics.newCustomers}
-            trend={metrics.newGrowth}
-            icon={FiUserPlus}
-            subtitle="This month"
-          />
-          <StatCard
-            title="Active Customers"
-            value={metrics.activeCustomers}
-            trend={metrics.activeGrowth}
-            icon={FiUserCheck}
-            subtitle="Last 30 days"
-          />
-          <StatCard
-            title="Churn Rate"
-            value={`${metrics.churnRate}%`}
-            trend={metrics.churnRateChange}
-            icon={FiUserX}
-            subtitle="This month"
-          />
+          {[
+            {
+              title: "Total Customers",
+              value: metrics.totalCustomers,
+              trend: metrics.totalGrowth,
+              icon: FiUsers,
+              subtitle: "Active accounts"
+            },
+            {
+              title: "New Customers",
+              value: metrics.newCustomers,
+              trend: metrics.newGrowth,
+              icon: FiUserPlus,
+              subtitle: "This month"
+            },
+            {
+              title: "Active Customers",
+              value: metrics.activeCustomers,
+              trend: metrics.activeGrowth,
+              icon: FiUserCheck,
+              subtitle: "Last 30 days"
+            },
+            {
+              title: "Churn Rate",
+              value: `${metrics.churnRate}%`,
+              trend: metrics.churnRateChange,
+              icon: FiUserX,
+              subtitle: "This month"
+            }
+          ].map((stat, index) => (
+            <StatCard key={`stat-${index}`} {...stat} />
+          ))}
         </Grid>
 
         {/* Charts and Activity */}
@@ -208,8 +212,11 @@ const Customers = () => {
 
         {/* Customer Segments */}
         <Grid templateColumns={{ base: '1fr', md: 'repeat(2, 1fr)', lg: 'repeat(4, 1fr)' }} gap={6} mb={8}>
-          {Object.entries(segments).map(([key, segment]) => (
-            <CustomerSegmentCard key={key} segment={segment} />
+          {Object.entries(segments).map(([key, value]) => (
+            <CustomerSegmentCard 
+              key={`segment-${key}`} 
+              segment={{ name: key, count: value }} 
+            />
           ))}
         </Grid>
 

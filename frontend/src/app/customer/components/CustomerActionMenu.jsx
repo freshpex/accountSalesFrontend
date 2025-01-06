@@ -1,47 +1,88 @@
-import { Menu, MenuButton, MenuList, MenuItem, IconButton } from '@chakra-ui/react';
+import { useState } from 'react';
+import { Menu, MenuButton, MenuList, MenuItem, IconButton, useDisclosure } from '@chakra-ui/react';
 import { FiMoreVertical, FiUser, FiEdit2, FiMail, FiPhone } from 'react-icons/fi';
+import UpdateSegmentModal from './UpdateSegmentModal';
+import ViewProfileModal from './ViewProfileModal';
 
-const CustomerActionMenu = ({ customer, onView, onUpdateSegment }) => {
-  const handleSegmentUpdate = (newSegment) => {
-    onUpdateSegment(customer._id, customer.segment, newSegment);
+const CustomerActionMenu = ({ customer, onUpdateSegment }) => {
+  const {
+    isOpen: isUpdateOpen,
+    onOpen: onUpdateOpen,
+    onClose: onUpdateClose
+  } = useDisclosure();
+
+  const {
+    isOpen: isViewOpen,
+    onOpen: onViewOpen,
+    onClose: onViewClose
+  } = useDisclosure();
+
+  console.log('Customer in ActionMenu:', customer);
+
+  const handleEmailClick = (e) => {
+    e.stopPropagation();
+    if (customer.email) {
+      window.location.href = `mailto:${customer.email}`;
+    }
+  };
+
+  const handlePhoneClick = (e) => {
+    e.stopPropagation();
+    if (customer.phoneNumber) {
+      window.location.href = `tel:${customer.phoneNumber}`;
+    }
   };
 
   return (
-    <Menu>
-      <MenuButton
-        as={IconButton}
-        icon={<FiMoreVertical />}
-        variant="ghost"
-        size="sm"
-        onClick={(e) => e.stopPropagation()}
+    <>
+      <Menu>
+        <MenuButton
+          as={IconButton}
+          icon={<FiMoreVertical />}
+          variant="ghost"
+          size="sm"
+          onClick={(e) => e.stopPropagation()}
+        />
+        <MenuList onClick={(e) => e.stopPropagation()}>
+        <MenuItem icon={<FiUser />} onClick={onViewOpen}>
+            View Profile
+          </MenuItem>
+          <MenuItem icon={<FiEdit2 />} onClick={onUpdateOpen}>
+            Update Segment
+          </MenuItem>
+          <MenuItem 
+            icon={<FiMail />} 
+            onClick={handleEmailClick}
+            isDisabled={!customer.email}
+          >
+            Send Email
+          </MenuItem>
+          <MenuItem 
+            icon={<FiPhone />} 
+            onClick={handlePhoneClick}
+            isDisabled={!customer.phoneNumber}
+          >
+            Call
+          </MenuItem>
+        </MenuList>
+      </Menu>
+
+      <UpdateSegmentModal
+        isOpen={isUpdateOpen}
+        onClose={onUpdateClose}
+        customer={{
+          _id: customer.id,
+          segment: customer.segment,
+        }}
+        onUpdate={onUpdateSegment}
       />
-      <MenuList onClick={(e) => e.stopPropagation()}>
-        <MenuItem icon={<FiUser />} onClick={() => onView(customer._id)}>
-          View Profile
-        </MenuItem>
-        <MenuItem icon={<FiEdit2 />}>
-          Update Segment
-          <Menu placement="right-start">
-            <MenuList>
-              <MenuItem onClick={() => handleSegmentUpdate('bronze')}>
-                Bronze
-              </MenuItem>
-              <MenuItem onClick={() => handleSegmentUpdate('silver')}>
-                Silver
-              </MenuItem>
-              <MenuItem onClick={() => handleSegmentUpdate('gold')}>
-                Gold
-              </MenuItem>
-              <MenuItem onClick={() => handleSegmentUpdate('platinum')}>
-                Platinum
-              </MenuItem>
-            </MenuList>
-          </Menu>
-        </MenuItem>
-        <MenuItem icon={<FiMail />}>Send Email</MenuItem>
-        <MenuItem icon={<FiPhone />}>Call</MenuItem>
-      </MenuList>
-    </Menu>
+
+      <ViewProfileModal
+        isOpen={isViewOpen}
+        onClose={onViewClose}
+        customer={customer}
+      />
+    </>
   );
 };
 

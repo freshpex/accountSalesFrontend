@@ -98,27 +98,22 @@ function* fetchProductsTransactionSaga() {
 
 function* fetchTransactionProductsSaga() {
   try {
-    yield call(delay, 1000);
+    // Add delay to prevent rate limiting
+    yield delay(1000);
+
+    console.log('Fetching available products...');
+    const response = yield call(api.get, `${ApiEndpoints.PRODUCTS}/available`);
+    console.log('Available products response:', response);
+
+    const products = response.data?.data || [];
     
-    const response = yield call(api.get, ApiEndpoints.PRODUCTS_AVAILABLE);
-    
-    // Transform the response data
-    const products = response.data.data || response.data || [];
-    const formattedProducts = Array.isArray(products) ? products.map(product => ({
-      _id: product._id || product.id,
-      name: product.name,
-      price: product.price,
-      // Add any other needed fields
-    })) : [];
-    
-    yield put(fetch_transaction_products_success(formattedProducts));
-  } catch (error) {
-    if (error.response?.status === 429) {
-      toast.error('Too many requests. Please try again later.');
-    } else {
-      const errorMessage = error.response?.data?.error || 'Failed to fetch available products';
-      toast.error(errorMessage);
+    if (!Array.isArray(products)) {
+      throw new Error('Invalid products data received');
     }
+
+    yield put(fetch_transaction_products_success(products));
+  } catch (error) {
+    console.error('Error fetching available products:', error);
     yield put(fetch_transaction_products_error(error.message));
   }
 }

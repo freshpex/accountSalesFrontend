@@ -91,22 +91,42 @@ function* addCustomerSaga({ payload }) {
 
 function* updateCustomerSegmentSaga({ payload }) {
   try {
-    const { customerId, newSegment } = payload;
+    const { customerId, oldSegment, newSegment } = payload;
     
-    // Call API to update segment
-    yield call(
+    // Add validation
+    if (!customerId) {
+      throw new Error('Customer ID is required');
+    }
+
+    console.log('Updating segment for customer:', { customerId, oldSegment, newSegment });
+
+    const response = yield call(
       api.patch, 
       `${ApiEndpoints.CUSTOMERS}/${customerId}/segment`, 
       { segment: newSegment }
     );
-    
-    // Refresh customer list after update
-    yield put(fetch_customers());
-    
-    toast.success("Customer segment updated successfully");
+
+    if (response.data.success) {
+      yield put({
+        type: 'customer/update_segment_success',
+        payload: {
+          customer: response.data.data.customer,
+          segments: response.data.data.segments
+        }
+      });
+      
+      toast.success('Customer segment updated successfully');
+    } else {
+      throw new Error(response.data.error || 'Failed to update segment');
+    }
   } catch (error) {
-    const errorMessage = error.response?.data?.error || "Failed to update customer segment";
+    console.error('Update segment error:', error);
+    const errorMessage = error.response?.data?.error || error.message || 'Failed to update customer segment';
     toast.error(errorMessage);
+    yield put({
+      type: 'customer/update_segment_error',
+      payload: errorMessage
+    });
   }
 }
 

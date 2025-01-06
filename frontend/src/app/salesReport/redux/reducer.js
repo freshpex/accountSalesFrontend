@@ -8,24 +8,17 @@ const initialState = {
   },
   data: {
     summary: {
+      totalRevenue: 0,
+      totalTransactions: 0,
+      totalProducts: 0,
       currentTarget: 0,
       totalTarget: 0,
-      totalRevenue: 0,
       revenueGrowth: 0,
-      totalTransactions: 0,
-      transactionGrowth: 0,
-      totalCustomers: 0,
       customerGrowth: 0,
-      totalProducts: 0,
       productGrowth: 0
     },
     monthlySales: [],
-    regionalData: [],
-    popularProducts: [],
-    periodComparison: {
-      current: {},
-      previous: {}
-    }
+    popularProducts: []
   },
   filters: {
     dateRange: 'month',

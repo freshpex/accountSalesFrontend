@@ -32,28 +32,22 @@ function* fetchTransactionsSaga({ payload }) {
       }
     });
 
-    console.log('Fetch transactions response:', response);
+    console.log('Raw transactions response:', response);
 
-    const responseData = response.data.data || response.data;
+    // Extract data from nested structure
+    const responseData = response.data?.data || response.data;
     
     const formattedData = {
-      items: Array.isArray(responseData.items) ? responseData.items.map(item => ({
-        ...item,
-        date: item.date || item.createdAt,
-        price: Number(item.price || item.amount || 0),
-        customer: item.customer || item.metadata?.customerName || 'N/A',
-        productName: item.productName || item.metadata?.productName || 'N/A'
-      })) : [],
-      meta: responseData.meta || { currentPage: 1, totalPages: 1, totalItems: 0 },
-      stats: responseData.stats || { all: 0, shipping: 0, completed: 0, cancelled: 0 }
+      items: responseData?.items || [],
+      meta: responseData?.meta || { currentPage: 1, totalPages: 1, totalItems: 0 },
+      stats: responseData?.stats || { all: 0, shipping: 0, completed: 0, cancelled: 0 }
     };
 
+    console.log('Formatted transaction data:', formattedData);
     yield put(fetch_transactions_success(formattedData));
   } catch (error) {
     console.error('Fetch transactions error:', error);
-    const errorMessage = error.response?.data?.error || error.message || "Failed to fetch transactions";
-    toast.error(errorMessage);
-    yield put(fetch_transactions_error(errorMessage));
+    yield put(fetch_transactions_error(error.message));
   }
 }
 

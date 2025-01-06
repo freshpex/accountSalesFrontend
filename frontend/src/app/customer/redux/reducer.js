@@ -100,14 +100,29 @@ export const customerSlice = createSlice({
       state.ui.loading = false;
       state.ui.error = action.payload;
     },
-    update_customer_segment: (state, action) => {
-      const { customerId, oldSegment, newSegment } = action.payload;
-      state.data.segments[oldSegment.toLowerCase()]--;
-      state.data.segments[newSegment.toLowerCase()]++;
-      const customerIndex = state.data.customers.findIndex(c => c.id === customerId);
+    update_customer_segment: (state) => {
+      state.ui.loading = true;
+      state.ui.error = null;
+    },
+    update_segment_success: (state, action) => {
+      state.ui.loading = false;
+      state.ui.error = null;
+      
+      // Update the customer in the list
+      const customerIndex = state.data.customers.findIndex(
+        c => c._id === action.payload.customer._id
+      );
+      
       if (customerIndex !== -1) {
-        state.data.customers[customerIndex].segment = newSegment;
+        state.data.customers[customerIndex] = action.payload.customer;
       }
+      
+      // Update segment counts
+      state.data.segments = action.payload.segments;
+    },
+    update_segment_error: (state, action) => {
+      state.ui.loading = false;
+      state.ui.error = action.payload;
     }
   }
 });
@@ -123,6 +138,8 @@ export const {
   add_customer_success,
   add_customer_error,
   update_customer_segment,
+  update_segment_success,
+  update_segment_error,
   search_customers,
   search_customers_success,
   search_customers_error

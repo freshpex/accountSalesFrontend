@@ -31,7 +31,20 @@ const SalesReport = () => {
   const cardBg = useColorModeValue('white', 'gray.800');
 
   useEffect(() => {
-    dispatch(fetch_sales_report(filters));
+    const fetchData = () => {
+      dispatch(fetch_sales_report({
+        dateRange: filters.dateRange,
+        startDate: filters.startDate,
+        endDate: filters.endDate,
+        region: filters.region
+      }));
+    };
+
+    fetchData();
+    // Set up an interval to refresh data every 5 minutes
+    const interval = setInterval(fetchData, 300000);
+
+    return () => clearInterval(interval);
   }, [dispatch, filters]);
 
   const handleFilterChange = (e) => {
@@ -47,7 +60,11 @@ const SalesReport = () => {
   console.log('Popular products:', popularProducts); // Add logging
   
   const renderContent = () => {
-    if (!summary.totalRevenue && !monthlySales.length) {
+    if (loading) {
+      return <LoadingSpinner />;
+    }
+
+    if (!summary || (!summary.totalRevenue && !monthlySales?.length)) {
       return (
         <EmptyStatePage
           title="No Sales Data Available"
