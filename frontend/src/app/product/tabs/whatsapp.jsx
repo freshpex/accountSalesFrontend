@@ -8,7 +8,7 @@ import { getWhatsappProducts, getLoading } from '../redux/selector';
 import LoadingSpinner from '../../../components/LoadingSpinner';
 
 const Whatsapp = ({ searchQuery, filters, onDataFiltered, applyFilters, onViewPost, onEditPost, onDeletePost }) => {
-  const WhatsappProducts = useSelector(getWhatsappProducts);
+  const whatsappProducts = useSelector(getWhatsappProducts) || [];
   const loading = useSelector(getLoading);
   const [selectedItems, setSelectedItems] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -16,21 +16,29 @@ const Whatsapp = ({ searchQuery, filters, onDataFiltered, applyFilters, onViewPo
   const itemsPerPage = 10;
 
   useEffect(() => {
-    const filteredData = applyFilters(WhatsappProducts);
-    onDataFiltered(filteredData);
-    setFilteredPosts(filteredData);
-    setCurrentPage(1);
-  }, [searchQuery, filters, applyFilters, onDataFiltered, WhatsappProducts]);
+    if (whatsappProducts) {
+      console.log('WhatsApp products:', whatsappProducts); // Debug log
+      const filteredData = applyFilters(whatsappProducts);
+      console.log('Filtered WhatsApp data:', filteredData); // Debug log
+      onDataFiltered(filteredData);
+      setFilteredPosts(filteredData);
+      setCurrentPage(1);
+    }
+  }, [searchQuery, filters, applyFilters, onDataFiltered, whatsappProducts]);
 
   if (loading) {
     return <LoadingSpinner />;
   }
 
-  if (!WhatsappProducts.length) {
+  // More detailed empty state check
+  const hasProducts = Array.isArray(whatsappProducts) && whatsappProducts.length > 0;
+  console.log('Has WhatsApp products:', hasProducts); // Debug log
+
+  if (!hasProducts) {
     return (
       <EmptyStatePage
-        title="No Whatsapp Products"
-        sub="Start by adding your first Whatsapp product"
+        title="No WhatsApp Products"
+        sub="Start by adding your first WhatsApp product"
         icon={<FaWhatsapp size={50} color="#25D366" />}
       />
     );

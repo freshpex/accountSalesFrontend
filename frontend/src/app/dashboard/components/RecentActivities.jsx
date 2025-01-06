@@ -6,7 +6,7 @@ import DashboardCard from '../../../components/cards/DashboardCard';
 import EmptyStatePage from '../../../components/emptyState';
 
 const RecentActivities = ({ activities }) => {
-  if (!activities?.length) {
+  if (!activities || !activities.length) {
     return (
       <DashboardCard>
         <EmptyStatePage
@@ -32,7 +32,7 @@ const RecentActivities = ({ activities }) => {
       
       <Stack spacing={4}>
         {activities.map((activity) => (
-          <ActivityItem key={activity.id} activity={activity} />
+          <ActivityItem key={activity._id} activity={activity} />
         ))}
       </Stack>
     </DashboardCard>

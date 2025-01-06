@@ -66,18 +66,26 @@ export const transactionSlice = createSlice({
     },
     update_transaction: (state) => {
       state.ui.loading = true;
+      state.ui.error = null;
     },
     update_transaction_success: (state, action) => {
       state.ui.loading = false;
       state.ui.success = true;
-      const index = state.data.transactions.findIndex(t => t.id === action.payload.id);
+      const index = state.data.transactions.findIndex(
+        t => t.id === action.payload.id || t._id === action.payload._id
+      );
       if (index !== -1) {
-        state.data.transactions[index] = action.payload;
+        state.data.transactions[index] = {
+          ...state.data.transactions[index],
+          ...action.payload,
+          id: action.payload.id || action.payload._id
+        };
       }
     },
     update_transaction_error: (state, action) => {
       state.ui.loading = false;
       state.ui.error = action.payload;
+      state.ui.success = false;
     },
     delete_transaction: (state) => {
       state.ui.loading = true;
@@ -95,7 +103,7 @@ export const transactionSlice = createSlice({
     },
     update_filters: (state, action) => {
       state.filters = { ...state.filters, ...action.payload };
-      state.filters.page = 1; // Reset to first page when filters change
+      state.filters.page = 1;
     },
     reset_filters: (state) => {
       state.filters = initialState.filters;

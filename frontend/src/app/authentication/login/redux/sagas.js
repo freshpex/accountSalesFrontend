@@ -7,17 +7,24 @@ import { setWithExpiry } from "../../../../utils/store";
 function* loginSaga({ payload }) {
   try {
     const response = yield call(api.post, `/api/v1/user/signin`, payload);
+    console.log('API Response:', response.data); // Debug log
     
     if (response.data.success) {
       const { data } = response.data;
+      
+      
+      if (!data) {
+        throw new Error('Invalid response format from server');
+      }
+
       setWithExpiry("x-access-token", `Bearer ${data.userToken}`);
       setWithExpiry("email", data.user.email);
+      
       
       yield put(login_success(data));
       
       toast.success('Login successful!');
 
-      // Redirect after success message
       setTimeout(() => {
         window.location.href = data.user.role === "admin" ? "/adminDashboard" : "/dashboard";
       }, 1000);

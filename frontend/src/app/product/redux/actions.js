@@ -2,8 +2,14 @@ export const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/svg+xml'];
 export const MAX_IMAGE_SIZE = 8 * 1024 * 1024;
 
 export const validateImage = (file) => {
-  if (!file) return { isValid: false, error: 'No file provided' };
-  
+  if (!file || typeof file !== 'object') {
+    return { isValid: false, error: 'Invalid file object' };
+  }
+
+  if (!file.type || !file.size) {
+    return { isValid: false, error: 'Invalid file format' };
+  }
+
   if (!ALLOWED_IMAGE_TYPES.includes(file.type)) {
     return { 
       isValid: false, 
@@ -14,7 +20,7 @@ export const validateImage = (file) => {
   if (file.size > MAX_IMAGE_SIZE) {
     return { 
       isValid: false, 
-      error: 'File size too large. Maximum size is 4MB' 
+      error: `File size too large. Maximum size is ${MAX_IMAGE_SIZE / (1024 * 1024)}MB` 
     };
   }
 
@@ -31,6 +37,9 @@ export const validateProductData = (data) => {
   if (!data.price) errors.price = 'Price is required';
   if (!data.region?.trim()) errors.region = 'Region is required';
   if (!data.about?.trim()) errors.about = 'Description is required';
+  if (data.engagement && (isNaN(data.engagement) || data.engagement < 0 || data.engagement > 100)) {
+    errors.engagement = 'Engagement must be a number between 0 and 100';
+  }
 
   return {
     isValid: Object.keys(errors).length === 0,

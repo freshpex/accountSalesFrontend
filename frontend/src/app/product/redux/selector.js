@@ -4,7 +4,11 @@ const productState = (state) => state.product;
 
 export const getProducts = createSelector(
   productState,
-  (state) => state.data.products
+  (state) => {
+    console.log('Get Products Selector - Full state:', state);
+    console.log('Products from state:', state?.data?.products);
+    return state?.data?.products || [];
+  }
 );
 
 export const getProductStats = createSelector(
@@ -32,25 +36,42 @@ export const getSuccess = createSelector(
   (state) => state.ui.success
 );
 
-// Platform-specific selectors
 export const getInstagramProducts = createSelector(
   getProducts,
-  (products) => products.filter(p => p.type === 'instagram')
+  (products) => {
+    console.log('Instagram Selector - All products:', products);
+    if (!Array.isArray(products)) {
+      console.warn('Products is not an array:', products);
+      return [];
+    }
+    const filtered = products.filter(p => p?.type?.toLowerCase() === 'instagram');
+    console.log('Filtered Instagram products:', filtered);
+    return filtered;
+  }
 );
 
 export const getFacebookProducts = createSelector(
   getProducts,
-  (products) => products.filter(p => p.type === 'facebook')
+  (products) => {
+    if (!Array.isArray(products)) return [];
+    return products.filter(p => p?.type?.toLowerCase() === 'facebook');
+  }
 );
 
 export const getTwitterProducts = createSelector(
   getProducts,
-  (products) => products.filter(p => p.type === 'twitter')
+  (products) => {
+    if (!Array.isArray(products)) return [];
+    return products.filter(p => p?.type?.toLowerCase() === 'twitter');
+  }
 );
 
 export const getWhatsappProducts = createSelector(
   getProducts,
-  (products) => products.filter(p => p.type === 'whatsapp')
+  (products) => {
+    if (!Array.isArray(products)) return [];
+    return products.filter(p => p?.type?.toLowerCase() === 'whatsapp');
+  }
 );
 
 export const getTableSettings = createSelector(
@@ -103,4 +124,15 @@ export const getTransactionProducts = createSelector(
 export const getProductsLoading = createSelector(
   productState,
   state => state.loading
+);
+
+export const getPlatformStats = createSelector(
+  [productState],
+  (state) => ({
+    instagram: state.data.stats.instagram || 0,
+    facebook: state.data.stats.facebook || 0,
+    twitter: state.data.stats.twitter || 0,
+    whatsapp: state.data.stats.whatsapp || 0,
+    total: state.data.stats.total || 0
+  })
 );

@@ -63,3 +63,12 @@ export const getTransactionsByStatus = createSelector(
     cancelled: transactions.filter(t => t.status.toLowerCase() === 'cancelled').length
   })
 );
+
+export const getUpdateStatus = createSelector(
+  transactionState,
+  (state) => ({
+    loading: state.ui.loading,
+    error: state.ui.error,
+    success: state.ui.success
+  })
+);

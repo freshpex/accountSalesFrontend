@@ -9,7 +9,7 @@ import LoadingSpinner from '../../../components/LoadingSpinner';
 import { useColors } from '../../../utils/colors';
 
 const Facebook = ({ searchQuery, filters, onDataFiltered, applyFilters, onViewPost, onEditPost, onDeletePost }) => {
-  const FacebookProducts = useSelector(getFacebookProducts);
+  const facebookProducts = useSelector(getFacebookProducts) || [];
   const loading = useSelector(getLoading);
   const [selectedItems, setSelectedItems] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -18,17 +18,19 @@ const Facebook = ({ searchQuery, filters, onDataFiltered, applyFilters, onViewPo
   const colors = useColors();
 
   useEffect(() => {
-    const filteredData = applyFilters(FacebookProducts);
-    onDataFiltered(filteredData);
-    setFilteredPosts(filteredData);
-    setCurrentPage(1);
-  }, [searchQuery, filters, applyFilters, onDataFiltered, FacebookProducts]);
+    if (facebookProducts) {
+      const filteredData = applyFilters(facebookProducts);
+      onDataFiltered(filteredData);
+      setFilteredPosts(filteredData);
+      setCurrentPage(1);
+    }
+  }, [searchQuery, filters, applyFilters, onDataFiltered, facebookProducts]);
 
   if (loading) {
     return <LoadingSpinner />;
   }
 
-  if (!FacebookProducts.length) {
+  if (!facebookProducts || facebookProducts.length === 0) {
     return (
       <EmptyStatePage
         title="No Facebook Products"

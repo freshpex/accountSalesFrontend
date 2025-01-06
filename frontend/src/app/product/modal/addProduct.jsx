@@ -72,27 +72,28 @@ const AddProduct = ({ isOpen, onClose, data, action, onSave, onDelete }) => {
 
   useEffect(() => {
     if (data) {
-      setUsername(data.username);
-      setType(data.type);
-      setAge(data.age);
-      setFollower(data.follower);
-      setStatus(data.status);
-      setPrice(data.price);
-      setRegion(data.region);
-      setAbout(data.about);
-      setEngagement(data.engagement);
-      setImages(data.images);
+      setUsername(data.username || '');
+      setType(data.type || '');
+      setAge(data.age || '');
+      setFollower(data.followers || '');
+      setStatus(data.status || '');
+      setPrice(data.price || '');
+      setRegion(data.region || '');
+      setAbout(data.about || '');
+      setEngagement(data.engagement || '');
+      setImages(data.images || ['', '', '', '']);
     } else {
-      setUsername("");
-      setType("");
-      setAge("");
-      setFollower("");
-      setStatus("");
-      setPrice("");
-      setRegion("");
-      setAbout("");
-      setEngagement("");
-      setImages(["", "", "", ""]);
+      // Reset form
+      setUsername('');
+      setType('');
+      setAge('');
+      setFollower('');
+      setStatus('');
+      setPrice('');
+      setRegion('');
+      setAbout('');
+      setEngagement('');
+      setImages(['', '', '', '']);
     }
   }, [data]);
 
@@ -108,19 +109,26 @@ const AddProduct = ({ isOpen, onClose, data, action, onSave, onDelete }) => {
       price: Number(price),
       region,
       about,
-      engagement: Number(engagement) || 0,
-      images: images.filter(Boolean)
+      engagement: Number(engagement) || 0
     };
+
+    if (action === 'edit') {
+      // For edit, separate existing images and new files
+      const existingImages = images.filter(img => typeof img === 'string');
+      const newImages = images.filter(img => img instanceof File);
+      
+      productData.existingImages = existingImages;
+      productData.newImages = newImages;
+    } else {
+      // For add, just include the files
+      productData.images = images.filter(img => img instanceof File);
+    }
 
     let success;
     if (action === 'add') {
       success = await handleAddProduct(productData);
     } else if (action === 'edit') {
-      success = await handleUpdateProduct(data.id, {
-        ...productData,
-        existingImages: images.filter(img => typeof img === 'string'),
-        newImages: images.filter(img => img instanceof File)
-      });
+      success = await handleUpdateProduct(data.id, productData);
     }
 
     if (success) {
@@ -130,17 +138,39 @@ const AddProduct = ({ isOpen, onClose, data, action, onSave, onDelete }) => {
   };
 
   const handleImageChange = (index, file) => {
-    if (file) {
+    try {
+      if (!file) {
+        const newImages = [...images];
+        newImages[index] = "";
+        setImages(newImages);
+        return;
+      }
+
       const { isValid, error } = validateImage(file);
       if (!isValid) {
         toast.error(error);
         return;
       }
-    }
 
-    const newImages = [...images];
-    newImages[index] = file || "";
-    setImages(newImages);
+      const newImages = [...images];
+      if (action === 'edit') {
+        // For edit mode, keep track of new files vs existing URLs
+        if (typeof images[index] === 'string') {
+          // If replacing an existing image URL
+          newImages[index] = file;
+        } else {
+          // If adding a new image
+          newImages[index] = file;
+        }
+      } else {
+        // For add mode, simply store the file
+        newImages[index] = file;
+      }
+      setImages(newImages);
+    } catch (error) {
+      console.error('Image handling error:', error);
+      toast.error('Failed to process image');
+    }
   };
 
   const handleDeleteConfirm = () => {
@@ -294,6 +324,21 @@ const AddProduct = ({ isOpen, onClose, data, action, onSave, onDelete }) => {
                     bg={isReadOnly ? "gray.100" : colors.bgColor}
                   />
                   <FormErrorMessage>{formErrors.region}</FormErrorMessage>
+                </FormControl>
+                
+                <FormControl>
+                  <FormLabel>Engagement Rate (%)</FormLabel>
+                  <Input
+                    placeholder="Input engagement rate percentage"
+                    type="number"
+                    min="0"
+                    max="100"
+                    step="0.01"
+                    value={engagement}
+                    onChange={(e) => setEngagement(e.target.value)}
+                    isReadOnly={isReadOnly}
+                    bg={isReadOnly ? "gray.100" : colors.bgColor}
+                  />
                 </FormControl>
 
                 <FormControl isInvalid={!!formErrors.about}>

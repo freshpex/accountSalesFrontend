@@ -161,6 +161,11 @@ const DataTable = ({
       }
     }
 
+    // Add engagement rate formatting
+    if (column.key === 'engagement') {
+      return <Text>{value ? `${value}%` : '0%'}</Text>;
+    }
+
     // Default text rendering
     return <Text>{value}</Text>;
   };

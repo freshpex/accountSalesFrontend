@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { Box } from '@chakra-ui/react';
 import { FiInstagram } from 'react-icons/fi';
@@ -9,7 +9,7 @@ import LoadingSpinner from '../../../components/LoadingSpinner';
 import { useColors } from '../../../utils/colors';
 
 const Instagram = ({ searchQuery, filters, onDataFiltered, applyFilters, onViewPost, onEditPost, onDeletePost }) => {
-  const instagramProducts = useSelector(getInstagramProducts);
+  const rawInstagramProducts = useSelector(getInstagramProducts);
   const loading = useSelector(getLoading);
   const [selectedItems, setSelectedItems] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -17,8 +17,12 @@ const Instagram = ({ searchQuery, filters, onDataFiltered, applyFilters, onViewP
   const itemsPerPage = 10;
   const colors = useColors();
 
+  const instagramProducts = useMemo(() => rawInstagramProducts || [], [rawInstagramProducts]);
+
   useEffect(() => {
+    console.log('Instagram products in effect:', instagramProducts); // Debug log
     const filteredData = applyFilters(instagramProducts);
+    console.log('Filtered data:', filteredData); // Debug log
     onDataFiltered(filteredData);
     setFilteredPosts(filteredData);
     setCurrentPage(1);
@@ -28,7 +32,7 @@ const Instagram = ({ searchQuery, filters, onDataFiltered, applyFilters, onViewP
     return <LoadingSpinner />;
   }
 
-  if (!instagramProducts.length) {
+  if (!instagramProducts || instagramProducts.length === 0) {
     return (
       <EmptyStatePage
         title="No Instagram Products"

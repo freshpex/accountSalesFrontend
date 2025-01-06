@@ -78,6 +78,7 @@ export const socialData = {
     ]
   };
 
+// Remove the hardcoded tabCounts and just export empty initial state
 export const tabCounts = {
   instagram: 0,
   facebook: 0,

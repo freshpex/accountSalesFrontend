@@ -8,7 +8,7 @@ import { getTwitterProducts, getLoading } from '../redux/selector';
 import LoadingSpinner from '../../../components/LoadingSpinner';
 
 const Twitter = ({ searchQuery, filters, onDataFiltered, applyFilters, onViewPost, onEditPost, onDeletePost }) => {
-  const TwitterProducts = useSelector(getTwitterProducts);
+  const twitterProducts = useSelector(getTwitterProducts) || [];
   const loading = useSelector(getLoading);
   const [selectedItems, setSelectedItems] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -16,21 +16,23 @@ const Twitter = ({ searchQuery, filters, onDataFiltered, applyFilters, onViewPos
   const itemsPerPage = 10;
 
   useEffect(() => {
-    const filteredData = applyFilters(TwitterProducts);
-    onDataFiltered(filteredData);
-    setFilteredPosts(filteredData);
-    setCurrentPage(1);
-  }, [searchQuery, filters, applyFilters, onDataFiltered, TwitterProducts]);
+    if (twitterProducts) {
+      const filteredData = applyFilters(twitterProducts);
+      onDataFiltered(filteredData);
+      setFilteredPosts(filteredData);
+      setCurrentPage(1);
+    }
+  }, [searchQuery, filters, applyFilters, onDataFiltered, twitterProducts]);
 
   if (loading) {
     return <LoadingSpinner />;
   }
 
-  if (!TwitterProducts.length) {
+  if (!twitterProducts || twitterProducts.length === 0) {
     return (
       <EmptyStatePage
         title="No Twitter Products"
-        sub="Start by adding your first Twitter Product"
+        sub="Start by adding your first Twitter product"
         icon={<FiTwitter size={50} color="#1DA1F2" />}
       />
     );

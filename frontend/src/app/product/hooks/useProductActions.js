@@ -21,23 +21,17 @@ export const useProductActions = () => {
 
   const handleAddProduct = async (productData) => {
     try {
-      const { isValid, errors } = validateProductData(productData);
-      if (!isValid) {
-        Object.values(errors).forEach(error => toast.error(error));
-        return false;
-      }
-
       const formData = new FormData();
-
-      // Add basic fields
-      Object.keys(productData).forEach(key => {
+      
+      // Basic fields
+      Object.entries(productData).forEach(([key, value]) => {
         if (key !== 'images') {
-          formData.append(key, productData[key]);
+          formData.append(key, String(value));
         }
       });
 
       // Handle images
-      if (productData.images?.length) {
+      if (Array.isArray(productData.images)) {
         productData.images.forEach(image => {
           if (image instanceof File) {
             const { isValid, error } = validateImage(image);
@@ -56,55 +50,54 @@ export const useProductActions = () => {
       toast.success('Product added successfully');
       return true;
     } catch (error) {
-      console.error('Product addition error:', error);
+      console.error('Add product error:', error);
       const errorMessage = error.response?.data?.error || error.message;
-      toast.error(errorMessage);
       dispatch(add_product_error(errorMessage));
+      toast.error(errorMessage);
       return false;
     }
   };
 
   const handleUpdateProduct = async (id, productData) => {
     try {
-      dispatch(clear_product_error());
-      const { isValid, errors } = validateProductData(productData);
+      const formData = new FormData();
 
-      if (!isValid) {
-        Object.values(errors).forEach(error => toast.error(error));
-        return false;
-      }
-
-      // Validate new images if present
-      if (productData.newImages?.length) {
-        for (const image of productData.newImages) {
-          if (image instanceof File) {
-            const { isValid, error } = validateImage(image);
-            if (!isValid) {
-              toast.error(error);
-              return false;
-            }
-          }
-        }
-      }
-
-      dispatch(update_product({ id, data: productData }));
-      const response = await fetch(`/api/v1/products/${id}`, {
-        method: 'PUT',
-        body: JSON.stringify(productData),
-        headers: {
-          'Content-Type': 'application/json'
+      // Add basic fields
+      Object.keys(productData).forEach(key => {
+        if (key !== 'images' && key !== 'newImages' && key !== 'existingImages') {
+          formData.append(key, productData[key]);
         }
       });
 
-      if (!response.ok) throw new Error('Failed to update product');
+      // Handle existing images
+      if (productData.existingImages?.length) {
+        formData.append('existingImages', JSON.stringify(productData.existingImages));
+      }
 
-      const result = await response.json();
-      dispatch(update_product_success(result));
+      // Handle new images
+      if (productData.newImages?.length) {
+        productData.newImages.forEach(image => {
+          if (image instanceof File) {
+            const { isValid, error } = validateImage(image);
+            if (!isValid) throw new Error(error);
+            formData.append('images', image);
+          }
+        });
+      }
+
+      dispatch(update_product());
+      const response = await api.put(`/api/v1/products/${id}`, formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
+
+      dispatch(update_product_success(response.data));
       toast.success('Product updated successfully');
       return true;
     } catch (error) {
-      toast.error(`Failed to update product ${error.message}`);
-      dispatch(update_product_error(error.message));
+      console.error('Update error:', error);
+      const errorMessage = error.response?.data?.error || error.message;
+      dispatch(update_product_error(errorMessage));
+      toast.error(errorMessage);
       return false;
     }
   };

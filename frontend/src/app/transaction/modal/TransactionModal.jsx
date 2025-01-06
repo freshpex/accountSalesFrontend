@@ -16,6 +16,8 @@ import {
   HStack,
   Image,
   Text,
+  Flex,
+  Spinner,
 } from '@chakra-ui/react';
 import { useColors } from '../../../utils/colors';
 import { validateTransactionData } from '../../../utils/validation';
@@ -25,6 +27,7 @@ import { fetch_transaction_products } from '../../product/redux/reducer';
 const TransactionModal = ({ isOpen, onClose, data, action, onSave, onDelete }) => {
   const dispatch = useDispatch();
   const isReadOnly = action === 'view';
+  const isEdit = action === 'edit';
   const colors = useColors();
   
   const [formData, setFormData] = useState({
@@ -43,33 +46,48 @@ const TransactionModal = ({ isOpen, onClose, data, action, onSave, onDelete }) =
   });
 
   const [selectedProduct, setSelectedProduct] = useState(null);
-  const products = useSelector(state => state.product.transactionProducts || []);
-  const isLoading = useSelector(state => state.product.loading);
+  const { transactionProducts: products, loading: isLoading } = useSelector(state => ({
+    transactionProducts: state.product.transactionProducts || [],
+    loading: state.product.loading
+  }));
+
+  const [hasFetchedProducts, setHasFetchedProducts] = useState(false);
 
   useEffect(() => {
-    if (isOpen) {
+    if (isOpen && !hasFetchedProducts) {
       dispatch(fetch_transaction_products());
+      setHasFetchedProducts(true);
     }
-  }, [isOpen, dispatch]);
+
+    if (!isOpen) {
+      setHasFetchedProducts(false);
+    }
+  }, [isOpen, hasFetchedProducts, dispatch]);
 
   useEffect(() => {
-    if (data) {
+    if (data && (action === 'edit' || action === 'view')) {
       setFormData({
         productId: data.productId || '',
-        amount: data.amount || '',
+        amount: data.price || '',
         quantity: data.quantity || 1,
         status: data.status || 'pending',
-        paymentStatus: data.paymentStatus || 'pending',
+        paymentStatus: data.payment || 'pending',
         paymentMethod: data.paymentMethod || 'card',
         notes: data.notes || '',
         metadata: {
           productName: data.productName || '',
           customerName: data.customer || ''
         },
-        transactionId: data.transactionId || ''
+        transactionId: data.transactionId || '',
+        id: data.id || data._id
       });
+
+      if (data.productId) {
+        const product = products.find(p => p._id === data.productId);
+        setSelectedProduct(product);
+      }
     }
-  }, [data]);
+  }, [data, action, products]);
 
   const handleChange = (field) => (e) => {
     setFormData(prev => {
@@ -118,11 +136,42 @@ const TransactionModal = ({ isOpen, onClose, data, action, onSave, onDelete }) =
   const handleSubmit = () => {
     const { isValid, errors } = validateTransactionData(formData);
     if (isValid) {
-      onSave(formData);
+      onSave({
+        ...formData,
+        action: isEdit ? 'edit' : 'add'
+      });
     } else {
       toast.error(Object.values(errors).join('\n'));
     }
   };
+
+  const renderProductOptions = () => {
+    if (!Array.isArray(products)) {
+      return <option value="">No products available</option>;
+    }
+
+    return products.map(product => (
+      <option key={product._id} value={product._id}>
+        {product.name} - ${product.price}
+      </option>
+    ));
+  };
+
+  if (isLoading) {
+    return (
+      <Modal isOpen={isOpen} onClose={onClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalBody>
+            <Flex justify="center" align="center" py={8}>
+              <Spinner size="xl" />
+              <Text ml={4}>Loading products...</Text>
+            </Flex>
+          </ModalBody>
+        </ModalContent>
+      </Modal>
+    );
+  }
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} size="6xl">
@@ -130,6 +179,7 @@ const TransactionModal = ({ isOpen, onClose, data, action, onSave, onDelete }) =
       <ModalContent maxW="1200px" maxH="90vh" overflowY="auto" bg={colors.bgColor} color={colors.textColor}>
         <ModalHeader>
           {action === 'add' && 'New Transaction'}
+          {action === 'edit' && 'Edit Transaction'}
           {action === 'view' && 'View Transaction'}
           {action === 'delete' && 'Delete Transaction'}
         </ModalHeader>
@@ -167,11 +217,7 @@ const TransactionModal = ({ isOpen, onClose, data, action, onSave, onDelete }) =
                   isDisabled={isReadOnly || isLoading}
                   placeholder={isLoading ? "Loading products..." : "Select a product"}
                 >
-                  {products?.map(product => (
-                    <option key={product._id} value={product._id}>
-                      {product.name} - ${product.price}
-                    </option>
-                  ))}
+                  {renderProductOptions()}
                 </Select>
               </FormControl>
 
@@ -272,7 +318,7 @@ const TransactionModal = ({ isOpen, onClose, data, action, onSave, onDelete }) =
                 Cancel
               </Button>
               <Button colorScheme="blue" onClick={handleSubmit}>
-                Save
+                {isEdit ? 'Update' : 'Save'}
               </Button>
             </>
           )}

@@ -21,10 +21,15 @@ function* fetchDashboardDataSaga() {
       call(api.get, ApiEndpoints.DASHBOARD_METRICS)
     ]);
 
-    yield put(fetch_dashboard_success({
-      ...overview.data,
-      metrics: metrics.data
-    }));
+    const dashboardData = {
+      salesTrends: overview.data.data.salesTrends || { weekly: [], monthly: [] },
+      customerGrowth: overview.data.data.customerGrowth || [],
+      recentActivities: overview.data.data.recentActivities || [],
+      productPopular: overview.data.data.productPopular || [],
+      metrics: metrics.data.data || {}
+    };
+
+    yield put(fetch_dashboard_success(dashboardData));
   } catch (error) {
     const errorMessage = error.response?.data?.error || "Failed to fetch dashboard data";
     toast.error(errorMessage);
@@ -39,6 +44,7 @@ function* fetchSalesMetricsSaga({ payload }) {
       params: { timeRange }
     });
     yield put(fetch_sales_metrics_success(response.data));
+    console.log("Redux Fetch Sales Metrics", response.data);
   } catch (error) {
     const errorMessage = error.response?.data?.error || "Failed to fetch sales metrics";
     toast.error(errorMessage);
@@ -52,6 +58,7 @@ function* fetchSalesReportSaga({ payload }) {
       params: payload
     });
     yield put(fetch_sales_report_success(response.data));
+    console.log("Redux Fetch Sales Report", response.data);
   } catch (error) {
     const errorMessage = error.response?.data?.error || "Failed to fetch sales report";
     toast.error(errorMessage);

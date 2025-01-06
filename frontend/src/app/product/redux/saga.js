@@ -1,4 +1,4 @@
-import { put, takeLatest, call, select } from "redux-saga/effects";
+import { put, takeLatest, call, select, delay } from "redux-saga/effects";
 import {
   fetch_products,
   fetch_products_success,
@@ -25,7 +25,6 @@ import toast from "react-hot-toast";
 
 function* fetchProductsSaga({ payload }) {
   try {
-    // Get current filters from state
     const filters = yield select(state => state.product.filters);
     const tableSettings = yield select(state => state.product.tableSettings);
 
@@ -38,18 +37,50 @@ function* fetchProductsSaga({ payload }) {
       limit: tableSettings.pageSize
     };
 
-    console.log('Fetching products with params:', params);
-
     const response = yield call(api.get, ApiEndpoints.PRODUCTS, { params });
-    
-    if (response.data.items) {
-      yield put(fetch_products_success(response.data));
-    } else {
-      throw new Error('Invalid response format');
+    console.log('Raw API Response:', response);
+
+    const responseData = {
+      items: response.data.data?.items || 
+             response.data.items || 
+             (Array.isArray(response.data) ? response.data : []),
+      stats: response.data.stats || response.data.data?.stats || {
+        instagram: 0,
+        facebook: 0,
+        twitter: 0,
+        whatsapp: 0,
+        total: 0
+      },
+      meta: response.data.meta || response.data.data?.meta || {
+        currentPage: 1,
+        totalPages: 1,
+        totalItems: 0,
+        itemsPerPage: 10
+      }
+    };
+
+    if (responseData.items && Array.isArray(responseData.items)) {
+      responseData.items = responseData.items.map(item => ({
+        id: item._id || item.id,
+        type: item.type?.toLowerCase(),
+        username: item.username,
+        status: item.status,
+        followers: item.followers,
+        engagement: item.engagement,
+        age: item.age,
+        price: item.price,
+        region: item.region,
+        about: item.about,
+        images: item.images || []
+      }));
     }
+
+    console.log('Transformed response data:', responseData);
+    yield put(fetch_products_success(responseData));
   } catch (error) {
-    const errorMessage = error.response?.data?.error || 'Failed to fetch products';
-    toast.error(`Product fetch error: ${errorMessage}`);
+    console.error('Product fetch error:', error);
+    const errorMessage = error.response?.data?.message || error.message || 'Failed to fetch products';
+    toast.error(errorMessage);
     yield put(fetch_products_error(errorMessage));
   }
 }
@@ -67,12 +98,28 @@ function* fetchProductsTransactionSaga() {
 
 function* fetchTransactionProductsSaga() {
   try {
+    yield call(delay, 1000);
+    
     const response = yield call(api.get, ApiEndpoints.PRODUCTS_AVAILABLE);
-    yield put(fetch_transaction_products_success(response.data));
+    
+    // Transform the response data
+    const products = response.data.data || response.data || [];
+    const formattedProducts = Array.isArray(products) ? products.map(product => ({
+      _id: product._id || product.id,
+      name: product.name,
+      price: product.price,
+      // Add any other needed fields
+    })) : [];
+    
+    yield put(fetch_transaction_products_success(formattedProducts));
   } catch (error) {
-    const errorMessage = error.response?.data?.error || 'Failed to fetch available products';
-    toast.error(errorMessage);
-    yield put(fetch_transaction_products_error(errorMessage));
+    if (error.response?.status === 429) {
+      toast.error('Too many requests. Please try again later.');
+    } else {
+      const errorMessage = error.response?.data?.error || 'Failed to fetch available products';
+      toast.error(errorMessage);
+    }
+    yield put(fetch_transaction_products_error(error.message));
   }
 }
 
@@ -80,15 +127,19 @@ function* addProductSaga({ payload }) {
   try {
     const formData = new FormData();
     
+    if (!payload) {
+      throw new Error('No product data provided');
+    }
+
     // Add basic fields
-    Object.keys(payload).forEach(key => {
+    Object.entries(payload).forEach(([key, value]) => {
       if (key !== 'images') {
-        formData.append(key, String(payload[key]));
+        formData.append(key, value);
       }
     });
 
     // Handle images
-    if (payload.images?.length) {
+    if (Array.isArray(payload.images)) {
       payload.images.forEach(image => {
         if (image instanceof File) {
           formData.append('images', image);
@@ -104,15 +155,19 @@ function* addProductSaga({ payload }) {
       }
     });
 
-    if (response.data) {
-      yield put(add_product_success(response.data));
-      toast.success("Product added successfully");
-    } else {
-      throw new Error('Invalid response from server');
-    }
+    const transformedData = response.data?.data || response.data || {};
+    
+    const productData = {
+      ...transformedData,
+      id: transformedData._id || transformedData.id,
+      type: transformedData.type?.toLowerCase(),
+    };
+
+    yield put(add_product_success(productData));
+    toast.success("Product added successfully");
   } catch (error) {
     console.error('Add product error:', error.response || error);
-    const errorMessage = error.response?.data?.error || "Failed to add product";
+    const errorMessage = error.response?.data?.error || error.message || "Failed to add product";
     toast.error(errorMessage);
     yield put(add_product_error(errorMessage));
   }

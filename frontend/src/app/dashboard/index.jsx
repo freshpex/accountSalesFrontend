@@ -23,7 +23,7 @@ import {
 } from './redux/selector';
 import { 
   fetch_dashboard_data, 
-  fetch_sales_metrics 
+  fetch_sales_metrics,
 } from './redux/reducer';
 import LoadingSpinner from '../../components/LoadingSpinner';
 
@@ -55,7 +55,7 @@ const Dashboard = () => {
   }
 
   const renderContent = () => {
-    if (!metrics || !salesTarget) {
+    if (!metrics?.revenue?.value || !salesTarget?.current) {
       return (
         <EmptyStatePage
           title="No Dashboard Data"
@@ -74,34 +74,34 @@ const Dashboard = () => {
         >
           <MetricCard
             title="Total Revenue"
-            value={`$${metrics.revenue.value.toLocaleString()}`}
-            growth={metrics.revenue.growth}
+            value={`$${(metrics.revenue?.value || 0).toLocaleString()}`}
+            growth={metrics.revenue?.growth || 0}
             icon={FiDollarSign}
-            secondaryValue={`$${metrics.revenue.previousValue.toLocaleString()}`}
+            secondaryValue={`$${(metrics.revenue?.previousValue || 0).toLocaleString()}`}
             secondaryLabel="Previous Period"
           />
           <MetricCard
             title="Total Customers"
-            value={metrics.customers.value.toLocaleString()}
-            growth={metrics.customers.growth}
+            value={(metrics.customers?.value || 0).toLocaleString()}
+            growth={metrics.customers?.growth || 0}
             icon={FiUsers}
-            secondaryValue={metrics.customers.newCustomers}
+            secondaryValue={metrics.customers?.newCustomers || 0}
             secondaryLabel="New Customers"
           />
           <MetricCard
             title="Total Transactions"
-            value={metrics.transactions.value.toLocaleString()}
-            growth={metrics.transactions.growth}
+            value={(metrics.transactions?.value || 0).toLocaleString()}
+            growth={metrics.transactions?.growth || 0}
             icon={FiShoppingBag}
-            secondaryValue={`$${metrics.transactions.avgTicketSize}`}
+            secondaryValue={`$${metrics.transactions?.avgTicketSize || 0}`}
             secondaryLabel="Avg. Ticket Size"
           />
           <MetricCard
             title="Total Products"
-            value={metrics.products.value.toLocaleString()}
-            growth={metrics.products.growth}
+            value={(metrics.products?.value || 0).toLocaleString()}
+            growth={metrics.products?.growth || 0}
             icon={FiPackage}
-            secondaryValue={metrics.products.outOfStock}
+            secondaryValue={metrics.products?.outOfStock || 0}
             secondaryLabel="Out of Stock"
           />
         </Grid>

@@ -8,7 +8,7 @@ const initialState = {
   },
   data: {
     user: null,
-    token: null
+    userToken: null
   }
 };
 
@@ -24,8 +24,10 @@ export const loginReducerSlice = createSlice({
     login_success: (state, action) => {
       state.ui.loading = false;
       state.ui.success = true;
-      state.data.user = action.payload;
-      state.data.token = action.payload.userToken;
+      state.data = {
+        user: action.payload?.user ?? null,
+        userToken: action.payload?.userToken ?? null
+      };
     },
     login_error: (state, action) => {
       state.ui.loading = false;

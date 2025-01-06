@@ -17,10 +17,9 @@ import {
   useBreakpointValue,
   Flex,
   Image,
-  useColorModeValue,
   Tooltip,
 } from '@chakra-ui/react';
-import { ViewIcon, DeleteIcon, ChevronLeftIcon, ChevronRightIcon } from '@chakra-ui/icons';
+import { ViewIcon, DeleteIcon, ChevronLeftIcon, ChevronRightIcon, EditIcon } from '@chakra-ui/icons';
 import { motion } from 'framer-motion';
 import { useColors } from '../../../utils/colors';
 
@@ -37,6 +36,7 @@ const TransactionTable = ({
   totalItems = 0,
   onPageChange,
   onView,
+  onEdit,
   onDelete,
   getStatusColor,
   getPaymentColor
@@ -141,6 +141,13 @@ const TransactionTable = ({
               aria-label="View"
               size="sm"
               onClick={() => onView('view', transaction)}
+            />
+            <IconButton
+              icon={<EditIcon />}
+              variant="ghost"
+              aria-label="Edit"
+              size="sm"
+              onClick={() => onEdit('edit', transaction)}
             />
             <IconButton
               icon={<DeleteIcon />}
@@ -268,6 +275,15 @@ const TransactionTable = ({
                       colorScheme="blue"
                       size="sm"
                       onClick={() => onView('view', transaction)}
+                    />
+                  </Tooltip>
+                  <Tooltip label="Edit">
+                    <IconButton
+                      icon={<EditIcon />}
+                      variant="ghost"
+                      colorScheme="green"
+                      size="sm"
+                      onClick={() => onEdit('edit', transaction)}
                     />
                   </Tooltip>
                   <Tooltip label="Delete">

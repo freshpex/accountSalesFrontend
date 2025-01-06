@@ -7,7 +7,7 @@ import DashboardCard from '../../../components/cards/DashboardCard';
 import EmptyStatePage from '../../../components/emptyState';
 
 const PopularProducts = ({ products }) => {
-  if (!products?.length) {
+  if (!products || !products.length) {
     return (
       <DashboardCard>
         <EmptyStatePage
@@ -52,7 +52,7 @@ const PopularProducts = ({ products }) => {
           </Thead>
           <Tbody>
             {products.map((product) => (
-              <ProductRow key={product.id} product={product} />
+              <ProductRow key={product._id} product={product} />
             ))}
           </Tbody>
         </Table>
@@ -76,7 +76,7 @@ const ProductRow = ({ product }) => (
         />
         <Box>
           <Text fontWeight="medium">{product.name}</Text>
-          <Text fontSize="sm" color="gray.500">#{product.id}</Text>
+          <Text fontSize="sm" color="gray.500">#{product._id}</Text>
         </Box>
       </Flex>
     </Td>
@@ -104,7 +104,7 @@ const ProductRow = ({ product }) => (
     </Td>
     <Td>
       <Badge
-        colorScheme={product.status === 'Success' ? 'green' : 'red'}
+        colorScheme={product.status === 'available' ? 'green' : 'red'}
         borderRadius="full"
         px={3}
         py={1}

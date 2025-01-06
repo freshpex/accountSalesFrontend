@@ -16,3 +16,13 @@ export const getSuccess = createSelector(
   loginState,
   (state) => state.ui.success
 );
+
+export const getUserData = createSelector(
+  loginState,
+  (state) => state.data.user
+);
+
+export const getUserToken = createSelector(
+  loginState,
+  (state) => state.data.userToken
+);

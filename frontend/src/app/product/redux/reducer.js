@@ -49,17 +49,36 @@ export const productSlice = createSlice({
       state.error = null;
     },
     fetch_products_success: (state, action) => {
+      console.log('Reducer received payload:', action.payload);
       state.ui.loading = false;
       state.ui.success = true;
-      state.data.products = action.payload.items;
-      state.data.stats = action.payload.stats;
-      state.data.meta = action.payload.meta;
+      
+      // Ensure products array is properly set
+      state.data.products = Array.isArray(action.payload.items) 
+        ? action.payload.items 
+        : [];
+      
+      // Update stats
+      state.data.stats = {
+        ...initialState.data.stats,
+        ...action.payload.stats
+      };
+      
+      // Update meta
+      state.data.meta = {
+        ...initialState.data.meta,
+        ...action.payload.meta
+      };
+      
+      // Update table settings
       state.tableSettings = {
         ...state.tableSettings,
-        currentPage: action.payload.meta.currentPage || 1,
-        totalPages: action.payload.meta.totalPages || 1,
-        totalItems: action.payload.meta.totalItems || 0
+        currentPage: action.payload.meta?.currentPage || 1,
+        totalPages: action.payload.meta?.totalPages || 1,
+        totalItems: action.payload.meta?.totalItems || 0
       };
+    
+      console.log('Updated state:', state);
     },
     fetch_products_error: (state, action) => {
       state.ui.loading = false;
@@ -72,9 +91,21 @@ export const productSlice = createSlice({
     add_product_success: (state, action) => {
       state.ui.loading = false;
       state.ui.success = true;
-      state.data.products.unshift(action.payload);
-      state.data.stats[action.payload.type]++;
-      state.data.stats.total++;
+
+      // Ensure we have valid data
+      if (action.payload) {
+        const productType = action.payload.type?.toLowerCase();
+        
+        state.data.products.unshift({
+          ...action.payload,
+          type: productType
+        });
+
+        if (productType && state.data.stats[productType] !== undefined) {
+          state.data.stats[productType]++;
+          state.data.stats.total++;
+        }
+      }
     },
     add_product_error: (state, action) => {
       state.ui.loading = false;
@@ -87,7 +118,7 @@ export const productSlice = createSlice({
     update_product_success: (state, action) => {
       state.ui.loading = false;
       state.ui.success = true;
-      const index = state.data.products.findIndex(p => p.id === action.payload.id);
+      const index = state.data.products.findIndex(p => p.id === action.payload._id || p.id === action.payload.id);
       if (index !== -1) {
         const oldType = state.data.products[index].type;
         const newType = action.payload.type;
@@ -95,7 +126,11 @@ export const productSlice = createSlice({
           state.data.stats[oldType]--;
           state.data.stats[newType]++;
         }
-        state.data.products[index] = action.payload;
+        // Ensure consistent id format
+        state.data.products[index] = {
+          ...action.payload,
+          id: action.payload._id || action.payload.id
+        };
       }
     },
     update_product_error: (state, action) => {

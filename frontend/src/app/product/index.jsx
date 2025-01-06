@@ -24,12 +24,12 @@ import Instagram from './tabs/instagram';
 import Facebook from './tabs/facebook';
 import Twitter from './tabs/twitter';
 import Whatsapp from './tabs/whatsapp';
-import { tabCounts } from './data';
 import { useFilters } from '../../context/FilterContext';
 import { exportToCSV } from '../../utils/export';
 import AddProduct from './modal/addProduct';
 import {
   getLoading,
+  getPlatformStats
 } from './redux/selector';
 import {
   fetch_products,
@@ -43,6 +43,7 @@ import { useColors } from '../../utils/colors';
 const Product = () => {
   const dispatch = useDispatch();
   const loading = useSelector(getLoading);
+  const platformStats = useSelector(getPlatformStats);
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize] = useState(10);
   const [tabIndex, setTabIndex] = useState(0);
@@ -170,10 +171,10 @@ const Product = () => {
   };
 
   const tabs = [
-    { key: 'instagram', label: 'Instagram', count: tabCounts.instagram },
-    { key: 'facebook', label: 'Facebook', count: tabCounts.facebook },
-    { key: 'twitter', label: 'Twitter', count: tabCounts.twitter },
-    { key: 'whatsapp', label: 'Whatsapp', count: tabCounts.whatsapp },
+    { key: 'instagram', label: 'Instagram', count: platformStats.instagram },
+    { key: 'facebook', label: 'Facebook', count: platformStats.facebook },
+    { key: 'twitter', label: 'Twitter', count: platformStats.twitter },
+    { key: 'whatsapp', label: 'Whatsapp', count: platformStats.whatsapp },
   ];
 
   if (loading) {

@@ -8,7 +8,7 @@ import EmptyStatePage from '../../../components/emptyState';
 import RegionCard from './RegionCard';
 
 const RegionalGrowth = ({ regions }) => {
-  if (!regions?.length) {
+  if (!regions || !regions.length) {
     return (
       <EmptyStatePage
         title="No Regional Data"

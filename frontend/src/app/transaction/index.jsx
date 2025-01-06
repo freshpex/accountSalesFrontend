@@ -60,10 +60,20 @@ const Transaction = () => {
   };
 
   const handleSaveTransaction = (data) => {
-    if (modalAction === 'add') {
-      dispatch(add_transaction(data));
+    if (data.action === 'edit') {
+      dispatch(update_transaction({
+        id: data.id,
+        data: {
+          amount: data.amount,
+          status: data.status,
+          paymentStatus: data.paymentStatus,
+          paymentMethod: data.paymentMethod,
+          notes: data.notes,
+          metadata: data.metadata
+        }
+      }));
     } else {
-      dispatch(update_transaction({ id: data.id, data }));
+      dispatch(add_transaction(data));
     }
     handleModalClose();
   };
@@ -172,8 +182,11 @@ const Transaction = () => {
               </MenuButton>
               <MenuList>
                 <MenuItem>
+                  <Text>Payment Status</Text>
                   <Menu placement="right-start">
-                    <MenuButton w="full">Payment Status</MenuButton>
+                    <MenuButton as={Box} w="full" cursor="pointer">
+                      Payment Status
+                    </MenuButton>
                     <MenuList>
                       <MenuItem onClick={() => handleFilter('payment', 'Paid')}>Paid</MenuItem>
                       <MenuItem onClick={() => handleFilter('payment', 'Unpaid')}>Unpaid</MenuItem>
@@ -252,6 +265,7 @@ const Transaction = () => {
           onDelete={handleModalOpen}
           getStatusColor={getStatusColor}
           getPaymentColor={getPaymentColor}
+          onEdit={handleModalOpen}
         />
       </>
     );

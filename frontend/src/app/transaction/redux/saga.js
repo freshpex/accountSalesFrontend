@@ -32,19 +32,20 @@ function* fetchTransactionsSaga({ payload }) {
       }
     });
 
-    console.log('Fetch transactions response:', response.data);
+    console.log('Fetch transactions response:', response);
 
-    // Transform data if needed
+    const responseData = response.data.data || response.data;
+    
     const formattedData = {
-      items: response.data.items.map(item => ({
+      items: Array.isArray(responseData.items) ? responseData.items.map(item => ({
         ...item,
         date: item.date || item.createdAt,
         price: Number(item.price || item.amount || 0),
         customer: item.customer || item.metadata?.customerName || 'N/A',
         productName: item.productName || item.metadata?.productName || 'N/A'
-      })),
-      meta: response.data.meta,
-      stats: response.data.stats
+      })) : [],
+      meta: responseData.meta || { currentPage: 1, totalPages: 1, totalItems: 0 },
+      stats: responseData.stats || { all: 0, shipping: 0, completed: 0, cancelled: 0 }
     };
 
     yield put(fetch_transactions_success(formattedData));
@@ -90,11 +91,39 @@ function* addTransactionSaga({ payload }) {
 function* updateTransactionSaga({ payload }) {
   try {
     const { id, data } = payload;
-    const response = yield call(api.put, `${ApiEndpoints.TRANSACTIONS}/${id}`, data);
+    
+    // Validate required fields
+    if (!id) {
+      throw new Error('Transaction ID is required for update');
+    }
+
+    // Format the data for update
+    const formattedData = {
+      status: data.status?.toLowerCase(),
+      paymentStatus: data.paymentStatus?.toLowerCase(),
+      paymentMethod: data.paymentMethod,
+      notes: data.notes,
+      amount: Number(data.amount),
+      metadata: {
+        productName: data.metadata?.productName,
+        customerName: data.metadata?.customerName
+      }
+    };
+
+    const response = yield call(
+      api.put,
+      `${ApiEndpoints.TRANSACTIONS}/${id}`,
+      formattedData
+    );
+
     yield put(update_transaction_success(response.data));
-    toast.success("Transaction updated successfully");
+    toast.success('Transaction updated successfully');
+    
+    // Refresh the transactions list
+    yield put(fetch_transactions());
   } catch (error) {
-    const errorMessage = error.response?.data?.error || "Failed to update transaction";
+    console.error('Update transaction error:', error);
+    const errorMessage = error.response?.data?.error || 'Failed to update transaction';
     toast.error(errorMessage);
     yield put(update_transaction_error(errorMessage));
   }

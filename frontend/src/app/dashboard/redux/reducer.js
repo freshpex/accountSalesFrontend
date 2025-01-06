@@ -59,10 +59,11 @@ export const dashboardSlice = createSlice({
       state.ui.success = true;
       state.data = {
         ...state.data,
-        salesTrends: action.payload.salesTrends,
-        customerGrowth: action.payload.customerGrowth,
-        recentActivities: action.payload.recentActivities,
-        productPopular: action.payload.productPopular
+        ...action.payload,
+        metrics: {
+          ...state.data.metrics,
+          ...action.payload.metrics
+        }
       };
     },
     fetch_dashboard_error: (state, action) => {
@@ -77,7 +78,10 @@ export const dashboardSlice = createSlice({
     fetch_sales_metrics_success: (state, action) => {
       state.ui.loading = false;
       state.ui.success = true;
-      state.data.metrics = action.payload;
+      state.data.metrics = {
+        ...state.data.metrics,
+        ...action.payload.data
+      };
     },
     fetch_sales_metrics_error: (state, action) => {
       state.ui.loading = false;

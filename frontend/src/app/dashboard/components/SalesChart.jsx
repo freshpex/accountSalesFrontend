@@ -9,7 +9,9 @@ import EmptyStatePage from '../../../components/emptyState';
 import { FiTrendingUp } from 'react-icons/fi';
 
 const SalesChart = ({ data, timeRange, onTimeRangeChange }) => {
-  if (!data?.length) {
+  const strokeColor = useColorModeValue('#718096', '#A0AEC0');
+
+  if (!data || !data.length) {
     return (
       <DashboardCard>
         <EmptyStatePage
@@ -51,10 +53,10 @@ const SalesChart = ({ data, timeRange, onTimeRangeChange }) => {
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis 
               dataKey={timeRange === 'weekly' ? 'day' : 'month'} 
-              stroke={useColorModeValue('#718096', '#A0AEC0')}
+              stroke={strokeColor}
             />
             <YAxis 
-              stroke={useColorModeValue('#718096', '#A0AEC0')}
+              stroke={strokeColor}
               tickFormatter={value => `$${(value/1000).toFixed(0)}k`}
             />
             <Tooltip 
@@ -62,7 +64,7 @@ const SalesChart = ({ data, timeRange, onTimeRangeChange }) => {
             />
             <Area
               type="monotone"
-              dataKey={timeRange === 'weekly' ? 'sales' : 'value'}
+              dataKey={timeRange === 'weekly' ? 'sales' : 'revenue'}
               stroke="#3182CE"
               fillOpacity={1}
               fill="url(#salesGradient)"
