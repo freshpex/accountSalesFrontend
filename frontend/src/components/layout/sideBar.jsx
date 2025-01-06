@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import {
   Box,
@@ -24,8 +24,10 @@ import { ChevronDownIcon } from "@chakra-ui/icons";
 import { sidebarData, company } from "./data";
 import SidebarCloseButton from "../../assets/icons/SidebarCloseButton";
 import { selectProfile } from "../../app/accountSettings.jsx/redux/selector";
+import { logout } from "./redux/actions";
 
 const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
+  const dispatch = useDispatch();
   const profile = useSelector(selectProfile);
   const [isCollapsed, setCollapsed] = useState(false);
   const { colorMode, toggleColorMode } = useColorMode();
@@ -33,8 +35,14 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
   const textColor = useColorModeValue("gray.600", "gray.200");
   const activeColor = useColorModeValue("blue.50", "blue.800");
   const borderColor = useColorModeValue("gray.100", "gray.700");
+  const navigate = useNavigate();
 
   const toggleCollapse = () => setCollapsed(!isCollapsed);
+
+  const handleLogout = () => {
+    dispatch(logout());
+    navigate('/login');
+  };
 
   return (
     <>
@@ -205,7 +213,7 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
             </MenuButton>
             <MenuList>
               <MenuItem>Profile</MenuItem>
-              <MenuItem>Logout</MenuItem>
+              <MenuItem onClick={handleLogout}>Logout</MenuItem>
             </MenuList>
           </Menu>
         </Box>

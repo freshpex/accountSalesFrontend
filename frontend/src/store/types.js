@@ -97,11 +97,13 @@ export const ActionTypes = {
   FETCH_REGIONAL_DATA_ERROR: 'salesReport/fetch_regional_data_error',
 
   // Layout actions
-  TOGGLE_SIDEBAR: 'layout/toggle_sidebar',
+  LOGOUT: 'layout/logout',
+  LOGOUT_SUCCESS: 'layout/logout_success',
+  LOGOUT_ERROR: 'layout/logout_error',
+
 };
 
 export const ApiEndpoints = {
-  // Auth endpoints
   LOGIN: '/api/v1/user/signin',
   REGISTER: '/api/v1/user/signup',
   FORGOT_PASSWORD: '/api/v1/user/forgot-password',
@@ -125,4 +127,5 @@ export const ApiEndpoints = {
   DASHBOARD_OVERVIEW: '/api/v1/dashboard/overview',
   DASHBOARD_METRICS: '/api/v1/dashboard/metrics',
   NOTIFICATION_SETTINGS: '/api/v1/user/notification-settings',
+  LOGOUT: '/api/v1/auth/logout',
 };

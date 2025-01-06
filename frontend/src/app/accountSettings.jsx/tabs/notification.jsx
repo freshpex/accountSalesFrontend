@@ -77,20 +77,20 @@ const Notification = () => {
         <NotificationToggle
             title="New Messages"
             description="Get notified when you receive new messages"
-            isChecked={notifications.email.promotions}
+            isChecked={notifications.push.messages}
             onChange={() => handleNotificationToggle('push', 'messages')}
           />
           <NotificationToggle
             title="Mentions"
-            description="Get notified when you`re mentioned"
-            isChecked={notifications.email.promotions}
-            onChange={() => handleNotificationToggle('Push', 'mentions')}
+            description="Get notified when you're mentioned"
+            isChecked={notifications.push.mentions}
+            onChange={() => handleNotificationToggle('push', 'mentions')}
           />
           <NotificationToggle
             title="Reminders"
             description="Get reminders about unread notifications"
-            isChecked={notifications.email.promotions}
-            onChange={() => handleNotificationToggle('Push', 'reminders')}
+            isChecked={notifications.push.reminders}
+            onChange={() => handleNotificationToggle('push', 'reminders')}
           />
         </VStack>
       </Box>
@@ -104,14 +104,14 @@ const Notification = () => {
         <NotificationToggle
             title="Security Alerts"
             description="Get SMS alerts for suspicious activities"
-            isChecked={notifications.email.promotions}
-            onChange={() => handleNotificationToggle('SMS', 'security')}
+            isChecked={notifications.sms.security}
+            onChange={() => handleNotificationToggle('sms', 'security')}
           />
           <NotificationToggle
             title="Order Updates"
             description="Receive order status updates via SMS"
-            isChecked={notifications.email.promotions}
-            onChange={() => handleNotificationToggle('SMS', 'orders')}
+            isChecked={notifications.sms.orders}
+            onChange={() => handleNotificationToggle('sms', 'orders')}
           />
         </VStack>
       </Box>
@@ -125,20 +125,20 @@ const Notification = () => {
         <NotificationToggle
             title="Desktop Alerts"
             description="Show desktop notifications when browser is open"
-            isChecked={notifications.email.promotions}
-            onChange={() => handleNotificationToggle('Browser', 'desktop')}
+            isChecked={notifications.browser.desktop}
+            onChange={() => handleNotificationToggle('browser', 'desktop')}
           />
           <NotificationToggle
             title="Sound Notifications"
             description="Play a sound for important notifications"
-            isChecked={notifications.email.promotions}
-            onChange={() => handleNotificationToggle('Browser', 'sound')}
+            isChecked={notifications.browser.sound}
+            onChange={() => handleNotificationToggle('browser', 'sound')}
           />
           <NotificationToggle
             title="Background Notifications"
             description="Receive notifications when browser is in background"
-            isChecked={notifications.email.promotions}
-            onChange={() => handleNotificationToggle('Browser', 'background')}
+            isChecked={notifications.browser.background}
+            onChange={() => handleNotificationToggle('browser', 'background')}
           />
         </VStack>
       </Box>

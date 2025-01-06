@@ -13,7 +13,7 @@ const Layout = () => {
     <Box display="flex" spacing={0} w="100vw" h="100vh">
       <Sidebar isSidebarOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
       <Box flex="1" align="stretch" ml={{ base: 0, md: isSidebarOpen ? "72" : "72" }}>
-        <Header toggleSidebar={toggleSidebar} isSidebarOpen={isSidebarOpen} />
+        <Header toggleSidebar={toggleSidebar} />
         <Box p={4} flex={1} bg="gray.50">
           <Outlet />
         </Box>

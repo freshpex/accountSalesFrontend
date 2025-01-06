@@ -88,7 +88,10 @@ function* uploadProfilePictureSaga({ payload }) {
     formData.append('image', payload);
     
     const response = yield call(api.post, ApiEndpoints.PROFILE_PICTURE, formData, {
-      headers: { 'Content-Type': 'multipart/form-data' }
+      headers: { 
+        'Content-Type': 'multipart/form-data',
+        Authorization: `Bearer ${localStorage.getItem('token')}` 
+      }
     });
     
     yield put(upload_profile_picture_success(response.data.url));

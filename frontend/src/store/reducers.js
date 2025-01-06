@@ -22,7 +22,7 @@ const rootReducer = combineReducers({
   customer: customerReducer,
   help: helpReducer,
   transaction: transactionReducer,
-  layout: layoutReducer
+  layout: layoutReducer,
 });
 
 export default rootReducer;
@@ -30,10 +30,10 @@ export default rootReducer;
 // Selector helpers
 export const selectRegisterState = (state) => state.register;
 export const selectLoginState = (state) => state.login;
+export const selectLogoutState = (state) => state.logout;
 export const selectAuthState = (state) => state.auth;
 export const selectSalesReportState = (state) => state.salesReport;
 export const selectProductState = (state) => state.product;
 export const selectCustomerState = (state) => state.customer;
 export const selectTransactionState = (state) => state.transaction;
 export const selectHelpState = (state) => state.help;
-export const selectLayoutState = (state) => state.layout;

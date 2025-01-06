@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import {
   Flex,
   IconButton,
@@ -24,17 +25,23 @@ import {
   MdOutlineSearch,
 } from "react-icons/md";
 import { selectProfile } from "../../app/accountSettings.jsx/redux/selector";
+import { logout } from "./redux/actions";
 
-const Header = ({ toggleSidebar, isSidebarOpen }) => {
+const Header = ({ toggleSidebar }) => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const profile = useSelector(selectProfile);
   const bgColor = useColorModeValue("white", "gray.900");
   const textColor = useColorModeValue("gray.600", "gray.200");
-  const activeColor = useColorModeValue("blue.50", "blue.800");
-  const borderColor = useColorModeValue("gray.100", "gray.700");
 
   // Dummy data for notifications and messages
   const [notifications] = useState(3);
   const [messages] = useState(5);
+
+  const handleLogout = () => {
+    dispatch(logout());
+    navigate('/login');
+  };
 
   return (
     <Flex
@@ -135,7 +142,7 @@ const Header = ({ toggleSidebar, isSidebarOpen }) => {
           <MenuList>
             <MenuItem>Profile</MenuItem>
             <MenuItem>Settings</MenuItem>
-            <MenuItem>Logout</MenuItem>
+            <MenuItem onClick={handleLogout}>Logout</MenuItem>
           </MenuList>
         </Menu>
       </HStack>

@@ -10,7 +10,8 @@ const persistConfig = {
   storage,
   whitelist: [
     'auth', 
-    'login', 
+    'login',
+    'logout',
     'register',
     'dashboard',
     'accountSettings',

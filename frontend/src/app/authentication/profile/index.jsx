@@ -12,6 +12,7 @@ import {
 import { useSelector } from 'react-redux';
 import { getUser } from './redux/selector';
 import { useColors } from '../../../utils/colors';
+import { convertToPublicUrl } from '../../../utils/supabase';
 
 const Profile = () => {
   const user = useSelector(getUser);
@@ -72,7 +73,12 @@ const Profile = () => {
         </Button>
       </FormControl>
       {user.profilePicture && (
-        <Image src={user.profilePicture} alt="Profile Picture" boxSize="150px" mt={4} />
+        <Image 
+          src={convertToPublicUrl(user.profilePicture)} 
+          alt="Profile Picture" 
+          boxSize="150px" 
+          mt={4} 
+        />
       )}
     </Box>
   );

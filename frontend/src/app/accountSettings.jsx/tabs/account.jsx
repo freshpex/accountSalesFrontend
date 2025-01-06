@@ -17,6 +17,7 @@ import {
   upload_profile_picture
 } from '../redux/reducer';
 import LoadingSpinner from '../../../components/LoadingSpinner';
+import { convertToPublicUrl } from '../../../utils/supabase';
 
 const Account = () => {
   const toast = useToast();
@@ -85,7 +86,7 @@ const Account = () => {
         <Flex mb={6} alignItems="center">
           <Box position="relative">
             <Image
-              src={profile.profilePicture || 'default-avatar.png'}
+              src={profile.profilePicture ? convertToPublicUrl(profile.profilePicture) : '/logo.svg'}
               alt="Profile"
               boxSize="100px"
               borderRadius="full"
