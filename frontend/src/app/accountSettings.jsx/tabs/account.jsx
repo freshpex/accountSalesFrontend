@@ -25,13 +25,29 @@ const Account = () => {
   const profile = useSelector(getProfile);
   const loading = useSelector(getLoading);
   const [isEditing, setIsEditing] = useState(false);
+  const [formData, setFormData] = useState(null);
 
   useEffect(() => {
     dispatch(fetch_profile());
   }, [dispatch]);
 
+  useEffect(() => {
+    if (profile) {
+      setFormData(profile);
+    }
+  }, [profile]);
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+    setIsEditing(true);
+  };
+
   const handleProfileUpdate = () => {
-    dispatch(update_profile(profile));
+    dispatch(update_profile(formData));
     setIsEditing(false);
     toast({
       title: "Profile updated successfully",
@@ -119,59 +135,70 @@ const Account = () => {
           <FormControl>
             <FormLabel>First Name</FormLabel>
             <Input
-              value={profile.firstName}
-              onChange={(e) =>
-                dispatch(update_profile({ ...profile, firstName: e.target.value }))
-              }
+              name="firstName"
+              value={formData?.firstName || ''}
+              onChange={handleInputChange}
+              isDisabled={!isEditing}
             />
           </FormControl>
 
           <FormControl>
             <FormLabel>Last Name</FormLabel>
             <Input
-              value={profile.lastName}
-              onChange={(e) =>
-                dispatch(update_profile({ ...profile, lastName: e.target.value }))
-              }
+              name="lastName"
+              value={formData?.lastName || ''}
+              onChange={handleInputChange}
+              isDisabled={!isEditing}
             />
           </FormControl>
 
           <FormControl>
             <FormLabel>Gender</FormLabel>
             <Input
-              value={profile.gender}
-              onChange={(e) =>
-                dispatch(update_profile({ ...profile, gender: e.target.value }))
-              }
+              name="gender"
+              value={formData?.gender || ''}
+              onChange={handleInputChange}
+              isDisabled={!isEditing}
             />
           </FormControl>
 
           <FormControl>
             <FormLabel>Date Birthday</FormLabel>
             <Input
-              value={profile.birthDate}
-              onChange={(e) =>
-                dispatch(update_profile({ ...profile, birthDate: e.target.value }))
-              }
+              name="birthDate"
+              type="date"
+              value={formData?.birthDate || ''}
+              onChange={handleInputChange}
+              isDisabled={!isEditing}
             />
           </FormControl>
         </Grid>
 
         <Flex mt={6} gap={4}>
-          <Button
-            colorScheme="blue"
-            onClick={handleProfileUpdate}
-            isDisabled={!isEditing}
-          >
-            Update
-          </Button>
-          <Button
-            variant="ghost"
-            onClick={handleCancel}
-            isDisabled={!isEditing}
-          >
-            Cancel
-          </Button>
+          {!isEditing ? (
+            <Button
+              leftIcon={<EditIcon />}
+              colorScheme="blue"
+              onClick={() => setIsEditing(true)}
+            >
+              Edit Profile
+            </Button>
+          ) : (
+            <>
+              <Button
+                colorScheme="blue"
+                onClick={handleProfileUpdate}
+              >
+                Save Changes
+              </Button>
+              <Button
+                variant="ghost"
+                onClick={handleCancel}
+              >
+                Cancel
+              </Button>
+            </>
+          )}
         </Flex>
       </Box>
 
@@ -179,41 +206,46 @@ const Account = () => {
       <Box>
         <Flex justify="space-between" align="center" mb={4}>
           <Text fontSize="xl" fontWeight="bold">
-            Contact Detail
+            Contact Details
           </Text>
-          <IconButton
-            icon={<EditIcon />}
+          <Button
+            leftIcon={<EditIcon />}
+            size="sm"
             variant="ghost"
-            onClick={() => dispatch(fetch_profile())}
-            aria-label="Edit contact details"
-          />
+            onClick={() => setIsEditing(prev => !prev)}
+          >
+            {isEditing ? 'Cancel' : 'Edit'}
+          </Button>
         </Flex>
 
         <Grid templateColumns={{ base: "1fr", md: "repeat(3, 1fr)" }} gap={6}>
           <FormControl>
             <FormLabel>Phone Number</FormLabel>
             <Input
-              value={profile.phoneNumber}
-              isReadOnly
-              bg="gray.100"
+              name="phoneNumber"
+              value={formData?.phoneNumber || ''}
+              onChange={handleInputChange}
+              isDisabled={!isEditing}
             />
           </FormControl>
 
           <FormControl>
             <FormLabel>Country</FormLabel>
             <Input
-              value={profile.country}
-              isReadOnly
-              bg="gray.100"
+              name="country"
+              value={formData?.country || ''}
+              onChange={handleInputChange}
+              isDisabled={!isEditing}
             />
           </FormControl>
 
           <FormControl>
             <FormLabel>Address</FormLabel>
             <Input
-              value={profile.address}
-              isReadOnly
-              bg="gray.100"
+              name="address"
+              value={formData?.address || ''}
+              onChange={handleInputChange}
+              isDisabled={!isEditing}
             />
           </FormControl>
         </Grid>

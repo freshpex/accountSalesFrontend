@@ -38,3 +38,32 @@ export const validateCustomer = (data) => {
     errors
   };
 };
+
+export const validateProfile = (data) => {
+  const errors = {};
+
+  if (!data.firstName?.trim()) {
+    errors.firstName = 'First name is required';
+  }
+
+  if (!data.lastName?.trim()) {
+    errors.lastName = 'Last name is required';
+  }
+
+  if (data.phoneNumber && !/^\+?[\d\s-]+$/.test(data.phoneNumber)) {
+    errors.phoneNumber = 'Invalid phone number format';
+  }
+
+  if (data.birthDate) {
+    const date = new Date(data.birthDate);
+    const now = new Date();
+    if (date > now) {
+      errors.birthDate = 'Birth date cannot be in the future';
+    }
+  }
+
+  return {
+    isValid: Object.keys(errors).length === 0,
+    errors
+  };
+};

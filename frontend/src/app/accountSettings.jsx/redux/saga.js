@@ -48,13 +48,21 @@ function* fetchProfileSaga() {
 
 function* updateProfileSaga({ payload }) {
   try {
+    yield put({ type: 'SET_LOADING', payload: true });
+    
     const response = yield call(api.put, '/api/v1/user/profile', payload);
+    
     yield put(update_profile_success(response.data));
     toast.success("Profile updated successfully");
+    
+    // Refresh profile data
+    yield call(fetchProfileSaga);
   } catch (error) {
     const errorMessage = error.response?.data?.error || "Failed to update profile";
     toast.error(errorMessage);
     yield put(update_profile_error(errorMessage));
+  } finally {
+    yield put({ type: 'SET_LOADING', payload: false });
   }
 }
 
