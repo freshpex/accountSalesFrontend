@@ -40,6 +40,7 @@ import {
   fetch_login_history
 } from '../redux/reducer';
 import LoadingSpinner from '../../../components/LoadingSpinner';
+import { validatePassword } from '../../../utils/validation';
 
 const Security = () => {
   const dispatch = useDispatch();
@@ -62,23 +63,29 @@ const Security = () => {
   }, [dispatch]);
 
   const handleTwoFactorToggle = () => {
-    dispatch(toggle_two_factor());
+    if (!securitySettings.twoFactorEnabled) {
+      onOpen();
+    } else {
+      dispatch(toggle_two_factor({ enabled: false }));
+    }
   };
 
   const validatePasswordForm = () => {
     const newErrors = {};
+    const passwordValidation = validatePassword(passwordForm.newPassword);
+
     if (!passwordForm.currentPassword) {
       newErrors.currentPassword = 'Current password is required';
     }
-    if (!passwordForm.newPassword) {
-      newErrors.newPassword = 'New password is required';
+
+    if (!passwordValidation.isValid) {
+      newErrors.newPassword = passwordValidation.error;
     }
-    if (passwordForm.newPassword && passwordForm.newPassword.length < 8) {
-      newErrors.newPassword = 'Password must be at least 8 characters';
-    }
+
     if (passwordForm.newPassword !== passwordForm.confirmPassword) {
       newErrors.confirmPassword = 'Passwords do not match';
     }
+
     return newErrors;
   };
 
