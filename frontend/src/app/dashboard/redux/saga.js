@@ -44,7 +44,6 @@ function* fetchSalesMetricsSaga({ payload }) {
       params: { timeRange }
     });
     yield put(fetch_sales_metrics_success(response.data));
-    console.log("Redux Fetch Sales Metrics", response.data);
   } catch (error) {
     const errorMessage = error.response?.data?.error || "Failed to fetch sales metrics";
     toast.error(errorMessage);
@@ -58,7 +57,6 @@ function* fetchSalesReportSaga({ payload }) {
       params: payload
     });
     yield put(fetch_sales_report_success(response.data));
-    console.log("Redux Fetch Sales Report", response.data);
   } catch (error) {
     const errorMessage = error.response?.data?.error || "Failed to fetch sales report";
     toast.error(errorMessage);

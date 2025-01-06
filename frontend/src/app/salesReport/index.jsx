@@ -2,11 +2,11 @@ import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   Box, Grid, Flex, Text, Progress, Stack, Table, Thead, 
-  Tbody, Tr, Th, Td, Image, useColorModeValue, Button,
+  Tbody, Tr, Th, Td, useColorModeValue, Button,
   Select, HStack
 } from '@chakra-ui/react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import { FiUsers, FiShoppingBag, FiDollarSign, FiBarChart2 } from 'react-icons/fi';
+import { FiShoppingBag, FiDollarSign, FiBarChart2 } from 'react-icons/fi';
 import StatCard from '../../components/cards/StatCard';
 import EmptyStatePage from '../../components/emptyState';
 import { 
@@ -41,7 +41,6 @@ const SalesReport = () => {
     };
 
     fetchData();
-    // Set up an interval to refresh data every 5 minutes
     const interval = setInterval(fetchData, 300000);
 
     return () => clearInterval(interval);
@@ -55,16 +54,76 @@ const SalesReport = () => {
     return <LoadingSpinner />;
   }
 
-  console.log('Sales summary:', summary); // Add logging
-  console.log('Monthly sales:', monthlySales); // Add logging
-  console.log('Popular products:', popularProducts); // Add logging
-  
-  const renderContent = () => {
-    if (loading) {
-      return <LoadingSpinner />;
-    }
+  const renderRegionalData = () => {
+    if (!summary.regionalData?.length) return null;
+    
+    return (
+      <Box bg={cardBg} p={6} rounded="xl" shadow="lg">
+        <Text fontSize="lg" fontWeight="bold" mb={6}>Regional Performance</Text>
+        <Grid templateColumns="repeat(auto-fit, minmax(200px, 1fr))" gap={4}>
+          {summary.regionalData.map((region) => (
+            <Box key={region.region} p={4} bg="gray.50" rounded="lg">
+              <Text fontWeight="medium">{region.region}</Text>
+              <Text fontSize="2xl">{region.growth}%</Text>
+            </Box>
+          ))}
+        </Grid>
+      </Box>
+    );
+  };
 
-    if (!summary || (!summary.totalRevenue && !monthlySales?.length)) {
+  const renderPopularProducts = () => {
+    if (!popularProducts?.length) return null;
+
+    return (
+      <Box bg={cardBg} p={6} rounded="xl" shadow="lg">
+        <Flex justify="space-between" align="center" mb={6}>
+          <Text fontSize="lg" fontWeight="bold">Popular Products</Text>
+          <Button size="sm" colorScheme="blue">View All</Button>
+        </Flex>
+        <Table>
+          <Thead>
+            <Tr>
+              <Th>Product</Th>
+              <Th>Revenue</Th>
+              <Th>Units</Th>
+              <Th>Growth</Th>
+            </Tr>
+          </Thead>
+          <Tbody>
+            {popularProducts.map((product) => (
+              <Tr key={product.id || Math.random()}>
+                <Td>
+                  <Flex align="center">
+                    <Text fontWeight="medium">{product.name || 'N/A'}</Text>
+                  </Flex>
+                </Td>
+                <Td>${(product.revenue || 0).toLocaleString()}</Td>
+                <Td>{(product.units || 0).toLocaleString()}</Td>
+                <Td>
+                  <Text
+                    px={3}
+                    py={1}
+                    rounded="full"
+                    fontSize="sm"
+                    fontWeight="medium"
+                    bg={(product.growth || 0) >= 0 ? 'green.100' : 'red.100'}
+                    color={(product.growth || 0) >= 0 ? 'green.800' : 'red.800'}
+                    display="inline-block"
+                  >
+                    {(product.growth || 0)}%
+                  </Text>
+                </Td>
+              </Tr>
+            ))}
+          </Tbody>
+        </Table>
+      </Box>
+    );
+  };
+
+  const renderContent = () => {
+    if (!summary || !summary.totalRevenue) {
       return (
         <EmptyStatePage
           title="No Sales Data Available"
@@ -95,10 +154,9 @@ const SalesReport = () => {
               onChange={handleFilterChange}
             >
               <option value="all">All Regions</option>
-              <option value="north">North</option>
-              <option value="south">South</option>
-              <option value="east">East</option>
-              <option value="west">West</option>
+              <option value="usa">USA</option>
+              <option value="london">London</option>
+              <option value="korea">Korea</option>
             </Select>
           </HStack>
         </Box>
@@ -108,11 +166,11 @@ const SalesReport = () => {
           <Flex justify="space-between" align="center" mb={4}>
             <Text fontSize="lg" fontWeight="bold">Sales Target</Text>
             <Text fontSize="sm" color="gray.500">
-              ${summary.currentTarget.toLocaleString()} / ${summary.totalTarget.toLocaleString()}
+              ${(summary.currentTarget || 0).toLocaleString()} / ${(summary.totalTarget || 0).toLocaleString()}
             </Text>
           </Flex>
           <Progress
-            value={(summary.currentTarget / summary.totalTarget) * 100}
+            value={((summary.currentTarget || 0) / (summary.totalTarget || 1)) * 100}
             size="lg"
             rounded="full"
             colorScheme="blue"
@@ -123,43 +181,60 @@ const SalesReport = () => {
         <Grid templateColumns={{ base: '1fr', md: 'repeat(2, 1fr)', lg: 'repeat(4, 1fr)' }} gap={6}>
           <StatCard
             title="Total Revenue"
-            value={`$${summary.totalRevenue.toLocaleString()}`}
-            growth={summary.revenueGrowth}
+            value={`$${(summary.totalRevenue || 0).toLocaleString()}`}
+            growth={summary.revenueGrowth || 0}
             icon={FiDollarSign}
           />
           <StatCard
-            title="Total Customers"
-            value={summary.totalCustomers}
-            growth={summary.customerGrowth}
-            icon={FiUsers}
-          />
-          <StatCard
-            title="Total Transactions"
-            value={summary.totalTransactions}
-            growth={summary.transactionGrowth}
+            title="Total Sales"
+            value={(summary.totalTransactions || 0).toLocaleString()}
+            growth={summary.transactionGrowth || 0}
             icon={FiShoppingBag}
           />
           <StatCard
-            title="Total Products"
-            value={summary.totalProducts}
-            growth={summary.productGrowth}
+            title="Products"
+            value={(summary.totalProducts || 0).toLocaleString()}
+            growth={summary.productGrowth || 0}
             icon={FiShoppingBag}
+          />
+          <StatCard
+            title="Growth"
+            value={`${summary.revenueGrowth || 0}%`}
+            growth={summary.revenueGrowth || 0}
+            icon={FiBarChart2}
           />
         </Grid>
 
+        {/* Regional Data */}
+        {renderRegionalData()}
+
         {/* Sales Chart */}
-        {monthlySales.length > 0 && (
+        {monthlySales?.length > 0 && (
           <Box bg={cardBg} p={6} rounded="xl" shadow="lg">
-            <Text fontSize="lg" fontWeight="bold" mb={6}>Sales Overview</Text>
+            <Text fontSize="lg" fontWeight="bold" mb={6}>Monthly Sales Overview</Text>
             <Box h="400px">
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={monthlySales}>
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="month" />
                   <YAxis />
-                  <Tooltip />
-                  <Line type="monotone" dataKey="revenue" stroke="#3182CE" strokeWidth={2} dot={{ r: 4 }} />
-                  <Line type="monotone" dataKey="itemValue" stroke="#48BB78" strokeWidth={2} dot={{ r: 4 }} />
+                  <Tooltip formatter={(value) => `$${value.toLocaleString()}`} />
+                  <Line 
+                    type="monotone" 
+                    dataKey="revenue" 
+                    name="Revenue"
+                    stroke="#3182CE" 
+                    strokeWidth={2} 
+                    dot={{ r: 4 }} 
+                  />
+                  <Line 
+                    type="monotone" 
+                    dataKey="itemValue" 
+                    name="Average Item Value"
+                    stroke="#48BB78" 
+                    strokeWidth={2} 
+                    dot={{ r: 4 }} 
+                  />
                 </LineChart>
               </ResponsiveContainer>
             </Box>
@@ -167,72 +242,14 @@ const SalesReport = () => {
         )}
 
         {/* Popular Products */}
-        {popularProducts.length > 0 ? (
-          <Box bg={cardBg} p={6} rounded="xl" shadow="lg">
-            <Flex justify="space-between" align="center" mb={6}>
-              <Text fontSize="lg" fontWeight="bold">Popular Products</Text>
-              <Button size="sm" colorScheme="blue">View All</Button>
-            </Flex>
-            <Table>
-              <Thead>
-                <Tr>
-                  <Th>Product</Th>
-                  <Th>Price</Th>
-                  <Th>Sales</Th>
-                  <Th>Status</Th>
-                </Tr>
-              </Thead>
-              <Tbody>
-                {popularProducts.map((product) => (
-                  <Tr key={product.id}>
-                    <Td>
-                      <Flex align="center">
-                        <Image
-                          src={product.image}
-                          alt={product.name}
-                          boxSize="40px"
-                          mr={3}
-                          rounded="md"
-                          fallbackSrc="https://via.placeholder.com/40"
-                        />
-                        <Text fontWeight="medium">{product.name}</Text>
-                      </Flex>
-                    </Td>
-                    <Td>${product.price}</Td>
-                    <Td>{product.sales.toLocaleString()}</Td>
-                    <Td>
-                      <Text
-                        px={3}
-                        py={1}
-                        rounded="full"
-                        fontSize="sm"
-                        fontWeight="medium"
-                        bg={product.status === 'Success' ? 'green.100' : 'red.100'}
-                        color={product.status === 'Success' ? 'green.800' : 'red.800'}
-                        display="inline-block"
-                      >
-                        {product.status}
-                      </Text>
-                    </Td>
-                  </Tr>
-                ))}
-              </Tbody>
-            </Table>
-          </Box>
-        ) : (
-          <EmptyStatePage
-            title="No Popular Products"
-            sub="There are no popular products to display for the selected period"
-            icon={<FiShoppingBag size={50} />}
-          />
-        )}
+        {renderPopularProducts()}
       </Stack>
     );
   };
 
   return (
     <Box bg={bgColor} minH="100vh" p={8}>
-      {renderContent()}
+      {loading ? <LoadingSpinner /> : renderContent()}
     </Box>
   );
 };

@@ -18,12 +18,11 @@ const initialState = {
       productGrowth: 0
     },
     monthlySales: [],
+    regionalData: [],
     popularProducts: []
   },
   filters: {
     dateRange: 'month',
-    startDate: null,
-    endDate: null,
     region: 'all'
   }
 };

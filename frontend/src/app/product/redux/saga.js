@@ -78,7 +78,6 @@ function* fetchProductsSaga({ payload }) {
     console.log('Transformed response data:', responseData);
     yield put(fetch_products_success(responseData));
   } catch (error) {
-    console.error('Product fetch error:', error);
     const errorMessage = error.response?.data?.message || error.message || 'Failed to fetch products';
     toast.error(errorMessage);
     yield put(fetch_products_error(errorMessage));
@@ -98,12 +97,10 @@ function* fetchProductsTransactionSaga() {
 
 function* fetchTransactionProductsSaga() {
   try {
-    // Add delay to prevent rate limiting
     yield delay(1000);
 
     console.log('Fetching available products...');
     const response = yield call(api.get, `${ApiEndpoints.PRODUCTS}/available`);
-    console.log('Available products response:', response);
 
     const products = response.data?.data || [];
     
@@ -113,7 +110,6 @@ function* fetchTransactionProductsSaga() {
 
     yield put(fetch_transaction_products_success(products));
   } catch (error) {
-    console.error('Error fetching available products:', error);
     yield put(fetch_transaction_products_error(error.message));
   }
 }

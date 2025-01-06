@@ -30,10 +30,7 @@ function* fetchCustomersSaga({ payload }) {
       role: 'user'
     };
     
-    console.log('Fetching customers with params:', params);
     const response = yield call(api.get, ApiEndpoints.CUSTOMERS, { params });
-    console.log('Customers response:', response.data);
-    
     if (response.data.success) {
       const transformedData = {
         customers: response.data.data.items,
@@ -91,15 +88,11 @@ function* addCustomerSaga({ payload }) {
 
 function* updateCustomerSegmentSaga({ payload }) {
   try {
-    const { customerId, oldSegment, newSegment } = payload;
+    const { customerId, newSegment } = payload;
     
-    // Add validation
     if (!customerId) {
       throw new Error('Customer ID is required');
     }
-
-    console.log('Updating segment for customer:', { customerId, oldSegment, newSegment });
-
     const response = yield call(
       api.patch, 
       `${ApiEndpoints.CUSTOMERS}/${customerId}/segment`, 
