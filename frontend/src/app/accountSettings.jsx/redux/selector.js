@@ -67,3 +67,10 @@ export const getPasswordRequirements = createSelector(
   getSecuritySettings,
   (security) => security.passwordRequirements
 );
+
+export const getFilteredLoginHistory = createSelector(
+  [getLoginHistory, (_, filter) => filter],
+  (history, filter) => history.filter(entry => 
+    entry.device.toLowerCase().includes(filter.toLowerCase())
+  )
+);

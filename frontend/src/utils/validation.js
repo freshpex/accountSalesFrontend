@@ -1,4 +1,4 @@
-import { SECURITY_TYPES } from '../app/accountSettings/redux/types';
+import { SECURITY_TYPES } from "../app/accountSettings.jsx/redux/types";
 
 export const isValidObjectId = (id) => {
   const objectIdPattern = /^[0-9a-fA-F]{24}$/;

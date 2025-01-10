@@ -79,8 +79,9 @@ export const accountSettingsSlice = createSlice({
       state.ui.loading = false;
       state.ui.error = action.payload;
     },
-    update_profile: (state) => {
+    update_profile: (state, action) => {
       state.ui.loading = true;
+      state.data.profile = { ...state.data.profile, ...action.payload };
     },
     update_profile_success: (state, action) => {
       state.ui.loading = false;

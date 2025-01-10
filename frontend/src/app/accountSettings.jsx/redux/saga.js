@@ -1,4 +1,4 @@
-import { put, takeLatest, call } from "redux-saga/effects";
+import { put, takeLatest, call, delay } from "redux-saga/effects";
 import { ApiEndpoints } from "../../../store/types";
 import {
   fetch_profile,
@@ -35,14 +35,19 @@ import {
 import api from "../../../services/DataService";
 import toast from "react-hot-toast";
 
-function* fetchProfileSaga() {
+function* fetchProfileSaga(retries = 3) {
   try {
     const response = yield call(api.get, ApiEndpoints.PROFILE);
     yield put(fetch_profile_success(response.data));
   } catch (error) {
-    const errorMessage = error.response?.data?.error || "Failed to fetch profile";
-    toast.error(errorMessage);
-    yield put(fetch_profile_error(errorMessage));
+    if (retries > 0) {
+      yield delay(1000);
+      yield call(fetchProfileSaga, retries - 1);
+    } else {
+      const errorMessage = error.response?.data?.error || "Failed to fetch profile";
+      toast.error(errorMessage);
+      yield put(fetch_profile_error(errorMessage));
+    }
   }
 }
 

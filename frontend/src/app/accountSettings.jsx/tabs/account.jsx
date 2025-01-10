@@ -33,7 +33,15 @@ const Account = () => {
 
   useEffect(() => {
     if (profile) {
-      setFormData(profile);
+      setFormData({
+        firstName: profile.firstName || '',
+        lastName: profile.lastName || '',
+        gender: profile.gender || '',
+        birthDate: profile.birthDate ? new Date(profile.birthDate).toISOString().split('T')[0] : '',
+        phoneNumber: profile.phoneNumber || '',
+        country: profile.country || '',
+        address: profile.address || ''
+      });
     }
   }, [profile]);
 
@@ -56,15 +64,13 @@ const Account = () => {
     });
   };
 
-  const handlePictureUpload = (event) => {
+  const handlePictureUpload = async (event) => {
     const file = event.target.files?.[0];
     if (file) {
-      dispatch(upload_profile_picture(file));
-      toast({
-        title: "Profile picture uploading",
-        status: "info",
-        duration: 2000,
-      });
+      const formData = new FormData();
+      formData.append('profile', file);
+      
+      dispatch(upload_profile_picture(formData));
     }
   };
 
@@ -102,11 +108,12 @@ const Account = () => {
         <Flex mb={6} alignItems="center">
           <Box position="relative">
             <Image
-              src={profile.profilePicture ? convertToPublicUrl(profile.profilePicture) : '/logo.svg'}
+              src={profile.profilePicture ? convertToPublicUrl(profile.profilePicture) : 'https://via.placeholder.com/150'}
               alt="Profile"
               boxSize="100px"
               borderRadius="full"
               objectFit="cover"
+              fallbackSrc="https://via.placeholder.com/150"
             />
             <Input
               type="file"
