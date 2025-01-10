@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import {
@@ -11,7 +11,6 @@ import {
   useColorModeValue,
   HStack,
   Box,
-  Badge,
   Menu,
   MenuButton,
   MenuList,
@@ -20,13 +19,14 @@ import {
 } from "@chakra-ui/react";
 import {
   MdMenu,
-  MdOutlineNotifications,
-  MdOutlineMail,
   MdOutlineSearch,
 } from "react-icons/md";
 import { selectProfile } from "../../app/accountSettings.jsx/redux/selector";
 import { logout } from "./redux/actions";
 import { convertToPublicUrl } from '../../utils/supabase';
+import { fetchNotifications, fetchHelpTickets } from "../../app/help/redux/actions";
+import NotificationsPopover from "./NotificationsPopover";
+import MessagesPopover from "./MessagesPopover";
 
 const Header = ({ toggleSidebar }) => {
   const dispatch = useDispatch();
@@ -35,9 +35,16 @@ const Header = ({ toggleSidebar }) => {
   const bgColor = useColorModeValue("white", "gray.900");
   const textColor = useColorModeValue("gray.600", "gray.200");
 
-  // Dummy data for notifications and messages
-  const [notifications] = useState(3);
-  const [messages] = useState(5);
+  const notifications = useSelector(state => state.notifications.items);
+  const messages = useSelector(state => state.help.tickets);
+  
+  const unreadNotifications = notifications.filter(n => !n.read).length;
+  const unreadMessages = messages.filter(m => !m.read).length;
+
+  useEffect(() => {
+    dispatch(fetchNotifications());
+    dispatch(fetchHelpTickets());
+  }, [dispatch]);
 
   const handleLogout = () => {
     dispatch(logout());
@@ -82,47 +89,19 @@ const Header = ({ toggleSidebar }) => {
 
       {/* Icons & User Section */}
       <HStack>
-        {/* Message Icon */}
-        <Box position="relative">
-          <IconButton
-            icon={<MdOutlineMail size="24px" />}
-            aria-label="Messages"
-            variant="ghost"
-          />
-          {messages > 0 && (
-            <Badge
-              position="absolute"
-              top="-1"
-              right="-1"
-              fontSize="0.7em"
-              colorScheme="red"
-              borderRadius="full"
-            >
-              {messages}
-            </Badge>
-          )}
-        </Box>
+        {/* Messages Popover */}
+        <MessagesPopover
+          messages={messages}
+          unreadCount={unreadMessages}
+          onViewAll={() => navigate('/help')}
+        />
 
-        {/* Notification Icon */}
-        <Box position="relative">
-          <IconButton
-            icon={<MdOutlineNotifications size="24px" />}
-            aria-label="Notifications"
-            variant="ghost"
-          />
-          {notifications > 0 && (
-            <Badge
-              position="absolute"
-              top="-1"
-              right="-1"
-              fontSize="0.7em"
-              colorScheme="red"
-              borderRadius="full"
-            >
-              {notifications}
-            </Badge>
-          )}
-        </Box>
+        {/* Notifications Popover */}
+        <NotificationsPopover
+          notifications={notifications}
+          unreadCount={unreadNotifications}
+          onViewAll={() => navigate('/notifications')}
+        />
 
         {/* User Avatar */}
         <Menu>
