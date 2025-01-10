@@ -26,6 +26,7 @@ import {
   fetch_sales_metrics,
 } from './redux/reducer';
 import LoadingSpinner from '../../components/LoadingSpinner';
+import SalesTarget from './components/SalesTarget';
 
 const Dashboard = () => {
   const dispatch = useDispatch();
@@ -37,12 +38,7 @@ const Dashboard = () => {
   const recentActivities = useSelector(getRecentActivities);
   const loading = useSelector(getLoading);
 
-  console.log("Metrics", metrics)
-  console.log("salesTarget", salesTarget)
-  console.log("salesTrends", salesTrends)
-  console.log("customerGrowth", customerGrowth)
-  console.log("popularProducts", popularProducts)
-  console.log("recentActivities", recentActivities)
+  console.log("Sales Target", salesTarget)
   
   const [timeRange, setTimeRange] = useState('weekly');
   const bgColor = useColorModeValue('gray.50', 'gray.900');
@@ -62,7 +58,7 @@ const Dashboard = () => {
   }
 
   const renderContent = () => {
-    if (!metrics?.revenue?.value || !salesTarget?.current) {
+    if (!metrics || Object.keys(metrics).length === 0) {
       return (
         <EmptyStatePage
           title="No Dashboard Data"
@@ -112,6 +108,10 @@ const Dashboard = () => {
             secondaryLabel="Out of Stock"
           />
         </Grid>
+
+        <Box mb={8}>
+          <SalesTarget salesTarget={salesTarget} />
+        </Box>
 
         <Grid templateColumns={{ base: '1fr', lg: '2fr 1fr' }} gap={6} mb={8}>
           <SalesChart

@@ -27,18 +27,15 @@ import { selectProfile } from "../../app/accountSettings.jsx/redux/selector";
 import { logout } from "./redux/actions";
 import { convertToPublicUrl } from '../../utils/supabase';
 
-const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
+const Sidebar = ({ isSidebarOpen, toggleSidebar, isCollapsed, toggleCollapse }) => {
   const dispatch = useDispatch();
   const profile = useSelector(selectProfile);
-  const [isCollapsed, setCollapsed] = useState(false);
   const { colorMode, toggleColorMode } = useColorMode();
   const bgColor = useColorModeValue("white", "gray.900");
   const textColor = useColorModeValue("gray.600", "gray.200");
   const activeColor = useColorModeValue("blue.50", "blue.800");
   const borderColor = useColorModeValue("gray.100", "gray.700");
   const navigate = useNavigate();
-
-  const toggleCollapse = () => setCollapsed(!isCollapsed);
 
   const handleLogout = () => {
     dispatch(logout());
@@ -56,7 +53,7 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
         <DrawerOverlay />
         <DrawerContent bg={bgColor}>
           <DrawerCloseButton />
-          <VStack align="stretch" w="full">
+          <VStack align="stretch" w="full" h="full">
             {/* Logo Section for Mobile */}
             <Flex align="center" p={4}>
               <Box
@@ -99,11 +96,53 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
               </Box>
             </Flex>
 
-            <SidebarContent
-              isCollapsed={false}
-              activeColor={activeColor}
-              textColor={textColor}
-            />
+            <Box flex="1">
+              <SidebarContent
+                isCollapsed={false}
+                activeColor={activeColor}
+                textColor={textColor}
+              />
+            </Box>
+
+            {/* Add Dark Mode Toggle for Mobile */}
+            <Box p={4} borderTop="1px" borderColor={borderColor}>
+              <Flex alignItems="center" mb={4}>
+                <Text flex="1" color={textColor} fontSize="sm">
+                  Dark Mode
+                </Text>
+                <Switch
+                  size="sm"
+                  isChecked={colorMode === "dark"}
+                  onChange={toggleColorMode}
+                />
+              </Flex>
+              
+              {/* User Menu */}
+              <Menu>
+                <MenuButton w="full">
+                  <Flex align="center" gap={3}>
+                    <Avatar
+                      src={profilePicture}
+                      name={`${profile?.firstName} ${profile?.lastName}` || "User"}
+                      size="sm"
+                    />
+                    <Box flex="1" textAlign="left">
+                      <Text fontSize="sm" color="gray.700">
+                        {`${profile?.firstName} ${profile?.lastName}` || "User"}
+                      </Text>
+                      <Text fontSize="xs" color={textColor}>
+                        {profile?.role || "Role"}
+                      </Text>
+                    </Box>
+                    <ChevronDownIcon />
+                  </Flex>
+                </MenuButton>
+                <MenuList>
+                  <MenuItem onClick={() => navigate('/settings')}>Profile</MenuItem>
+                  <MenuItem onClick={handleLogout}>Logout</MenuItem>
+                </MenuList>
+              </Menu>
+            </Box>
           </VStack>
         </DrawerContent>
       </Drawer>
