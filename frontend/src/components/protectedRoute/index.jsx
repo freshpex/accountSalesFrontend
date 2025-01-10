@@ -1,12 +1,11 @@
-import { Navigate, useLocation } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 import { getWithExpiry } from '../../utils/store';
 
 const ProtectedRoute = ({ children }) => {
-  const auth = getWithExpiry('x-access-token');
-  const location = useLocation();
-
-  if (!auth) {
-    return <Navigate to="/login" state={{ from: location }} replace />;
+  const token = getWithExpiry('x-access-token');
+  
+  if (!token) {
+    return <Navigate to="/login" replace />;
   }
 
   return children;

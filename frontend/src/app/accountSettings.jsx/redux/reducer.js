@@ -73,7 +73,7 @@ export const accountSettingsSlice = createSlice({
     fetch_profile_success: (state, action) => {
       state.ui.loading = false;
       state.ui.success = true;
-      state.data.profile = action.payload;
+      state.data.profile = action.payload.data || action.payload;
     },
     fetch_profile_error: (state, action) => {
       state.ui.loading = false;
@@ -131,10 +131,22 @@ export const accountSettingsSlice = createSlice({
       state.ui.loading = true;
     },
     toggle_notification_setting_success: (state, action) => {
-      const { type, setting, value } = action.payload;
+      const { type, setting, value, preferences } = action.payload;
       state.ui.loading = false;
       state.ui.success = true;
-      state.data.notifications[type][setting] = value;
+      // Update the entire notification preferences if available
+      if (preferences) {
+        state.data.notifications = preferences;
+      } else {
+        // Fallback to updating just the specific setting
+        state.data.notifications = {
+          ...state.data.notifications,
+          [type]: {
+            ...(state.data.notifications[type] || {}),
+            [setting]: value
+          }
+        };
+      }
     },
     toggle_notification_setting_error: (state, action) => {
       state.ui.loading = false;
@@ -181,7 +193,13 @@ export const accountSettingsSlice = createSlice({
     fetch_notification_settings_success: (state, action) => {
       state.ui.loading = false;
       state.ui.success = true;
-      state.data.notifications = action.payload;
+      // Ensure we're getting the correct data structure
+      state.data.notifications = action.payload || {
+        email: { newsUpdates: false, accountActivity: false, promotions: false },
+        push: { newMessages: false, mentions: false, reminders: false },
+        sms: { security: false, orders: false },
+        browser: { desktop: false, sound: false, background: false }
+      };
     },
     fetch_notification_settings_error: (state, action) => {
       state.ui.loading = false;

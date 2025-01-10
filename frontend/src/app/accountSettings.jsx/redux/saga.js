@@ -60,7 +60,6 @@ function* updateProfileSaga({ payload }) {
     yield put(update_profile_success(response.data));
     toast.success("Profile updated successfully");
     
-    // Refresh profile data
     yield call(fetchProfileSaga);
   } catch (error) {
     const errorMessage = error.response?.data?.error || "Failed to update profile";
@@ -96,20 +95,22 @@ function* updateNotificationPreferencesSaga({ payload }) {
 }
 
 function* uploadProfilePictureSaga({ payload }) {
-  try {
-    const formData = new FormData();
-    formData.append('image', payload);
-    
-    const response = yield call(api.post, ApiEndpoints.PROFILE_PICTURE, formData, {
+  try {    
+    const response = yield call(api.post, ApiEndpoints.PROFILE_PICTURE, payload, {
       headers: { 
-        'Content-Type': 'multipart/form-data',
-        Authorization: `Bearer ${localStorage.getItem('token')}` 
+        'Content-Type': 'multipart/form-data'
       }
     });
     
-    yield put(upload_profile_picture_success(response.data.url));
-    toast.success("Profile picture updated successfully");
+    if (response.data && response.data.success) {
+      yield put(upload_profile_picture_success(response.data.url));
+      toast.success("Profile picture updated successfully");
+      yield call(fetchProfileSaga);
+    } else {
+      throw new Error('Invalid response format');
+    }
   } catch (error) {
+    console.error('Profile picture upload error:', error);
     const errorMessage = error.response?.data?.error || "Failed to upload profile picture";
     toast.error(errorMessage);
     yield put(upload_profile_picture_error(errorMessage));
@@ -143,8 +144,14 @@ function* updatePasswordSaga({ payload }) {
 function* fetchLoginHistorySaga() {
   try {
     const response = yield call(api.get, `${ApiEndpoints.SECURITY}/login-history`);
-    yield put(fetch_login_history_success(response.data));
+    
+    if (response.data?.success) {
+      yield put(fetch_login_history_success(response.data.data));
+    } else {
+      throw new Error('Invalid response format');
+    }
   } catch (error) {
+    console.error('Login history error:', error);
     const errorMessage = error.response?.data?.error || "Failed to fetch login history";
     toast.error(errorMessage);
     yield put(fetch_login_history_error(errorMessage));
@@ -158,9 +165,16 @@ function* toggleNotificationSettingSaga({ payload }) {
       `${ApiEndpoints.NOTIFICATIONS}/toggle`,
       payload
     );
-    yield put(toggle_notification_setting_success(response.data));
-    toast.success("Notification setting updated");
+    
+    if (response.data?.success) {
+      yield put(toggle_notification_setting_success(response.data.data));
+      toast.success("Notification setting updated");
+      yield call(fetchNotificationSettingsSaga);
+    } else {
+      throw new Error('Invalid response format');
+    }
   } catch (error) {
+    console.error('Toggle notification error:', error);
     const errorMessage = error.response?.data?.error || "Failed to update notification setting";
     toast.error(errorMessage);
     yield put(toggle_notification_setting_error(errorMessage));
@@ -169,9 +183,14 @@ function* toggleNotificationSettingSaga({ payload }) {
 
 function* fetchNotificationSettingsSaga() {
   try {
-    const response = yield call(api.get, ApiEndpoints.NOTIFICATIONS);
-    yield put(fetch_notification_settings_success(response.data));
+    const response = yield call(api.get, ApiEndpoints.NOTIFICATION_SETTINGS);    
+    if (response.data?.success) {
+      yield put(fetch_notification_settings_success(response.data.data));
+    } else {
+      throw new Error('Invalid response format');
+    }
   } catch (error) {
+    console.error('Fetch notification settings error:', error);
     const errorMessage = error.response?.data?.error || "Failed to fetch notification settings";
     toast.error(errorMessage);
     yield put(fetch_notification_settings_error(errorMessage));

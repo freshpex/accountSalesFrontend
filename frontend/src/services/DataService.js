@@ -33,6 +33,10 @@ api.interceptors.response.use(
     return response;
   },
   (error) => {
+    if (error.response?.status === 401) {
+      localStorage.clear();
+      window.location.href = '/login';
+    }
     const errorMessage = error.response?.data?.error || error.message;
     return Promise.reject({ ...error, message: errorMessage });
   }

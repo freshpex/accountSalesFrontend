@@ -25,6 +25,7 @@ import { sidebarData, company } from "./data";
 import SidebarCloseButton from "../../assets/icons/SidebarCloseButton";
 import { selectProfile } from "../../app/accountSettings.jsx/redux/selector";
 import { logout } from "./redux/actions";
+import { convertToPublicUrl } from '../../utils/supabase';
 
 const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
   const dispatch = useDispatch();
@@ -43,6 +44,10 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
     dispatch(logout());
     navigate('/login');
   };
+
+  const profilePicture = profile?.profilePicture ? 
+    convertToPublicUrl(profile.profilePicture) : 
+    "https://via.placeholder.com/150";
 
   return (
     <>
@@ -194,14 +199,14 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
             <MenuButton w="full">
               <Flex align="center" gap={3}>
                 <Avatar
-                  src={profile?.profilePicture || "https://via.placeholder.com/150"}
-                  name={profile?.name || "User"}
+                  src={profilePicture}
+                  name={`${profile?.firstName} ${profile?.lastName}` || "User"}
                   size="sm"
                 />
                 {!isCollapsed && (
                   <Box flex="1" textAlign="left">
                     <Text fontSize="sm" color="gray.700">
-                      {profile?.name || "User"}
+                      {`${profile?.firstName} ${profile?.lastName}` || "User"}
                     </Text>
                     <Text fontSize="xs" color={textColor}>
                       {profile?.role || "Role"}
@@ -212,7 +217,7 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
               </Flex>
             </MenuButton>
             <MenuList>
-              <MenuItem>Profile</MenuItem>
+              <MenuItem onClick={() => navigate('/settings')}>Profile</MenuItem>
               <MenuItem onClick={handleLogout}>Logout</MenuItem>
             </MenuList>
           </Menu>

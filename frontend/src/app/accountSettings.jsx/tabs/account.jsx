@@ -67,10 +67,34 @@ const Account = () => {
   const handlePictureUpload = async (event) => {
     const file = event.target.files?.[0];
     if (file) {
+      if (file.size > 2 * 1024 * 1024) { // 2MB limit
+        toast({
+          title: "File too large",
+          description: "Please select an image under 2MB",
+          status: "error",
+          duration: 3000,
+        });
+        return;
+      }
+
       const formData = new FormData();
-      formData.append('profile', file);
+      formData.append('image', file); // Make sure this matches backend expectation
       
-      dispatch(upload_profile_picture(formData));
+      try {
+        dispatch(upload_profile_picture(formData));
+        toast({
+          title: "Uploading profile picture...",
+          status: "info",
+          duration: 2000,
+        });
+      } catch (error) {
+        toast({
+          title: "Upload failed",
+          description: error.message,
+          status: "error",
+          duration: 3000,
+        });
+      }
     }
   };
 

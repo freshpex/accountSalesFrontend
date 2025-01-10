@@ -26,6 +26,7 @@ import {
 } from "react-icons/md";
 import { selectProfile } from "../../app/accountSettings.jsx/redux/selector";
 import { logout } from "./redux/actions";
+import { convertToPublicUrl } from '../../utils/supabase';
 
 const Header = ({ toggleSidebar }) => {
   const dispatch = useDispatch();
@@ -42,6 +43,10 @@ const Header = ({ toggleSidebar }) => {
     dispatch(logout());
     navigate('/login');
   };
+
+  const profilePicture = profile?.profilePicture ? 
+    convertToPublicUrl(profile.profilePicture) : 
+    "https://via.placeholder.com/150";
 
   return (
     <Flex
@@ -125,13 +130,13 @@ const Header = ({ toggleSidebar }) => {
             <Flex align="center" textAlign="right">
               <Avatar
                 borderRadius="10px"
-                name={profile?.name || "User"}
-                src={profile?.profilePicture || "https://via.placeholder.com/150"}
+                name={`${profile?.firstName} ${profile?.lastName}` || "User"}
+                src={profilePicture}
                 size="sm"
               />
               <Box ml={2} display={{ base: "none", md: "block" }}>
                 <Text fontSize="sm" color="gray.700">
-                  {profile?.name || "User"}
+                  {`${profile?.firstName} ${profile?.lastName}` || "User"}
                 </Text>
                 <Text fontSize="xs" color="gray.500">
                   {profile?.role || "Role"}
@@ -140,8 +145,8 @@ const Header = ({ toggleSidebar }) => {
             </Flex>
           </MenuButton>
           <MenuList>
-            <MenuItem>Profile</MenuItem>
-            <MenuItem>Settings</MenuItem>
+            <MenuItem onClick={() => navigate('/settings')}>Profile</MenuItem>
+            <MenuItem onClick={() => navigate('/settings')}>Settings</MenuItem>
             <MenuItem onClick={handleLogout}>Logout</MenuItem>
           </MenuList>
         </Menu>

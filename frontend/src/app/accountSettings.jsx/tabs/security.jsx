@@ -62,6 +62,10 @@ const Security = () => {
     dispatch(fetch_login_history());
   }, [dispatch]);
 
+  useEffect(() => {
+    dispatch(fetch_login_history());
+  }, [dispatch]);
+
   const handleTwoFactorToggle = () => {
     if (!securitySettings.twoFactorEnabled) {
       onOpen();

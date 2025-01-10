@@ -31,16 +31,32 @@ const Notification = () => {
   }, [dispatch]);
 
   const handleNotificationToggle = (type, setting) => {
+    if (!notifications) {
+      console.error('Notifications settings not initialized');
+      return;
+    }
+
+    const currentValue = notifications[type]?.[setting] ?? false;
     dispatch(toggle_notification_setting({ 
       type, 
       setting,
-      value: !notifications[type][setting]
+      value: !currentValue
     }));
   };
 
   if (loading) {
     return <LoadingSpinner />;
   }
+
+  // Initialize with default values if notifications is undefined
+  const defaultNotifications = {
+    email: { newsUpdates: false, accountActivity: false, promotions: false },
+    push: { newMessages: false, mentions: false, reminders: false },
+    sms: { security: false, orders: false },
+    browser: { desktop: false, sound: false, background: false }
+  };
+
+  const notificationSettings = notifications || defaultNotifications;
 
   return (
     <Stack spacing={8}>
@@ -50,19 +66,19 @@ const Notification = () => {
           <NotificationToggle
             title="News and Updates"
             description="Receive news about features and updates"
-            isChecked={notifications?.email?.newsUpdates}
+            isChecked={notificationSettings.email?.newsUpdates ?? false}
             onChange={() => handleNotificationToggle('email', 'newsUpdates')}
           />
           <NotificationToggle
             title="Account Activity"
             description="Get important notifications about your account"
-            isChecked={notifications?.email?.accountActivity}
+            isChecked={notificationSettings.email?.accountActivity ?? false}
             onChange={() => handleNotificationToggle('email', 'accountActivity')}
           />
           <NotificationToggle
             title="Promotions"
             description="Receive promotional offers and deals"
-            isChecked={notifications?.email?.promotions}
+            isChecked={notificationSettings.email?.promotions ?? false}
             onChange={() => handleNotificationToggle('email', 'promotions')}
           />
         </VStack>
@@ -77,19 +93,19 @@ const Notification = () => {
         <NotificationToggle
             title="New Messages"
             description="Get notified when you receive new messages"
-            isChecked={notifications?.push?.messages}
+            isChecked={notificationSettings.push?.messages ?? false}
             onChange={() => handleNotificationToggle('push', 'messages')}
           />
           <NotificationToggle
             title="Mentions"
             description="Get notified when you're mentioned"
-            isChecked={notifications?.push?.mentions}
+            isChecked={notificationSettings.push?.mentions ?? false}
             onChange={() => handleNotificationToggle('push', 'mentions')}
           />
           <NotificationToggle
             title="Reminders"
             description="Get reminders about unread notifications"
-            isChecked={notifications?.push?.reminders}
+            isChecked={notificationSettings.push?.reminders ?? false}
             onChange={() => handleNotificationToggle('push', 'reminders')}
           />
         </VStack>
@@ -104,13 +120,13 @@ const Notification = () => {
         <NotificationToggle
             title="Security Alerts"
             description="Get SMS alerts for suspicious activities"
-            isChecked={notifications?.sms?.security}
+            isChecked={notificationSettings.sms?.security ?? false}
             onChange={() => handleNotificationToggle('sms', 'security')}
           />
           <NotificationToggle
             title="Order Updates"
             description="Receive order status updates via SMS"
-            isChecked={notifications?.sms?.orders}
+            isChecked={notificationSettings.sms?.orders ?? false}
             onChange={() => handleNotificationToggle('sms', 'orders')}
           />
         </VStack>
@@ -125,19 +141,19 @@ const Notification = () => {
         <NotificationToggle
             title="Desktop Alerts"
             description="Show desktop notifications when browser is open"
-            isChecked={notifications?.browser?.desktop}
+            isChecked={notificationSettings.browser?.desktop ?? false}
             onChange={() => handleNotificationToggle('browser', 'desktop')}
           />
           <NotificationToggle
             title="Sound Notifications"
             description="Play a sound for important notifications"
-            isChecked={notifications?.browser?.sound}
+            isChecked={notificationSettings.browser?.sound ?? false}
             onChange={() => handleNotificationToggle('browser', 'sound')}
           />
           <NotificationToggle
             title="Background Notifications"
             description="Receive notifications when browser is in background"
-            isChecked={notifications?.browser?.background}
+            isChecked={notificationSettings.browser?.background ?? false}
             onChange={() => handleNotificationToggle('browser', 'background')}
           />
         </VStack>

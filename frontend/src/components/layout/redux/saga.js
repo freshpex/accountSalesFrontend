@@ -6,10 +6,11 @@ import api from '../../../services/DataService';
 function* logoutSaga() {
   try {
     yield call(api.post, ApiEndpoints.LOGOUT);
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    yield put(logoutSuccess());
+    localStorage.clear();    
+    yield put(logoutSuccess());    
+    window.location.href = '/login';
   } catch (error) {
+    console.error('Logout error:', error);
     yield put(logoutError(error.message));
   }
 }
