@@ -21,7 +21,24 @@ function* fetchTicketsSaga({ payload }) {
     const { status, priority, page = 1, limit = 10 } = payload || {};
     const params = { status, priority, page, limit };
     const response = yield call(api.get, ApiEndpoints.HELP_TICKETS, { params });
-    yield put(fetch_tickets_success(response.data));
+    
+    const formattedData = {
+      tickets: response.data.data.tickets || [],
+      notifications: response.data.data.notifications || [],
+      stats: response.data.data.stats || {
+        open: 0,
+        pending: 0,
+        resolved: 0,
+        total: 0
+      },
+      meta: response.data.data.meta || {
+        currentPage: page,
+        totalPages: 1,
+        totalItems: 0
+      }
+    };
+    
+    yield put(fetch_tickets_success(formattedData));
   } catch (error) {
     const errorMessage = error.response?.data?.error || "Failed to fetch tickets";
     toast.error(errorMessage);

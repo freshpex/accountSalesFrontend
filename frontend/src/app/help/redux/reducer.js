@@ -34,9 +34,19 @@ export const helpSlice = createSlice({
     fetch_tickets_success: (state, action) => {
       state.ui.loading = false;
       state.ui.success = true;
-      state.data.tickets = action.payload.tickets;
-      state.data.stats = action.payload.stats;
-      state.data.meta = action.payload.meta;
+      state.data.tickets = action.payload.tickets || [];
+      state.data.notifications = action.payload.notifications || [];
+      state.data.stats = action.payload.stats || {
+        open: 0,
+        pending: 0,
+        resolved: 0,
+        total: 0
+      };
+      state.data.meta = action.payload.meta || {
+        currentPage: 1,
+        totalPages: 1,
+        totalItems: 0
+      };
     },
     fetch_tickets_error: (state, action) => {
       state.ui.loading = false;

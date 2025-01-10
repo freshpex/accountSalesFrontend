@@ -26,6 +26,7 @@ import {
 import { FiMail, FiInbox } from 'react-icons/fi';
 import LoadingSpinner from '../../components/LoadingSpinner';
 import { useColors } from '../../utils/colors';
+import { useLocation } from 'react-router-dom';
 
 const Help = () => {
   const dispatch = useDispatch();
@@ -36,10 +37,30 @@ const Help = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [filters, setFilters] = useState({ status: 'all', search: '' });
   const colors = useColors();
+  const [selectedTab, setSelectedTab] = useState(0);
+  const location = useLocation();
 
   useEffect(() => {
     dispatch(fetch_tickets());
   }, [dispatch]);
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const ticket = params.get('ticket');
+    const tab = params.get('tab');
+    
+    if (tab === 'notifications') {
+      setSelectedTab(1);
+    }
+    
+    if (ticket) {
+      // Find and scroll to the ticket
+      const element = document.getElementById(`ticket-${ticket}`);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+  }, [location]);
 
   const handleCreateTicket = (ticketData) => {
     dispatch(create_ticket(ticketData));
@@ -76,7 +97,7 @@ const Help = () => {
     }
 
     return (
-      <Tabs variant="enclosed">
+      <Tabs variant="enclosed" index={selectedTab} onChange={setSelectedTab}>
         <TabList>
           <Tab>Support Tickets ({stats?.total})</Tab>
           <Tab>
