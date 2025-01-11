@@ -8,7 +8,6 @@ import NormalSearchBar from "../../components/common/searchBar/NormalSearchBar";
 export default function MobileMenu({ isMobileMenuVisible, setIsMobileMenuVisible, offCanvasExtraClasses, offCanvasBackdropExtraClasses, sidebarRef }) {
     return (
         <>
-            {/* className={`${sidebarExtraClasses} absolute right-0 top-0 z-40 min-h-screen transition-transform duration-1000 ${isMobileMenuVisible ? "translate-x-0" : "translate-x-full min-[600px]:translate-x-96"}`} */}
             <aside
                 ref={sidebarRef}
                 id="mobile-menu"
@@ -60,7 +59,6 @@ export default function MobileMenu({ isMobileMenuVisible, setIsMobileMenuVisible
 
                     {/* buttons */}
                     <div className="flex flex-wrap justify-between items-center gap-5">
-                        {/* <Link to="/login"> */}
                         <OutlinedButton
                             type="button"
                             extraClasses="grow | px-10 py-4 font-semibold bg-neutral-100 leading-[100%]"
@@ -78,7 +76,6 @@ export default function MobileMenu({ isMobileMenuVisible, setIsMobileMenuVisible
                             Login
                             </Link>
                         </OutlinedButton>
-                        {/* </Link> */}
                     </div>
                 </div>
             </aside>

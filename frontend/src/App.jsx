@@ -3,7 +3,7 @@ import { FilterProvider } from './context/FilterContext';
 import { Suspense, lazy } from 'react';
 import SuspenseLoadingUI from './UI';
 import './App.css';
-import ErrorBoundary from './pages/ErrorBoundary';
+import ErrorBoundary from './pages/errorBoundary';
 
 const AppRoutes = lazy(() => import('./routes'));
 
