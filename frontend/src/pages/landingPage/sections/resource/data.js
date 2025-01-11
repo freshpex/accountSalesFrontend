@@ -1,12 +1,12 @@
-import nftOwner1 from "../../assets/images/avatars/avatar3.png";
-import nftOwner2 from "../../assets/images/avatars/avatar4.png";
-import nftOwner3 from "../../assets/images/avatars/avatar5.png";
-import nftOwner4 from "../../assets/images/avatars/avatar6.png";
-import nft1 from "../../assets/images/nfts/nft1.png";
-import nft2 from "../../assets/images/nfts/nft2.png";
-import nft3 from "../../assets/images/nfts/nft3.png";
-import nft4 from "../../assets/images/nfts/nft4.png";
-import { getRandomTime } from "../../utils/getRandomTime";
+import nftOwner1 from "../../../../assets/images/avatars/avatar3.png";
+import nftOwner2 from "../../../../assets/images/avatars/avatar4.png";
+import nftOwner3 from "../../../../assets/images/avatars/avatar5.png";
+import nftOwner4 from "../../../../assets/images/avatars/avatar6.png";
+import nft1 from "../../../../assets/images/nfts/nft1.png";
+import nft2 from "../../../../assets/images/nfts/nft2.png";
+import nft3 from "../../../../assets/images/nfts/nft3.png";
+import nft4 from "../../../../assets/images/nfts/nft4.png";
+import { getRandomTime } from "../../../../utils/getRandomTime";
 
 export const nftData = [
     {

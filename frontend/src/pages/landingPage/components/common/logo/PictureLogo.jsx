@@ -14,7 +14,7 @@ export default function PictureLogo() {
         >
             <span className="sr-only">ScottTech</span>
             <Picture
-                src=""
+                src="/dashboard"
                 alt="ScottTech logo"
                 extraClasses=""
             />

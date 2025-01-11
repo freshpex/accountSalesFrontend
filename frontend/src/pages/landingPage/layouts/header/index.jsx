@@ -66,7 +66,6 @@ export default function Header() {
                             <OutlinedButton
                                 type="button"
                                 extraClasses="px-10 py-4 font-semibold bg-neutral-100 leading-[100%]"
-                                href="/register"
                             >
                                 Sign Up
                             </OutlinedButton>
@@ -74,7 +73,6 @@ export default function Header() {
                             <OutlinedButton
                                 type="button"
                                 extraClasses="px-5 py-4 font-semibold bg-neutral-100 leading-[100%]"
-                                href="/login"
                             >
                                 Login
                             </OutlinedButton>

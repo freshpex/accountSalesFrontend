@@ -63,7 +63,7 @@ export default function MobileMenu({ isMobileMenuVisible, setIsMobileMenuVisible
                         <OutlinedButton
                             type="button"
                             extraClasses="grow | px-10 py-4 font-semibold bg-neutral-100 leading-[100%]"
-                            href="/register"
+                            to="/register"
                         >
                             Sign Up
                         </OutlinedButton>
@@ -71,7 +71,7 @@ export default function MobileMenu({ isMobileMenuVisible, setIsMobileMenuVisible
                         <OutlinedButton
                             type="button"
                             extraClasses="grow | px-5 py-4 font-semibold bg-neutral-100 leading-[100%]"
-                            href="/login"
+                            to="/login"
                         >
                             Login
                         </OutlinedButton>
