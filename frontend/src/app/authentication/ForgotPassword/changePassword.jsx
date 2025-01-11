@@ -8,7 +8,7 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import { Form, Formik } from "formik";
-import { PasswordInput, TextInput } from "../../../components/Inputs";
+import { PasswordInput, TextInput } from "../../../components/inputs";
 import * as Yup from "yup";
 import { useDispatch, useSelector } from "react-redux";
 import { getLoading, getError } from "./redux/selector";
