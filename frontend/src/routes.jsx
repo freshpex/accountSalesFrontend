@@ -3,7 +3,7 @@ import { lazy } from 'react';
 import Layout from './components/layout';
 import ProtectedRoute from './components/protectedRoute';
 
-const LandingPage = lazy(() => import('./pages/LandingPage'));
+const LandingPage = lazy(() => import('./pages/landingPage'));
 const Login = lazy(() => import('./app/authentication/login'));
 const Register = lazy(() => import('./app/authentication/register'));
 const Dashboard = lazy(() => import('./app/dashboard'));
