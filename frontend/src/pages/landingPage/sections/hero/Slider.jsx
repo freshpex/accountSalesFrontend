@@ -3,13 +3,13 @@ import 'swiper/css';
 import 'swiper/css/effect-coverflow';
 import { EffectCoverflow } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import avatar1sm from "../../assets/images/avatars/avatar1sm.png";
-import nftBadge from "../../assets/images/miscellaneous/badge.png";
-import copy1 from "../../assets/images/nfts/copy1.png";
-import copy2 from "../../assets/images/nfts/copy2.png";
-import copy3 from "../../assets/images/nfts/copy3.png";
+import avatar1sm from "../../../../assets/images/avatars/avatar1sm.png";
+import nftBadge from "../../../../assets/images/miscellaneous/badge.png";
+import copy1 from "../../../../assets/images/nfts/copy1.png";
+import copy2 from "../../../../assets/images/nfts/copy2.png";
+import copy3 from "../../../../assets/images/nfts/copy3.png";
 import Picture from "../../components/common/Picture";
-import { getRandomTime } from "../../utils/getRandomTime";
+import { getRandomTime } from "../../../../utils/getRandomTime";
 
 const sliderData = [
     {

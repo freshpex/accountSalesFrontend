@@ -1,0 +1,28 @@
+@font-face {
+    font-family: 'Integral CF';
+    font-display: swap;
+    font-weight: 900;
+    src: url('./assets/fonts/IntegralCF-Bold.otf') format('opentype');
+}
+
+@tailwind base;
+
+body {
+    @apply font-['DM_Sans',_sans-serif] text-400 text-neutral-900;
+}
+
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+    .side-scrollbar-hide {
+        scrollbar-width: none;
+    }
+
+    .side-scrollbar-hide::-webkit-scrollbar {
+        display: none !important;
+        height: 0;
+        width: 0;
+        background-color: transparent;
+    }
+}

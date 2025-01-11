@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
-import EmailSubscriptionForm from '../../common/EmailSubscriptionForm';
-import Navigation from '../../common/Navigation';
-import TextLogo from '../../common/logo/TextLogo';
+import EmailSubscriptionForm from '../../components/common/EmailSubscriptionForm';
+import Navigation from '../../components/common/Navigation';
+import TextLogo from '../../components/common/logo/TextLogo';
 
 const facebookImg = <svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
     <g id="facebook" clipPath="url(#clip0_0_413)">

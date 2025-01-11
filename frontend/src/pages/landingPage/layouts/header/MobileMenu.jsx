@@ -1,9 +1,9 @@
 import { Link } from "react-scroll";
-import Navigation from "../../common/Navigation";
-import SectionDivider from "../../common/SectionDivider";
-import OutlinedButton from "../../common/buttons/OutlinedButton";
-import TextLogo from "../../common/logo/TextLogo";
-import NormalSearchBar from "../../common/searchBar/NormalSearchBar";
+import Navigation from "../../components/common/Navigation";
+import SectionDivider from "../../components/common/SectionDivider";
+import OutlinedButton from "../../components/common/buttons/OutlinedButton";
+import TextLogo from "../../components/common/logo/TextLogo";
+import NormalSearchBar from "../../components/common/searchBar/NormalSearchBar";
 
 export default function MobileMenu({ isMobileMenuVisible, setIsMobileMenuVisible, offCanvasExtraClasses, offCanvasBackdropExtraClasses, sidebarRef }) {
     return (

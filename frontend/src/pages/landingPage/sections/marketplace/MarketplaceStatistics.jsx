@@ -1,9 +1,9 @@
 import { motion } from "framer-motion";
-import nft10 from "../../assets/images/nfts/nft10.png";
-import nft11 from "../../assets/images/nfts/nft11.png";
-import nft12 from "../../assets/images/nfts/nft12.png";
-import nft13 from "../../assets/images/nfts/nft13.png";
-import nft14 from "../../assets/images/nfts/nft14.png";
+import nft10 from "../../../../assets/images/nfts/nft10.png";
+import nft11 from "../../../../assets/images/nfts/nft11.png";
+import nft12 from "../../../../assets/images/nfts/nft12.png";
+import nft13 from "../../../../assets/images/nfts/nft13.png";
+import nft14 from "../../../../assets/images/nfts/nft14.png";
 import Picture from "../../components/common/Picture";
 
 const statData = [

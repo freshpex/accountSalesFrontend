@@ -1,14 +1,14 @@
 import { motion } from "framer-motion";
-import avatar1sm from "../../assets/images/avatars/avatar1sm.png";
-import nft1 from "../../assets/images/nfts/nft1.png";
-import nft2 from "../../assets/images/nfts/nft2.png";
-import nft3 from "../../assets/images/nfts/nft3.png";
-import nft4 from "../../assets/images/nfts/nft4.png";
-import nft5 from "../../assets/images/nfts/nft5.png";
-import nft6 from "../../assets/images/nfts/nft6.png";
-import nft7 from "../../assets/images/nfts/nft7.png";
-import nft8 from "../../assets/images/nfts/nft8.png";
-import nft9 from "../../assets/images/nfts/nft9.png";
+import avatar1sm from "../../../../assets/images/avatars/avatar1sm.png";
+import nft1 from "../../../../assets/images/nfts/nft1.png";
+import nft2 from "../../../../assets/images/nfts/nft2.png";
+import nft3 from "../../../../assets/images/nfts/nft3.png";
+import nft4 from "../../../../assets/images/nfts/nft4.png";
+import nft5 from "../../../../assets/images/nfts/nft5.png";
+import nft6 from "../../../../assets/images/nfts/nft6.png";
+import nft7 from "../../../../assets/images/nfts/nft7.png";
+import nft8 from "../../../../assets/images/nfts/nft8.png";
+import nft9 from "../../../../assets/images/nfts/nft9.png";
 import FeaturedNftCard from "./FeaturedNftCard";
 
 const featuredNftData = [

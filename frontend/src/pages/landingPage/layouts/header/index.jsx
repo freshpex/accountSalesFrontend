@@ -1,11 +1,11 @@
 import { motion } from "framer-motion";
 import { Link } from "react-scroll";
-import useOffCanvas from "../../../hooks/useOffCanvas";
-import Navigation from "../../common/Navigation";
-import OutlinedButton from "../../common/buttons/OutlinedButton";
-import TextLogo from "../../common/logo/TextLogo";
-import DynamicWidthSearchBar from "../../common/searchBar/DynamicWidthSearchBar";
-import NormalSearchBar from "../../common/searchBar/NormalSearchBar";
+import useOffCanvas from "../../../../hooks/useOffCanvas";
+import Navigation from "../../components/common/Navigation";
+import OutlinedButton from "../../components/common/buttons/OutlinedButton";
+import TextLogo from "../../components/common/logo/TextLogo";
+import DynamicWidthSearchBar from "../../components/common/searchBar/DynamicWidthSearchBar";
+import NormalSearchBar from "../../components/common/searchBar/NormalSearchBar";
 import HamburgerButton from "./HamburgerButton";
 import MobileMenu from "./MobileMenu";
 

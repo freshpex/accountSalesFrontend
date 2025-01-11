@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import dotsBg from "../../assets/images/miscellaneous/dots.png";
+import dotsBg from "../../../../assets/images/miscellaneous/dots.png";
 import Picture from "../../components/common/Picture";
 import ContainedButton from "../../components/common/buttons/ContainedButton";
 import Slider from "./Slider";

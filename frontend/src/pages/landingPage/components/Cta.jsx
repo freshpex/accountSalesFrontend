@@ -1,11 +1,11 @@
 import { motion } from "framer-motion";
-import avatar1 from "../assets/images/avatars/avatar1.png";
-import avatar2 from "../assets/images/avatars/avatar2.png";
-import nft1 from "../assets/images/nfts/nft1.png";
-import nft2 from "../assets/images/nfts/nft2.png";
-import nft3 from "../assets/images/nfts/nft3.png";
-import Picture from "../components/common/Picture";
-import ContainedButton from "../components/common/buttons/ContainedButton";
+import avatar1 from "../../../assets/images/avatars/avatar1.png";
+import avatar2 from "../../../assets/images/avatars/avatar2.png";
+import nft1 from "../../../assets/images/nfts/nft1.png";
+import nft2 from "../../../assets/images/nfts/nft2.png";
+import nft3 from "../../../assets/images/nfts/nft3.png";
+import Picture from "./common/Picture";
+import ContainedButton from "./common/buttons/ContainedButton";
 
 const pictureContainerVariant = {
     hidden: {},
