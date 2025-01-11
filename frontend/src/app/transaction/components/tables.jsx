@@ -18,6 +18,8 @@ import {
   Flex,
   Image,
   Tooltip,
+  SimpleGrid,
+  VStack,
 } from '@chakra-ui/react';
 import { ViewIcon, DeleteIcon, ChevronLeftIcon, ChevronRightIcon, EditIcon } from '@chakra-ui/icons';
 import { motion } from 'framer-motion';
@@ -64,101 +66,100 @@ const TransactionTable = ({
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
       bg={colors.bgColor}
-      p={4}
-      borderRadius="xl"
+      p={3}
+      mb={3}
+      borderRadius="lg"
       borderWidth="1px"
       borderColor={colors.borderColor}
       shadow="sm"
-      _hover={{
-        transform: 'translateY(-2px)',
-        shadow: 'md',
-        borderColor: 'blue.400',
-      }}
     >
-      <HStack spacing={3} mb={3}>
-        <Image
-          src={transaction.productImage}
-          alt={transaction.productName}
-          boxSize="60px"
-          objectFit="cover"
-          borderRadius="md"
-        />
-        <Box flex="1">
-          <Text color="blue.500" fontWeight="medium">
-            {transaction.id}
-          </Text>
-          <Text fontSize="sm" color="gray.600">
-            {transaction.productName}
-          </Text>
-        </Box>
-      </HStack>
-
-      <Stack spacing={2}>
-        <Flex justify="space-between">
-          <Text fontSize="sm" color="gray.600">Customer</Text>
-          <Text fontSize="sm">{transaction.customer}</Text>
-        </Flex>
-
-        <Flex justify="space-between">
-          <Text fontSize="sm" color="gray.600">Price</Text>
-          <Text fontSize="sm">${transaction.price}</Text>
-        </Flex>
-
-        <Flex justify="space-between">
-          <Text fontSize="sm" color="gray.600">Date</Text>
-          <Text fontSize="sm">{transaction.date}</Text>
-        </Flex>
-
+      <VStack align="stretch" spacing={3}>
+        {/* Header */}
         <Flex justify="space-between" align="center">
-          <Text fontSize="sm" color="gray.600">Payment</Text>
+          <VStack align="start" spacing={0}>
+            <Text fontWeight="medium" fontSize="sm">
+              #{transaction.transactionId || 'N/A'}
+            </Text>
+            <Text fontSize="xs" color="gray.500">
+              {new Date(transaction.date).toLocaleDateString()}
+            </Text>
+          </VStack>
           <Badge
-            px={2}
-            py={1}
-            borderRadius="full"
-            {...getPaymentColor(transaction?.payment || 'pending')}
-          >
-            {transaction?.payment || 'Pending'}
-          </Badge>
-        </Flex>
-
-        <Flex justify="space-between" align="center">
-          <Text fontSize="sm" color="gray.600">Status</Text>
-          <Badge
-            px={2}
-            py={1}
-            borderRadius="full"
             {...getStatusColor(transaction?.status || 'pending')}
+            fontSize="xs"
           >
             {transaction?.status || 'Pending'}
           </Badge>
         </Flex>
 
-        <Flex justify="flex-end" mt={2}>
-          <HStack spacing={2}>
+        {/* Product Info */}
+        <Flex gap={3}>
+          <Image
+            src={transaction.productImage}
+            alt={transaction.productName}
+            boxSize="50px"
+            objectFit="cover"
+            borderRadius="md"
+            fallbackSrc="/placeholder.png"
+          />
+          <Box flex={1}>
+            <Text fontWeight="medium" noOfLines={2}>
+              {transaction.productName}
+            </Text>
+            <Text fontSize="lg" fontWeight="bold" color="blue.500">
+              ${transaction.price?.toFixed(2)}
+            </Text>
+          </Box>
+        </Flex>
+
+        {/* Details Grid */}
+        <SimpleGrid columns={2} spacing={3} mt={2}>
+          <Box>
+            <Text fontSize="xs" color="gray.500">Customer</Text>
+            <Text fontSize="sm" fontWeight="medium">{transaction.customer}</Text>
+          </Box>
+          <Box>
+            <Text fontSize="xs" color="gray.500">Payment</Text>
+            <Badge
+              {...getPaymentColor(transaction?.payment || 'pending')}
+              borderRadius="full"
+              px={2}
+              py={0.5}
+              fontSize="xs"
+            >
+              {transaction?.payment || 'Pending'}
+            </Badge>
+          </Box>
+        </SimpleGrid>
+
+        {/* Actions */}
+        <Flex justify="space-between" align="center" mt={2} pt={2} borderTopWidth={1}>
+          <HStack spacing={1}>
             <IconButton
               icon={<ViewIcon />}
               variant="ghost"
-              aria-label="View"
               size="sm"
               onClick={() => onView('view', transaction)}
+              aria-label="View details"
             />
             <IconButton
               icon={<EditIcon />}
               variant="ghost"
-              aria-label="Edit"
               size="sm"
               onClick={() => onEdit('edit', transaction)}
-            />
-            <IconButton
-              icon={<DeleteIcon />}
-              variant="ghost"
-              aria-label="Delete"
-              size="sm"
-              onClick={() => onDelete('delete', transaction)}
+              aria-label="Edit transaction"
             />
           </HStack>
+          <IconButton
+            icon={<DeleteIcon />}
+            variant="ghost"
+            colorScheme="red"
+            size="sm"
+            onClick={() => onDelete('delete', transaction)}
+            aria-label="Delete transaction"
+          />
         </Flex>
-      </Stack>
+      </VStack>
     </MotionBox>
   );
 

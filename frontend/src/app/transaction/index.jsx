@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
-  Box, Container, Flex, HStack, Input, InputGroup, InputLeftElement,
+  Box, Container, Flex, Input, InputGroup, InputLeftElement,
   Text, Menu, MenuButton, MenuList, MenuItem, Breadcrumb, BreadcrumbItem,
-  BreadcrumbLink, Button
+  BreadcrumbLink, Button, Stack
 } from '@chakra-ui/react';
 import { SearchIcon, ChevronDownIcon } from '@chakra-ui/icons';
 import { FiArchive } from 'react-icons/fi';
@@ -161,23 +161,43 @@ const Transaction = () => {
     return (
       <>
         {/* Search and Actions */}
-        <Flex justify="space-between" mb={6} gap={4} flexWrap="wrap">
-          <InputGroup maxW="400px">
+        <Flex 
+          direction={{ base: "column", md: "row" }} 
+          justify="space-between" 
+          gap={3} 
+          mb={4}
+          w="100%"
+        >
+          <InputGroup maxW={{ base: "100%", md: "400px" }}>
             <InputLeftElement pointerEvents="none">
               <SearchIcon color="gray.400" />
             </InputLeftElement>
             <Input
-              placeholder="Search transactions..."
+              placeholder="Search..."
               value={searchQuery}
               onChange={(e) => handleSearch(e.target.value)}
-              bg={colors.bgColor}
-              color={colors.textColor}
             />
           </InputGroup>
 
-          <HStack spacing={4}>
+          <Stack 
+            direction={{ base: "row", md: "row" }} 
+            spacing={2} 
+            w={{ base: "100%", md: "auto" }}
+            overflowX={{ base: "auto", md: "visible" }}
+            pb={{ base: 2, md: 0 }}
+            sx={{
+              '::-webkit-scrollbar': {
+                display: 'none'
+              }
+            }}
+          >
             <Menu>
-              <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>
+              <MenuButton 
+                as={Button} 
+                rightIcon={<ChevronDownIcon />}
+                minW="auto"
+                size="sm"
+              >
                 Filter
               </MenuButton>
               <MenuList>
@@ -213,6 +233,8 @@ const Transaction = () => {
               onClick={handleExport} 
               leftIcon={<ChevronDownIcon />}
               isDisabled={!transactions.length}
+              minW="auto"
+              size="sm"
             >
               Export
             </Button>
@@ -221,52 +243,72 @@ const Transaction = () => {
               colorScheme="blue" 
               leftIcon={<ChevronDownIcon />}
               onClick={() => handleModalOpen('add')}
+              minW="auto"
+              size="sm"
             >
-              New Transaction
+              New
             </Button>
-          </HStack>
+          </Stack>
         </Flex>
 
         {/* Tabs */}
-        <Flex
-          overflowX="auto"
-          borderBottom="1px"
-          borderColor={colors.borderColor}
-          mb={6}
-          whiteSpace="nowrap"
+        <Box 
+          overflowX="auto" 
+          mb={4}
+          mx={-3}
+          px={3}
+          sx={{
+            '::-webkit-scrollbar': {
+              display: 'none'
+            }
+          }}
         >
-          {tabs.map((tab) => (
-            <Box
-              key={tab.key}
-              px={4}
-              py={2}
-              cursor="pointer"
-              borderBottom="2px"
-              borderColor={selectedTab === tab.key ? 'blue.500' : 'transparent'}
-              color={selectedTab === tab.key ? 'blue.500' : colors.textColor}
-              onClick={() => setSelectedTab(tab.key)}
-            >
-              {tab.label} ({stats[tab.key] || 0})
-            </Box>
-          ))}
-        </Flex>
+          <Flex 
+            borderBottom="1px"
+            borderColor={colors.borderColor}
+            whiteSpace="nowrap"
+            minW="min-content"
+          >
+            {tabs.map((tab) => (
+              <Box
+                key={tab.key}
+                px={3}
+                py={2}
+                cursor="pointer"
+                fontSize={{ base: "sm", md: "md" }}
+                borderBottom="2px"
+                borderColor={selectedTab === tab.key ? 'blue.500' : 'transparent'}
+                color={selectedTab === tab.key ? 'blue.500' : colors.textColor}
+                onClick={() => setSelectedTab(tab.key)}
+              >
+                {tab.label} ({stats[tab.key] || 0})
+              </Box>
+            ))}
+          </Flex>
+        </Box>
 
-        <TransactionTable
-          data={transactions}
-          selectedItems={selectedItems}
-          onSelectAll={handleSelectAll}
-          onSelectItem={handleSelectItem}
-          currentPage={page}
-          totalPages={meta.totalPages}
-          pageSize={itemsPerPage}
-          totalItems={meta.totalItems}
-          onPageChange={setPage}
-          onView={handleModalOpen}
-          onDelete={handleModalOpen}
-          getStatusColor={getStatusColor}
-          getPaymentColor={getPaymentColor}
-          onEdit={handleModalOpen}
-        />
+        <Box 
+          overflowX="hidden"
+          mx={-3}
+          px={3}
+        >
+          <TransactionTable
+            data={transactions}
+            selectedItems={selectedItems}
+            onSelectAll={handleSelectAll}
+            onSelectItem={handleSelectItem}
+            currentPage={page}
+            totalPages={meta.totalPages}
+            pageSize={itemsPerPage}
+            totalItems={meta.totalItems}
+            onPageChange={setPage}
+            onView={handleModalOpen}
+            onDelete={handleModalOpen}
+            getStatusColor={getStatusColor}
+            getPaymentColor={getPaymentColor}
+            onEdit={handleModalOpen}
+          />
+        </Box>
       </>
     );
   };
@@ -289,13 +331,18 @@ const Transaction = () => {
   };
 
   return (
-    <Container maxW="container.xl" py={8} bg={colors.bgColor} color={colors.textColor}>
+    <Container 
+      maxW="100%"
+      p={0}
+      bg={colors.bgColor} 
+      color={colors.textColor}
+    >
       {/* Header */}
-      <Box mb={6}>
-        <Text fontSize="2xl" mb={2}>
+      <Box px={3} py={4}>
+        <Text fontSize={{ base: "xl", md: "2xl" }} mb={2}>
           Transactions
         </Text>
-        <Breadcrumb fontSize="sm" color="gray.500">
+        <Breadcrumb display={{ base: "none", md: "flex" }} fontSize="sm" color="gray.500">
           <BreadcrumbItem>
             <BreadcrumbLink href="#">Dashboard</BreadcrumbLink>
           </BreadcrumbItem>
@@ -305,7 +352,9 @@ const Transaction = () => {
         </Breadcrumb>
       </Box>
 
-      {renderContent()}
+      <Box px={3}>
+        {renderContent()}
+      </Box>
 
       {/* Modal */}
       <TransactionModal

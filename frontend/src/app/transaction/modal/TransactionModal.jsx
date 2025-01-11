@@ -18,6 +18,7 @@ import {
   Text,
   Flex,
   Spinner,
+  SimpleGrid,
 } from '@chakra-ui/react';
 import { useColors } from '../../../utils/colors';
 import { validateTransactionData } from '../../../utils/validation';
@@ -174,26 +175,43 @@ const TransactionModal = ({ isOpen, onClose, data, action, onSave, onDelete }) =
   }
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} size="6xl">
+    <Modal 
+      isOpen={isOpen} 
+      onClose={onClose} 
+      size={{ base: "full", md: "6xl" }}
+      motionPreset="slideInBottom"
+    >
       <ModalOverlay />
-      <ModalContent maxW="1200px" maxH="90vh" overflowY="auto" bg={colors.bgColor} color={colors.textColor}>
-        <ModalHeader>
+      <ModalContent 
+        maxW={{ base: "100%", md: "1200px" }}
+        maxH={{ base: "100vh", md: "90vh" }}
+        m={{ base: 0, md: 4 }}
+        borderRadius={{ base: 0, md: "lg" }}
+      >
+        <ModalHeader 
+          fontSize={{ base: "lg", md: "xl" }}
+          p={{ base: 4, md: 6 }}
+        >
           {action === 'add' && 'New Transaction'}
           {action === 'edit' && 'Edit Transaction'}
           {action === 'view' && 'View Transaction'}
           {action === 'delete' && 'Delete Transaction'}
         </ModalHeader>
-        <ModalBody>
+        <ModalBody 
+          px={{ base: 4, md: 6 }}
+          py={{ base: 2, md: 4 }}
+        >
           {action === 'delete' ? (
             <Text>Are you sure you want to delete this transaction?</Text>
           ) : (
-            <VStack spacing={4}>
-              <HStack w="full" spacing={4}>
+            <VStack spacing={{ base: 4, md: 6 }}>
+              <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4} w="full">
                 {data?.productImage && (
                   <Image
                     src={data.productImage}
                     alt={formData.metadata.productName}
-                    boxSize="100px"
+                    height={{ base: "200px", md: "100px" }}
+                    width="100%"
                     objectFit="cover"
                     borderRadius="md"
                     fallbackSrc="/logo.svg"
@@ -207,7 +225,7 @@ const TransactionModal = ({ isOpen, onClose, data, action, onSave, onDelete }) =
                     bg="gray.100"
                   />
                 </FormControl>
-              </HStack>
+              </SimpleGrid>
 
               <FormControl isRequired>
                 <FormLabel>Select Product</FormLabel>
@@ -298,7 +316,11 @@ const TransactionModal = ({ isOpen, onClose, data, action, onSave, onDelete }) =
           )}
         </ModalBody>
 
-        <ModalFooter>
+        <ModalFooter 
+          p={{ base: 4, md: 6 }}
+          borderTop="1px"
+          borderColor={colors.borderColor}
+        >
           {action === 'delete' ? (
             <>
               <Button variant="ghost" mr={3} onClick={onClose}>
