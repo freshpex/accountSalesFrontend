@@ -1,5 +1,35 @@
 import { createSlice } from "@reduxjs/toolkit";
 
+const defaultMetrics = {
+  salesTarget: {
+    current: 0,
+    target: 0,
+    percentage: 0,
+    timeLeft: ""
+  },
+  revenue: {
+    value: 0,
+    growth: 0,
+    trend: "neutral",
+    previousValue: 0
+  },
+  customers: {
+    value: 0,
+    growth: 0,
+    newCustomers: 0
+  },
+  transactions: {
+    value: 0,
+    growth: 0,
+    avgTicketSize: 0
+  },
+  products: {
+    value: 0,
+    growth: 0,
+    outOfStock: 0
+  }
+};
+
 const initialState = {
   ui: {
     loading: false,
@@ -7,35 +37,7 @@ const initialState = {
     success: false
   },
   data: {
-    metrics: {
-      salesTarget: {
-        current: 0,
-        target: 0,
-        percentage: 0,
-        timeLeft: ""
-      },
-      revenue: {
-        value: 0,
-        growth: 0,
-        trend: "neutral",
-        previousValue: 0
-      },
-      customers: {
-        value: 0,
-        growth: 0,
-        newCustomers: 0
-      },
-      transactions: {
-        value: 0,
-        growth: 0,
-        avgTicketSize: 0
-      },
-      products: {
-        value: 0,
-        growth: 0,
-        outOfStock: 0
-      }
-    },
+    metrics: defaultMetrics,
     salesTrends: {
       weekly: [],
       monthly: []
@@ -61,8 +63,8 @@ export const dashboardSlice = createSlice({
         ...state.data,
         ...action.payload,
         metrics: {
-          ...state.data.metrics,
-          ...action.payload.metrics
+          ...defaultMetrics,
+          ...(action.payload.metrics || {})
         }
       };
     },

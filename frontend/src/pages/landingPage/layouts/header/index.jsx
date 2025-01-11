@@ -1,6 +1,5 @@
 import { motion } from "framer-motion";
-import { Link } from "react-scroll";
-import { Link as RouterLink } from "react-router-dom";
+import { Link } from "react-router-dom";
 import useOffCanvas from "../../../../hooks/useOffCanvas";
 import Navigation from "../../components/common/Navigation";
 import OutlinedButton from "../../components/common/buttons/OutlinedButton";
@@ -64,23 +63,25 @@ export default function Header() {
                             </div>
 
                             {/* buttons */}
-                            <OutlinedButton
-                                type="button"
-                                extraClasses="px-10 py-4 font-semibold bg-neutral-100 leading-[100%]"
-                                as={RouterLink}
-                                to="/register"
-                            >
-                                Sign Up
-                            </OutlinedButton>
+                            {/* <Link to="/login"> */}
+                                <OutlinedButton
+                                    type="button"
+                                    extraClasses="px-10 py-4 font-semibold bg-neutral-100 leading-[100%]"
+                                >
+                                    <Link to="/register">
+                                    Sign Up
+                                    </Link>
+                                </OutlinedButton>
 
-                            <OutlinedButton
-                                type="button"
-                                extraClasses="px-5 py-4 font-semibold bg-neutral-100 leading-[100%]"
-                                as={RouterLink}
-                                to="/login"
-                            >
-                                Login
-                            </OutlinedButton>
+                                <OutlinedButton
+                                    type="button"
+                                    extraClasses="px-5 py-4 font-semibold bg-neutral-100 leading-[100%]"
+                                >
+                                    <Link to="/login">
+                                    Login
+                                    </Link>
+                                </OutlinedButton>
+                            {/* </Link> */}
                         </div>
                     </div>
 

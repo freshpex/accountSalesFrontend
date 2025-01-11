@@ -37,8 +37,6 @@ const Dashboard = () => {
   const popularProducts = useSelector(getPopularProducts);
   const recentActivities = useSelector(getRecentActivities);
   const loading = useSelector(getLoading);
-
-  console.log("Sales Target", salesTarget)
   
   const [timeRange, setTimeRange] = useState('weekly');
   const bgColor = useColorModeValue('gray.50', 'gray.900');

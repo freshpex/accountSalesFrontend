@@ -122,7 +122,7 @@ const Register = () => {
 
   return (
     <Container maxW="md" py={12} bg={colors.bgColor} color={colors.textColor}>
-      <Stack spacing={8} alignItems="center">
+      <Stack spacing={2} alignItems="center">
         <Stack align="center" spacing={2}>
           <Image src="/logo.svg" alt="Logo" h="100px" />
           <Text fontSize="2xl" fontWeight="bold">Create your account</Text>
@@ -246,8 +246,7 @@ const Register = () => {
             </FormControl>
 
             <Button
-              bg="blue.500"
-              color={colors.textColor}
+              bg={colors.bgColor} color={colors.textColor}
               _hover={{ bg: 'blue.600' }}
               onClick={handleSubmit}
               isDisabled={!formData.agreeToTerms || loading}
