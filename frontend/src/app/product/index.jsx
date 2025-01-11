@@ -20,14 +20,15 @@ import {
   BreadcrumbLink,
 } from '@chakra-ui/react';
 import { SearchIcon, ChevronDownIcon } from '@chakra-ui/icons';
-import Instagram from './tabs/instagram';
-import Facebook from './tabs/facebook';
-import Twitter from './tabs/twitter';
-import Whatsapp from './tabs/whatsapp';
+import SocialMediaTab from './components/SocialMediaTab';
 import { useFilters } from '../../context/FilterContext';
 import { exportToCSV } from '../../utils/export';
 import AddProduct from './modal/addProduct';
 import {
+  getInstagramProducts,
+  getFacebookProducts,
+  getTwitterProducts,
+  getWhatsappProducts,
   getLoading,
   getPlatformStats
 } from './redux/selector';
@@ -39,6 +40,13 @@ import {
 } from './redux/reducer';
 import LoadingSpinner from '../../components/LoadingSpinner';
 import { useColors } from '../../utils/colors';
+
+const platformSelectors = {
+  instagram: getInstagramProducts,
+  facebook: getFacebookProducts,
+  twitter: getTwitterProducts,
+  whatsapp: getWhatsappProducts
+};
 
 const Product = () => {
   const dispatch = useDispatch();
@@ -103,8 +111,9 @@ const Product = () => {
     }));
   }, [dispatch, location.pathname, filters, currentPage, pageSize]);
 
-  const components = [Instagram, Facebook, Twitter, Whatsapp];
-  const ActiveComponent = components[tabIndex];
+  const getCurrentPlatform = () => {
+    return location.pathname.split('/').pop();
+  };
 
   const handleTabChange = (index) => {
     const paths = ['instagram', 'facebook', 'twitter', 'whatsapp'];
@@ -284,17 +293,17 @@ const Product = () => {
         ))}
       </Flex>
 
-      <ActiveComponent 
-        searchQuery={searchQuery} 
+      <SocialMediaTab
+        platform={getCurrentPlatform()}
+        searchQuery={searchQuery}
         filters={filters}
         onDataFiltered={setFilteredData}
         applyFilters={applyFilters}
         onViewPost={(post) => handleModalOpen('view', post)}
         onEditPost={(post) => handleModalOpen('edit', post)}
         onDeletePost={(post) => handleModalOpen('delete', post)}
-        currentPage={currentPage}
-        pageSize={pageSize}
-        onPageChange={setCurrentPage}
+        getProducts={platformSelectors[getCurrentPlatform()]}
+        getLoading={getLoading}
       />
 
     <AddProduct
