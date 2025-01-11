@@ -1,5 +1,5 @@
 import {
-  Box, Flex, Text, Stack, IconButton, Circle, Badge
+  Box, Flex, Text, Stack, IconButton, Circle, Badge, useColorModeValue
 } from '@chakra-ui/react';
 import { FiFilter, FiActivity } from 'react-icons/fi';
 import DashboardCard from '../../../components/cards/DashboardCard';
@@ -20,7 +20,7 @@ const RecentActivities = ({ activities }) => {
 
   return (
     <DashboardCard>
-      <Flex justify="space-between" align="center" mb={6}>
+      <Flex justify="space-between" align="center" mb={6} flexWrap="wrap">
         <Text fontSize="lg" fontWeight="medium">Recent Activities</Text>
         <IconButton
           icon={<FiFilter />}
@@ -52,13 +52,21 @@ const ActivityItem = ({ activity }) => {
   const color = getActivityColor(activity.type);
 
   return (
-    <Flex align="center" justify="space-between">
+    <Flex 
+      direction={{ base: 'column', sm: 'row' }}
+      align={{ base: 'flex-start', sm: 'center' }}
+      justify="space-between"
+      gap={3}
+      p={3}
+      borderRadius="md"
+      _hover={{ bg: useColorModeValue('gray.50', 'gray.700') }}
+    >
       <Flex align="center">
         <Circle
-          size="40px"
+          size={{ base: "32px", sm: "40px" }}
           bg={`${color}.100`}
           color={`${color}.500`}
-          mr={4}
+          mr={3}
         >
           <FiActivity />
         </Circle>
@@ -70,7 +78,13 @@ const ActivityItem = ({ activity }) => {
         </Box>
       </Flex>
       {activity.amount && (
-        <Badge colorScheme={color}>${activity.amount.toLocaleString()}</Badge>
+        <Badge 
+          colorScheme={color}
+          fontSize={{ base: 'xs', sm: 'sm' }}
+          mt={{ base: 2, sm: 0 }}
+        >
+          ${activity.amount.toLocaleString()}
+        </Badge>
       )}
     </Flex>
   );

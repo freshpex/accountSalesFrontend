@@ -16,7 +16,7 @@ const SalesTarget = ({ salesTarget }) => {
 
   return (
     <DashboardCard>
-      <Flex justify="space-between" align="center" mb={4}>
+      <Flex justify="space-between" align="center" mb={4} flexWrap="wrap">
         <Text fontSize="lg" fontWeight="medium">Sales Target</Text>
         <Badge colorScheme={getProgressColor(salesTarget?.percentage)}>
           {salesTarget?.timeLeft} remaining
@@ -24,7 +24,7 @@ const SalesTarget = ({ salesTarget }) => {
       </Flex>
 
       <Box mb={4}>
-        <Flex justify="space-between" mb={2}>
+        <Flex justify="space-between" mb={2} flexWrap="wrap">
           <Text fontSize="sm" color={textColor}>
             Current: ${salesTarget?.current.toLocaleString()}
           </Text>

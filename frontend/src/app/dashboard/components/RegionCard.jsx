@@ -16,13 +16,13 @@ const RegionCard = ({ region }) => {
 
   return (
     <DashboardCard>
-      <Flex justify="space-between" align="center" mb={4}>
+      <Flex justify="space-between" align="center" mb={4} flexWrap="wrap">
         <Text fontSize="lg" fontWeight="medium">{region.region}</Text>
         <Badge colorScheme="blue">{region.percentage}% Growth</Badge>
       </Flex>
       
       <Box>
-        <Flex justify="space-between" mb={2}>
+        <Flex justify="space-between" mb={2} flexWrap="wrap">
           <Text fontSize="sm" color="gray.500">Total Customers</Text>
           <Text fontWeight="medium">{region.total.toLocaleString()}</Text>
         </Flex>
@@ -34,7 +34,7 @@ const RegionCard = ({ region }) => {
         />
       </Box>
       
-      <Flex justify="space-between" align="center">
+      <Flex justify="space-between" align="center" flexWrap="wrap">
         <Box>
           <Text fontSize="sm" color="gray.500">New Customers</Text>
           <Text fontSize="lg" fontWeight="medium">+{region.new.toLocaleString()}</Text>

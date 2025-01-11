@@ -28,7 +28,7 @@ const AppRoutes = () => {
       <Route path="/email-check" element={<EmailInfo />} />
       <Route path="/reset-password/:id" element={<ChangePassword />} />
 
-      {/* Protected Routes Group */}
+      {/* Protected Routes */}
       <Route element={<ProtectedRoute><Layout /></ProtectedRoute>}>
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/help" element={<Help />} />

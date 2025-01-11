@@ -128,20 +128,28 @@ const Dashboard = () => {
   };
 
   return (
-    <Container maxW="container.xl" bg={bgColor} py={8}>
+    <Container 
+      maxW="container.xl" 
+      bg={bgColor} 
+      py={{ base: 4, md: 8 }}
+      px={{ base: 2, md: 8 }}
+    >
       <Flex
-        px={8}
+        px={{ base: 4, md: 8 }}
+        py={4}
         bg={headerBgColor}
+        borderRadius="lg"
         borderColor={borderColor}
         justify="space-between"
         align="center"
+        mb={6}
       >
-        <Text fontSize="xl" fontWeight="bold">
+        <Text fontSize={{ base: "lg", md: "xl" }} fontWeight="bold">
           Dashboard
         </Text>
       </Flex>
 
-      <Box p={8}>
+      <Box px={{ base: 2, md: 8 }}>
         {renderContent()}
       </Box>
     </Container>

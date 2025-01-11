@@ -25,13 +25,20 @@ const SalesChart = ({ data, timeRange, onTimeRangeChange }) => {
 
   return (
     <DashboardCard>
-      <Flex justify="space-between" align="center" mb={6}>
+      <Flex 
+        direction={{ base: 'column', sm: 'row' }}
+        justify="space-between" 
+        align={{ base: 'stretch', sm: 'center' }}
+        mb={6} 
+        gap={4}
+      >
         <Text fontSize="lg" fontWeight="medium">Sales Overview</Text>
-        <Flex gap={2}>
+        <Flex gap={2} justify={{ base: 'center', sm: 'flex-end' }}>
           {['weekly', 'monthly'].map((range) => (
             <Button
               key={range}
               size="sm"
+              width={{ base: '100%', sm: 'auto' }}
               variant={timeRange === range ? 'solid' : 'ghost'}
               onClick={() => onTimeRangeChange(range)}
             >
@@ -41,9 +48,17 @@ const SalesChart = ({ data, timeRange, onTimeRangeChange }) => {
         </Flex>
       </Flex>
 
-      <Box height={{ base: "200px", md: "300px" }}>
+      <Box height={{ base: "250px", md: "300px" }}>
         <ResponsiveContainer width="100%" height="100%">
-          <AreaChart data={data} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
+          <AreaChart 
+            data={data} 
+            margin={{ 
+              top: 10, 
+              right: 10, 
+              left: 0, 
+              bottom: 0 
+            }}
+          >
             <defs>
               <linearGradient id="salesGradient" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="5%" stopColor="#3182CE" stopOpacity={0.8}/>
