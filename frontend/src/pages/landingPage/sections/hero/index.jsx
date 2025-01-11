@@ -4,7 +4,7 @@ import Picture from "../../components/common/Picture";
 import ContainedButton from "../../components/common/buttons/ContainedButton";
 import Slider from "./Slider";
 
-export default function Hero() {
+const Hero = () => {
     return (
         <section
             aria-label="hero section"
@@ -75,3 +75,5 @@ export default function Hero() {
         </section>
     );
 }
+
+export default Hero;

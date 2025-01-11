@@ -38,7 +38,7 @@ const featuredNftData = [
     },
 ];
 
-export default function Featured() {
+const Featured = () => {
     return (
         <section
             aria-label="featured nft section"
@@ -63,3 +63,6 @@ export default function Featured() {
         </section>
     );
 }
+
+
+export default Featured;

@@ -46,7 +46,7 @@ const marketplaceNftCardData = [
     },
 ];
 
-export default function Marketplace() {
+const Marketplace = () => {
     return (
         <section
             id="marketplace"
@@ -77,3 +77,5 @@ export default function Marketplace() {
         </section>
     );
 }
+
+export default Marketplace;

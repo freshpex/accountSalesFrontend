@@ -31,7 +31,7 @@ const pictureChildVariant = {
     }
 };
 
-export default function Resource() {
+const Resource = () => {
     return (
         <section
             id="resource"
@@ -84,3 +84,6 @@ export default function Resource() {
         </section>
     );
 }
+
+
+export default Resource;
