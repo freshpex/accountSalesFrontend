@@ -124,7 +124,7 @@ const Register = () => {
     <Container maxW="md" py={12} bg={colors.bgColor} color={colors.textColor}>
       <Stack spacing={8} alignItems="center">
         <Stack align="center" spacing={2}>
-          <Image src="/logo.svg" alt="Logo" h="40px" />
+          <Image src="/logo.svg" alt="Logo" h="100px" />
           <Text fontSize="2xl" fontWeight="bold">Create your account</Text>
         </Stack>
 

@@ -76,13 +76,13 @@ const Login = () => {
 
   return (
     <Container maxW="md" py={12}>
-      <Stack spacing={8} alignItems="center">
+      <Stack spacing={4} alignItems="center">
         {/* Logo */}
         <Stack align="center" spacing={2}>
-          <Image src="/logo.svg" alt="Culters Logo" h="40px" />
+          <Image src="/logo.svg"  h="100px" />
         </Stack>
 
-        {/* Sign In Form */}bg={colors.bgColor} color={colors.textColor}
+        {/* Sign In Form */}
         <Box w="full" p={8} borderRadius="lg" bg={colors.bgColor} color={colors.textColor} boxShadow="sm">
           <Stack spacing={4}>
             <Text fontSize="2xl" fontWeight="bold" textAlign="center">

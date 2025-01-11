@@ -65,7 +65,7 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar, isCollapsed, toggleCollapse }) 
                 mr={2}
               />
               <Text fontSize="lg" fontWeight="bold" color={textColor}>
-                Culters
+                ScotTech
               </Text>
             </Flex>
 
@@ -91,7 +91,7 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar, isCollapsed, toggleCollapse }) 
                   Company
                 </Text>
                 <Text fontSize="sm" fontWeight="medium" color={textColor}>
-                  {company.name}
+                  ScotTech
                 </Text>
               </Box>
             </Flex>
@@ -171,7 +171,7 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar, isCollapsed, toggleCollapse }) 
             />
             {!isCollapsed && (
               <Text fontSize="lg" fontWeight="bold">
-                Culters
+                ScotTech
               </Text>
             )}
           </Flex>
@@ -206,7 +206,7 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar, isCollapsed, toggleCollapse }) 
                 Company
               </Text>
               <Text fontSize="sm" fontWeight="medium">
-                {company.name}
+                social Store
               </Text>
             </Box>
           </Flex>

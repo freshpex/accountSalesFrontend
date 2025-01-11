@@ -1,4 +1,5 @@
 import { Link } from "react-scroll";
+import { Link as RouterLink } from "react-router-dom";
 import Navigation from "../../components/common/Navigation";
 import SectionDivider from "../../components/common/SectionDivider";
 import OutlinedButton from "../../components/common/buttons/OutlinedButton";
@@ -63,6 +64,7 @@ export default function MobileMenu({ isMobileMenuVisible, setIsMobileMenuVisible
                         <OutlinedButton
                             type="button"
                             extraClasses="grow | px-10 py-4 font-semibold bg-neutral-100 leading-[100%]"
+                            as={RouterLink}
                             to="/register"
                         >
                             Sign Up
@@ -71,6 +73,7 @@ export default function MobileMenu({ isMobileMenuVisible, setIsMobileMenuVisible
                         <OutlinedButton
                             type="button"
                             extraClasses="grow | px-5 py-4 font-semibold bg-neutral-100 leading-[100%]"
+                            as={RouterLink}
                             to="/login"
                         >
                             Login
