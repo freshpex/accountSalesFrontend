@@ -1,12 +1,11 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import {
   Box,
   Input,
   InputGroup,
   InputLeftElement,
-  HStack,
   Button,
   Menu,
   MenuButton,
@@ -18,8 +17,16 @@ import {
   Breadcrumb,
   BreadcrumbItem,
   BreadcrumbLink,
+  Stack,
+  IconButton,
+  Tag
 } from '@chakra-ui/react';
-import { SearchIcon, ChevronDownIcon } from '@chakra-ui/icons';
+import { SearchIcon, ChevronDownIcon, AddIcon } from '@chakra-ui/icons';
+import { motion, AnimatePresence } from 'framer-motion';
+import { useInView } from 'react-intersection-observer';
+import { useSwipeable } from 'react-swipeable';
+import { useVirtualizer } from '@tanstack/react-virtual';
+import { ScrollMenu } from 'react-horizontal-scrolling-menu';
 import SocialMediaTab from './components/SocialMediaTab';
 import { useFilters } from '../../context/FilterContext';
 import { exportToCSV } from '../../utils/export';
@@ -58,12 +65,13 @@ const Product = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredData, setFilteredData] = useState([]);
   const location = useLocation();
-  const navigate = useNavigate();
   const { filters, updateFilters } = useFilters();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalAction, setModalAction] = useState('');
   const [selectedPost, setSelectedPost] = useState(null);
   const colors = useColors();
+  const [viewMode, setViewMode] = useState('grid');
+  const [selectedCategory, setSelectedCategory] = useState(null);
 
   const handleModalOpen = (action, post = null) => {
     setModalAction(action);
@@ -113,12 +121,6 @@ const Product = () => {
 
   const getCurrentPlatform = () => {
     return location.pathname.split('/').pop();
-  };
-
-  const handleTabChange = (index) => {
-    const paths = ['instagram', 'facebook', 'twitter', 'whatsapp'];
-    navigate(`/product/${paths[index]}`);
-    setTabIndex(index);
   };
 
   const applyFilters = useCallback((data) => {
@@ -179,134 +181,206 @@ const Product = () => {
     exportToCSV(dataToExport, filename);
   };
 
-  const tabs = [
-    { key: 'instagram', label: 'Instagram', count: platformStats.instagram },
-    { key: 'facebook', label: 'Facebook', count: platformStats.facebook },
-    { key: 'twitter', label: 'Twitter', count: platformStats.twitter },
-    { key: 'whatsapp', label: 'Whatsapp', count: platformStats.whatsapp },
-  ];
+
+  const FloatingActionButton = () => (
+    <motion.div
+      initial={{ scale: 0 }}
+      animate={{ scale: 1 }}
+      style={{
+        position: 'fixed',
+        bottom: '2rem',
+        right: '2rem',
+        zIndex: 10
+      }}
+    >
+      <Menu>
+        <MenuButton
+          as={IconButton}
+          icon={<AddIcon />}
+          colorScheme="blue"
+          rounded="full"
+          w="60px"
+          h="60px"
+          shadow="lg"
+        />
+        <MenuList>
+          <MenuItem onClick={() => handleModalOpen('add')}>New Product</MenuItem>
+          <MenuItem onClick={handleExport}>Export Data</MenuItem>
+          <MenuItem onClick={() => setViewMode(viewMode === 'grid' ? 'list' : 'grid')}>
+            Toggle View
+          </MenuItem>
+        </MenuList>
+      </Menu>
+    </motion.div>
+  );
+
+  const CategoryChips = () => (
+    <ScrollMenu>
+      {['All', 'Popular', 'Recent', 'Trending'].map((category) => (
+        <Tag
+          key={category}
+          size="lg"
+          variant={selectedCategory === category ? "solid" : "outline"}
+          colorScheme="blue"
+          cursor="pointer"
+          onClick={() => setSelectedCategory(category)}
+          mx={2}
+        >
+          {category}
+        </Tag>
+      ))}
+    </ScrollMenu>
+  );
 
   if (loading) {
     return <LoadingSpinner />;
   }
 
   return (
-    <Container maxW="container.xl" py={8} bg={colors.bgColor} color={colors.textColor}>
-      {/* Header */}
-      <Box mb={6}>
-        <Text fontSize="2xl" mb={2}>
-          Product
-        </Text>
-        <Breadcrumb fontSize="sm" color="gray.500">
-            <BreadcrumbItem>
-            <BreadcrumbLink href="#">Dashboard</BreadcrumbLink>
-          </BreadcrumbItem>
-          <BreadcrumbItem>
-            <BreadcrumbLink href="#">products</BreadcrumbLink>
-          </BreadcrumbItem>
-        </Breadcrumb>
-      </Box>
-
-      {/* Search and Actions */}
-      <Flex justify="space-between" mb={6} gap={4} flexWrap="wrap">
-        <InputGroup maxW="400px">
-          <InputLeftElement pointerEvents="none">
-            <SearchIcon color="gray.400" />
-          </InputLeftElement>
-          <Input
-            placeholder="Search transactions..."
-            value={searchQuery}
-            onChange={(e) => handleSearch(e.target.value)}
-            bg={colors.bgColor}
-            color={colors.textColor}
-          />
-        </InputGroup>
-
-        <HStack spacing={4}>
-        <Menu>
-            <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>
-              Filter
-            </MenuButton>
-            <MenuList>
-              <MenuItem>
-                <Menu placement="right-start">
-                  <MenuButton w="full">Status</MenuButton>
-                </Menu>
-              </MenuItem>
-              <MenuItem onClick={() => handleFilter('status', 'sold')}>Sold</MenuItem>
-              <MenuItem onClick={() => handleFilter('status', 'available')}>Available</MenuItem>
-              <MenuItem>
-                <Input
-                  type="date"
-                  onChange={(e) => handleFilter('date', e.target.value)}
-                  bg={colors.bgColor}
-                  color={colors.textColor}
-                />
-              </MenuItem>
-              <MenuItem onClick={() => {
-                updateFilters({
-                  status: null,
-                  date: null,
-                  type: null
-                });
-                setSearchQuery('');
-              }}>
-                Clear All Filters
-              </MenuItem>
-            </MenuList>
-          </Menu>
-
-          <Button 
-            onClick={handleExport} 
-            leftIcon={<ChevronDownIcon />}
-          >
-            Export
-          </Button>
-
-          <Button colorScheme="blue" leftIcon={<ChevronDownIcon />} onClick={() => handleModalOpen('add')}>
-            New Post
-          </Button>
-        </HStack>
-      </Flex>
-
-      {/* Tabs */}
-      <Flex
-        overflowX="auto"
+    <Container 
+      maxW="container.xl" 
+      p={0}
+    >
+      {/* Header Section */}
+      <Box 
+        position="sticky" 
+        top={0} 
+        bg={colors.bgColor} 
+        zIndex={10}
+        px={4}
+        py={2}
         borderBottom="1px"
         borderColor={colors.borderColor}
-        mb={6}
-        whiteSpace="nowrap"
       >
-        {tabs.map((tab) => (
-          <Box
-            key={tab.key}
-            px={4}
-            py={2}
-            cursor="pointer"
-            borderBottom="2px"
-            borderColor={tab.key === location.pathname.split('/').pop() ? 'blue.500' : 'transparent'}
-            color={tab.key === location.pathname.split('/').pop() ? 'blue.500' : colors.textColor}
-            onClick={() => handleTabChange(tabs.findIndex(t => t.key === tab.key))}
-          >
-            {tab.label} ({tab.count})
+        <Flex 
+          direction={{ base: "column", md: "row" }} 
+          justify="space-between" 
+          align={{ base: "start", md: "center" }}
+          mb={6}
+          gap={4}
+        >
+          <Box>
+            <Text fontSize={{ base: "xl", md: "2xl" }} mb={2}>
+              Product
+            </Text>
+            <Breadcrumb fontSize="sm" color="gray.500">
+              <BreadcrumbItem>
+                <BreadcrumbLink href="#">Dashboard</BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbItem>
+                <BreadcrumbLink href="#">products</BreadcrumbLink>
+              </BreadcrumbItem>
+            </Breadcrumb>
           </Box>
-        ))}
-      </Flex>
 
-      <SocialMediaTab
-        platform={getCurrentPlatform()}
-        searchQuery={searchQuery}
-        filters={filters}
-        onDataFiltered={setFilteredData}
-        applyFilters={applyFilters}
-        onViewPost={(post) => handleModalOpen('view', post)}
-        onEditPost={(post) => handleModalOpen('edit', post)}
-        onDeletePost={(post) => handleModalOpen('delete', post)}
-        getProducts={platformSelectors[getCurrentPlatform()]}
-        getLoading={getLoading}
-      />
+          <Button 
+            colorScheme="blue" 
+            leftIcon={<ChevronDownIcon />} 
+            onClick={() => handleModalOpen('add')}
+            w={{ base: "full", md: "auto" }}
+          >
+            New Post
+          </Button>
+        </Flex>
 
-    <AddProduct
+        <Stack 
+          direction={{ base: "column", md: "row" }} 
+          justify="space-between" 
+          mb={6} 
+          spacing={4}
+        >
+          <InputGroup maxW={{ base: "full", md: "400px" }}>
+            <InputLeftElement pointerEvents="none">
+              <SearchIcon color="gray.400" />
+            </InputLeftElement>
+            <Input
+              placeholder="Search transactions..."
+              value={searchQuery}
+              onChange={(e) => handleSearch(e.target.value)}
+              bg={colors.bgColor}
+              color={colors.textColor}
+            />
+          </InputGroup>
+
+          <Stack 
+            direction={{ base: "column", md: "row" }} 
+            spacing={4} 
+            w={{ base: "full", md: "auto" }}
+          >
+            <Menu>
+              <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>
+                Filter
+              </MenuButton>
+              <MenuList>
+                <MenuItem>
+                  <Menu placement="right-start">
+                    <MenuButton w="full">Status</MenuButton>
+                  </Menu>
+                </MenuItem>
+                <MenuItem onClick={() => handleFilter('status', 'sold')}>Sold</MenuItem>
+                <MenuItem onClick={() => handleFilter('status', 'available')}>Available</MenuItem>
+                <MenuItem>
+                  <Input
+                    type="date"
+                    onChange={(e) => handleFilter('date', e.target.value)}
+                    bg={colors.bgColor}
+                    color={colors.textColor}
+                  />
+                </MenuItem>
+                <MenuItem onClick={() => {
+                  updateFilters({
+                    status: null,
+                    date: null,
+                    type: null
+                  });
+                  setSearchQuery('');
+                }}>
+                  Clear All Filters
+                </MenuItem>
+              </MenuList>
+            </Menu>
+
+            <Button 
+              onClick={handleExport}
+              w={{ base: "full", md: "auto" }}
+            >
+              Export
+            </Button>
+          </Stack>
+        </Stack>
+
+        <CategoryChips />
+      </Box>
+
+      <Box px={4}>
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={viewMode}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+          >
+            <SocialMediaTab
+              platform={getCurrentPlatform()}
+              searchQuery={searchQuery}
+              filters={filters}
+              onDataFiltered={setFilteredData}
+              applyFilters={applyFilters}
+              onViewPost={(post) => handleModalOpen('view', post)}
+              onEditPost={(post) => handleModalOpen('edit', post)}
+              onDeletePost={(post) => handleModalOpen('delete', post)}
+              getProducts={platformSelectors[getCurrentPlatform()]}
+              getLoading={getLoading}
+              viewMode={viewMode}
+            />
+          </motion.div>
+        </AnimatePresence>
+      </Box>
+
+      <FloatingActionButton />
+
+      <AddProduct
         isOpen={isModalOpen}
         onClose={handleModalClose}
         data={selectedPost}

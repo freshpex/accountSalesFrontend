@@ -49,7 +49,6 @@ export const productSlice = createSlice({
       state.error = null;
     },
     fetch_products_success: (state, action) => {
-      console.log('Reducer received payload:', action.payload);
       state.ui.loading = false;
       state.ui.success = true;
       
@@ -77,8 +76,6 @@ export const productSlice = createSlice({
         totalPages: action.payload.meta?.totalPages || 1,
         totalItems: action.payload.meta?.totalItems || 0
       };
-    
-      console.log('Updated state:', state);
     },
     fetch_products_error: (state, action) => {
       state.ui.loading = false;

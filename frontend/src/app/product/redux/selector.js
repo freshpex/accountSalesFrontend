@@ -5,8 +5,6 @@ const productState = (state) => state.product;
 export const getProducts = createSelector(
   productState,
   (state) => {
-    console.log('Get Products Selector - Full state:', state);
-    console.log('Products from state:', state?.data?.products);
     return state?.data?.products || [];
   }
 );
@@ -39,7 +37,6 @@ export const getSuccess = createSelector(
 export const getInstagramProducts = createSelector(
   getProducts,
   (products) => {
-    console.log('Instagram Selector - All products:', products);
     if (!Array.isArray(products)) {
       console.warn('Products is not an array:', products);
       return [];

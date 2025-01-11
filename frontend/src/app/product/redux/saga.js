@@ -38,7 +38,6 @@ function* fetchProductsSaga({ payload }) {
     };
 
     const response = yield call(api.get, ApiEndpoints.PRODUCTS, { params });
-    console.log('Raw API Response:', response);
 
     const responseData = {
       items: response.data.data?.items || 
@@ -75,7 +74,6 @@ function* fetchProductsSaga({ payload }) {
       }));
     }
 
-    console.log('Transformed response data:', responseData);
     yield put(fetch_products_success(responseData));
   } catch (error) {
     const errorMessage = error.response?.data?.message || error.message || 'Failed to fetch products';
@@ -99,9 +97,7 @@ function* fetchTransactionProductsSaga() {
   try {
     yield delay(1000);
 
-    console.log('Fetching available products...');
     const response = yield call(api.get, `${ApiEndpoints.PRODUCTS}/available`);
-
     const products = response.data?.data || [];
     
     if (!Array.isArray(products)) {
