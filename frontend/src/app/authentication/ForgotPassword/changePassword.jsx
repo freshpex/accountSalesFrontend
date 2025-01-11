@@ -15,7 +15,7 @@ import { getLoading, getError } from "./redux/selector";
 import { change_password } from "./redux/reducer";
 import { useParams } from "react-router-dom";
 import { useEffect } from "react";
-import { useColors } from '../../utils/colors';
+import { useColors } from "../../../utils/colors";
 
 const ChangePassword = () => {
   const dispatch = useDispatch();
