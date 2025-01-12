@@ -50,6 +50,7 @@ import { useColors } from '../../utils/colors';
 import { FiInstagram, FiFacebook, FiTwitter } from 'react-icons/fi';
 import { FaWhatsapp } from 'react-icons/fa';
 import { CheckIcon } from '@chakra-ui/icons';
+import { convertToPublicUrl } from '../../utils/supabase';
 
 const platformSelectors = {
   all: getAllProducts,
@@ -101,8 +102,19 @@ const Product = () => {
   }, [selectedCategory, updateFilters, navigate]);
 
   const handleModalOpen = (action, post = null) => {
+    if (post && post.images) {
+      const formattedPost = {
+        ...post,
+        images: Array.isArray(post.images) 
+          ? post.images.map(img => img.startsWith('http') ? convertToPublicUrl(img) : img)
+          : [convertToPublicUrl(post.images)]
+      };
+      setSelectedPost(formattedPost);
+    } else {
+      setSelectedPost(post);
+    }
+    
     setModalAction(action);
-    setSelectedPost(post);
     setIsModalOpen(true);
   };
 

@@ -32,6 +32,7 @@ import { useColors } from '../../../utils/colors';
 import toast from "react-hot-toast";
 import { useProductActions } from '../hooks/useProductActions';
 import { validateImage, validateProductData } from '../redux/actions';
+import { convertToPublicUrl } from '../../../utils/supabase';
 
 const AddProduct = ({ isOpen, onClose, data, action, onSave, onDelete }) => {
   const loading = useSelector(getLoading);
@@ -45,33 +46,44 @@ const AddProduct = ({ isOpen, onClose, data, action, onSave, onDelete }) => {
   const [about, setAbout] = useState("");
   const [engagement, setEngagement] = useState("");
   const [images, setImages] = useState(["", "", "", ""]);
+  const [imagesPreviews, setImagesPreviews] = useState(['', '', '', '']);
 
   const isReadOnly = action === 'view';
   const colors = useColors();
 
-  // Add delete confirmation dialog
   const { isOpen: isDeleteOpen, onOpen: onDeleteOpen, onClose: onDeleteClose } = useDisclosure();
   const cancelRef = useRef();
 
-  // Form validation state
   const [formErrors, setFormErrors] = useState({});
 
-  const validateForm = () => {
-    const errors = {};
-    if (!username) errors.username = 'Username is required';
-    if (!type) errors.type = 'Product type is required';
-    if (!age) errors.age = 'Account age is required';
-    if (!follower) errors.follower = 'Follower count is required';
-    if (!price) errors.price = 'Price is required';
-    if (!region) errors.region = 'Region is required';
-    if (!about) errors.about = 'Description is required';
-    
-    setFormErrors(errors);
-    return Object.keys(errors).length === 0;
+  const renderImage = (image, preview) => {
+    if (typeof image === 'string' && image.startsWith('http')) {
+      // Convert Supabase URL to public URL
+      return convertToPublicUrl(image);
+    }
+    if (preview) {
+      return preview;
+    }
+    if (image instanceof File) {
+      return URL.createObjectURL(image);
+    }
+    return null;
   };
 
   useEffect(() => {
     if (data) {
+      let formattedImages = [];
+      if (data.images) {
+        if (Array.isArray(data.images)) {
+          formattedImages = data.images;
+        } else if (typeof data.images === 'string') {
+          formattedImages = [data.images];
+        }
+        formattedImages = formattedImages.concat(Array(4 - formattedImages.length).fill(''));
+      } else {
+        formattedImages = ['', '', '', ''];
+      }
+
       setUsername(data.username || '');
       setType(data.type || '');
       setAge(data.age || '');
@@ -81,9 +93,9 @@ const AddProduct = ({ isOpen, onClose, data, action, onSave, onDelete }) => {
       setRegion(data.region || '');
       setAbout(data.about || '');
       setEngagement(data.engagement || '');
-      setImages(data.images || ['', '', '', '']);
+      setImages(formattedImages);
+      setImagesPreviews(formattedImages);
     } else {
-      // Reset form
       setUsername('');
       setType('');
       setAge('');
@@ -94,6 +106,7 @@ const AddProduct = ({ isOpen, onClose, data, action, onSave, onDelete }) => {
       setAbout('');
       setEngagement('');
       setImages(['', '', '', '']);
+      setImagesPreviews(['', '', '', '']);
     }
   }, [data]);
 
@@ -113,14 +126,12 @@ const AddProduct = ({ isOpen, onClose, data, action, onSave, onDelete }) => {
     };
 
     if (action === 'edit') {
-      // For edit, separate existing images and new files
       const existingImages = images.filter(img => typeof img === 'string');
       const newImages = images.filter(img => img instanceof File);
       
       productData.existingImages = existingImages;
       productData.newImages = newImages;
     } else {
-      // For add, just include the files
       productData.images = images.filter(img => img instanceof File);
     }
 
@@ -141,8 +152,11 @@ const AddProduct = ({ isOpen, onClose, data, action, onSave, onDelete }) => {
     try {
       if (!file) {
         const newImages = [...images];
+        const newPreviews = [...imagesPreviews];
         newImages[index] = "";
+        newPreviews[index] = "";
         setImages(newImages);
+        setImagesPreviews(newPreviews);
         return;
       }
 
@@ -153,25 +167,28 @@ const AddProduct = ({ isOpen, onClose, data, action, onSave, onDelete }) => {
       }
 
       const newImages = [...images];
-      if (action === 'edit') {
-        // For edit mode, keep track of new files vs existing URLs
-        if (typeof images[index] === 'string') {
-          // If replacing an existing image URL
-          newImages[index] = file;
-        } else {
-          // If adding a new image
-          newImages[index] = file;
-        }
-      } else {
-        // For add mode, simply store the file
-        newImages[index] = file;
-      }
+      const newPreviews = [...imagesPreviews];
+
+      newImages[index] = file;
+      newPreviews[index] = URL.createObjectURL(file);
+
       setImages(newImages);
+      setImagesPreviews(newPreviews);
     } catch (error) {
       console.error('Image handling error:', error);
       toast.error('Failed to process image');
     }
   };
+
+  useEffect(() => {
+    return () => {
+      imagesPreviews.forEach(preview => {
+        if (preview && preview.startsWith('blob:')) {
+          URL.revokeObjectURL(preview);
+        }
+      });
+    };
+  }, [imagesPreviews]);
 
   const handleDeleteConfirm = () => {
     onDelete(data.id);
@@ -382,14 +399,27 @@ const AddProduct = ({ isOpen, onClose, data, action, onSave, onDelete }) => {
                       onClick={isReadOnly ? undefined : () => document.getElementById(`fileInput-${index}`).click()}
                       cursor={isReadOnly ? "default" : "pointer"}
                     >
-                      {image ? (
+                      {(imagesPreviews[index] || image) ? (
                         <>
                           <Image
-                            src={image}
+                            src={renderImage(image, imagesPreviews[index])}
                             alt={`Image ${index + 1}`}
                             objectFit="contain"
                             boxSize="60px"
                             height="100px"
+                            fallback={<Box>
+                              <FaImage color="#007bff" size={24} />
+                              <Text fontSize="xs" color="gray.600" fontWeight="bold" mt={2}>
+                                Error loading image
+                              </Text>
+                            </Box>}
+                            onError={(e) => {
+                              console.error('Image load error:', {
+                                src: e.target.src,
+                                originalImage: image,
+                                preview: imagesPreviews[index]
+                              });
+                            }}
                           />
                           {!isReadOnly && (
                             <Button
@@ -419,6 +449,7 @@ const AddProduct = ({ isOpen, onClose, data, action, onSave, onDelete }) => {
                         <Input
                           id={`fileInput-${index}`}
                           type="file"
+                          accept="image/*"
                           display="none"
                           onChange={(e) => handleImageChange(index, e.target.files[0])}
                         />

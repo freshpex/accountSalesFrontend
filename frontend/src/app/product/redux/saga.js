@@ -117,10 +117,6 @@ function* fetchTransactionProductsSaga() {
 function* addProductSaga({ payload }) {
   try {
     const formData = new FormData();
-    
-    if (!payload) {
-      throw new Error('No product data provided');
-    }
 
     // Add basic fields
     Object.entries(payload).forEach(([key, value]) => {
@@ -137,8 +133,6 @@ function* addProductSaga({ payload }) {
         }
       });
     }
-
-    console.log('Sending product data:', Object.fromEntries(formData.entries()));
 
     const response = yield call(api.post, ApiEndpoints.PRODUCTS, formData, {
       headers: { 
@@ -157,9 +151,8 @@ function* addProductSaga({ payload }) {
     yield put(add_product_success(productData));
     toast.success("Product added successfully");
   } catch (error) {
-    console.error('Add product error:', error.response || error);
     const errorMessage = error.response?.data?.error || error.message || "Failed to add product";
-    toast.error(errorMessage);
+    console.log(errorMessage);
     yield put(add_product_error(errorMessage));
   }
 }
@@ -179,12 +172,18 @@ function* updateProductSaga({ payload }) {
     const response = yield call(api.put, `${ApiEndpoints.PRODUCTS}/${id}`, formData, {
       headers: { 'Content-Type': 'multipart/form-data' }
     });
-    yield put(update_product_success(response.data));
+
+    const updatedProduct = {
+      ...response.data,
+    };
+
+    yield put(update_product_success(updatedProduct));
     toast.success("Product updated successfully");
   } catch (error) {
-    const errorMessage = error.response?.data?.error || "Failed to update product";
+    const errorMessage = error.response?.data?.error || error.message || "Failed to update product";
     toast.error(errorMessage);
     yield put(update_product_error(errorMessage));
+    console.log(errorMessage);
   }
 }
 
@@ -195,7 +194,7 @@ function* deleteProductSaga({ payload }) {
     toast.success("Product deleted successfully");
   } catch (error) {
     const errorMessage = error.response?.data?.error || "Failed to delete product";
-    toast.error(errorMessage);
+    console.log(errorMessage);
     yield put(delete_product_error(errorMessage));
   }
 }

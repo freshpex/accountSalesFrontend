@@ -1,4 +1,5 @@
 export function convertToPublicUrl(src) {
-  const publicUrl = src.replace('/s3/', '/object/public/');
-  return publicUrl;
+  if (!src || typeof src !== 'string') return '';
+  if (!src.includes('supabase')) return src;
+  return src.replace('/s3/', '/object/public/');
 }
