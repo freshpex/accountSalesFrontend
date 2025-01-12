@@ -38,7 +38,6 @@ import Masonry from 'react-masonry-css';
 import { LazyLoadImage } from 'react-lazy-load-image-component';
 import { useInView } from 'react-intersection-observer';
 import { useSwipeable } from 'react-swipeable';
-import { useNavigate } from 'react-router-dom';
 
 const MotionBox = motion(Box);
 
@@ -157,7 +156,7 @@ const DataTable = ({
   const bgCard = useColorModeValue('white', 'gray.800');
   const borderColor = useColorModeValue('gray.200', 'gray.700');
   const hoverBg = useColorModeValue('gray.50', 'gray.700');
-  const navigate = useNavigate();
+  const theadBgColor = useColorModeValue('white', 'gray.800');
 
   if (!data?.length) {
     return (
@@ -454,7 +453,19 @@ const DataTable = ({
       borderRadius="lg"
       borderColor={borderColor}
     >
-      <Table variant="simple">
+      <Table variant="simple" sx={{
+        'th, td': {
+          whiteSpace: 'normal',
+          verticalAlign: 'top',
+          padding: '1rem',
+        },
+        'thead': {
+          position: 'sticky',
+          top: 0,
+          backgroundColor: theadBgColor,
+          zIndex: 1,
+        }
+      }}>
         <Thead bg={bgCard}>
           <Tr>
             <Th w="40px">
@@ -478,15 +489,10 @@ const DataTable = ({
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.2 }}
-              style={{ 
-                backgroundColor: 'transparent',
-                cursor: 'pointer'
-              }}
+              style={{ backgroundColor: 'transparent' }}
               whileHover={{ backgroundColor: hoverBg }}
-              onClick={() => navigate(`/product/${item.type}/${item.id}`)}
             >
-              {/* Prevent row click when clicking checkbox or actions */}
-              <Td onClick={e => e.stopPropagation()}>
+              <Td>
                 <Checkbox
                   isChecked={selectedItems.includes(item.id)}
                   onChange={() => handleSelectItem(item.id)}
@@ -498,7 +504,7 @@ const DataTable = ({
                   {renderCellContent(item, column)}
                 </Td>
               ))}
-              <Td onClick={e => e.stopPropagation()}>
+              <Td>
                 <HStack spacing={2}>
                   <Tooltip label="View Details">
                     <IconButton

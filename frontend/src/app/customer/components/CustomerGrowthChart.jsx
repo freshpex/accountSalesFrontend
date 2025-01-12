@@ -25,16 +25,23 @@ const CustomerGrowthChart = ({ data }) => {
   return (
     <Box
       bg={bgColor}
-      p={6}
+      p={{ base: 3, md: 6 }}
       borderRadius="lg"
       border="1px solid"
       borderColor={borderColor}
       shadow="sm"
+      w="100%"
     >
-      <Flex justify="space-between" align="center" mb={6}>
-        <Text fontSize="lg" fontWeight="medium">Customer Growth</Text>
+      <Flex 
+        justify="space-between" 
+        align="center" 
+        mb={6}
+        flexDirection={{ base: 'column', sm: 'row' }}
+        gap={3}
+      >
+        <Text fontSize={{ base: "md", md: "lg" }} fontWeight="medium">Customer Growth</Text>
         <Select
-          width="150px"
+          width={{ base: "100%", sm: "150px" }}
           size="sm"
           value={timeframe}
           onChange={(e) => setTimeframe(e.target.value)}
@@ -44,15 +51,43 @@ const CustomerGrowthChart = ({ data }) => {
           <option value="ytd">Year to date</option>
         </Select>
       </Flex>
+      
       {data && data.length > 0 ? (
-        <Box h="300px">
+        <Box 
+          h={{ base: "200px", sm: "250px", md: "300px" }}
+          mx={{ base: -3, md: 0 }}
+          overflow="hidden"
+        >
           <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={data}>
+            <LineChart data={data} margin={{ 
+              top: 5,
+              right: 10,
+              left: 0,
+              bottom: 30
+            }}>
               <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="month" />
-              <YAxis />
-              <Tooltip />
-              <Legend />
+              <XAxis 
+                dataKey="month" 
+                tick={{ fontSize: 10 }}
+                angle={-45}
+                textAnchor="end"
+                height={50}
+                interval="preserveStartEnd"
+              />
+              <YAxis 
+                tick={{ fontSize: 10 }}
+                width={30}
+              />
+              <Tooltip 
+                contentStyle={{ fontSize: '12px' }}
+                labelStyle={{ fontSize: '12px' }}
+              />
+              <Legend 
+                verticalAlign="top"
+                height={36}
+                wrapperStyle={{ fontSize: '11px' }}
+                align="center"
+              />
               <Line
                 type="monotone"
                 dataKey="active"

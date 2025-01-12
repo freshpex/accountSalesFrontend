@@ -17,8 +17,6 @@ const CustomerActionMenu = ({ customer, onUpdateSegment }) => {
     onClose: onViewClose
   } = useDisclosure();
 
-  console.log('Customer in ActionMenu:', customer);
-
   const handleEmailClick = (e) => {
     e.stopPropagation();
     if (customer.email) {
