@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import {
   Box,
   Input,
@@ -19,14 +19,14 @@ import {
   BreadcrumbLink,
   Stack,
   IconButton,
-  Tag
+  Tag,
+  SimpleGrid,
+  useBreakpointValue,
+  TagLabel,
+  TagRightIcon,
 } from '@chakra-ui/react';
 import { SearchIcon, ChevronDownIcon, AddIcon } from '@chakra-ui/icons';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useInView } from 'react-intersection-observer';
-import { useSwipeable } from 'react-swipeable';
-import { useVirtualizer } from '@tanstack/react-virtual';
-import { ScrollMenu } from 'react-horizontal-scrolling-menu';
 import SocialMediaTab from './components/SocialMediaTab';
 import { useFilters } from '../../context/FilterContext';
 import { exportToCSV } from '../../utils/export';
@@ -37,7 +37,7 @@ import {
   getTwitterProducts,
   getWhatsappProducts,
   getLoading,
-  getPlatformStats
+  getAllProducts
 } from './redux/selector';
 import {
   fetch_products,
@@ -47,18 +47,33 @@ import {
 } from './redux/reducer';
 import LoadingSpinner from '../../components/LoadingSpinner';
 import { useColors } from '../../utils/colors';
+import { FiInstagram, FiFacebook, FiTwitter } from 'react-icons/fi';
+import { FaWhatsapp } from 'react-icons/fa';
+import { CheckIcon } from '@chakra-ui/icons';
 
 const platformSelectors = {
+  all: getAllProducts,
   instagram: getInstagramProducts,
   facebook: getFacebookProducts,
   twitter: getTwitterProducts,
   whatsapp: getWhatsappProducts
 };
 
+const categories = [
+  // { id: 'all', label: 'All', icon: null },
+  { id: 'instagram', label: 'Instagram', icon: FiInstagram },
+  { id: 'facebook', label: 'Facebook', icon: FiFacebook },
+  { id: 'twitter', label: 'Twitter', icon: FiTwitter },
+  { id: 'whatsapp', label: 'WhatsApp', icon: FaWhatsapp },
+  // { id: 'popular', label: 'Popular', icon: null },
+  // { id: 'recent', label: 'Recent', icon: null },
+  // { id: 'trending', label: 'Trending', icon: null },
+];
+
 const Product = () => {
   const dispatch = useDispatch();
   const loading = useSelector(getLoading);
-  const platformStats = useSelector(getPlatformStats);
+  // const platformStats = useSelector(getPlatformStats);
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize] = useState(10);
   const [tabIndex, setTabIndex] = useState(0);
@@ -72,6 +87,18 @@ const Product = () => {
   const colors = useColors();
   const [viewMode, setViewMode] = useState('grid');
   const [selectedCategory, setSelectedCategory] = useState(null);
+  const navigate = useNavigate();
+  
+  useEffect(() => {
+    if (selectedCategory) {
+      if (selectedCategory === 'all') {
+        navigate(`/product/all`);
+      } else if (['instagram', 'facebook', 'twitter', 'whatsapp'].includes(selectedCategory)) {
+        selectedCategory === selectedCategory; 
+        navigate(`/product/${selectedCategory}`);
+      }
+    }
+  }, [selectedCategory, updateFilters, navigate]);
 
   const handleModalOpen = (action, post = null) => {
     setModalAction(action);
@@ -101,6 +128,14 @@ const Product = () => {
 
   useEffect(() => {
     const path = location.pathname.split('/').pop();
+    const validCategories = ['all', 'instagram', 'facebook', 'twitter', 'whatsapp'];
+    
+    if (validCategories.includes(path)) {
+      setSelectedCategory(path);
+    } else {
+      setSelectedCategory('all');
+    }
+
     const tabMap = {
       'instagram': 0,
       'facebook': 1,
@@ -108,7 +143,7 @@ const Product = () => {
       'whatsapp': 3
     };
     setTabIndex(tabMap[path] || 0);
-  }, [location]);
+  }, [location.pathname]);
 
   useEffect(() => {
     dispatch(fetch_products({
@@ -120,7 +155,8 @@ const Product = () => {
   }, [dispatch, location.pathname, filters, currentPage, pageSize]);
 
   const getCurrentPlatform = () => {
-    return location.pathname.split('/').pop();
+    const platform = location.pathname.split('/').pop();
+    return platform === 'all' ? 'all' : platform;
   };
 
   const applyFilters = useCallback((data) => {
@@ -214,23 +250,51 @@ const Product = () => {
     </motion.div>
   );
 
-  const CategoryChips = () => (
-    <ScrollMenu>
-      {['All', 'Popular', 'Recent', 'Trending'].map((category) => (
-        <Tag
-          key={category}
-          size="lg"
-          variant={selectedCategory === category ? "solid" : "outline"}
-          colorScheme="blue"
-          cursor="pointer"
-          onClick={() => setSelectedCategory(category)}
-          mx={2}
+  const CategoryChips = () => {
+    const columns = useBreakpointValue({ base: 2, sm: 3, md: 8 });
+    
+    return (
+      <Box overflowX={{ base: 'hidden', md: 'auto' }} py={2}>
+        <SimpleGrid 
+          columns={columns}
+          spacing={2}
+          mx={{ base: -2, md: 0 }}
         >
-          {category}
-        </Tag>
-      ))}
-    </ScrollMenu>
-  );
+          {categories.map((category) => {
+            const Icon = category.icon;
+            return (
+              <Tag
+                key={category.id}
+                size="lg"
+                variant={selectedCategory === category.id ? "solid" : "outline"}
+                colorScheme="blue"
+                cursor="pointer"
+                onClick={() => setSelectedCategory(category.id)}
+                display="flex"
+                alignItems="center"
+                justifyContent="center"
+                px={3}
+                py={2}
+                borderRadius="full"
+                whiteSpace="nowrap"
+                transition="all 0.2s"
+                _hover={{
+                  bg: 'blue.50',
+                  color: 'blue.600'
+                }}
+              >
+                {Icon && <Icon size={16} style={{ marginRight: '8px' }} />}
+                <TagLabel>{category.label}</TagLabel>
+                {selectedCategory === category.id && (
+                  <TagRightIcon as={CheckIcon} color="currentColor" />
+                )}
+              </Tag>
+            );
+          })}
+        </SimpleGrid>
+      </Box>
+    );
+  };
 
   if (loading) {
     return <LoadingSpinner />;
@@ -349,7 +413,15 @@ const Product = () => {
           </Stack>
         </Stack>
 
-        <CategoryChips />
+        <Box 
+          px={4} 
+          pb={2}
+          bg={colors.bgColor}
+          borderBottom="1px"
+          borderColor={colors.borderColor}
+        >
+          <CategoryChips />
+        </Box>
       </Box>
 
       <Box px={4}>

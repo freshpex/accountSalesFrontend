@@ -8,6 +8,12 @@ import EmptyStatePage from '../../../components/emptyState';
 import LoadingSpinner from '../../../components/LoadingSpinner';
 
 const platformConfig = {
+  all: {
+    icon: null,
+    color: '#718096',
+    title: 'All Products',
+    subtitle: 'Start by adding your first product'
+  },
   instagram: {
     icon: FiInstagram,
     color: '#E1306C',
@@ -53,7 +59,7 @@ const SocialMediaTab = ({
   const [filteredPosts, setFilteredPosts] = useState([]);
   const itemsPerPage = 10;
 
-  const config = platformConfig[platform.toLowerCase()];
+  const config = platformConfig[platform.toLowerCase()] || platformConfig.all;
 
   useEffect(() => {
     if (products) {
@@ -74,7 +80,7 @@ const SocialMediaTab = ({
       <EmptyStatePage
         title={config.title}
         sub={config.subtitle}
-        icon={<Icon size={50} color={config.color} />}
+        icon={Icon && <Icon size={50} color={config.color} />}
       />
     );
   }

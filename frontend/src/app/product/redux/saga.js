@@ -37,6 +37,10 @@ function* fetchProductsSaga({ payload }) {
       limit: tableSettings.pageSize
     };
 
+    if (!params.type) {
+      delete params.type;
+    }
+
     const response = yield call(api.get, ApiEndpoints.PRODUCTS, { params });
 
     const responseData = {

@@ -9,6 +9,17 @@ export const getProducts = createSelector(
   }
 );
 
+export const getAllProducts = createSelector(
+  getProducts,
+  (products) => {
+    if (!Array.isArray(products)) {
+      console.warn('Products is not an array:', products);
+      return [];
+    }
+    return products;
+  }
+);
+
 export const getProductStats = createSelector(
   productState,
   (state) => state.data.stats
@@ -42,7 +53,6 @@ export const getInstagramProducts = createSelector(
       return [];
     }
     const filtered = products.filter(p => p?.type?.toLowerCase() === 'instagram');
-    console.log('Filtered Instagram products:', filtered);
     return filtered;
   }
 );
