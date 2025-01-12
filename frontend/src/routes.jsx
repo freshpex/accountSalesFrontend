@@ -16,6 +16,7 @@ const SalesReport = lazy(() => import('./app/salesReport'));
 const ResetPassword = lazy(() => import('./app/authentication/ForgotPassword/ResetPassword.jsx'));
 const EmailInfo = lazy(() => import('./app/authentication/ForgotPassword/EmailInfo.jsx'));
 const ChangePassword = lazy(() => import('./app/authentication/ForgotPassword/changePassword.jsx'));
+const ProductDetail = lazy(() => import('./app/product/pages/ProductDetail'));
 
 const AppRoutes = () => {
   return (
@@ -34,6 +35,7 @@ const AppRoutes = () => {
         <Route path="/help" element={<Help />} />
         <Route path="/settings" element={<AccountSettings />} />
         <Route path="/product/*" element={<Products />} />
+        <Route path="/product/:type/:id" element={<ProductDetail />} />
         <Route path="/transaction" element={<Transaction />} />
         <Route path="/customers" element={<Customers />} />
         <Route path="/sales-report" element={<SalesReport />} />

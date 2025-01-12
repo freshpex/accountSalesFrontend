@@ -18,15 +18,12 @@ import {
   Modal,
   ModalOverlay,
   ModalContent,
-  ModalHeader,
   ModalBody,
-  ModalFooter,
   useDisclosure,
   List,
   ListItem,
   ListIcon,
   Icon,
-  Badge,
   Stat,
   StatLabel,
   StatNumber,
@@ -37,7 +34,6 @@ import {
   Tab,
   TabPanel,
   SimpleGrid,
-  AspectRatio,
   Skeleton,
 } from '@chakra-ui/react';
 import {
@@ -51,8 +47,7 @@ import {
   FiCheck,
   FiAlertTriangle,
 } from 'react-icons/fi';
-import { getSelectedProduct } from '../redux/selector';
-import { fetch_products, set_selected_product } from '../redux/reducer';
+import { fetch_single_product, clear_selected_product, initiate_purchase, request_escrow } from '../redux/reducer';
 import PaymentModal from '../components/PaymentModal';
 import ImageGallery from '../components/ImageGallery';
 import { motion } from 'framer-motion';
@@ -64,15 +59,18 @@ const ProductDetail = () => {
   const { type, id } = useParams();
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [paymentMethod, setPaymentMethod] = useState('crypto');
+  const product = useSelector(state => state.product.selectedProduct);
   const toast = useToast();
   const colors = useColors();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [selectedImage, setSelectedImage] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const product = useSelector(getSelectedProduct);
 
-    // Subcomponents for better organization
-    const StatBox = ({ icon, label, value }) => (
+  // Subcomponents for better organization
+  const StatBox = ({ icon, label, value }) => (
     <HStack p={4} bg="gray.50" borderRadius="md">
       <Icon as={icon} boxSize={5} color="blue.500" />
       <VStack align="start" spacing={0}>
@@ -81,7 +79,7 @@ const ProductDetail = () => {
       </VStack>
     </HStack>
   );
-  
+
   const SecurityFeature = ({ text, isAvailable }) => (
     <ListItem>
       <ListIcon
@@ -91,310 +89,335 @@ const ProductDetail = () => {
       {text}
     </ListItem>
   );
-  
+
   const IncludedItem = ({ text }) => (
     <ListItem>
       <ListIcon as={FiCheck} color="green.500" />
       {text}
     </ListItem>
   );
-  
-  const StatisticCard = ({ title, value, change }) => (
-      <Stat
-        px={4}
-        py={2}
-        bg="gray.50"
-        borderRadius="md"
-      >
-        <StatLabel fontSize="sm" color="gray.500">{title}</StatLabel>
-        <StatNumber fontSize="lg" fontWeight="bold">
-          {value.toLocaleString()}
-        </StatNumber>
-        <StatHelpText color={change.startsWith('+') ? 'green.500' : 'red.500'}>
-          {change} from last month
-        </StatHelpText>
-      </Stat>
-    );
-    
-    const Alert = ({ status, title, description }) => (
-      <Box
-        p={4}
-        borderRadius="md"
-        bg={status === 'info' ? 'blue.50' : 'red.50'}
-        color={status === 'info' ? 'blue.700' : 'red.700'}
-      >
-        <HStack spacing={3}>
-          <Icon
-            as={status === 'info' ? FiShield : FiAlertTriangle}
-            boxSize={5}
-          />
-          <VStack align="start" spacing={1}>
-            <Text fontWeight="bold">{title}</Text>
-            <Text fontSize="sm">{description}</Text>
-          </VStack>
-        </HStack>
-      </Box>
-    );
-    
-    const LoadingSkeleton = () => (
-      <Container maxW="container.xl" py={8}>
-        <Grid templateColumns={{ base: '1fr', lg: '2fr 1fr' }} gap={8}>
-          <GridItem>
-            <VStack align="stretch" spacing={6}>
-              <Skeleton height="400px" borderRadius="lg" />
-              <Skeleton height="200px" borderRadius="lg" />
-            </VStack>
-          </GridItem>
-          <GridItem>
-            <Skeleton height="500px" borderRadius="lg" />
-          </GridItem>
-        </Grid>
-      </Container>
-    );
-    
-    const ErrorState = () => (
-      <Container maxW="container.xl" py={8}>
-        <VStack spacing={4} align="center">
-          <Icon as={FiAlertTriangle} boxSize={12} color="red.500" />
-          <Heading size="lg">Product Not Found</Heading>
-          <Text color="gray.600">
-            The product you`re looking for doesn`t exist or has been removed.
-          </Text>
-          <Button
-            colorScheme="blue"
-            onClick={() => navigate('/products')}
-          >
-            Back to Products
-          </Button>
-        </VStack>
-      </Container>
-    );
 
+  const StatisticCard = ({ title, value, change }) => (
+    <Stat
+      px={4}
+      py={2}
+      bg="gray.50"
+      borderRadius="md"
+    >
+      <StatLabel fontSize="sm" color="gray.500">{title}</StatLabel>
+      <StatNumber fontSize="lg" fontWeight="bold">
+        {value.toLocaleString()}
+      </StatNumber>
+      <StatHelpText color={change.startsWith('+') ? 'green.500' : 'red.500'}>
+        {change} from last month
+      </StatHelpText>
+    </Stat>
+  );
+
+  const Alert = ({ status, title, description }) => (
+    <Box
+      p={4}
+      borderRadius="md"
+      bg={status === 'info' ? 'blue.50' : 'red.50'}
+      color={status === 'info' ? 'blue.700' : 'red.700'}
+    >
+      <HStack spacing={3}>
+        <Icon
+          as={status === 'info' ? FiShield : FiAlertTriangle}
+          boxSize={5}
+        />
+        <VStack align="start" spacing={1}>
+          <Text fontWeight="bold">{title}</Text>
+          <Text fontSize="sm">{description}</Text>
+        </VStack>
+      </HStack>
+    </Box>
+  );
+
+  const LoadingSkeleton = () => (
+    <Container maxW="container.xl" py={8}>
+      <Grid templateColumns={{ base: '1fr', lg: '2fr 1fr' }} gap={8}>
+        <GridItem>
+          <VStack align="stretch" spacing={6}>
+            <Skeleton height="400px" borderRadius="lg" />
+            <Skeleton height="200px" borderRadius="lg" />
+          </VStack>
+        </GridItem>
+        <GridItem>
+          <Skeleton height="500px" borderRadius="lg" />
+        </GridItem>
+      </Grid>
+    </Container>
+  );
+
+  const ErrorState = () => (
+    <Container maxW="container.xl" py={8}>
+      <VStack spacing={4} align="center">
+        <Icon as={FiAlertTriangle} boxSize={12} color="red.500" />
+        <Heading size="lg">Product Not Found</Heading>
+        <Text color="gray.600">
+          The product you`re looking for doesn`t exist or has been removed.
+        </Text>
+        <Button
+          colorScheme="blue"
+          onClick={() => navigate('/products')}
+        >
+          Back to Products
+        </Button>
+      </VStack>
+    </Container>
+  );
 
   useEffect(() => {
-    const fetchProduct = async () => {
+    const loadProduct = async () => {
       try {
-        await dispatch(fetch_products({ id }));
+        setLoading(true);
+        await dispatch(fetch_single_product({ id, type }));
         setLoading(false);
-      } catch (error) {
-        toast({
-          title: 'Error loading product',
-          description: error.message,
-          status: 'error',
-          duration: 5000,
-        });
-        navigate('/product');
+      } catch (err) {
+        setError(err.message);
+        setLoading(false);
       }
     };
 
-    fetchProduct();
-
-    return () => dispatch(set_selected_product(null));
-  }, [dispatch, id, navigate, toast]);
-
-  if (loading) {
-    return <LoadingSkeleton />;
-  }
-
-  if (!product) {
-    return <ErrorState />;
-  }
+    loadProduct();
+    return () => dispatch(clear_selected_product());
+  }, [id, type, dispatch]);
 
   const handleBuyNow = () => {
-    onOpen();
+    onOpen(); // Open payment modal
   };
+
+  const handlePaymentSubmit = async (paymentDetails) => {
+    try {
+      const response = await dispatch(initiate_purchase({
+        productId: id,
+        paymentMethod,
+        ...paymentDetails
+      }));
+
+      if (response.success) {
+        toast.success('Payment initiated successfully');
+        // Redirect to payment processing or confirmation page
+        navigate(`/payment/process/${response.transactionId}`);
+      }
+    } catch (error) {
+      toast.error('Payment initiation failed');
+    }
+  };
+
+  const handleEscrowRequest = async () => {
+    try {
+      const response = await dispatch(request_escrow({
+        productId: id,
+        type: 'product_purchase'
+      }));
+
+      if (response.success) {
+        toast.success('Escrow request initiated');
+        navigate(`/escrow/${response.escrowId}`);
+      }
+    } catch (error) {
+      toast.error('Failed to initiate escrow');
+    }
+  };
+
+  if (loading) return <LoadingSkeleton />;
+  if (error) return <ErrorState error={error} />;
+  if (!product) return <ErrorState />;
 
   return (
     <Container maxW="container.xl" py={8}>
-        <MotionBox
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}>
-            <Grid templateColumns={{ base: '1fr', lg: '2fr 1fr' }} gap={8}>
-            <GridItem>
-                <VStack align="stretch" spacing={6}>
-                {/* Image Gallery */}
-                <Box
-                    borderRadius="lg"
-                    overflow="hidden"
-                    bg={colors.bgColor}
-                    p={4}
-                >
-                    <ImageGallery
-                    images={product.images}
-                    onImageClick={setSelectedImage}
-                    />
-                </Box>
-
-                {/* Product Information Tabs */}
-                <Tabs colorScheme="blue" isLazy>
-                    <TabList>
-                    <Tab>Details</Tab>
-                    <Tab>Statistics</Tab>
-                    <Tab>Security</Tab>
-                    </TabList>
-
-                    <TabPanels>
-                    <TabPanel>
-                        <VStack align="stretch" spacing={4}>
-                        <Heading size="md">Account Information</Heading>
-                        <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4}>
-                            <StatBox
-                            icon={FiUser}
-                            label="Username"
-                            value={product.username}
-                            />
-                            <StatBox
-                            icon={FiCalendar}
-                            label="Account Age"
-                            value={`${product.age} years`}
-                            />
-                            <StatBox
-                            icon={FiUsers}
-                            label="Followers"
-                            value={product.followers.toLocaleString()}
-                            />
-                            <StatBox
-                            icon={FiPercent}
-                            label="Engagement Rate"
-                            value={`${product.engagement}%`}
-                            />
-                            <StatBox
-                            icon={FiMapPin}
-                            label="Region"
-                            value={product.region}
-                            />
-                        </SimpleGrid>
-
-                        <Divider />
-
-                        <Box>
-                            <Heading size="md" mb={4}>Description</Heading>
-                            <Text>{product.about}</Text>
-                        </Box>
-                        </VStack>
-                    </TabPanel>
-
-                    <TabPanel>
-                        <VStack align="stretch" spacing={4}>
-                        <Heading size="md">Account Statistics</Heading>
-                        <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4}>
-                            <StatisticCard
-                            title="Average Likes"
-                            value={Math.floor(product.followers * (product.engagement / 100))}
-                            change="+5%"
-                            />
-                            <StatisticCard
-                            title="Average Comments"
-                            value={Math.floor(product.followers * 0.01)}
-                            change="+3%"
-                            />
-                            <StatisticCard
-                            title="Monthly Growth"
-                            value={Math.floor(product.followers * 0.03)}
-                            change="+2.5%"
-                            />
-                            <StatisticCard
-                            title="Reach"
-                            value={Math.floor(product.followers * 0.3)}
-                            change="+4%"
-                            />
-                        </SimpleGrid>
-                        </VStack>
-                    </TabPanel>
-
-                    <TabPanel>
-                        <VStack align="stretch" spacing={4}>
-                        <Heading size="md">Security Features</Heading>
-                        <List spacing={3}>
-                            <SecurityFeature
-                            text="2FA Enabled"
-                            isAvailable={true}
-                            />
-                            <SecurityFeature
-                            text="Original Email Available"
-                            isAvailable={true}
-                            />
-                            <SecurityFeature
-                            text="Account Recovery Options"
-                            isAvailable={true}
-                            />
-                            <SecurityFeature
-                            text="Previous Password History"
-                            isAvailable={false}
-                            />
-                        </List>
-                        </VStack>
-                    </TabPanel>
-                    </TabPanels>
-                </Tabs>
-                </VStack>
-            </GridItem>
-
-            {/* Right Column - Purchase Info */}
-            <GridItem>
-                <Box
-                position="sticky"
-                top="20px"
-                p={6}
+      <MotionBox
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+      >
+        <Grid templateColumns={{ base: '1fr', lg: '2fr 1fr' }} gap={8}>
+          <GridItem>
+            <VStack align="stretch" spacing={6}>
+              {/* Image Gallery */}
+              <Box
                 borderRadius="lg"
+                overflow="hidden"
                 bg={colors.bgColor}
-                borderWidth="1px"
-                borderColor={colors.borderColor}
-                >
-                <VStack align="stretch" spacing={6}>
-                    <HStack justify="space-between">
-                    <Heading size="lg">${product.price}</Heading>
-                    <Tag
-                        size="lg"
-                        colorScheme={product.status === 'available' ? 'green' : 'red'}
-                    >
-                        {product.status}
-                    </Tag>
-                    </HStack>
+                p={4}
+              >
+                <ImageGallery
+                  images={product.images}
+                  onImageClick={setSelectedImage}
+                />
+              </Box>
 
+              {/* Product Information Tabs */}
+              <Tabs colorScheme="blue" isLazy>
+                <TabList>
+                  <Tab>Details</Tab>
+                  <Tab>Statistics</Tab>
+                  <Tab>Security</Tab>
+                </TabList>
+
+                <TabPanels>
+                  <TabPanel>
                     <VStack align="stretch" spacing={4}>
-                    <Button
-                        size="lg"
-                        colorScheme="blue"
-                        isDisabled={product.status !== 'available'}
-                        onClick={handleBuyNow}
-                        leftIcon={<FiDollarSign />}
-                    >
-                        Buy Now
-                    </Button>
+                      <Heading size="md">Account Information</Heading>
+                      <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4}>
+                        <StatBox
+                          icon={FiUser}
+                          label="Username"
+                          value={product.username}
+                        />
+                        <StatBox
+                          icon={FiCalendar}
+                          label="Account Age"
+                          value={`${product.age} years`}
+                        />
+                        <StatBox
+                          icon={FiUsers}
+                          label="Followers"
+                          value={product.followers.toLocaleString()}
+                        />
+                        <StatBox
+                          icon={FiPercent}
+                          label="Engagement Rate"
+                          value={`${product.engagement}%`}
+                        />
+                        <StatBox
+                          icon={FiMapPin}
+                          label="Region"
+                          value={product.region}
+                        />
+                      </SimpleGrid>
 
-                    <Button
-                        variant="outline"
-                        leftIcon={<FiShield />}
-                    >
-                        Request Escrow
-                    </Button>
+                      <Divider />
+
+                      <Box>
+                        <Heading size="md" mb={4}>Description</Heading>
+                        <Text>{product.about}</Text>
+                      </Box>
                     </VStack>
+                  </TabPanel>
 
-                    <Divider />
-
-                    <VStack align="stretch" spacing={2}>
-                    <Heading size="sm">What`s included:</Heading>
-                    <List spacing={3}>
-                        <IncludedItem text="Full account access" />
-                        <IncludedItem text="Original email access" />
-                        <IncludedItem text="24/7 Support" />
-                        <IncludedItem text="Transfer assistance" />
-                    </List>
+                  <TabPanel>
+                    <VStack align="stretch" spacing={4}>
+                      <Heading size="md">Account Statistics</Heading>
+                      <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4}>
+                        <StatisticCard
+                          title="Average Likes"
+                          value={Math.floor(product.followers * (product.engagement / 100))}
+                          change="+5%"
+                        />
+                        <StatisticCard
+                          title="Average Comments"
+                          value={Math.floor(product.followers * 0.01)}
+                          change="+3%"
+                        />
+                        <StatisticCard
+                          title="Monthly Growth"
+                          value={Math.floor(product.followers * 0.03)}
+                          change="+2.5%"
+                        />
+                        <StatisticCard
+                          title="Reach"
+                          value={Math.floor(product.followers * 0.3)}
+                          change="+4%"
+                        />
+                      </SimpleGrid>
                     </VStack>
+                  </TabPanel>
 
-                    <Alert
-                    status="info"
-                    title="Secure Transaction"
-                    description="All purchases are protected by our escrow service"
-                    />
+                  <TabPanel>
+                    <VStack align="stretch" spacing={4}>
+                      <Heading size="md">Security Features</Heading>
+                      <List spacing={3}>
+                        <SecurityFeature
+                          text="2FA Enabled"
+                          isAvailable={true}
+                        />
+                        <SecurityFeature
+                          text="Original Email Available"
+                          isAvailable={true}
+                        />
+                        <SecurityFeature
+                          text="Account Recovery Options"
+                          isAvailable={true}
+                        />
+                        <SecurityFeature
+                          text="Previous Password History"
+                          isAvailable={false}
+                        />
+                      </List>
+                    </VStack>
+                  </TabPanel>
+                </TabPanels>
+              </Tabs>
+            </VStack>
+          </GridItem>
+
+          {/* Right Column - Purchase Info */}
+          <GridItem>
+            <Box
+              position="sticky"
+              top="20px"
+              p={6}
+              borderRadius="lg"
+              bg={colors.bgColor}
+              borderWidth="1px"
+              borderColor={colors.borderColor}
+            >
+              <VStack align="stretch" spacing={6}>
+                <HStack justify="space-between">
+                  <Heading size="lg">${product.price}</Heading>
+                  <Tag
+                    size="lg"
+                    colorScheme={product.status === 'available' ? 'green' : 'red'}
+                  >
+                    {product.status}
+                  </Tag>
+                </HStack>
+
+                <VStack align="stretch" spacing={4}>
+                  <Button
+                    size="lg"
+                    colorScheme="blue"
+                    isDisabled={product.status !== 'available'}
+                    onClick={handleBuyNow}
+                    leftIcon={<FiDollarSign />}
+                  >
+                    Buy Now
+                  </Button>
+
+                  <Button
+                    variant="outline"
+                    leftIcon={<FiShield />}
+                    onClick={handleEscrowRequest}
+                  >
+                    Request Escrow
+                  </Button>
                 </VStack>
-                </Box>
-            </GridItem>
-            </Grid>
-        </MotionBox>
-        
+
+                <Divider />
+
+                <VStack align="stretch" spacing={2}>
+                  <Heading size="sm">What`s included:</Heading>
+                  <List spacing={3}>
+                    <IncludedItem text="Full account access" />
+                    <IncludedItem text="Original email access" />
+                    <IncludedItem text="24/7 Support" />
+                    <IncludedItem text="Transfer assistance" />
+                  </List>
+                </VStack>
+
+                <Alert
+                  status="info"
+                  title="Secure Transaction"
+                  description="All purchases are protected by our escrow service"
+                />
+              </VStack>
+            </Box>
+          </GridItem>
+        </Grid>
+      </MotionBox>
 
       {/* Image Preview Modal */}
       <Modal isOpen={!!selectedImage} onClose={() => setSelectedImage(null)} size="6xl">
@@ -411,6 +434,7 @@ const ProductDetail = () => {
         isOpen={isOpen}
         onClose={onClose}
         product={product}
+        onSubmit={handlePaymentSubmit}
       />
     </Container>
   );
