@@ -33,7 +33,6 @@ import {
 import { ApiEndpoints } from "../../../store/types";
 import api from "../../../services/DataService";
 import toast from "react-hot-toast";
-import { convertToPublicUrl } from '../../../utils/supabase';
 
 function* fetchProductsSaga({ payload }) {
   try {
@@ -132,14 +131,7 @@ function* fetchSingleProductSaga({ payload }) {
     const response = yield call(api.get, `${ApiEndpoints.PRODUCTS}/${id}`);
     
     const productData = {
-      ...response.data,
-      id: response.data._id || response.data.id,
-      type: response.data.type?.toLowerCase(),
-      images: (response.data.images || []).map(img => convertToPublicUrl(img)),
-      status: response.data.status || 'available',
-      engagement: parseFloat(response.data.engagement) || 0,
-      followers: parseInt(response.data.followers) || 0,
-      price: parseFloat(response.data.price) || 0
+      ...response.data.data,
     };
     
     yield put(fetch_single_product_success(productData));

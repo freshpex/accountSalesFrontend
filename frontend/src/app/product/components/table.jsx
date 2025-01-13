@@ -240,6 +240,12 @@ const DataTable = ({
       borderWidth="1px"
       borderColor={borderColor}
       shadow="sm"
+      cursor="pointer"
+      onClick={(e) => {
+        if (!e.defaultPrevented) {
+          navigate(`/product/${item.type}/${item.id}`);
+        }
+      }}
       _hover={{
         transform: 'translateY(-2px)',
         shadow: 'md',
@@ -247,7 +253,7 @@ const DataTable = ({
       }}
     >
       {/* Header section */}
-      <Flex justify="space-between" align="center" mb={4}>
+      <Flex justify="space-between" align="center" mb={4} onClick={e => e.stopPropagation()}>
         <HStack spacing={3}>
           <Checkbox
             isChecked={selectedItems.includes(item.id)}
@@ -306,7 +312,7 @@ const DataTable = ({
       </Box>
 
       {/* Action buttons */}
-      <Flex justify="space-between" align="center" mt={2}>
+      <Flex justify="space-between" align="center" mt={2} onClick={e => e.stopPropagation()}>
         <HStack spacing={2}>
           <IconButton
             icon={<ViewIcon />}
@@ -390,7 +396,6 @@ const DataTable = ({
                 onView(item);
               }}
             />
-            {/* ...other quick actions... */}
           </HStack>
 
           {/* Content */}
@@ -473,20 +478,17 @@ const DataTable = ({
         </Thead>
         <Tbody>
           {data.map((item) => (
-            <motion.tr
+            <Tr
               key={item.id}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.2 }}
-              style={{ 
-                backgroundColor: 'transparent',
-                cursor: 'pointer'
+              cursor="pointer"
+              _hover={{ bg: hoverBg }}
+              onClick={(e) => {
+                if (!e.defaultPrevented) {
+                  navigate(`/product/${item.type}/${item.id}`);
+                }
               }}
-              whileHover={{ backgroundColor: hoverBg }}
-              onClick={() => navigate(`/product/${item.type}/${item.id}`)}
             >
-              {/* Prevent row click when clicking checkbox or actions */}
-              <Td onClick={e => e.stopPropagation()}>
+              <Td onClick={e => e.preventDefault()}>
                 <Checkbox
                   isChecked={selectedItems.includes(item.id)}
                   onChange={() => handleSelectItem(item.id)}
@@ -498,7 +500,7 @@ const DataTable = ({
                   {renderCellContent(item, column)}
                 </Td>
               ))}
-              <Td onClick={e => e.stopPropagation()}>
+              <Td onClick={e => e.preventDefault()}>
                 <HStack spacing={2}>
                   <Tooltip label="View Details">
                     <IconButton
@@ -506,7 +508,10 @@ const DataTable = ({
                       variant="ghost"
                       colorScheme="blue"
                       size="sm"
-                      onClick={() => onView(item)}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        onView(item);
+                      }}
                     />
                   </Tooltip>
                   <Tooltip label="Edit">
@@ -515,7 +520,10 @@ const DataTable = ({
                       variant="ghost"
                       colorScheme="green"
                       size="sm"
-                      onClick={() => onEdit(item)}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        onEdit(item);
+                      }}
                     />
                   </Tooltip>
                   <Tooltip label="Delete">
@@ -524,12 +532,15 @@ const DataTable = ({
                       variant="ghost"
                       colorScheme="red"
                       size="sm"
-                      onClick={() => onDelete(item)}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        onDelete(item);
+                      }}
                     />
                   </Tooltip>
                 </HStack>
               </Td>
-            </motion.tr>
+            </Tr>
           ))}
         </Tbody>
       </Table>
