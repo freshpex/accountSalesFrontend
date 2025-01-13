@@ -143,5 +143,6 @@ export const ApiEndpoints = {
   PURCHASES: '/api/v1/transactions/initiate',
   ESCROW: '/api/v1/transactions/escrow',
   PAYMENT_CALLBACK: '/api/v1/transactions/callback',
+  PAYMENT_VERIFY: '/api/v1/transactions/verify',
   PRODUCT_DETAIL: '/api/v1/products/:id',
 };

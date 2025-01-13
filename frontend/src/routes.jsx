@@ -19,6 +19,7 @@ const ResetPassword = lazy(() => import('./app/authentication/ForgotPassword/Res
 const EmailInfo = lazy(() => import('./app/authentication/ForgotPassword/EmailInfo.jsx'));
 const ChangePassword = lazy(() => import('./app/authentication/ForgotPassword/changePassword.jsx'));
 const ProductDetail = lazy(() => import(/* webpackChunkName: "product-detail" */ './app/product/pages/ProductDetail'));
+const PaymentCallback = lazy(() => import('./app/payment/PaymentCallback'));
 
 const AppRoutes = () => {
   return (
@@ -31,6 +32,7 @@ const AppRoutes = () => {
         <Route path="/forgot-password" element={<ResetPassword />} />
         <Route path="/email-check" element={<EmailInfo />} />
         <Route path="/reset-password/:id" element={<ChangePassword />} />
+        <Route path="/payment/callback" element={<PaymentCallback />} />
 
         {/* Protected Routes with Layout */}
         <Route element={

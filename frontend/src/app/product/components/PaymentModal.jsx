@@ -15,12 +15,12 @@ import {
   VStack,
 } from '@chakra-ui/react';
 
-const PaymentModal = ({ isOpen, onClose, product, onSubmit }) => {
+const PaymentModal = ({ isOpen, onClose, product, onSubmit, isLoading, error }) => {
   const [paymentDetails, setPaymentDetails] = useState({
-    cardNumber: '',
-    expiryDate: '',
-    cvv: '',
-    paymentMethod: 'crypto'
+    paymentMethod: 'card',
+    email: '',
+    name: '',
+    phone: ''
   });
   const toast = useToast();
 
@@ -32,8 +32,9 @@ const PaymentModal = ({ isOpen, onClose, product, onSubmit }) => {
     }));
   };
 
-  const handleSubmit = () => {
-    if (!paymentDetails.cardNumber || !paymentDetails.expiryDate || !paymentDetails.cvv) {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!paymentDetails.email || !paymentDetails.name || !paymentDetails.phone) {
       toast({
         title: 'Error',
         description: 'Please fill in all payment details',
@@ -43,14 +44,17 @@ const PaymentModal = ({ isOpen, onClose, product, onSubmit }) => {
       });
       return;
     }
-    onSubmit(paymentDetails);
+    onSubmit({
+      productId: product.id,
+      ...paymentDetails
+    });
   };
 
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>Payment for {product.username}</ModalHeader>
+        <ModalHeader>Payment Details</ModalHeader>
         <ModalBody>
           <VStack spacing={4}>
             <FormControl>
@@ -60,42 +64,47 @@ const PaymentModal = ({ isOpen, onClose, product, onSubmit }) => {
                 value={paymentDetails.paymentMethod}
                 onChange={handleChange}
               >
-                <option value="crypto">Crypto</option>
-                <option value="creditCard">Credit Card</option>
+                <option value="card">Card</option>
+                <option value="banktransfer">Bank Transfer</option>
+                <option value="ussd">USSD</option>
               </Select>
             </FormControl>
             <FormControl>
-              <FormLabel>Card Number</FormLabel>
+              <FormLabel>Email</FormLabel>
               <Input
-                name="cardNumber"
-                value={paymentDetails.cardNumber}
+                name="email"
+                type="email"
+                value={paymentDetails.email}
                 onChange={handleChange}
-                placeholder="Card Number"
               />
             </FormControl>
             <FormControl>
-              <FormLabel>Expiry Date</FormLabel>
+              <FormLabel>Full Name</FormLabel>
               <Input
-                name="expiryDate"
-                value={paymentDetails.expiryDate}
+                name="name"
+                value={paymentDetails.name}
                 onChange={handleChange}
-                placeholder="MM/YY"
               />
             </FormControl>
             <FormControl>
-              <FormLabel>CVV</FormLabel>
+              <FormLabel>Phone</FormLabel>
               <Input
-                name="cvv"
-                value={paymentDetails.cvv}
+                name="phone"
+                value={paymentDetails.phone}
                 onChange={handleChange}
-                placeholder="CVV"
               />
             </FormControl>
           </VStack>
         </ModalBody>
         <ModalFooter>
           <Button variant="ghost" onClick={onClose}>Cancel</Button>
-          <Button colorScheme="blue" onClick={handleSubmit}>Submit Payment</Button>
+          <Button 
+            colorScheme="blue" 
+            onClick={handleSubmit}
+            isLoading={isLoading}
+          >
+            Proceed to Payment
+          </Button>
         </ModalFooter>
       </ModalContent>
     </Modal>
