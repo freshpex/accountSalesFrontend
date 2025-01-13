@@ -140,7 +140,8 @@ export const ApiEndpoints = {
   DASHBOARD_METRICS: '/api/v1/dashboard/metrics',
   LOGOUT: '/api/v1/user/logout',
   
-  PURCHASES: '/api/v1/purchases',
-  ESCROW: '/api/v1/escrow',
+  PURCHASES: '/api/v1/transactions/initiate',
+  ESCROW: '/api/v1/transactions/escrow',
+  PAYMENT_CALLBACK: '/api/v1/transactions/callback',
   PRODUCT_DETAIL: '/api/v1/products/:id',
 };
