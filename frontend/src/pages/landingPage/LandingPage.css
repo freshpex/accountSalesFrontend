@@ -5,15 +5,14 @@
     src: url('../../assets/fonts/IntegralCF-Bold.otf') format('opentype');
 }
 
-@import 'tailwindcss/base';
+@tailwind base;
 
 body {
-    font-family: 'DM Sans', sans-serif;
-    font-size: 1rem;
-    color: #1a202c;
+    @apply font-['DM_Sans',_sans-serif] text-400 text-neutral-900;
 }
-@import 'tailwindcss/components';
-@import 'tailwindcss/utilities';
+
+@tailwind components;
+@tailwind utilities;
 
 @layer components {
     .side-scrollbar-hide {
