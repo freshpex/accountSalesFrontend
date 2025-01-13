@@ -47,23 +47,10 @@ const Login = () => {
     }
   }, [error, toast]);
 
-  useEffect(() => {
-    if (success) {
-      toast({
-        title: 'Login Successful',
-        description: 'Redirecting to dashboard...',
-        status: 'success',
-        duration: 3000,
-        isClosable: true,
-      });
-    }
-  }, [success, toast]);
-
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!email || !password) {
       toast({
-        title: 'Validation Error',
         description: 'Please fill in all required fields',
         status: 'error',
         duration: 3000,

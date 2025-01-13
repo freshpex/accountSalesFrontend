@@ -2,7 +2,7 @@ import { Routes, Route, Navigate, Outlet } from 'react-router-dom';
 import { lazy, Suspense } from 'react';
 import Layout from './components/layout';
 import ProtectedRoute from './components/protectedRoute';
-import LoadingSpinner from './components/LoadingSpinner'; // Add this component for loading states
+import LoadingSpinner from './components/LoadingSpinner';
 
 // Lazy load components with proper chunks naming
 const LandingPage = lazy(() => import(/* webpackChunkName: "landing" */ './pages/landingPage'));

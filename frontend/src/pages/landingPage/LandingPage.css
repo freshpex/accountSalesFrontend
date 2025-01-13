@@ -2,17 +2,18 @@
     font-family: 'Integral CF';
     font-display: swap;
     font-weight: 900;
-    src: url('./assets/fonts/IntegralCF-Bold.otf') format('opentype');
+    src: url('../../assets/fonts/IntegralCF-Bold.otf') format('opentype');
 }
 
-@tailwind base;
+@import 'tailwindcss/base';
 
 body {
-    @apply font-['DM_Sans',_sans-serif] text-400 text-neutral-900;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 1rem;
+    color: #1a202c;
 }
-
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
 
 @layer components {
     .side-scrollbar-hide {
