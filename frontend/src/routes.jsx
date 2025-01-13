@@ -2,7 +2,7 @@ import { Routes, Route, Navigate, Outlet } from 'react-router-dom';
 import { lazy, Suspense } from 'react';
 import Layout from './components/layout';
 import ProtectedRoute from './components/protectedRoute';
-import LoadingSpinner from './components/LoadingSpinner';
+import SuspenseLoadingUI from './UI';
 
 // Lazy load components with proper chunks naming
 const LandingPage = lazy(() => import(/* webpackChunkName: "landing" */ './pages/landingPage'));
@@ -23,7 +23,7 @@ const PaymentCallback = lazy(() => import('./app/payment/PaymentCallback'));
 
 const AppRoutes = () => {
   return (
-    <Suspense fallback={<LoadingSpinner />}>
+    <Suspense fallback={<SuspenseLoadingUI />}>
       <Routes>
         {/* Public Routes */}
         <Route path="/" element={<LandingPage />} />
@@ -45,7 +45,7 @@ const AppRoutes = () => {
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/help" element={<Help />} />
           <Route path="/settings" element={<AccountSettings />} />
-          <Route path="/product" element={<Products />} />
+          <Route path="/product/*" element={<Products />} />
           <Route path="/product/:type/:id" element={<ProductDetail />} />
           <Route path="/transaction" element={<Transaction />} />
           <Route path="/customers" element={<Customers />} />
