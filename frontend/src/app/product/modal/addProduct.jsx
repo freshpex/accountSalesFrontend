@@ -25,6 +25,7 @@ import {
   AlertDialogContent,
   AlertDialogOverlay,
   FormErrorMessage,
+  Heading
 } from "@chakra-ui/react";
 import { FaImage } from "react-icons/fa";
 import { getLoading } from '../redux/selector';
@@ -47,6 +48,10 @@ const AddProduct = ({ isOpen, onClose, data, action, onSave, onDelete }) => {
   const [engagement, setEngagement] = useState("");
   const [images, setImages] = useState(["", "", "", ""]);
   const [imagesPreviews, setImagesPreviews] = useState(['', '', '', '']);
+  const [averageLikes, setAverageLikes] = useState("");
+  const [averageComments, setAverageComments] = useState("");
+  const [twoFactorEnabled, setTwoFactorEnabled] = useState(false);
+  const [originalEmailAvailable, setOriginalEmailAvailable] = useState(false);
 
   const isReadOnly = action === 'view';
   const colors = useColors();
@@ -95,6 +100,10 @@ const AddProduct = ({ isOpen, onClose, data, action, onSave, onDelete }) => {
       setEngagement(data.engagement || '');
       setImages(formattedImages);
       setImagesPreviews(formattedImages);
+      setAverageLikes(data.stats?.averageLikes || '');
+      setAverageComments(data.stats?.averageComments || '');
+      setTwoFactorEnabled(data.security?.twoFactorEnabled || false);
+      setOriginalEmailAvailable(data.security?.originalEmailAvailable || false);
     } else {
       setUsername('');
       setType('');
@@ -107,6 +116,10 @@ const AddProduct = ({ isOpen, onClose, data, action, onSave, onDelete }) => {
       setEngagement('');
       setImages(['', '', '', '']);
       setImagesPreviews(['', '', '', '']);
+      setAverageLikes('');
+      setAverageComments('');
+      setTwoFactorEnabled(false);
+      setOriginalEmailAvailable(false);
     }
   }, [data]);
 
@@ -369,6 +382,62 @@ const AddProduct = ({ isOpen, onClose, data, action, onSave, onDelete }) => {
                   />
                   <FormErrorMessage>{formErrors.about}</FormErrorMessage>
                 </FormControl>
+
+                {/* Add Statistics Section */}
+                <Box>
+                  <Heading size="sm" mb={4}>Account Statistics (Optional)</Heading>
+                  <SimpleGrid columns={2} spacing={4}>
+                    <FormControl>
+                      <FormLabel>Average Likes</FormLabel>
+                      <Input
+                        type="number"
+                        placeholder="Enter average likes"
+                        value={averageLikes}
+                        onChange={(e) => setAverageLikes(e.target.value)}
+                        isReadOnly={isReadOnly}
+                      />
+                    </FormControl>
+                    <FormControl>
+                      <FormLabel>Average Comments</FormLabel>
+                      <Input
+                        type="number"
+                        placeholder="Enter average comments"
+                        value={averageComments}
+                        onChange={(e) => setAverageComments(e.target.value)}
+                        isReadOnly={isReadOnly}
+                      />
+                    </FormControl>
+                  </SimpleGrid>
+                </Box>
+
+                {/* Add Security Section */}
+                <Box>
+                  <Heading size="sm" mb={4}>Security Features</Heading>
+                  <SimpleGrid columns={2} spacing={4}>
+                    <FormControl>
+                      <FormLabel>2FA Status</FormLabel>
+                      <Select
+                        value={twoFactorEnabled ? 'true' : 'false'}
+                        onChange={(e) => setTwoFactorEnabled(e.target.value === 'true')}
+                        isDisabled={isReadOnly}
+                      >
+                        <option value="true">Enabled</option>
+                        <option value="false">Disabled</option>
+                      </Select>
+                    </FormControl>
+                    <FormControl>
+                      <FormLabel>Original Email</FormLabel>
+                      <Select
+                        value={originalEmailAvailable ? 'true' : 'false'}
+                        onChange={(e) => setOriginalEmailAvailable(e.target.value === 'true')}
+                        isDisabled={isReadOnly}
+                      >
+                        <option value="true">Available</option>
+                        <option value="false">Not Available</option>
+                      </Select>
+                    </FormControl>
+                  </SimpleGrid>
+                </Box>
               </VStack>
 
               {/* Right Section: Image Upload */}

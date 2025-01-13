@@ -48,7 +48,7 @@ import {
   FiAlertTriangle,
 } from 'react-icons/fi';
 import { fetch_single_product, clear_selected_product, initiate_purchase, request_escrow, clear_purchase_status, clear_escrow_status } from '../redux/reducer';
-import PaymentModal from '../components/PaymentModal';
+import PaymentModal from '../modal/PaymentModal';
 import ImageGallery from '../components/ImageGallery';
 import { motion } from 'framer-motion';
 import { useColors } from '../../../utils/colors';
@@ -74,6 +74,8 @@ const ProductDetail = () => {
   const colors = useColors();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [selectedImage, setSelectedImage] = useState(null);
+
+  console.log(product);
 
   // Subcomponents for better organization
   const StatBox = ({ icon, label, value }) => (
@@ -306,12 +308,12 @@ const ProductDetail = () => {
                       <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4}>
                         <StatisticCard
                           title="Average Likes"
-                          value={Math.floor(product.followers * (product.engagement / 100))}
+                          value={product.stats.averageLikes || Math.floor(product.followers * (product.engagement / 100))}
                           change="+5%"
                         />
                         <StatisticCard
                           title="Average Comments"
-                          value={Math.floor(product.followers * 0.01)}
+                          value={product.stats.averageComments || Math.floor(product.followers * 0.01)}
                           change="+3%"
                         />
                         <StatisticCard
@@ -334,11 +336,11 @@ const ProductDetail = () => {
                       <List spacing={3}>
                         <SecurityFeature
                           text="2FA Enabled"
-                          isAvailable={true}
+                          isAvailable={product.security.twoFactorEnabled || false}
                         />
                         <SecurityFeature
                           text="Original Email Available"
-                          isAvailable={true}
+                          isAvailable={product.security.originalEmailAvailable || false}
                         />
                         <SecurityFeature
                           text="Account Recovery Options"

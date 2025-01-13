@@ -92,7 +92,7 @@ function* fetchProductsSaga({ payload }) {
     yield put(fetch_products_success(responseData));
   } catch (error) {
     const errorMessage = error.response?.data?.message || error.message || 'Failed to fetch products';
-    toast.error(errorMessage);
+    console.log(errorMessage);
     yield put(fetch_products_error(errorMessage));
   }
 }
@@ -103,7 +103,7 @@ function* fetchProductsTransactionSaga() {
     yield put(fetch_products_transaction_success(response.data));
   } catch (error) {
     const errorMessage = error.response?.data?.error || 'Failed to fetch products';
-    toast.error(`Product fetch error: ${errorMessage}`);
+    console.log(errorMessage);
     yield put(fetch_products_transaction_error(errorMessage));
   }
 }
@@ -137,7 +137,7 @@ function* fetchSingleProductSaga({ payload }) {
     yield put(fetch_single_product_success(productData));
   } catch (error) {
     const errorMessage = error.response?.data?.message || error.message;
-    toast.error(errorMessage);
+    console.log(errorMessage);
     yield put(fetch_single_product_error(errorMessage));
   }
 }
@@ -156,7 +156,7 @@ function* initiatePurchaseSaga({ payload }) {
     const errorMessage = error.response?.data?.message || error.message;
     yield put(initiate_purchase_error(errorMessage));
     yield put(set_purchase_status('failed'));
-    toast.error(errorMessage);
+    console.log(errorMessage);
     return { success: false };
   }
 }
@@ -175,7 +175,7 @@ function* requestEscrowSaga({ payload }) {
     const errorMessage = error.response?.data?.message || error.message;
     yield put(request_escrow_error(errorMessage));
     yield put(set_escrow_status('failed'));
-    toast.error(errorMessage);
+    console.log(errorMessage);
     return { success: false };
   }
 }
@@ -247,9 +247,8 @@ function* updateProductSaga({ payload }) {
     toast.success("Product updated successfully");
   } catch (error) {
     const errorMessage = error.response?.data?.error || error.message || "Failed to update product";
-    toast.error(errorMessage);
-    yield put(update_product_error(errorMessage));
     console.log(errorMessage);
+    yield put(update_product_error(errorMessage));
   }
 }
 
