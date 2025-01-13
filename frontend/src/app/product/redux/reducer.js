@@ -4,7 +4,9 @@ const initialState = {
   ui: {
     loading: false,
     error: null,
-    success: false
+    success: false,
+    purchaseStatus: null,
+    escrowStatus: null
   },
   data: {
     products: [],
@@ -198,6 +200,57 @@ export const productSlice = createSlice({
       state.loading = false;
       state.error = action.payload;
       state.transactionProducts = [];
+    },
+    fetch_single_product: (state) => {
+      state.ui.loading = true;
+      state.ui.error = null;
+    },
+    fetch_single_product_success: (state, action) => {
+      state.ui.loading = false;
+      state.selectedProduct = action.payload;
+    },
+    fetch_single_product_error: (state, action) => {
+      state.ui.loading = false;
+      state.ui.error = action.payload;
+    },
+    clear_selected_product: (state) => {
+      state.selectedProduct = null;
+    },
+    initiate_purchase: (state) => {
+      state.ui.loading = true;
+      state.ui.error = null;
+    },
+    initiate_purchase_success: (state) => {
+      state.ui.loading = false;
+      state.ui.success = true;
+    },
+    initiate_purchase_error: (state, action) => {
+      state.ui.loading = false;
+      state.ui.error = action.payload;
+    },
+    request_escrow: (state) => {
+      state.ui.loading = true;
+      state.ui.error = null;
+    },
+    request_escrow_success: (state) => {
+      state.ui.loading = false;
+      state.ui.success = true;
+    },
+    request_escrow_error: (state, action) => {
+      state.ui.loading = false;
+      state.ui.error = action.payload;
+    },
+    set_purchase_status: (state, action) => {
+      state.ui.purchaseStatus = action.payload;
+    },
+    set_escrow_status: (state, action) => {
+      state.ui.escrowStatus = action.payload;
+    },
+    clear_purchase_status: (state) => {
+      state.ui.purchaseStatus = null;
+    },
+    clear_escrow_status: (state) => {
+      state.ui.escrowStatus = null;
     }
   }
 });
@@ -227,7 +280,21 @@ export const {
   set_product_sort,
   fetch_transaction_products,
   fetch_transaction_products_success,
-  fetch_transaction_products_error
+fetch_transaction_products_error,
+  fetch_single_product,
+  fetch_single_product_success,
+  fetch_single_product_error,
+  clear_selected_product,
+  initiate_purchase,
+  initiate_purchase_success,
+  initiate_purchase_error,
+  request_escrow,
+  request_escrow_success,
+  request_escrow_error,
+  set_purchase_status,
+  set_escrow_status,
+  clear_purchase_status,
+  clear_escrow_status
 } = productSlice.actions;
 
 export default productSlice.reducer;

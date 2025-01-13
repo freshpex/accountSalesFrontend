@@ -103,7 +103,26 @@ export const getPageSize = createSelector(
 
 export const getSelectedProduct = createSelector(
   productState,
-  (state) => state.selectedProduct
+  (state) => state.selectedProduct || null
+);
+
+export const getProductDetailLoading = createSelector(
+  productState,
+  (state) => state.ui.loading
+);
+
+export const getProductDetailError = createSelector(
+  productState,
+  (state) => state.ui.error
+);
+
+export const getProductPurchaseStatus = createSelector(
+  productState,
+  (state) => ({
+    loading: state.ui.loading,
+    error: state.ui.error,
+    success: state.ui.success
+  })
 );
 
 // Platform-specific filtered selectors

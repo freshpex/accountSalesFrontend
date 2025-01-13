@@ -1,8 +1,10 @@
 import PropTypes from 'prop-types';
 import { Box, Image, SimpleGrid, Text } from '@chakra-ui/react';
 import { FaImage } from 'react-icons/fa';
+import { convertToPublicUrl } from '../../../utils/supabase';
 
 const ImageGallery = ({ images, onImageClick }) => {
+  const processedImages = images?.map(img => convertToPublicUrl(img)) || [];
 
   if (!images || images.length === 0) {
     return (
@@ -17,7 +19,7 @@ const ImageGallery = ({ images, onImageClick }) => {
 
   return (
     <SimpleGrid columns={{ base: 2, md: 4 }} spacing={4}>
-      {images.map((image, index) => (
+      {processedImages.map((image, index) => (
         <Box
           key={index}
           borderRadius="md"

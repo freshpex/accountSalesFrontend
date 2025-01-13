@@ -96,6 +96,16 @@ export const ActionTypes = {
   FETCH_REGIONAL_DATA_SUCCESS: 'salesReport/fetch_regional_data_success',
   FETCH_REGIONAL_DATA_ERROR: 'salesReport/fetch_regional_data_error',
 
+  // Purchase actions
+  INITIATE_PURCHASE: 'purchase/initiate_purchase',
+  INITIATE_PURCHASE_SUCCESS: 'purchase/initiate_purchase_success',
+  INITIATE_PURCHASE_ERROR: 'purchase/initiate_purchase_error',
+  
+  // Escrow actions
+  REQUEST_ESCROW: 'escrow/request_escrow',
+  REQUEST_ESCROW_SUCCESS: 'escrow/request_escrow_success',
+  REQUEST_ESCROW_ERROR: 'escrow/request_escrow_error',
+
   // Layout actions
   LOGOUT: 'layout/logout',
   LOGOUT_SUCCESS: 'layout/logout_success',
@@ -129,4 +139,8 @@ export const ApiEndpoints = {
   DASHBOARD_OVERVIEW: '/api/v1/dashboard/overview',
   DASHBOARD_METRICS: '/api/v1/dashboard/metrics',
   LOGOUT: '/api/v1/user/logout',
+  
+  PURCHASES: '/api/v1/purchases',
+  ESCROW: '/api/v1/escrow',
+  PRODUCT_DETAIL: '/api/v1/products/:id',
 };

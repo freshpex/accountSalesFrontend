@@ -47,11 +47,17 @@ import {
   FiCheck,
   FiAlertTriangle,
 } from 'react-icons/fi';
-import { fetch_single_product, clear_selected_product, initiate_purchase, request_escrow } from '../redux/reducer';
+import { fetch_single_product, clear_selected_product, initiate_purchase, request_escrow, clear_purchase_status, clear_escrow_status } from '../redux/reducer';
 import PaymentModal from '../components/PaymentModal';
 import ImageGallery from '../components/ImageGallery';
 import { motion } from 'framer-motion';
 import { useColors } from '../../../utils/colors';
+import {
+  getSelectedProduct,
+  getProductDetailLoading,
+  getProductDetailError,
+  getProductPurchaseStatus
+} from '../redux/selector';
 
 const MotionBox = motion(Box);
 
@@ -59,11 +65,11 @@ const ProductDetail = () => {
   const { type, id } = useParams();
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [paymentMethod, setPaymentMethod] = useState('crypto');
-  const product = useSelector(state => state.product.selectedProduct);
+  const product = useSelector(getSelectedProduct);
+  const loading = useSelector(getProductDetailLoading);
+  const error = useSelector(getProductDetailError);
+  const { loading: purchaseLoading, error: purchaseError, success: purchaseSuccess } = useSelector(getProductPurchaseStatus);
   const toast = useToast();
   const colors = useColors();
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -169,58 +175,54 @@ const ProductDetail = () => {
   );
 
   useEffect(() => {
-    const loadProduct = async () => {
-      try {
-        setLoading(true);
-        await dispatch(fetch_single_product({ id, type }));
-        setLoading(false);
-      } catch (err) {
-        setError(err.message);
-        setLoading(false);
-      }
-    };
-
-    loadProduct();
+    dispatch(fetch_single_product({ id, type }));
     return () => dispatch(clear_selected_product());
   }, [id, type, dispatch]);
 
   const handleBuyNow = () => {
-    onOpen(); // Open payment modal
+    onOpen();
   };
 
   const handlePaymentSubmit = async (paymentDetails) => {
     try {
-      const response = await dispatch(initiate_purchase({
+      const result = await dispatch(initiate_purchase({
         productId: id,
-        paymentMethod,
+        paymentMethod: paymentDetails.paymentMethod,
         ...paymentDetails
-      }));
+      })).unwrap();
 
-      if (response.success) {
-        toast.success('Payment initiated successfully');
-        // Redirect to payment processing or confirmation page
-        navigate(`/payment/process/${response.transactionId}`);
+      if (result.success) {
+        onClose();
+        toast.success('Purchase initiated successfully');
+        navigate(`/payment/process/${result.transactionId}`);
       }
     } catch (error) {
-      toast.error('Payment initiation failed');
+      toast.error(error.message || 'Payment initiation failed');
     }
   };
 
   const handleEscrowRequest = async () => {
     try {
-      const response = await dispatch(request_escrow({
+      const result = await dispatch(request_escrow({
         productId: id,
         type: 'product_purchase'
-      }));
+      })).unwrap();
 
-      if (response.success) {
+      if (result.success) {
         toast.success('Escrow request initiated');
-        navigate(`/escrow/${response.escrowId}`);
+        navigate(`/escrow/${result.escrowId}`);
       }
     } catch (error) {
-      toast.error('Failed to initiate escrow');
+      toast.error(error.message);
     }
   };
+
+  useEffect(() => {
+    return () => {
+      dispatch(clear_purchase_status());
+      dispatch(clear_escrow_status());
+    };
+  }, [dispatch]);
 
   if (loading) return <LoadingSkeleton />;
   if (error) return <ErrorState error={error} />;
@@ -420,21 +422,24 @@ const ProductDetail = () => {
       </MotionBox>
 
       {/* Image Preview Modal */}
-      <Modal isOpen={!!selectedImage} onClose={() => setSelectedImage(null)} size="6xl">
+      <Modal 
+        isOpen={!!selectedImage} 
+        onClose={() => setSelectedImage(null)} 
+        size="6xl"
+        isCentered
+      >
         <ModalOverlay />
         <ModalContent bg={colors.bgColor}>
           <ModalBody p={0}>
-            <Image src={selectedImage} w="full" h="auto" />
-          </ModalBody>
-        </ModalContent>
-      </Modal>
-
-      {/* Payment Modal */}
-      <PaymentModal
+            <Image               src={selectedImage}               w="full"               h="auto"              objectFit="contain"              maxH="90vh"            />          </ModalBody>        </ModalContent>      </Modal>      {/* Payment Modal */}      <PaymentModal
         isOpen={isOpen}
         onClose={onClose}
         product={product}
         onSubmit={handlePaymentSubmit}
+        selectedMethod={paymentMethod}
+        onMethodChange={setPaymentMethod}
+        isLoading={purchaseLoading}
+        error={purchaseError}
       />
     </Container>
   );

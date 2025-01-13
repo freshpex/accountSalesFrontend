@@ -17,11 +17,23 @@ import {
   fetch_products_transaction_error,
   fetch_transaction_products,
   fetch_transaction_products_success,
-  fetch_transaction_products_error
+  fetch_transaction_products_error,
+  fetch_single_product,
+  fetch_single_product_success,
+  fetch_single_product_error,
+  initiate_purchase,
+  initiate_purchase_success,
+  initiate_purchase_error,
+  request_escrow,
+  request_escrow_success,
+  request_escrow_error,
+  set_purchase_status,
+  set_escrow_status
 } from "./reducer";
 import { ApiEndpoints } from "../../../store/types";
 import api from "../../../services/DataService";
 import toast from "react-hot-toast";
+import { convertToPublicUrl } from '../../../utils/supabase';
 
 function* fetchProductsSaga({ payload }) {
   try {
@@ -114,6 +126,68 @@ function* fetchTransactionProductsSaga() {
   }
 }
 
+function* fetchSingleProductSaga({ payload }) {
+  try {
+    const { id } = payload;
+    const response = yield call(api.get, `${ApiEndpoints.PRODUCTS}/${id}`);
+    
+    const productData = {
+      ...response.data,
+      id: response.data._id || response.data.id,
+      type: response.data.type?.toLowerCase(),
+      images: (response.data.images || []).map(img => convertToPublicUrl(img)),
+      status: response.data.status || 'available',
+      engagement: parseFloat(response.data.engagement) || 0,
+      followers: parseInt(response.data.followers) || 0,
+      price: parseFloat(response.data.price) || 0
+    };
+    
+    yield put(fetch_single_product_success(productData));
+  } catch (error) {
+    const errorMessage = error.response?.data?.message || error.message;
+    toast.error(errorMessage);
+    yield put(fetch_single_product_error(errorMessage));
+  }
+}
+
+function* initiatePurchaseSaga({ payload }) {
+  try {
+    yield put(set_purchase_status('pending'));
+    const response = yield call(api.post, `${ApiEndpoints.PURCHASES}`, payload);
+    
+    yield put(initiate_purchase_success());
+    yield put(set_purchase_status('success'));
+    toast.success('Purchase initiated successfully');
+    
+    return { success: true, transactionId: response.data.transactionId };
+  } catch (error) {
+    const errorMessage = error.response?.data?.message || error.message;
+    yield put(initiate_purchase_error(errorMessage));
+    yield put(set_purchase_status('failed'));
+    toast.error(errorMessage);
+    return { success: false };
+  }
+}
+
+function* requestEscrowSaga({ payload }) {
+  try {
+    yield put(set_escrow_status('pending'));
+    const response = yield call(api.post, `${ApiEndpoints.ESCROW}`, payload);
+    
+    yield put(request_escrow_success());
+    yield put(set_escrow_status('success'));
+    toast.success('Escrow request submitted successfully');
+    
+    return { success: true, escrowId: response.data.escrowId };
+  } catch (error) {
+    const errorMessage = error.response?.data?.message || error.message;
+    yield put(request_escrow_error(errorMessage));
+    yield put(set_escrow_status('failed'));
+    toast.error(errorMessage);
+    return { success: false };
+  }
+}
+
 function* addProductSaga({ payload }) {
   try {
     const formData = new FormData();
@@ -203,6 +277,9 @@ function* productSagas() {
   yield takeLatest(fetch_products.type, fetchProductsSaga);
   yield takeLatest(fetch_products_transaction.type, fetchProductsTransactionSaga);
   yield takeLatest(fetch_transaction_products.type, fetchTransactionProductsSaga);
+  yield takeLatest(fetch_single_product.type, fetchSingleProductSaga);
+  yield takeLatest(initiate_purchase.type, initiatePurchaseSaga);
+  yield takeLatest(request_escrow.type, requestEscrowSaga);
   yield takeLatest(add_product.type, addProductSaga);
   yield takeLatest(update_product.type, updateProductSaga);
   yield takeLatest(delete_product.type, deleteProductSaga);
