@@ -75,10 +75,10 @@ const Dashboard = () => {
         >
           <MetricCard
             title="Total Revenue"
-            value={`$${(metrics.revenue?.value || 0).toLocaleString()}`}
+            value={`₦${(metrics.revenue?.value || 0).toLocaleString()}`}
             growth={metrics.revenue?.growth || 0}
             icon={FiDollarSign}
-            secondaryValue={`$${(metrics.revenue?.previousValue || 0).toLocaleString()}`}
+            secondaryValue={`₦${(metrics.revenue?.previousValue || 0).toLocaleString()}`}
             secondaryLabel="Previous Period"
           />
           <MetricCard
@@ -94,7 +94,7 @@ const Dashboard = () => {
             value={(metrics.transactions?.value || 0).toLocaleString()}
             growth={metrics.transactions?.growth || 0}
             icon={FiShoppingBag}
-            secondaryValue={`$${metrics.transactions?.avgTicketSize || 0}`}
+            secondaryValue={`₦${metrics.transactions?.avgTicketSize || 0}`}
             secondaryLabel="Avg. Ticket Size"
           />
           <MetricCard

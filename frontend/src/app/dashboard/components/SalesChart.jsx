@@ -72,10 +72,10 @@ const SalesChart = ({ data, timeRange, onTimeRangeChange }) => {
             />
             <YAxis 
               stroke={strokeColor}
-              tickFormatter={value => `$${(value/1000).toFixed(0)}k`}
+              tickFormatter={value => `₦${(value/1000).toFixed(0)}k`}
             />
             <Tooltip 
-              formatter={value => `$${value.toLocaleString()}`}
+              formatter={value => `₦${value.toLocaleString()}`}
             />
             <Area
               type="monotone"

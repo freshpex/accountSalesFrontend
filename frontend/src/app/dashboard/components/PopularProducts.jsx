@@ -92,7 +92,7 @@ const ProductRow = ({ product }) => (
         </Box>
       </Flex>
     </Td>
-    <Td>${product.price.toFixed(2)}</Td>
+    <Td>₦{product.price.toFixed(2)}</Td>
     <Td>
       <Text fontWeight="medium">{product.sales?.toLocaleString()}</Text>
     </Td>
@@ -162,7 +162,7 @@ const ProductMobileCard = ({ product }) => (
     <Grid templateColumns="repeat(2, 1fr)" gap={4}>
       <Box>
         <Text fontSize="sm" color="gray.500">Price</Text>
-        <Text fontWeight="medium">${product.price.toFixed(2)}</Text>
+        <Text fontWeight="medium">₦{product.price.toFixed(2)}</Text>
       </Box>
       <Box>
         <Text fontSize="sm" color="gray.500">Sales</Text>

@@ -371,7 +371,7 @@ const ProductDetail = () => {
             >
               <VStack align="stretch" spacing={6}>
                 <HStack justify="space-between">
-                  <Heading size="lg">${product.price}</Heading>
+                  <Heading size="lg">₦{product.price}</Heading>
                   <Tag
                     size="lg"
                     colorScheme={product.status === 'available' ? 'green' : 'red'}
@@ -386,7 +386,6 @@ const ProductDetail = () => {
                     colorScheme="blue"
                     isDisabled={product.status !== 'available'}
                     onClick={handleBuyNow}
-                    leftIcon={<FiDollarSign />}
                   >
                     Buy Now
                   </Button>
@@ -433,16 +432,27 @@ const ProductDetail = () => {
         <ModalOverlay />
         <ModalContent bg={colors.bgColor}>
           <ModalBody p={0}>
-            <Image               src={selectedImage}               w="full"               h="auto"              objectFit="contain"              maxH="90vh"            />          </ModalBody>        </ModalContent>      </Modal>      {/* Payment Modal */}      <PaymentModal
-        isOpen={isOpen}
-        onClose={onClose}
-        product={product}
-        onSubmit={handlePaymentSubmit}
-        selectedMethod={paymentMethod}
-        onMethodChange={setPaymentMethod}
-        isLoading={purchaseLoading}
-        error={purchaseError}
-      />
+            <Image
+            src={selectedImage}
+            w="full"
+            h="auto"
+            objectFit="contain"
+            maxH="90vh"
+            />
+          </ModalBody>
+          </ModalContent>
+        </Modal>      
+        {/* Payment Modal */}      
+        <PaymentModal
+          isOpen={isOpen}
+          onClose={onClose}
+          product={product}
+          onSubmit={handlePaymentSubmit}
+          selectedMethod={paymentMethod}
+          onMethodChange={setPaymentMethod}
+          isLoading={purchaseLoading}
+          error={purchaseError}
+        />
     </Container>
   );
 };

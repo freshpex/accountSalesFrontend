@@ -181,7 +181,7 @@ const SalesReport = () => {
         <Grid templateColumns={{ base: '1fr', md: 'repeat(2, 1fr)', lg: 'repeat(4, 1fr)' }} gap={6}>
           <StatCard
             title="Total Revenue"
-            value={`$${(summary.totalRevenue || 0).toLocaleString()}`}
+            value={`₦${(summary.totalRevenue || 0).toLocaleString()}`}
             growth={summary.revenueGrowth || 0}
             icon={FiDollarSign}
           />
@@ -218,7 +218,7 @@ const SalesReport = () => {
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="month" />
                   <YAxis />
-                  <Tooltip formatter={(value) => `$${value.toLocaleString()}`} />
+                  <Tooltip formatter={(value) => `₦${value.toLocaleString()}`} />
                   <Line 
                     type="monotone" 
                     dataKey="revenue" 

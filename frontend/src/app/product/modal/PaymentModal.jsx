@@ -13,6 +13,7 @@ import {
   Select,
   useToast,
   VStack,
+  Text,
 } from '@chakra-ui/react';
 
 const PaymentModal = ({ isOpen, onClose, product, onSubmit, isLoading, error }) => {
@@ -22,6 +23,10 @@ const PaymentModal = ({ isOpen, onClose, product, onSubmit, isLoading, error }) 
     name: '',
     phone: ''
   });
+  
+  const vat = 200;
+  const amountInNaira = Math.ceil(product?.price + vat);
+
   const toast = useToast();
 
   const handleChange = (e) => {
@@ -57,6 +62,15 @@ const PaymentModal = ({ isOpen, onClose, product, onSubmit, isLoading, error }) 
         <ModalHeader>Payment Details</ModalHeader>
         <ModalBody>
           <VStack spacing={4}>
+            <FormControl>
+              <FormLabel>Amount</FormLabel>
+              <Text fontSize="2xl" fontWeight="bold">
+                ₦{amountInNaira.toLocaleString()} 
+                <Text as="span" fontSize="sm" color="gray.500" ml={2}>
+                  (₦{product?.price})
+                </Text>
+              </Text>
+            </FormControl>
             <FormControl>
               <FormLabel>Payment Method</FormLabel>
               <Select

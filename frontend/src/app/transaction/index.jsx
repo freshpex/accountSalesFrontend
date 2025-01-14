@@ -128,7 +128,7 @@ const Transaction = () => {
       'Transaction ID': item.id,
       'Product': item.productName,
       'Customer': item.customer,
-      'Price': `$${item.price}`,
+      'Price': `₦${item.price}`,
       'Date': new Date(item.date).toLocaleString(),
       'Payment': item.payment,
       'Status': item.status

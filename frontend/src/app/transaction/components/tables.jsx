@@ -243,7 +243,7 @@ const TransactionTable = ({
                 </HStack>
               </Td>
               <Td>{transaction.customer || 'N/A'}</Td>
-              <Td>${transaction.price?.toFixed(2) || '0.00'}</Td>
+              <Td>₦{transaction.price?.toFixed(2) || '0.00'}</Td>
               <Td>{new Date(transaction.date).toLocaleDateString()}</Td>
               <Td>{new Date(transaction.createdDate).toLocaleString()}</Td>
               <Td>{new Date(transaction.updatedDate).toLocaleString()}</Td>

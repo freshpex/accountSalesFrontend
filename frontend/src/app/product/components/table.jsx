@@ -416,7 +416,7 @@ const DataTable = ({
             {/* Footer */}
             <HStack justify="space-between" pt={2}>
               <Text fontWeight="bold" fontSize="xl">
-                ${item.price}
+                ₦${item.price}
               </Text>
               <Button
                 variant="ghost"

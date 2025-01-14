@@ -83,7 +83,7 @@ const ActivityItem = ({ activity }) => {
           fontSize={{ base: 'xs', sm: 'sm' }}
           mt={{ base: 2, sm: 0 }}
         >
-          ${activity.amount.toLocaleString()}
+          ₦{activity.amount.toLocaleString()}
         </Badge>
       )}
     </Flex>
