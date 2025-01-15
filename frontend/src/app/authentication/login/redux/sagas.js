@@ -7,7 +7,6 @@ import { setWithExpiry } from "../../../../utils/store";
 function* loginSaga({ payload }) {
   try {
     const response = yield call(api.post, `/api/v1/user/signin`, payload);
-    console.log('API Response:', response.data); // Debug log
     
     if (response.data.success) {
       const { data } = response.data;

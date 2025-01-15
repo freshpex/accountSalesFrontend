@@ -211,11 +211,23 @@ const ProductDetail = () => {
       })).unwrap();
 
       if (result.success) {
-        toast.success('Escrow request initiated');
+        toast({
+          title: 'Success',
+          description: 'Escrow request initiated',
+          status: 'success',
+          duration: 5000,
+          isClosable: true
+        });
         navigate(`/escrow/${result.escrowId}`);
       }
     } catch (error) {
-      toast.error(error.message);
+      toast({
+        title: 'Error',
+        description: error.message,
+        status: 'error',
+        duration: 5000,
+        isClosable: true
+      });
     }
   };
 
