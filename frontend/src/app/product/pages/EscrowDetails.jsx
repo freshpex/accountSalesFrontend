@@ -33,7 +33,8 @@ import {
   FiAlertCircle,
   FiLock,
   FiUnlock,
-  FiInfo
+  FiInfo,
+  FiCheck
 } from 'react-icons/fi';
 import { useColors } from '../../../utils/colors';
 import api from '../../../services/DataService';
@@ -48,6 +49,31 @@ const steps = [
   { title: 'Verification', description: 'Account transfer' },
   { title: 'Completed', description: 'Transaction finished' }
 ];
+
+// Add custom styles for mobile stepper
+const MobileStep = ({ title, description, isActive, isComplete }) => (
+  <Box 
+    p={4} 
+    bg={isActive ? 'blue.50' : 'white'}
+    borderRadius="md"
+    borderWidth="1px"
+    mb={4}
+  >
+    <HStack spacing={4}>
+      <Circle 
+        size="40px" 
+        bg={isComplete ? 'green.500' : isActive ? 'blue.500' : 'gray.200'}
+        color="white"
+      >
+        <Icon as={isComplete ? FiCheck : FiClock} />
+      </Circle>
+      <VStack align="start" spacing={0}>
+        <Text fontWeight="bold">{title}</Text>
+        <Text fontSize="sm" color="gray.600">{description}</Text>
+      </VStack>
+    </HStack>
+  </Box>
+);
 
 const EscrowDetails = () => {
   const { escrowId } = useParams();
@@ -68,8 +94,6 @@ const EscrowDetails = () => {
     const fetchEscrowDetails = async () => {
       try {
         const response = await api.get(`${ApiEndpoints.ESCROW}/${escrowId}`);
-        console.log('Escrow response:', response.data);
-        
         if (response.data.success && response.data.escrow) {
           setEscrow(response.data.escrow);
           if (response.data.escrow.product) {
@@ -196,36 +220,55 @@ const EscrowDetails = () => {
             </Badge>
           </HStack>
 
-          {/* Stepper - Responsive adjustments */}
-          <Box w="full" p={{ base: 2, md: 4 }} bg={colors.bgColor} borderRadius="lg" borderWidth="1px">
-            <Stepper 
-              index={activeStep} 
-              colorScheme="blue"
-              orientation={{ base: "vertical", md: "horizontal" }}
-              size={{ base: "sm", md: "md" }}
-              gap={{ base: 2, md: 4 }}
+          {/* Stepper Section */}
+          <Box 
+            w="full" 
+            p={{ base: 4, md: 6 }} 
+            bg={colors.bgColor} 
+            borderRadius="lg" 
+            borderWidth="1px"
+          >
+            {/* Desktop Stepper */}
+            <Box display={{ base: 'none', md: 'block' }}>
+              <Stepper 
+                index={activeStep} 
+                colorScheme="blue"
+                size="md"
+              >
+                {steps.map((step, index) => (
+                  <Step key={index}>
+                    <StepIndicator>
+                      <StepStatus
+                        complete={<StepIcon />}
+                        incomplete={<StepIcon />}
+                        active={<StepIcon />}
+                      />
+                    </StepIndicator>
+                    <Box flexShrink='0'>
+                      <StepTitle>{step.title}</StepTitle>
+                      <StepDescription>{step.description}</StepDescription>
+                    </Box>
+                  </Step>
+                ))}
+              </Stepper>
+            </Box>
+
+            {/* Mobile Vertical Steps */}
+            <VStack 
+              spacing={2} 
+              align="stretch"
+              display={{ base: 'flex', md: 'none' }}
             >
               {steps.map((step, index) => (
-                <Step key={index}>
-                  <StepIndicator>
-                    <StepStatus
-                      complete={<StepIcon />}
-                      incomplete={<StepIcon />}
-                      active={<StepIcon />}
-                    />
-                  </StepIndicator>
-                  <Box flexShrink='0'>
-                    <StepTitle fontSize={{ base: "sm", md: "md" }}>{step.title}</StepTitle>
-                    <StepDescription 
-                      fontSize={{ base: "xs", md: "sm" }}
-                      display={{ base: "none", sm: "block" }}
-                    >
-                      {step.description}
-                    </StepDescription>
-                  </Box>
-                </Step>
+                <MobileStep
+                  key={index}
+                  title={step.title}
+                  description={step.description}
+                  isActive={index === activeStep}
+                  isComplete={index < activeStep}
+                />
               ))}
-            </Stepper>
+            </VStack>
           </Box>
 
           <SimpleGrid 
@@ -368,7 +411,6 @@ const EscrowDetails = () => {
         isMobile={true}
       />
     </Container>
-  );
-};
+  );};
 
 export default EscrowDetails;
