@@ -125,6 +125,16 @@ export const getProductPurchaseStatus = createSelector(
   })
 );
 
+export const getEscrowStatus = createSelector(
+  productState,
+  (state) => ({
+    loading: state.ui.loading,
+    error: state.ui.error,
+    success: state.ui.success,
+    escrowData: state.escrowData
+  })
+);
+
 // Platform-specific filtered selectors
 export const getFilteredProducts = createSelector(
   [getProducts, (_, filters) => filters],

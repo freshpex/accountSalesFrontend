@@ -232,9 +232,13 @@ export const productSlice = createSlice({
       state.ui.loading = true;
       state.ui.error = null;
     },
-    request_escrow_success: (state) => {
+    request_escrow_success: (state, action) => {
       state.ui.loading = false;
       state.ui.success = true;
+      state.escrowData = {
+        escrowId: action.payload.escrowId,
+        success: action.payload.success
+      };
     },
     request_escrow_error: (state, action) => {
       state.ui.loading = false;

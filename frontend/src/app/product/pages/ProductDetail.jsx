@@ -40,7 +40,6 @@ import {
   FiUser,
   FiCalendar,
   FiMapPin,
-  FiDollarSign,
   FiShield,
   FiUsers,
   FiPercent,
@@ -56,7 +55,8 @@ import {
   getSelectedProduct,
   getProductDetailLoading,
   getProductDetailError,
-  getProductPurchaseStatus
+  getProductPurchaseStatus,
+  getEscrowStatus
 } from '../redux/selector';
 
 const MotionBox = motion(Box);
@@ -70,6 +70,7 @@ const ProductDetail = () => {
   const loading = useSelector(getProductDetailLoading);
   const error = useSelector(getProductDetailError);
   const { loading: purchaseLoading, error: purchaseError, success: purchaseSuccess } = useSelector(getProductPurchaseStatus);
+  const escrowStatus = useSelector(getEscrowStatus);
   const toast = useToast();
   const colors = useColors();
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -205,29 +206,18 @@ const ProductDetail = () => {
 
   const handleEscrowRequest = async () => {
     try {
-      const result = await dispatch(request_escrow({
+      dispatch(request_escrow({
         productId: id,
         type: 'product_purchase'
-      })).unwrap();
+      }));
 
-      if (result.success) {
-        toast({
-          title: 'Success',
-          description: 'Escrow request initiated',
-          status: 'success',
-          duration: 5000,
-          isClosable: true
-        });
-        navigate(`/escrow/${result.escrowId}`);
+      console.log('Escrow request status:', escrowStatus);
+      
+      if (escrowStatus.escrowData?.escrowId) {
+        navigate(`/escrow/${escrowStatus.escrowData.escrowId}`);
       }
     } catch (error) {
-      toast({
-        title: 'Error',
-        description: error.message,
-        status: 'error',
-        duration: 5000,
-        isClosable: true
-      });
+      console.error('Escrow request error:', error);
     }
   };
 
@@ -383,7 +373,7 @@ const ProductDetail = () => {
             >
               <VStack align="stretch" spacing={6}>
                 <HStack justify="space-between">
-                  <Heading size="lg">₦{product.price}</Heading>
+                  <Heading size="lg">₦{product.price.toLocaleString()}</Heading>
                   <Tag
                     size="lg"
                     colorScheme={product.status === 'available' ? 'green' : 'red'}

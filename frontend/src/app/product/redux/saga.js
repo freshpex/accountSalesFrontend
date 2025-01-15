@@ -164,27 +164,31 @@ function* initiatePurchaseSaga({ payload }) {
 function* requestEscrowSaga({ payload }) {
   try {
     yield put(set_escrow_status('pending'));
-    const response = yield call(api.post, `${ApiEndpoints.ESCROW}`, payload);
     
-    yield put(request_escrow_success());
-    yield put(set_escrow_status('success'));
-    toast.success('Escrow request submitted successfully');
-    
-    return { success: true, escrowId: response.data.escrowId };
+    const response = yield call(api.post, ApiEndpoints.TRANSACTION_ESCROW, {
+      productId: payload.productId,
+      type: 'product_purchase'
+    });
+
+    if (response.data.success && response.data.escrowId) {
+      yield put(request_escrow_success(response.data));
+      yield put(set_escrow_status('success'));
+      toast.success('Escrow request created successfully');
+    } else {
+      throw new Error('Invalid response from server');
+    }
   } catch (error) {
+    console.error('Escrow request error:', error);
     const errorMessage = error.response?.data?.message || error.message;
     yield put(request_escrow_error(errorMessage));
     yield put(set_escrow_status('failed'));
-    console.log(errorMessage);
-    return { success: false };
+    toast.error(errorMessage || 'Failed to create escrow request');
   }
 }
 
 function* addProductSaga({ payload }) {
   try {
     const formData = new FormData();
-
-    // Add basic fields
     Object.entries(payload).forEach(([key, value]) => {
       if (key !== 'images') {
         formData.append(key, value);
