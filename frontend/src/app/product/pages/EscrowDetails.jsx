@@ -157,18 +157,28 @@ const EscrowDetails = () => {
   }
 
   return (
-    <Container maxW="container.lg" py={8}>
+    <Container maxW="container.lg" py={4} px={4}>
       <MotionBox
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
-        <VStack spacing={8}>
-          {/* Header Section */}
-          <HStack w="full" justify="space-between">
+        <VStack spacing={{ base: 4, md: 8 }}>
+          <HStack 
+            w="full" 
+            justify="space-between"
+            flexDir={{ base: 'column', sm: 'row' }}
+            align={{ base: 'start', sm: 'center' }}
+            spacing={{ base: 2, sm: 4 }}
+          >
             <VStack align="start" spacing={1}>
-              <Heading size="lg">Escrow Transaction</Heading>
-              <Text color="gray.500">ID: {escrowId}</Text>
+              <Heading size={{ base: "md", md: "lg" }}>Escrow Transaction</Heading>
+              <Text 
+                color="gray.500" 
+                fontSize={{ base: "sm", md: "md" }}
+              >
+                ID: {escrowId}
+              </Text>
             </VStack>
             <Badge
               size="lg"
@@ -180,14 +190,21 @@ const EscrowDetails = () => {
               }
               p={2}
               borderRadius="md"
+              fontSize={{ base: "xs", md: "sm" }}
             >
               {escrow.status.toUpperCase()}
             </Badge>
           </HStack>
 
-          {/* Stepper */}
-          <Box w="full" p={4} bg={colors.bgColor} borderRadius="lg" borderWidth="1px">
-            <Stepper index={activeStep} colorScheme="blue">
+          {/* Stepper - Responsive adjustments */}
+          <Box w="full" p={{ base: 2, md: 4 }} bg={colors.bgColor} borderRadius="lg" borderWidth="1px">
+            <Stepper 
+              index={activeStep} 
+              colorScheme="blue"
+              orientation={{ base: "vertical", md: "horizontal" }}
+              size={{ base: "sm", md: "md" }}
+              gap={{ base: 2, md: 4 }}
+            >
               {steps.map((step, index) => (
                 <Step key={index}>
                   <StepIndicator>
@@ -198,20 +215,28 @@ const EscrowDetails = () => {
                     />
                   </StepIndicator>
                   <Box flexShrink='0'>
-                    <StepTitle>{step.title}</StepTitle>
-                    <StepDescription>{step.description}</StepDescription>
+                    <StepTitle fontSize={{ base: "sm", md: "md" }}>{step.title}</StepTitle>
+                    <StepDescription 
+                      fontSize={{ base: "xs", md: "sm" }}
+                      display={{ base: "none", sm: "block" }}
+                    >
+                      {step.description}
+                    </StepDescription>
                   </Box>
                 </Step>
               ))}
             </Stepper>
           </Box>
 
-          {/* Main Content Grid */}
-          <SimpleGrid columns={{ base: 1, md: 3 }} spacing={6} w="full">
-            {/* Transaction Details */}
+          <SimpleGrid 
+            columns={{ base: 1, md: 3 }} 
+            spacing={{ base: 4, md: 6 }} 
+            w="full"
+          >
+            {/* Transaction Details Card */}
             <MotionBox
               whileHover={{ y: -5 }}
-              p={6}
+              p={{ base: 4, md: 6 }}
               bg={colors.bgColor}
               borderRadius="lg"
               borderWidth="1px"
@@ -235,10 +260,10 @@ const EscrowDetails = () => {
               </VStack>
             </MotionBox>
 
-            {/* Product Information */}
+            {/* Product Information Card */}
             <MotionBox
               whileHover={{ y: -5 }}
-              p={6}
+              p={{ base: 4, md: 6 }}
               bg={colors.bgColor}
               borderRadius="lg"
               borderWidth="1px"
@@ -263,10 +288,10 @@ const EscrowDetails = () => {
               </VStack>
             </MotionBox>
 
-            {/* Security Status */}
+            {/* Security Status Card */}
             <MotionBox
               whileHover={{ y: -5 }}
-              p={6}
+              p={{ base: 4, md: 6 }}
               bg={colors.bgColor}
               borderRadius="lg"
               borderWidth="1px"
@@ -302,11 +327,17 @@ const EscrowDetails = () => {
             </MotionBox>
           </SimpleGrid>
 
-          {/* Action Buttons */}
-          <HStack spacing={4} w="full" justify="center">
+          {/* Action Buttons - Stack on mobile */}
+          <HStack 
+            spacing={{ base: 2, md: 4 }} 
+            w="full" 
+            justify="center"
+            flexDir={{ base: 'column', sm: 'row' }}
+          >
             <Tooltip label={escrow.status !== 'pending' ? 'Payment already processed' : ''}>
               <Button
-                size="lg"
+                size={{ base: "md", md: "lg" }}
+                width={{ base: "full", sm: "auto" }}
                 colorScheme="blue"
                 isDisabled={escrow.status !== 'pending'}
                 onClick={onOpen}
@@ -315,7 +346,8 @@ const EscrowDetails = () => {
               </Button>
             </Tooltip>
             <Button
-              size="lg"
+              size={{ base: "md", md: "lg" }}
+              width={{ base: "full", sm: "auto" }}
               variant="outline"
               leftIcon={<FiClock />}
               onClick={() => navigate('/transaction')}
@@ -333,6 +365,7 @@ const EscrowDetails = () => {
         product={product}
         onSubmit={handlePayment}
         escrowId={escrowId}
+        isMobile={true}
       />
     </Container>
   );
