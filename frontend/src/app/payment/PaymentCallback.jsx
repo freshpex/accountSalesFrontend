@@ -24,13 +24,24 @@ const PaymentCallback = () => {
         });
 
         if (response.data.success) {
-          toast.success('Payment successful!');
+          toast({
+            title: 'Payment successful!',
+            status: 'success',
+            duration: 5000,
+            isClosable: true,
+          });
           navigate('/transaction');
         } else {
           throw new Error('Payment verification failed');
         }
       } catch (error) {
-        toast.error(error.message);
+        toast({
+          title: 'Payment verification failed',
+          description: error.message,
+          status: 'error',
+          duration: 5000,
+          isClosable: true,
+        });
         navigate('/transaction');
       }
     };

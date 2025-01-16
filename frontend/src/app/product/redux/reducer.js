@@ -6,7 +6,8 @@ const initialState = {
     error: null,
     success: false,
     purchaseStatus: null,
-    escrowStatus: null
+    escrowStatus: null,
+    paymentStatus: null
   },
   data: {
     products: [],
@@ -255,6 +256,12 @@ export const productSlice = createSlice({
     },
     clear_escrow_status: (state) => {
       state.ui.escrowStatus = null;
+    },
+    set_payment_status: (state, action) => {
+      state.ui.paymentStatus = action.payload;
+    },
+    clear_payment_status: (state) => {
+      state.ui.paymentStatus = null;
     }
   }
 });
@@ -298,7 +305,9 @@ fetch_transaction_products_error,
   set_purchase_status,
   set_escrow_status,
   clear_purchase_status,
-  clear_escrow_status
+  clear_escrow_status,
+  set_payment_status,
+  clear_payment_status
 } = productSlice.actions;
 
 export default productSlice.reducer;

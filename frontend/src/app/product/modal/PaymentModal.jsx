@@ -49,9 +49,13 @@ const PaymentModal = ({ isOpen, onClose, product, onSubmit, isLoading, error }) 
       });
       return;
     }
+    console.log("payment details", paymentDetails)
     onSubmit({
       productId: product.id,
-      ...paymentDetails
+      paymentMethod: paymentDetails.paymentMethod,
+      email: paymentDetails.email,
+      name: paymentDetails.name,
+      phone: paymentDetails.phone
     });
   };
 

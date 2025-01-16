@@ -47,7 +47,6 @@ import {
   FiAlertTriangle,
 } from 'react-icons/fi';
 import { fetch_single_product, clear_selected_product, initiate_purchase, request_escrow, clear_purchase_status, clear_escrow_status } from '../redux/reducer';
-import PaymentModal from '../modal/PaymentModal';
 import ImageGallery from '../components/ImageGallery';
 import { motion } from 'framer-motion';
 import { useColors } from '../../../utils/colors';
@@ -65,18 +64,15 @@ const ProductDetail = () => {
   const { type, id } = useParams();
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [paymentMethod, setPaymentMethod] = useState('crypto');
   const product = useSelector(getSelectedProduct);
   const loading = useSelector(getProductDetailLoading);
   const error = useSelector(getProductDetailError);
-  const { loading: purchaseLoading, error: purchaseError, success: purchaseSuccess } = useSelector(getProductPurchaseStatus);
   const escrowStatus = useSelector(getEscrowStatus);
   const toast = useToast();
   const colors = useColors();
-  const { isOpen, onOpen, onClose } = useDisclosure();
   const [selectedImage, setSelectedImage] = useState(null);
 
-  console.log(product);
+  console.log("Product detail", product);
 
   // Subcomponents for better organization
   const StatBox = ({ icon, label, value }) => (
@@ -182,25 +178,128 @@ const ProductDetail = () => {
     return () => dispatch(clear_selected_product());
   }, [id, type, dispatch]);
 
-  const handleBuyNow = () => {
-    onOpen();
+  const loadFlutterwaveScript = (retryCount = 3) => {
+    return new Promise((resolve, reject) => {
+      const script = document.createElement('script');
+      script.src = 'https://checkout.flutterwave.com/v3.js';
+      script.async = true;
+      script.onload = () => resolve();
+      script.onerror = () => {
+        if (retryCount > 0) {
+          console.warn(`Flutterwave script load failed. Retrying... (${retryCount} attempts left)`);
+          setTimeout(() => loadFlutterwaveScript(retryCount - 1).then(resolve).catch(reject), 1000);
+        } else {
+          reject(new Error('Failed to load payment script. Please check your connection.'));
+        }
+      };
+      document.body.appendChild(script);
+    });
   };
 
-  const handlePaymentSubmit = async (paymentDetails) => {
+  const handleBuyNow = async () => {
     try {
-      const result = await dispatch(initiate_purchase({
-        productId: id,
-        paymentMethod: paymentDetails.paymentMethod,
-        ...paymentDetails
-      })).unwrap();
+      await loadFlutterwaveScript();
+      
+      const config = {
+        public_key: import.meta.env.VITE_FLUTTERWAVE_PUBLIC_KEY,
+        tx_ref: `TX_${Date.now()}_${Math.floor(Math.random() * 1000)}`,
+        amount: product.price,
+        currency: 'NGN',
+        payment_options: 'card,banktransfer,ussd',
+        redirect_url: `${window.location.origin}/payment/callback`,
+        meta: {
+          productId: product.id,
+          productType: product.type
+        },
+        customer: {
+          email: product.email || 'customer@example.com',
+          phone_number: product.phone || '',
+          name: product.username || 'Customer',
+        },
+        customizations: {
+          title: 'Product Purchase',
+          description: `Payment for ${product.username}`,
+          logo: import.meta.env.VITE_LOGO_URL,
+        },
+        callback: handleFlutterwaveSuccess,
+        onclose: () => {
+          console.log('Payment modal closed');
+          toast({
+            title: 'Payment Cancelled',
+            description: 'You have cancelled the payment',
+            status: 'warning',
+            duration: 5000,
+            isClosable: true,
+          });
+        }
+      };
 
-      if (result.success) {
-        onClose();
-        toast.success('Purchase initiated successfully');
-        navigate(`/payment/process/${result.transactionId}`);
+      if (typeof window.FlutterwaveCheckout === 'function') {
+        window.FlutterwaveCheckout(config);
+      } else {
+        throw new Error('Flutterwave not initialized properly');
       }
     } catch (error) {
-      toast.error(error.message || 'Payment initiation failed');
+      console.error('Payment initialization error:', error);
+      toast({
+        title: 'Payment Error',
+        description: 'Failed to initialize payment. Please try again.',
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      });
+    }
+  };
+
+  const handleFlutterwaveSuccess = async (response) => {
+    try {
+      console.log('Flutterwave response:', response); // Debugging
+
+      // Verify payment status
+      const verifyResponse = await fetch('/api/v1/transactions/callback', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          transaction_id: response.transaction_id,
+          tx_ref: response.tx_ref
+        })
+      });
+
+      const verifyData = await verifyResponse.json();
+
+      if (verifyData.success) {
+        toast({
+          title: 'Payment Successful',
+          description: 'Your payment has been verified successfully',
+          status: 'success',
+          duration: 5000,
+          isClosable: true,
+        });
+
+        // Create escrow after successful payment
+        const escrowAction = await dispatch(request_escrow({
+          productId: product.id,
+          transactionId: response.transaction_id,
+          type: 'product_purchase'
+        }));
+
+        if (escrowAction.payload?.escrowId) {
+          navigate(`/escrow/${escrowAction.payload.escrowId}`);
+        }
+      } else {
+        throw new Error(verifyData.error || 'Payment verification failed');
+      }
+    } catch (error) {
+      console.error('Payment processing error:', error);
+      toast({
+        title: 'Payment Error',
+        description: error.message || 'Failed to process payment',
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      });
     }
   };
 
@@ -444,17 +543,6 @@ const ProductDetail = () => {
           </ModalBody>
           </ModalContent>
         </Modal>      
-        {/* Payment Modal */}      
-        <PaymentModal
-          isOpen={isOpen}
-          onClose={onClose}
-          product={product}
-          onSubmit={handlePaymentSubmit}
-          selectedMethod={paymentMethod}
-          onMethodChange={setPaymentMethod}
-          isLoading={purchaseLoading}
-          error={purchaseError}
-        />
     </Container>
   );
 };

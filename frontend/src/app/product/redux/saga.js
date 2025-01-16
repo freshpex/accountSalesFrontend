@@ -28,7 +28,9 @@ import {
   request_escrow_success,
   request_escrow_error,
   set_purchase_status,
-  set_escrow_status
+  set_escrow_status,
+  set_payment_status,
+  clear_payment_status
 } from "./reducer";
 import { ApiEndpoints } from "../../../store/types";
 import api from "../../../services/DataService";
@@ -151,7 +153,7 @@ function* initiatePurchaseSaga({ payload }) {
     yield put(set_purchase_status('success'));
     toast.success('Purchase initiated successfully');
     
-    return { success: true, transactionId: response.data.transactionId };
+    return { success: true, paymentUrl: response.data.paymentUrl };
   } catch (error) {
     const errorMessage = error.response?.data?.message || error.message;
     yield put(initiate_purchase_error(errorMessage));
