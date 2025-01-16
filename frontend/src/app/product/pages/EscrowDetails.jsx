@@ -40,6 +40,10 @@ import { useColors } from '../../../utils/colors';
 import api from '../../../services/DataService';
 import PaymentModal from '../modal/PaymentModal';
 import { ApiEndpoints } from '../../../store/types';    
+import FlutterwavePayment from '../../../components/FlutterwavePayment';
+import { getProfile } from '../../account/redux/selector';
+import { fetch_profile } from '../../accountSettings/tabs/account/redux/reducer';
+import { useSelector, useDispatch } from 'react-redux';
 
 const MotionBox = motion(Box);
 
@@ -76,6 +80,7 @@ const MobileStep = ({ title, description, isActive, isComplete }) => (
 );
 
 const EscrowDetails = () => {
+  const dispatch = useDispatch();
   const { escrowId } = useParams();
   const [escrow, setEscrow] = useState(null);
   const [product, setProduct] = useState(null);
@@ -84,11 +89,23 @@ const EscrowDetails = () => {
   const colors = useColors();
   const navigate = useNavigate();
   const toast = useToast();
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const { isOpen, onClose } = useDisclosure();
+  const profile = useSelector(getProfile);
+
+  useEffect(() => {
+    dispatch(fetch_profile());
+  }, [dispatch]);
+
+console.log("Product detail", product);
+console.log("customer details", profile);
+
   const { activeStep, setActiveStep } = useSteps({
     index: 1,
     count: steps.length
   });
+
+  const [showPayment, setShowPayment] = useState(false);
+  const [paymentConfig, setPaymentConfig] = useState(null);
 
   useEffect(() => {
     const fetchEscrowDetails = async () => {
@@ -129,27 +146,74 @@ const EscrowDetails = () => {
     fetchEscrowDetails();
   }, [escrowId, setActiveStep, toast]);
 
-  const handlePayment = async (paymentDetails) => {
-    try {
-      const response = await api.post('/api/v1/transactions/initiate', {
-        productId: product._id,
+  const handlePayment = async () => {
+    const config = {
+      public_key: import.meta.env.VITE_FLUTTERWAVE_PUBLIC_KEY,
+      tx_ref: `TX_${Date.now()}_${Math.floor(Math.random() * 1000)}`,
+      amount: escrow.amount,
+      currency: 'NGN',
+      payment_options: 'card,banktransfer,ussd',
+      redirect_url: `${window.location.origin}/payment/callback`,
+      meta: {
         escrowId: escrow._id,
-        ...paymentDetails
+        productId: product._id,
+        type: 'escrow_payment'
+      },
+      customer: {
+        id: profile.id || 'user_123',
+        email: profile.email || '',
+        phone_number: profile.phoneNumber || '',
+        name: profile.firstName || '',
+      },
+      customizations: {
+        title: 'Escrow Payment',
+        description: `Escrow Payment for ${product.username}`,
+        logo: import.meta.env.VITE_LOGO_URL,
+      }
+    };
+
+    setShowPayment(true);
+    setPaymentConfig(config);
+  };
+
+  const handlePaymentSuccess = async (response) => {
+    try {
+      const escrowAction = await api.post(`${ApiEndpoints.ESCROW}/${escrowId}/payment`, {
+        transactionId: response.transaction_id,
+        status: 'completed'
       });
 
-      if (response.data.success) {
-        onClose();
-        window.location.href = response.data.paymentUrl;
+      if (escrowAction.data.success) {
+        toast({
+          title: 'Payment Successful',
+          description: 'Escrow payment has been processed successfully',
+          status: 'success',
+          duration: 5000,
+          isClosable: true,
+        });
+        // Refresh escrow details
+        window.location.reload();
       }
     } catch (error) {
       toast({
-        title: 'Payment Error',
-        description: error.response?.data?.message || 'Failed to initiate payment',
+        title: 'Error',
+        description: error.response?.data?.message || 'Failed to process escrow payment',
         status: 'error',
         duration: 5000,
-        isClosable: true
+        isClosable: true,
       });
     }
+  };
+
+  const handlePaymentError = (error) => {
+    toast({
+      title: 'Payment Error',
+      description: error.message || 'Failed to process payment',
+      status: 'error',
+      duration: 5000,
+      isClosable: true,
+    });
+    setShowPayment(false);
   };
 
   if (loading) {
@@ -383,7 +447,7 @@ const EscrowDetails = () => {
                 width={{ base: "full", sm: "auto" }}
                 colorScheme="blue"
                 isDisabled={escrow.status !== 'pending'}
-                onClick={onOpen}
+                onClick={handlePayment}
               >
                 Proceed to Payment
               </Button>
@@ -410,6 +474,14 @@ const EscrowDetails = () => {
         escrowId={escrowId}
         isMobile={true}
       />
+
+      {showPayment && paymentConfig && (
+        <FlutterwavePayment
+          config={paymentConfig}
+          onSuccess={handlePaymentSuccess}
+          onError={handlePaymentError}
+        />
+      )}
     </Container>
   );};
 
