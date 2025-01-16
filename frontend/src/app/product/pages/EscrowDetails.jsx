@@ -41,8 +41,8 @@ import api from '../../../services/DataService';
 import PaymentModal from '../modal/PaymentModal';
 import { ApiEndpoints } from '../../../store/types';    
 import FlutterwavePayment from '../../../components/FlutterwavePayment';
-import { getProfile } from '../../account/redux/selector';
-import { fetch_profile } from '../../accountSettings/tabs/account/redux/reducer';
+import { getProfile } from '../../accountSettings.jsx/redux/selector';
+import { fetch_profile } from '../../accountSettings.jsx/redux/reducer';
 import { useSelector, useDispatch } from 'react-redux';
 
 const MotionBox = motion(Box);
@@ -157,13 +157,14 @@ console.log("customer details", profile);
       meta: {
         escrowId: escrow._id,
         productId: product._id,
-        type: 'escrow_payment'
+        type: 'escrow_payment',
+        userId: profile.userId,
+        customerId: profile._id,
       },
       customer: {
-        id: profile.id || 'user_123',
         email: profile.email || '',
         phone_number: profile.phoneNumber || '',
-        name: profile.firstName || '',
+        name: `${profile.firstName} ${profile.lastName}`.trim() || 'Anonymous',
       },
       customizations: {
         title: 'Escrow Payment',
@@ -172,15 +173,22 @@ console.log("customer details", profile);
       }
     };
 
-    setShowPayment(true);
     setPaymentConfig(config);
+    setShowPayment(true);
   };
 
   const handlePaymentSuccess = async (response) => {
     try {
       const escrowAction = await api.post(`${ApiEndpoints.ESCROW}/${escrowId}/payment`, {
         transactionId: response.transaction_id,
-        status: 'completed'
+        status: 'completed',
+        customerDetails: {
+          name: `${profile.firstName} ${profile.lastName}`,
+          email: 'customer@gmail.com',
+          phone: profile.phoneNumber,
+          address: profile.address,
+          country: profile.country
+        }
       });
 
       if (escrowAction.data.success) {

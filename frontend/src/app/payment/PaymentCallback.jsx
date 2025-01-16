@@ -1,55 +1,118 @@
-import { useEffect } from 'react';
-import { useSearchParams, useNavigate } from 'react-router-dom';
-import { useToast } from '@chakra-ui/react';
+import { useEffect, useState, useCallback } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import {
+  VStack,
+  Heading,
+  Text,
+  Spinner,
+  Container,
+  Button,
+  useToast
+} from '@chakra-ui/react';
+import { CheckCircleIcon, WarningIcon } from '@chakra-ui/icons';
 import api from '../../services/DataService';
 
 const PaymentCallback = () => {
-  const [searchParams] = useSearchParams();
+  const [status, setStatus] = useState('processing');
+  const [error, setError] = useState(null);
+  const location = useLocation();
   const navigate = useNavigate();
   const toast = useToast();
 
-  useEffect(() => {
-    const verifyPayment = async () => {
-      try {
-        const transaction_id = searchParams.get('transaction_id');
-        const tx_ref = searchParams.get('tx_ref');
-
-        if (!transaction_id || !tx_ref) {
-          throw new Error('Invalid payment response');
+  const verifyPayment = useCallback(async (params) => {
+    try {
+      console.log('Verifying payment with params:', params.toString());
+      
+      const response = await api.post('/api/v1/transactions/callback', {
+        transaction_id: params.get('transaction_id'),
+        tx_ref: params.get('tx_ref')
+      }, {
+        headers: {
+          'Content-Type': 'application/json'
         }
+      });
 
-        const response = await api.post('/api/v1/transactions/callback', {
-          transaction_id,
-          tx_ref
-        });
+      console.log('Payment verification response:', response.data);
 
-        if (response.data.success) {
-          toast({
-            title: 'Payment successful!',
-            status: 'success',
-            duration: 5000,
-            isClosable: true,
-          });
-          navigate('/transaction');
-        } else {
-          throw new Error('Payment verification failed');
-        }
-      } catch (error) {
+      if (response.data.success) {
+        setStatus('success');
         toast({
-          title: 'Payment verification failed',
-          description: error.message,
-          status: 'error',
+          title: 'Payment Successful',
+          description: 'Your transaction has been completed successfully',
+          status: 'success',
           duration: 5000,
           isClosable: true,
         });
-        navigate('/transaction');
+        
+        // Add delay before redirect
+        setTimeout(() => {
+          if (response.data.transaction?.escrowId) {
+            navigate(`/escrow/${response.data.transaction.escrowId}`);
+          } else {
+            navigate('/transaction');
+          }
+        }, 2000);
+      } else {
+        throw new Error(response.data.error || 'Payment verification failed');
       }
-    };
+    } catch (error) {
+      console.error('Payment verification error:', error);
+      setStatus('failed');
+      setError(error.response?.data?.error || error.message);
+      toast({
+        title: 'Payment Error',
+        description: error.response?.data?.error || error.message,
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      });
+    }
+  }, [navigate, toast]);
 
-    verifyPayment();
-  }, [searchParams, navigate, toast]);
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const status = params.get('status');
 
-  return <div>Processing payment...</div>;
+    if (status === 'successful') {
+      verifyPayment(params);
+    } else {
+      setStatus('failed');
+      setError('Payment was not successful');
+    }
+  }, [location, verifyPayment]);
+
+  return (
+    <Container maxW="container.md" py={10}>
+      <VStack spacing={6} align="center">
+        {status === 'processing' && (
+          <>
+            <Spinner size="xl" color="blue.500" />
+            <Heading size="lg">Verifying Payment</Heading>
+            <Text>Please wait while we verify your payment...</Text>
+          </>
+        )}
+
+        {status === 'success' && (
+          <>
+            <CheckCircleIcon boxSize={12} color="green.500" />
+            <Heading size="lg">Payment Successful!</Heading>
+            <Text>Your transaction has been completed successfully.</Text>
+          </>
+        )}
+
+        {status === 'failed' && (
+          <>
+            <WarningIcon boxSize={12} color="red.500" />
+            <Heading size="lg">Payment Failed</Heading>
+            <Text color="red.500">{error || 'Failed to process payment'}</Text>
+            <Button onClick={() => navigate('/transaction')}>
+              View Transactions
+            </Button>
+          </>
+        )}
+      </VStack>
+    </Container>
+  );
 };
 
 export default PaymentCallback;

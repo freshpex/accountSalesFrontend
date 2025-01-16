@@ -19,6 +19,7 @@ import {
   ModalOverlay,
   ModalContent,
   ModalBody,
+  useDisclosure,
   List,
   ListItem,
   ListIcon,
@@ -45,7 +46,7 @@ import {
   FiCheck,
   FiAlertTriangle,
 } from 'react-icons/fi';
-import { fetch_single_product, clear_selected_product, request_escrow, clear_purchase_status, clear_escrow_status } from '../redux/reducer';
+import { fetch_single_product, clear_selected_product, initiate_purchase, request_escrow, clear_purchase_status, clear_escrow_status } from '../redux/reducer';
 import ImageGallery from '../components/ImageGallery';
 import { motion } from 'framer-motion';
 import { useColors } from '../../../utils/colors';
@@ -53,11 +54,11 @@ import {
   getSelectedProduct,
   getProductDetailLoading,
   getProductDetailError,
+  getProductPurchaseStatus,
   getEscrowStatus
 } from '../redux/selector';
-import FlutterwavePayment from '../../../components/FlutterwavePayment';
-import { getProfile } from '../../account/redux/selector';
-import { fetch_profile } from '../../accountSettings/tabs/account/redux/reducer';
+import { getProfile } from '../../accountSettings.jsx/redux/selector';
+import { fetch_profile } from '../../accountSettings.jsx//redux/reducer';
 
 const MotionBox = motion(Box);
 
@@ -72,16 +73,11 @@ const ProductDetail = () => {
   const toast = useToast();
   const colors = useColors();
   const [selectedImage, setSelectedImage] = useState(null);
-  const [showPayment, setShowPayment] = useState(false);
-  const [paymentConfig, setPaymentConfig] = useState(null);
   const profile = useSelector(getProfile);
-
+  
   useEffect(() => {
       dispatch(fetch_profile());
     }, [dispatch]);
-
-  console.log("Product detail", product);
-  console.log("customer details", profile);
 
   // Subcomponents for better organization
   const StatBox = ({ icon, label, value }) => (
@@ -187,52 +183,84 @@ const ProductDetail = () => {
     return () => dispatch(clear_selected_product());
   }, [id, type, dispatch]);
 
-  const handleBuyNow = async () => {
-    const config = {
-      public_key: import.meta.env.VITE_FLUTTERWAVE_PUBLIC_KEY,
-      tx_ref: `TX_${Date.now()}_${Math.floor(Math.random() * 1000)}`,
-      amount: product.price,
-      currency: 'NGN',
-      payment_options: 'card,banktransfer,ussd',
-      redirect_url: `${window.location.origin}/payment/callback`,
-      meta: {
-        productId: product.id,
-        productType: product.type
-      },
-      customer: {
-        id: profile.id || 'user_123',
-        email: profile.email || '',
-        phone_number: profile.phoneNumber || '',
-        name: profile.firstName || '',
-      },
-      customizations: {
-        title: 'Product Purchase',
-        description: `Payment for ${profile.firstName}`,
-        logo: import.meta.env.VITE_LOGO_URL,
-      }
-    };
-
-    setPaymentConfig(config);
-    setShowPayment(true);
+  const loadFlutterwaveScript = (retryCount = 3) => {
+    return new Promise((resolve, reject) => {
+      const script = document.createElement('script');
+      script.src = 'https://checkout.flutterwave.com/v3.js';
+      script.async = true;
+      script.onload = () => resolve();
+      script.onerror = () => {
+        if (retryCount > 0) {
+          console.warn(`Flutterwave script load failed. Retrying... (${retryCount} attempts left)`);
+          setTimeout(() => loadFlutterwaveScript(retryCount - 1).then(resolve).catch(reject), 1000);
+        } else {
+          reject(new Error('Failed to load payment script. Please check your connection.'));
+        }
+      };
+      document.body.appendChild(script);
+    });
   };
 
-  const handlePaymentSuccess = async (response) => {
+  const handleBuyNow = async () => {
     try {
-      // Create escrow after successful payment
-      const escrowAction = await dispatch(request_escrow({
-        productId: product.id,
-        transactionId: response.transaction_id,
-        type: 'product_purchase'
-      }));
+      await loadFlutterwaveScript();
+      
+      const config = {
+        public_key: import.meta.env.VITE_FLUTTERWAVE_PUBLIC_KEY,
+        tx_ref: `TX_${Date.now()}_${Math.floor(Math.random() * 1000)}`,
+        amount: product.price,
+        currency: 'NGN',
+        payment_options: 'card,banktransfer,ussd',
+        redirect_url: `${window.location.origin}/payment/callback`,
+        meta: {
+          productId: product.id,
+          productType: product.type,
+          userId: profile.userId,
+          customerId: profile._id,
+          escrowId: null
+        },
+        customer: {
+          email: profile.email || 'customer@example.com',
+          phone_number: profile.phoneNumber || '',
+          name: `${profile.firstName} ${profile.lastName}`.trim() || 'Customer',
+          firstName: profile.firstName || '',
+          lastName: profile.lastName || '',
+          address: profile.address || '',
+          country: profile.country || '',
+          gender: profile.gender || '',
+          birthDate: profile.birthDate || null,
+          profilePicture: profile.profilePicture || '',
+          userId: profile.userId,
+          profileId: profile._id
+        },
+        customizations: {
+          title: 'Product Purchase',
+          description: `Payment for ${product.username}`,
+          logo: import.meta.env.VITE_LOGO_URL,
+        },
+        callback: handleFlutterwaveSuccess,
+        onclose: () => {
+          console.log('Payment modal closed');
+          toast({
+            title: 'Payment Cancelled',
+            description: 'You have cancelled the payment',
+            status: 'warning',
+            duration: 5000,
+            isClosable: true,
+          });
+        }
+      };
 
-      if (escrowAction.payload?.escrowId) {
-        navigate(`/escrow/${escrowAction.payload.escrowId}`);
+      if (typeof window.FlutterwaveCheckout === 'function') {
+        window.FlutterwaveCheckout(config);
+      } else {
+        throw new Error('Flutterwave not initialized properly');
       }
     } catch (error) {
-      console.error('Error processing payment:', error);
+      console.error('Payment initialization error:', error);
       toast({
-        title: 'Error',
-        description: 'Failed to process payment',
+        title: 'Payment Error',
+        description: 'Failed to initialize payment. Please try again.',
         status: 'error',
         duration: 5000,
         isClosable: true,
@@ -240,15 +268,56 @@ const ProductDetail = () => {
     }
   };
 
-  const handlePaymentError = (error) => {
-    toast({
-      title: 'Payment Error',
-      description: error.message || 'Failed to process payment',
-      status: 'error',
-      duration: 5000,
-      isClosable: true,
-    });
-    setShowPayment(false);
+  const handleFlutterwaveSuccess = async (response) => {
+    try {
+      console.log('Flutterwave response:', response); // Debugging
+
+      // Verify payment status
+      const verifyResponse = await fetch('/api/v1/transactions/callback', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          transaction_id: response.transaction_id,
+          tx_ref: response.tx_ref
+        })
+      });
+
+      const verifyData = await verifyResponse.json();
+
+      if (verifyData.success) {
+        toast({
+          title: 'Payment Successful',
+          description: 'Your payment has been verified successfully',
+          status: 'success',
+          duration: 5000,
+          isClosable: true,
+        });
+
+        // Create escrow after successful payment
+        const escrowAction = await dispatch(request_escrow({
+          productId: product.id,
+          transactionId: response.transaction_id,
+          type: 'product_purchase'
+        }));
+
+        if (escrowAction.payload?.escrowId) {
+          navigate(`/escrow/${escrowAction.payload.escrowId}`);
+        }
+      } else {
+        throw new Error(verifyData.error || 'Payment verification failed');
+      }
+    } catch (error) {
+      console.error('Payment processing error:', error);
+      toast({
+        title: 'Payment Error',
+        description: error.message || 'Failed to process payment',
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      });
+    }
   };
 
   const handleEscrowRequest = async () => {
@@ -491,14 +560,6 @@ const ProductDetail = () => {
           </ModalBody>
           </ModalContent>
         </Modal>      
-
-      {showPayment && paymentConfig && (
-        <FlutterwavePayment
-          config={paymentConfig}
-          onSuccess={handlePaymentSuccess}
-          onError={handlePaymentError}
-        />
-      )}
     </Container>
   );
 };
