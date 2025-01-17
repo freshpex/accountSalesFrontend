@@ -37,7 +37,8 @@ import {
   fetchDashboardMetrics,
   fetchDashboardSpendingChart,
   fetchDashboardRecentActivity,
-  updateLastSeen
+  updateLastSeen,
+  track_activity
 } from './redux/reducer';
 import LoadingSpinner from '../../components/LoadingSpinner';
 import {
@@ -49,6 +50,8 @@ import {
   getUserErrorStates
 } from './redux/selector';
 import EmptyStatePage from '../../components/emptyState';
+import { convertToPublicUrl } from '../../utils/supabase';
+import { Link } from "react-router-dom";
 
 const MotionBox = motion(Box);
 
@@ -80,7 +83,7 @@ const WelcomeCard = ({ user }) => {
           <Avatar 
             size="xl" 
             name={`${user.firstName} ${user.lastName}`}
-            src={user.profilePicture}
+            src={convertToPublicUrl(user?.profilePicture)}
           />
           <VStack align="start" spacing={1}>
             <Text fontSize="sm" color={colors.textColor}>Welcome back,</Text>
@@ -140,9 +143,10 @@ const StatCard = ({ label, value, icon, change }) => {
 
 const RecentTransactions = ({ transactions = [] }) => {
   const colors = useColors();
-  console.log("Transactions", transactions);
   
-  if (!transactions || transactions.length === 0) {
+  const transactionOnly = transactions.filter(item => item.type === 'transaction');
+  
+  if (!transactionOnly || transactionOnly.length === 0) {
     return (
       <VStack
         spacing={4}
@@ -168,8 +172,8 @@ const RecentTransactions = ({ transactions = [] }) => {
       align="stretch"
     >
       <Heading size="md" mb={4}>Recent Transactions</Heading>
-      <VStack spacing={4} align="stretch">
-        {transactions.map((transaction, index) => (
+      <VStack spacing={4} align="stretch"></VStack>
+        {transactionOnly.map((transaction, index) => (
           <HStack
             key={index}
             justify="space-between"
@@ -204,7 +208,6 @@ const RecentTransactions = ({ transactions = [] }) => {
           </HStack>
         ))}
       </VStack>
-    </VStack>
   );
 };
 
@@ -239,14 +242,16 @@ const SecurityCard = ({ securityScore }) => {
           </Text>
         </VStack>
         
-        <Button
-          leftIcon={<FiShield />}
-          variant="outline"
-          size="sm"
-          w="full"
-        >
-          Improve Security
-        </Button>
+        <Link to='/settings'>
+          <Button
+            leftIcon={<FiShield />}
+            variant="outline"
+            size="sm"
+            w="full"
+          >
+            Improve Security
+          </Button>
+        </Link>
       </VStack>
     </Box>
   );
@@ -322,19 +327,31 @@ const UserDashboard = () => {
       device: navigator.userAgent,
       location: 'Web Browser'
     }));
+
+    // Track user activity without needing backend calls
+    dispatch(track_activity({
+      page: 'dashboard',
+      deviceInfo: {
+        userAgent: navigator.userAgent,
+        language: navigator.language,
+        screenSize: `${window.innerWidth}x${window.innerHeight}`,
+        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone
+      }
+    }));
+
+    // Regular data fetching
+    dispatch(fetchDashboardOverview());
+    dispatch(fetchDashboardMetrics());
+    dispatch(fetchDashboardSpendingChart());
+    dispatch(fetchDashboardRecentActivity());
   }, [dispatch]);
 
   // Debug logs
   useEffect(() => {
     console.log('Current overview:', overview);
-    console.log('Current recentActivity:', recentActivity);
-  }, [overview, recentActivity]);
-
-  // Debug the data before rendering
-  useEffect(() => {
-    console.log('Recent Activity Data:', recentActivity?.data);
-    console.log('Overview Data:', overview?.data);
-  }, [recentActivity, overview]);
+    console.log('Current metrics:', metrics);
+    console.log('Current spendingChart:', spendingChart);
+  }, [overview, metrics, spendingChart]);
 
   if (loading?.overviewLoading) {
     return <LoadingSpinner />;
@@ -357,9 +374,7 @@ const UserDashboard = () => {
     );
   }
 
-  // Finally check if we have data - modify this condition
   if (!overview?.data?.user) {
-    console.log('Dashboard data:', overview); // Debug log
     return (
       <EmptyStatePage 
         title="No Dashboard Data"
@@ -434,14 +449,14 @@ const UserDashboard = () => {
                       <TabPanel>
                         <OverviewPanel 
                           data={overview.data}
-                          metrics={metrics.data}
-                          spendingChart={spendingChart.data}
+                          metrics={metrics}
+                          spendingChart={spendingChart}
                           isLoading={loading.metricsLoading || loading.chartLoading}
                         />
                       </TabPanel>
                       <TabPanel>
                         <ProductsPanel 
-                          products={overview.data.products}
+                          products={overview.data?.user?.products || []}
                           isLoading={loading.overviewLoading}
                         />
                       </TabPanel>

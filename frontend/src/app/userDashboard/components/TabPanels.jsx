@@ -23,6 +23,7 @@ import {
   FiTrendingUp,
   FiShoppingBag,
   FiActivity,
+  FiShield,
 } from 'react-icons/fi';
 import {
   Chart as ChartJS,
@@ -38,6 +39,7 @@ import { Line } from 'react-chartjs-2';
 import { useColors } from '../../../utils/colors';
 import { useRef } from 'react';
 import LoadingSpinner from '../../../components/LoadingSpinner';
+import { Link } from "react-router-dom";
 
 // Register ChartJS components
 ChartJS.register(
@@ -49,6 +51,27 @@ ChartJS.register(
   Tooltip,
   Legend
 );
+
+const formatDate = (dateString) => {
+  return new Date(dateString).toLocaleString('en-US', {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit'
+  });
+};
+
+const getActivityIcon = (type) => {
+  switch (type) {
+    case 'security':
+      return FiShield;
+    case 'transaction':
+      return FiShoppingBag;
+    default:
+      return FiActivity;
+  }
+};
 
 export const OverviewPanel = ({ data, metrics, spendingChart, isLoading }) => {
   const colors = useColors();
@@ -87,15 +110,28 @@ export const OverviewPanel = ({ data, metrics, spendingChart, isLoading }) => {
       }]
     };
   
-    const ActivityItem = ({ activity, index }) => (
-      <HStack key={index} p={2} bg={colors.statCardBg} borderRadius="md">
-        <Icon as={FiActivity} color={colors.buttonPrimaryBg} />
-        <Text flex={1}>{activity.description}</Text>
-        <Text fontSize="sm" color="gray.500">
-          {new Date(activity.time).toLocaleString()}
-        </Text>
-      </HStack>
-    );
+    const ActivityItem = ({ activity, index }) => {
+      const ActivityIcon = getActivityIcon(activity.type);
+      return (
+        <HStack key={index} p={2} bg={colors.statCardBg} borderRadius="md">
+          <Icon as={ActivityIcon} color={colors.buttonPrimaryBg} />
+          <VStack align="start" spacing={0} flex={1}>
+            <Text fontSize="sm">{activity.description}</Text>
+            <Text fontSize="xs" color="gray.500">
+              {formatDate(activity.time)}
+            </Text>
+          </VStack>
+          {activity.type === 'transaction' && (
+            <Badge colorScheme={
+              activity.status === 'completed' ? 'green' :
+              activity.status === 'pending' ? 'yellow' : 'red'
+            }>
+              {activity.status}
+            </Badge>
+          )}
+        </HStack>
+      );
+    };
   
     return (
     <VStack spacing={6} align="stretch">
@@ -232,6 +268,27 @@ export const HistoryPanel = ({ transactions = [], isLoading }) => {
     return <LoadingSpinner />;
   }
 
+  // Filter and aggregate transactions
+  const transactionData = transactions.filter(tx => tx.type === 'transaction');
+  const securityData = transactions.filter(tx => tx.type === 'security');
+
+  const stats = {
+    totalSpent: transactionData.reduce((sum, tx) => sum + (tx.amount || 0), 0),
+    completedOrders: transactionData.filter(tx => tx.status === 'completed').length,
+    successRate: transactionData.length ? 
+      (transactionData.filter(tx => tx.status === 'completed').length / transactionData.length * 100).toFixed(0) : 0
+  };
+
+  const renderActivity = (activity) => ({
+    date: formatDate(activity.time),
+    id: activity.id || 'N/A',
+    description: activity.description,
+    amount: activity.amount,
+    status: activity.status,
+    type: activity.type,
+    location: activity.location
+  });
+
   // Add empty state
   if (!transactions || transactions.length === 0) {
     return (
@@ -264,15 +321,6 @@ export const HistoryPanel = ({ transactions = [], isLoading }) => {
     );
   }
 
-  // Safe access to transaction properties
-  const renderTransaction = (tx) => ({
-    date: tx?.date ? new Date(tx.date).toLocaleDateString() : 'N/A',
-    transactionId: tx?.transactionId || 'N/A',
-    productName: tx?.productName || 'Unknown Product',
-    amount: tx?.amount ? tx.amount.toLocaleString() : '0',
-    status: tx?.status || 'unknown'
-  });
-
   return (
     <VStack spacing={6} align="stretch">
       {/* Summary Cards */}
@@ -280,30 +328,30 @@ export const HistoryPanel = ({ transactions = [], isLoading }) => {
         <Box p={4} bg={colors.statCardBg} borderRadius="lg">
           <VStack align="start">
             <Text color="gray.500">Total Spent</Text>
-            <Text fontSize="2xl" fontWeight="bold">₦458,200</Text>
+            <Text fontSize="2xl" fontWeight="bold">₦{stats.totalSpent.toLocaleString()}</Text>
             <Progress value={75} w="full" colorScheme="green" size="sm" />
           </VStack>
         </Box>
         <Box p={4} bg={colors.statCardBg} borderRadius="lg">
           <VStack align="start">
             <Text color="gray.500">Completed Orders</Text>
-            <Text fontSize="2xl" fontWeight="bold">24</Text>
+            <Text fontSize="2xl" fontWeight="bold">{stats.completedOrders}</Text>
             <Progress value={90} w="full" colorScheme="blue" size="sm" />
           </VStack>
         </Box>
         <Box p={4} bg={colors.statCardBg} borderRadius="lg">
           <VStack align="start">
             <Text color="gray.500">Success Rate</Text>
-            <Text fontSize="2xl" fontWeight="bold">95%</Text>
-            <Progress value={95} w="full" colorScheme="purple" size="sm" />
+            <Text fontSize="2xl" fontWeight="bold">{stats.successRate}%</Text>
+            <Progress value={stats.successRate} w="full" colorScheme="purple" size="sm" />
           </VStack>
         </Box>
       </SimpleGrid>
 
       {isMobile ? (
         <VStack spacing={4} align="stretch">
-          {transactions.map((tx, index) => {
-            const transaction = renderTransaction(tx);
+          {transactions.map((activity, index) => {
+            const data = renderActivity(activity);
             return (
               <Box
                 key={index}
@@ -314,29 +362,24 @@ export const HistoryPanel = ({ transactions = [], isLoading }) => {
               >
                 <VStack align="stretch" spacing={2}>
                   <HStack justify="space-between">
-                    <Text fontSize="sm" color="gray.500">Date</Text>
-                    <Text fontSize="sm">{transaction.date}</Text>
+                    <Text fontSize="sm" color="gray.500">{data.type}</Text>
+                    <Text fontSize="sm">{data.date}</Text>
                   </HStack>
-                  <HStack justify="space-between">
-                    <Text fontSize="sm" color="gray.500">ID</Text>
-                    <Text fontSize="sm" color={colors.buttonPrimaryBg}>{transaction.transactionId}</Text>
-                  </HStack>
-                  <HStack justify="space-between">
-                    <Text fontSize="sm" color="gray.500">Product</Text>
-                    <Text fontSize="sm">{transaction.productName}</Text>
-                  </HStack>
-                  <HStack justify="space-between">
-                    <Text fontSize="sm" color="gray.500">Amount</Text>
-                    <Text fontSize="sm" fontWeight="bold">₦{transaction.amount}</Text>
-                  </HStack>
-                  <HStack justify="flex-end">
-                    <Badge colorScheme={
-                      transaction.status === 'completed' ? 'green' :
-                      transaction.status === 'pending' ? 'yellow' : 'red'
-                    }>
-                      {transaction.status}
-                    </Badge>
-                  </HStack>
+                  <Text>{data.description}</Text>
+                  {data.type === 'transaction' && (
+                    <>
+                      <HStack justify="space-between">
+                        <Text fontSize="sm" color="gray.500">Amount</Text>
+                        <Text fontSize="sm" fontWeight="bold">₦{data.amount?.toLocaleString() || 'N/A'}</Text>
+                      </HStack>
+                      <Badge alignSelf="flex-end" colorScheme={
+                        data.status === 'completed' ? 'green' :
+                        data.status === 'pending' ? 'yellow' : 'red'
+                      }>
+                        {data.status}
+                      </Badge>
+                    </>
+                  )}
                 </VStack>
               </Box>
             );
@@ -348,32 +391,35 @@ export const HistoryPanel = ({ transactions = [], isLoading }) => {
             <Thead bg={colors.tableHeaderBg}>
               <Tr>
                 <Th>Date</Th>
-                <Th>Transaction ID</Th>
-                <Th>Product</Th>
-                <Th>Amount</Th>
+                <Th>Type</Th>
+                <Th>Description</Th>
+                <Th>Details</Th>
                 <Th>Status</Th>
               </Tr>
             </Thead>
             <Tbody>
-              {transactions.map((tx, index) => {
-                const transaction = renderTransaction(tx);
+              {transactions.map((activity, index) => {
+                const data = renderActivity(activity);
                 return (
                   <Tr key={index} _hover={{ bg: colors.tableRowHoverBg }}>
-                    <Td>{transaction.date}</Td>
+                    <Td>{data.date}</Td>
+                    <Td>{data.type}</Td>
+                    <Td>{data.description}</Td>
                     <Td>
-                      <Text color={colors.buttonPrimaryBg}>
-                        {transaction.transactionId}
-                      </Text>
+                      {data.type === 'transaction' ? 
+                        `₦${data.amount?.toLocaleString()}` : 
+                        data.location
+                      }
                     </Td>
-                    <Td>{transaction.productName}</Td>
-                    <Td>₦{transaction.amount}</Td>
                     <Td>
-                      <Badge colorScheme={
-                        transaction.status === 'completed' ? 'green' :
-                        transaction.status === 'pending' ? 'yellow' : 'red'
-                      }>
-                        {transaction.status}
-                      </Badge>
+                      {data.type === 'transaction' && (
+                        <Badge colorScheme={
+                          data.status === 'completed' ? 'green' :
+                          data.status === 'pending' ? 'yellow' : 'red'
+                        }>
+                          {data.status}
+                        </Badge>
+                      )}
                     </Td>
                   </Tr>
                 );
@@ -385,9 +431,11 @@ export const HistoryPanel = ({ transactions = [], isLoading }) => {
 
       {/* Load More Button */}
       {transactions.length > 0 && (
-        <Button variant="outline" alignSelf="center" size="sm">
-          Load More History
-        </Button>
+        <Link to='/help'>
+          <Button variant="outline" alignSelf="center" size="sm">
+            Load More History
+          </Button>
+        </Link>
       )}
     </VStack>
   );

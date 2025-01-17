@@ -33,6 +33,12 @@ const initialState = {
     data: [],
     loading: false,
     error: null
+  },
+  userActivity: {
+    lastActive: null,
+    currentPage: null,
+    preferences: {},
+    deviceInfo: null
   }
 };
 
@@ -49,7 +55,6 @@ export const userDashboardSlice = createSlice({
       state.overview.error = null;
       state.overview.data = action.payload;
       
-      console.log('Received dashboard data:', action.payload);
     },
     fetch_overview_error: (state, action) => {
       state.overview.loading = false;
@@ -92,6 +97,20 @@ export const userDashboardSlice = createSlice({
     fetch_recent_activity_error: (state, action) => {
       state.recentActivity.loading = false;
       state.recentActivity.error = action.payload;
+    },
+    track_activity: (state, action) => {
+      state.userActivity = {
+        ...state.userActivity,
+        lastActive: new Date().toISOString(),
+        currentPage: action.payload.page,
+        deviceInfo: action.payload.deviceInfo
+      };
+    },
+    update_preferences: (state, action) => {
+      state.userActivity.preferences = {
+        ...state.userActivity.preferences,
+        ...action.payload
+      };
     }
   }
 });
@@ -109,7 +128,9 @@ export const {
   fetch_spending_chart_error,
   fetch_recent_activity,
   fetch_recent_activity_success,
-  fetch_recent_activity_error
+  fetch_recent_activity_error,
+  track_activity,
+  update_preferences
 } = userDashboardSlice.actions;
 
 export const fetchDashboardOverview = () => fetch_overview();

@@ -17,5 +17,9 @@ export const DASHBOARD_TYPES = {
 
   UPDATE_LAST_SEEN: 'userDashboard/update_last_seen',
   UPDATE_LAST_SEEN_SUCCESS: 'userDashboard/update_last_seen_success',
-  UPDATE_LAST_SEEN_ERROR: 'userDashboard/update_last_seen_error'
+  UPDATE_LAST_SEEN_ERROR: 'userDashboard/update_last_seen_error',
+
+  TRACK_USER_ACTIVITY: 'userDashboard/track_activity',
+  UPDATE_USER_STATUS: 'userDashboard/update_status',
+  UPDATE_USER_PREFERENCES: 'userDashboard/update_preferences'
 };

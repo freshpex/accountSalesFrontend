@@ -29,7 +29,6 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   (response) => {
     console.log(`Response from ${response.config.url}:`, response.data);
-    // Add success flag if not present
     if (response.data && !('success' in response.data)) {
       response.data = { success: true, data: response.data };
     }
