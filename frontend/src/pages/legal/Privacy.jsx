@@ -36,7 +36,6 @@ import {
   FiDatabase,
   FiUserCheck,
   FiGlobe,
-  FiClock,
   FiAlertCircle,
   FiCheck,
 } from 'react-icons/fi';
@@ -128,7 +127,7 @@ const Privacy = () => {
                 <MotionBox
                   whileHover={{ y: -5 }}
                   p={6}
-                  bg={useColorModeValue('white', 'gray.700')}
+                  bg={bgColor}
                   borderRadius="lg"
                   boxShadow="md"
                   textAlign="center"
@@ -224,3 +223,172 @@ const Privacy = () => {
                     </Box>
                   ))}
                 </SimpleGrid>
+                </Box>
+            </Section>
+
+            {/* Your Rights Section */}
+            <Section
+              id="rights"
+              icon={FiUserCheck}
+              title="Your Rights"
+              subtitle="Understanding your data privacy rights"
+            >
+              <VStack spacing={6} align="stretch">
+                <Text>
+                  You have several rights regarding your personal data:
+                </Text>
+                <Grid templateColumns={{ base: '1fr', md: '1fr 1fr' }} gap={6}>
+                  {[
+                    {
+                      title: "Right to Access",
+                      description: "You can request a copy of your personal data"
+                    },
+                    {
+                      title: "Right to Rectification",
+                      description: "You can request corrections to your personal data"
+                    },
+                    {
+                      title: "Right to Erasure",
+                      description: "You can request deletion of your personal data"
+                    },
+                    {
+                      title: "Right to Object",
+                      description: "You can object to processing of your personal data"
+                    }
+                  ].map((right, index) => (
+                    <Box
+                      key={index}
+                      p={6}
+                      borderRadius="lg"
+                      bg={bgColor}
+                    >
+                      <Heading size="sm" mb={3}>{right.title}</Heading>
+                      <Text fontSize="sm">{right.description}</Text>
+                    </Box>
+                  ))}
+                </Grid>
+              </VStack>
+            </Section>
+
+            {/* Cookie Policy Section */}
+            <Section
+              id="cookies"
+              icon={FiGlobe}
+              title="Cookie Policy"
+              subtitle="How we use cookies and similar technologies"
+            >
+              <VStack spacing={6} align="stretch">
+                <Text>
+                  We use cookies and similar tracking technologies to improve your browsing experience and analyze site traffic.
+                </Text>
+                <Table variant="simple">
+                  <Thead>
+                    <Tr>
+                      <Th>Cookie Type</Th>
+                      <Th>Purpose</Th>
+                      <Th>Duration</Th>
+                    </Tr>
+                  </Thead>
+                  <Tbody>
+                    {[
+                      {
+                        type: "Essential",
+                        purpose: "Required for basic site functionality",
+                        duration: "Session"
+                      },
+                      {
+                        type: "Analytics",
+                        purpose: "Track site usage and performance",
+                        duration: "1 year"
+                      },
+                      {
+                        type: "Preferences",
+                        purpose: "Remember your settings",
+                        duration: "6 months"
+                      }
+                    ].map((cookie, index) => (
+                      <Tr key={index}>
+                        <Td>{cookie.type}</Td>
+                        <Td>{cookie.purpose}</Td>
+                        <Td>{cookie.duration}</Td>
+                      </Tr>
+                    ))}
+                  </Tbody>
+                </Table>
+              </VStack>
+            </Section>
+          </Box>
+
+          {/* Sidebar */}
+          <Box display={{ base: 'none', lg: 'block' }}>
+            <Box
+              position="sticky"
+              top="100px"
+              p={6}
+              borderRadius="lg"
+              bg={useColorModeValue('gray.50', 'gray.700')}
+            >
+              <VStack spacing={4} align="stretch">
+                <Heading size="md">Quick Links</Heading>
+                <List spacing={3}>
+                  {[
+                    { text: "Data Collection", href: "#collection", icon: FiDatabase },
+                    { text: "Data Security", href: "#security", icon: FiLock },
+                    { text: "Your Rights", href: "#rights", icon: FiUserCheck },
+                    { text: "Cookie Policy", href: "#cookies", icon: FiGlobe }
+                  ].map((link, index) => (
+                    <ListItem key={index}>
+                      <Link
+                        href={link.href}
+                        display="flex"
+                        alignItems="center"
+                        color={headingColor}
+                      >
+                        <ListIcon as={link.icon} />
+                        {link.text}
+                      </Link>
+                    </ListItem>
+                  ))}
+                </List>
+                <Divider />
+                <Box>
+                  <Text fontWeight="bold" mb={2}>Need Help?</Text>
+                  <Button
+                    as={RouterLink}
+                    to="/contact"
+                    colorScheme="blue"
+                    leftIcon={<FiAlertCircle />}
+                    size="sm"
+                    width="full"
+                  >
+                    Contact Support
+                  </Button>
+                </Box>
+              </VStack>
+            </Box>
+          </Box>
+        </Grid>
+      </Container>
+    </Box>
+  );
+};
+
+// Section component for reusability
+const Section = ({ id, icon, title, subtitle, children }) => (
+  <Box id={id} mb={12} scrollMarginTop="100px">
+    <Flex align="center" mb={6}>
+      <Icon as={icon} boxSize={6} color="blue.500" mr={3} />
+      <Box>
+        <Heading size="lg" color={useColorModeValue('gray.700', 'white')}>
+          {title}
+        </Heading>
+        <Text color={useColorModeValue('gray.600', 'gray.300')} mt={1}>
+          {subtitle}
+        </Text>
+      </Box>
+    </Flex>
+    {children}
+  </Box>
+);
+
+export default Privacy;
