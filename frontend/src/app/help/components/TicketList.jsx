@@ -13,7 +13,14 @@ import TicketDetail from '../tabs/ticketDetail';
 import { useState } from 'react';
 import { useColors } from '../../../utils/colors';
 
-const TicketList = ({ tickets = [], onStatusUpdate, onAddResponse, statusColors, priorityColors }) => {
+const TicketList = ({ 
+  tickets = [], 
+  onStatusUpdate, 
+  onAddResponse, 
+  onDelete,
+  statusColors, 
+  priorityColors 
+}) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [selectedTicket, setSelectedTicket] = useState(null);
   const colors = useColors();
@@ -76,6 +83,7 @@ const TicketList = ({ tickets = [], onStatusUpdate, onAddResponse, statusColors,
           ticket={selectedTicket}
           onStatusUpdate={onStatusUpdate}
           onAddResponse={onAddResponse}
+          onDelete={onDelete}
         />
       )}
     </>

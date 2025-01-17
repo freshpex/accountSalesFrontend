@@ -115,11 +115,19 @@ function* markNotificationReadSaga({ payload }) {
 
 function* deleteTicketSaga({ payload }) {
   try {
-    yield call(api.delete, `${ApiEndpoints.HELP_TICKETS}/${payload}`);
-    yield put(delete_ticket_success(payload));
-    toast.success('Ticket deleted successfully');
+    const response = yield call(api.delete, `${ApiEndpoints.HELP_TICKETS}/${payload}`);
+    
+    if (response.data.success) {
+      yield put(delete_ticket_success(payload));
+      toast.success('Ticket deleted successfully');
+      // Refresh tickets list
+      yield put(fetch_tickets());
+    } else {
+      throw new Error(response.data.error || 'Failed to delete ticket');
+    }
   } catch (error) {
-    const errorMessage = error.response?.data?.error || 'Failed to delete ticket';
+    console.error('Delete ticket error:', error);
+    const errorMessage = error.response?.data?.error || error.message || 'Failed to delete ticket';
     toast.error(errorMessage);
     yield put(delete_ticket_error(errorMessage));
   }
