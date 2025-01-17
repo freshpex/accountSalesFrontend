@@ -83,10 +83,23 @@ export const helpSlice = createSlice({
     },
     update_ticket_status: (state, action) => {
       const { ticketId, status } = action.payload;
-      const ticket = state.data.tickets.find(t => t.id === ticketId);
+      const ticket = state.data.tickets.find(t => t._id === ticketId);
       if (ticket) {
-        state.data.stats[ticket.status.toLowerCase()]--;
-        state.data.stats[status.toLowerCase()]++;
+        const oldStatus = ticket.status.toLowerCase();
+        const newStatus = status.toLowerCase();
+        
+        // Update stats
+        state.data.stats[oldStatus]--;
+        state.data.stats[newStatus]++;
+        
+        // If changing from or to resolved status
+        if (oldStatus === 'resolved') {
+          state.data.stats.resolved--;
+        }
+        if (newStatus === 'resolved') {
+          state.data.stats.resolved++;
+        }
+        
         ticket.status = status;
       }
     },

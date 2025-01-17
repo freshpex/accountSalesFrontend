@@ -24,7 +24,6 @@ const TicketList = ({
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [selectedTicket, setSelectedTicket] = useState(null);
   const colors = useColors();
-  console.log('ticket List', tickets);
 
   const handleTicketClick = (ticket) => {
     setSelectedTicket(ticket);

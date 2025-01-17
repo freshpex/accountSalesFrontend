@@ -39,8 +39,6 @@ const TicketDetail = ({
   const customerEmail = ticket?.customerDetails?.email;
   const customerAvatar = ticket?.customerDetails?.profilePicture;
 
-  console.log('ticket', ticket);
-
   const handleReply = () => {
     onAddResponse(ticket._id, {
       message: reply,
@@ -77,16 +75,22 @@ const TicketDetail = ({
           <HStack justify="space-between">
             <Text>Ticket Details</Text>
             <HStack>
-              <Select
-                width="150px"
-                value={status}
-                onChange={handleStatusChange}
-                size="sm"
-              >
-                <option value="open">Open</option>
-                <option value="pending">Pending</option>
-                <option value="resolved">Resolved</option>
-              </Select>
+              {isAdmin ? (
+                <Select
+                  width="150px"
+                  value={status}
+                  onChange={handleStatusChange}
+                  size="sm"
+                >
+                  <option value="open">Open</option>
+                  <option value="pending">Pending</option>
+                  <option value="resolved">Resolved</option>
+                </Select>
+              ) : (
+                <Badge {...ticketStatusColors[ticket?.status]}>
+                  {ticket?.status}
+                </Badge>
+              )}
               <Button
                 colorScheme="red"
                 size="sm"

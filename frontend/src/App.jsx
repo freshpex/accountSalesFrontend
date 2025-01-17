@@ -5,7 +5,7 @@ import SuspenseLoadingUI from './UI';
 import './App.css';
 import ErrorBoundary from './pages/errorBoundary';
 
-const AppRoutes = lazy(() => import('./routes'));
+const AppRoutes = lazy(() => import('./components/routes'));
 
 function App() {
   return (
