@@ -41,16 +41,9 @@ const TransactionModal = ({ isOpen, onClose, data, action, onSave, onDelete }) =
     customerDetails: {
       name: '',
       email: '',
-      phone: '',
-      address: '',
-      country: ''
+      phone: ''
     },
-    metadata: {
-      productName: '',
-      customerName: ''
-    },
-    notes: '',
-    transactionId: ''
+    notes: ''
   });
 
   const [selectedProduct, setSelectedProduct] = useState(null);
@@ -76,18 +69,19 @@ const TransactionModal = ({ isOpen, onClose, data, action, onSave, onDelete }) =
     if (data && (action === 'edit' || action === 'view')) {
       setFormData({
         productId: data.productId || '',
-        amount: data.price || '',
-        quantity: data.quantity || 1,
-        status: data.status || 'pending',
-        paymentStatus: data.payment || 'pending',
+        amount: data.amount || '',
+        currency: data.currency || 'NGN',
         paymentMethod: data.paymentMethod || 'card',
-        notes: data.notes || '',
-        metadata: {
-          productName: data.productName || '',
-          customerName: data.customer || ''
+        paymentStatus: data.paymentStatus || 'pending',
+        status: data.status || 'pending',
+        customerDetails: {
+          name: data.customerDetails?.name || '',
+          email: data.customerDetails?.email || '',
+          phone: data.customerDetails?.phone || ''
         },
+        notes: data.notes || '',
         transactionId: data.transactionId || '',
-        id: data.id || data._id
+        id: data.id
       });
 
       if (data.productId) {
@@ -134,32 +128,87 @@ const TransactionModal = ({ isOpen, onClose, data, action, onSave, onDelete }) =
   // Validate form before submission
   const validateForm = () => {
     const errors = {};
-    if (!formData.productId) errors.productId = 'Product ID is required';
-    if (!formData.amount || formData.amount <= 0) errors.amount = 'Valid amount is required';
-    if (!formData.metadata.productName) errors.productName = 'Product name is required';
-    if (!formData.metadata.customerName) errors.customerName = 'Customer name is required';
-    return errors;
+    
+    try {
+      if (!formData.productId) {
+        errors.productId = 'Product ID is required';
+      }
+      
+      if (!formData.amount || formData.amount <= 0) {
+        errors.amount = 'Valid amount is required';
+      }
+      
+      if (!formData.customerDetails?.name?.trim()) {
+        errors.customerName = 'Customer name is required';
+      }
+      
+      if (!formData.customerDetails?.email?.trim()) {
+        errors.email = 'Customer email is required';
+      } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.customerDetails.email)) {
+        errors.email = 'Valid email address is required';
+      }
+      
+      if (!formData.paymentMethod) {
+        errors.paymentMethod = 'Payment method is required';
+      }
+
+      return {
+        isValid: Object.keys(errors).length === 0,
+        errors
+      };
+    } catch (error) {
+      console.error('Validation error:', error);
+      return {
+        isValid: false,
+        errors: { general: 'Validation failed. Please check all fields.' }
+      };
+    }
   };
 
   const handleSubmit = () => {
-    const { isValid, errors } = validateForm();
-    if (!isValid) {
-      Object.values(errors).forEach(error => toast.error(error));
-      return;
-    }
-
-    const submissionData = {
-      ...formData,
-      action: isEdit ? 'edit' : 'add',
-      metadata: {
-        ...formData.metadata,
-        customerName: formData.customerDetails.name,
-        customerEmail: formData.customerDetails.email,
-        productName: formData.metadata.productName
+    try {
+      const validation = validateForm();
+      
+      if (!validation.isValid) {
+        // Show all validation errors
+        Object.values(validation.errors).forEach(error => {
+          toast.error(error);
+        });
+        return;
       }
-    };
 
-    onSave(submissionData);
+      // Format data for API
+      const submissionData = {
+        productId: formData.productId,
+        amount: Number(formData.amount),
+        currency: formData.currency,
+        paymentMethod: formData.paymentMethod,
+        paymentStatus: formData.paymentStatus.toLowerCase(),
+        status: formData.status.toLowerCase(),
+        customerDetails: {
+          name: formData.customerDetails.name.trim(),
+          email: formData.customerDetails.email.toLowerCase().trim(),
+          phone: formData.customerDetails.phone,
+          address: formData.customerDetails.address,
+          country: formData.customerDetails.country
+        },
+        metadata: {
+          customerName: formData.customerDetails.name,
+          customerEmail: formData.customerDetails.email
+        },
+        notes: formData.notes
+      };
+
+      if (isEdit) {
+        submissionData.id = formData.id;
+        submissionData.action = 'edit';
+      }
+
+      onSave(submissionData);
+    } catch (error) {
+      console.error('Submit error:', error);
+      toast.error('Failed to submit form. Please try again.');
+    }
   };
 
   const renderProductOptions = () => {
@@ -225,7 +274,6 @@ const TransactionModal = ({ isOpen, onClose, data, action, onSave, onDelete }) =
                 {data?.productImage && (
                   <Image
                     src={data.productImage}
-                    alt={formData.metadata.productName}
                     height={{ base: "200px", md: "100px" }}
                     width="100%"
                     objectFit="cover"
@@ -236,7 +284,7 @@ const TransactionModal = ({ isOpen, onClose, data, action, onSave, onDelete }) =
                 <FormControl>
                   <FormLabel>Transaction ID</FormLabel>
                   <Input
-                    value={formData.transactionId || 'Will be generated'}
+                    value={formData?.transactionId || 'Will be generated'}
                     isReadOnly={true}
                     bg="gray.100"
                   />
@@ -246,7 +294,7 @@ const TransactionModal = ({ isOpen, onClose, data, action, onSave, onDelete }) =
               <FormControl isRequired>
                 <FormLabel>Select Product</FormLabel>
                 <Select
-                  value={formData.productId}
+                  value={formData?.productId}
                   onChange={handleProductSelect}
                   isDisabled={isReadOnly || isLoading}
                   placeholder={isLoading ? "Loading products..." : "Select a product"}
@@ -256,20 +304,21 @@ const TransactionModal = ({ isOpen, onClose, data, action, onSave, onDelete }) =
               </FormControl>
 
               <FormControl>
-                <FormLabel>Product Name</FormLabel>
+                <FormLabel>Customer</FormLabel>
                 <Input
-                  value={formData.metadata.productName}
-                  onChange={handleChange('metadata.productName')}
+                  value={formData?.metadata?.customerName}
+                  onChange={handleChange('metadata.customerName')}
                   isReadOnly={isReadOnly}
                   bg={isReadOnly ? "gray.100" : colors.bgColor}
                 />
               </FormControl>
 
-              <FormControl>
-                <FormLabel>Customer</FormLabel>
+              <FormControl isRequired>
+                <FormLabel>Customer Email</FormLabel>
                 <Input
-                  value={formData.metadata.customerName}
-                  onChange={handleChange('metadata.customerName')}
+                  type="email"
+                  value={formData.customerDetails.email}
+                  onChange={handleChange('customerDetails.email')}
                   isReadOnly={isReadOnly}
                   bg={isReadOnly ? "gray.100" : colors.bgColor}
                 />
@@ -279,7 +328,7 @@ const TransactionModal = ({ isOpen, onClose, data, action, onSave, onDelete }) =
                 <FormControl>
                   <FormLabel>Price</FormLabel>
                   <Input
-                    value={formData.amount}
+                    value={formData?.amount}
                     onChange={handleChange('amount')}
                     type="number"
                     isReadOnly={isReadOnly}
@@ -291,7 +340,7 @@ const TransactionModal = ({ isOpen, onClose, data, action, onSave, onDelete }) =
                   <FormLabel>Date</FormLabel>
                   <Input
                     type="date"
-                    value={formData.date}
+                    value={formData?.date}
                     onChange={handleChange('date')}
                     isReadOnly={isReadOnly}
                     bg={isReadOnly ? "gray.100" : colors.bgColor}
@@ -303,7 +352,7 @@ const TransactionModal = ({ isOpen, onClose, data, action, onSave, onDelete }) =
                 <FormControl>
                   <FormLabel>Payment Status</FormLabel>
                   <Select
-                    value={formData.paymentStatus}
+                    value={formData?.paymentStatus}
                     onChange={handleChange('paymentStatus')}
                     isDisabled={isReadOnly}
                     bg={isReadOnly ? "gray.100" : colors.bgColor}
@@ -317,7 +366,7 @@ const TransactionModal = ({ isOpen, onClose, data, action, onSave, onDelete }) =
                 <FormControl>
                   <FormLabel>Status</FormLabel>
                   <Select
-                    value={formData.status}
+                    value={formData?.status}
                     onChange={handleChange('status')}
                     isDisabled={isReadOnly}
                     bg={isReadOnly ? "gray.100" : colors.bgColor}

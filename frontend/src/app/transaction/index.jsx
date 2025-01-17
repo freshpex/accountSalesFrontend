@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
   Box, Container, Flex, Input, InputGroup, InputLeftElement,
   Text, Menu, MenuButton, MenuList, MenuItem, Breadcrumb, BreadcrumbItem,
-  BreadcrumbLink, Button, Stack
+  BreadcrumbLink, Button, Stack, Tabs, TabList, Tab,
 } from '@chakra-ui/react';
 import { SearchIcon, ChevronDownIcon } from '@chakra-ui/icons';
 import { FiArchive } from 'react-icons/fi';
@@ -29,6 +29,30 @@ import {
   reset_filters
 } from './redux/reducer';
 import { useColors } from '../../utils/colors';
+
+const TransactionTabs = () => {
+  const [activeTab, setActiveTab] = useState('all');
+  const stats = useSelector(getTransactionStats);
+
+  const tabs = [
+    { id: 'all', label: 'All', count: stats?.all || 0 },
+    { id: 'completed', label: 'Completed', count: stats?.completed || 0 },
+    { id: 'pending', label: 'Pending', count: stats?.pending || 0 },
+    { id: 'failed', label: 'Failed', count: stats?.failed || 0 },
+  ];
+
+  return (
+    <Tabs onChange={setActiveTab} value={activeTab}>
+      <TabList>
+        {tabs.map(tab => (
+          <Tab key={tab.id}>
+            {tab.label} ({tab.count})
+          </Tab>
+        ))}
+      </TabList>
+    </Tabs>
+  );
+};
 
 const Transaction = () => {
   const dispatch = useDispatch();
@@ -88,13 +112,6 @@ const Transaction = () => {
     dispatch(delete_transaction(data.id || data._id));
     handleModalClose();
   };
-
-  const tabs = [
-    { key: 'all', label: 'All Transactions', count: stats?.all || 0 },
-    { key: 'shipping', label: 'Shipping', count: stats?.shipping || 0 },
-    { key: 'completed', label: 'Completed', count: stats?.completed || 0 },
-    { key: 'cancelled', label: 'Cancelled', count: stats?.cancelled || 0 },
-  ];
 
   useEffect(() => {
     dispatch(fetch_transactions({ 
@@ -265,28 +282,7 @@ const Transaction = () => {
             }
           }}
         >
-          <Flex 
-            borderBottom="1px"
-            borderColor={colors.borderColor}
-            whiteSpace="nowrap"
-            minW="min-content"
-          >
-            {tabs.map((tab) => (
-              <Box
-                key={tab.key}
-                px={3}
-                py={2}
-                cursor="pointer"
-                fontSize={{ base: "sm", md: "md" }}
-                borderBottom="2px"
-                borderColor={selectedTab === tab.key ? 'blue.500' : 'transparent'}
-                color={selectedTab === tab.key ? 'blue.500' : colors.textColor}
-                onClick={() => setSelectedTab(tab.key)}
-              >
-                {tab.label} ({stats[tab.key] || 0})
-              </Box>
-            ))}
-          </Flex>
+          <TransactionTabs />
         </Box>
 
         <Box 

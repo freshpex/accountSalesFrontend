@@ -11,23 +11,21 @@ import {
   HStack,
   Box,
   Text,
-  Select,
   Button,
-  Stack,
   useBreakpointValue,
   Flex,
   Image,
-  Tooltip,
-  SimpleGrid,
   VStack,
 } from '@chakra-ui/react';
-import { ViewIcon, DeleteIcon, ChevronLeftIcon, ChevronRightIcon, EditIcon } from '@chakra-ui/icons';
-import { motion, AnimatePresence } from 'framer-motion';
+import { ViewIcon, DeleteIcon, EditIcon } from '@chakra-ui/icons';
+import { motion } from 'framer-motion';
 import { useColors } from '../../../utils/colors';
+import { STATUS_CONFIG, PAYMENT_STATUS_CONFIG } from '../../../utils/constants';
+import { convertToPublicUrl } from '../../../utils/supabase';
 
 const MotionBox = motion(Box);
 
-const TransactionTable = ({
+const TransactionTable = ({ 
   data = [],
   selectedItems = [],
   onSelectAll,
@@ -42,35 +40,21 @@ const TransactionTable = ({
   onDelete,
   getStatusColor,
   getPaymentColor
-}) => {
+ }) => {
   const isMobile = useBreakpointValue({ base: true, md: false });
   const colors = useColors();
 
-  const renderStatus = (status, payment) => {
-    // Status badge setup
-    const statusConfig = {
-      completed: { color: 'green', label: 'Completed' },
-      pending: { color: 'yellow', label: 'Pending' },
-      cancelled: { color: 'red', label: 'Cancelled' },
-      processing: { color: 'blue', label: 'Processing' },
-      failed: { color: 'red', label: 'Failed' }
-    };
-
-    // Payment badge setup
-    const paymentConfig = {
-      paid: { color: 'green', label: 'Paid' },
-      pending: { color: 'yellow', label: 'Pending' },
-      failed: { color: 'red', label: 'Failed' },
-      refunded: { color: 'purple', label: 'Refunded' }
-    };
+  const renderStatus = (status, paymentStatus) => {
+    const statusConfig = STATUS_CONFIG[status?.toLowerCase()] || STATUS_CONFIG.pending;
+    const paymentConfig = PAYMENT_STATUS_CONFIG[paymentStatus?.toLowerCase()] || PAYMENT_STATUS_CONFIG.pending;
 
     return (
       <HStack spacing={2}>
-        <Badge {...getStatusColor(status)} fontSize="xs">
-          {statusConfig[status]?.label || status}
+        <Badge colorScheme={statusConfig.colorScheme} fontSize="xs">
+          {statusConfig.label}
         </Badge>
-        <Badge {...getPaymentColor(payment)} fontSize="xs">
-          {paymentConfig[payment]?.label || payment}
+        <Badge colorScheme={paymentConfig.colorScheme} fontSize="xs">
+          {paymentConfig.label}
         </Badge>
       </HStack>
     );
@@ -84,127 +68,65 @@ const TransactionTable = ({
       exit={{ opacity: 0, y: -20 }}
       layout
     >
-      <VStack spacing={4} p={4} bg={colors.cardBg} borderRadius="xl" position="relative">
-        {/* Status Badge - Floating */}
-        <HStack 
-          position="absolute" 
-          top={-2} 
-          right={-2} 
-          spacing={2} 
-          bg={colors.glassBg} 
-          p={2} 
-          borderRadius="full"
-          backdropFilter="blur(8px)"
-        >
-          {renderStatus(transaction.status, transaction.paymentStatus)}
-        </HStack>
-
-        {/* Header */}
-        <HStack w="full" justify="space-between">
-          <VStack align="start" spacing={0}>
-            <Text fontSize="xs" color="gray.500">Transaction ID</Text>
-            <Text fontWeight="bold" color="blue.500">
-              #{transaction.transactionId}
-            </Text>
+      <VStack spacing={4}>
+        {/* Header with ID and Amount */}
+        <Flex justify="space-between" w="full">
+          <VStack align="start">
+            <Text fontSize="sm" color="gray.500">Transaction ID</Text>
+            <Text fontWeight="semibold">{transaction.transactionId}</Text>
           </VStack>
-          <VStack align="end" spacing={0}>
-            <Text fontSize="xs" color="gray.500">Amount</Text>
-            <Text fontWeight="bold" fontSize="lg">
-              {transaction.currency} {transaction.amount?.toLocaleString()}
-            </Text>
+          <VStack align="end">
+            <Text fontSize="sm" color="gray.500">Amount</Text>
+            <Text fontWeight="bold">{transaction.currency} {transaction.amount}</Text>
           </VStack>
-        </HStack>
+        </Flex>
 
         {/* Product Info */}
-        <HStack w="full" spacing={4}>
-          <Box 
-            position="relative" 
-            w="80px" 
-            h="80px"
-            borderRadius="lg"
-            overflow="hidden"
-          >
-            <Image
-              src={transaction.productImage}
-              alt={transaction.productName}
-              layout="fill"
-              objectFit="cover"
-              fallbackSrc="/placeholder.png"
-            />
-            {transaction.productType && (
-              <Box
-                position="absolute"
-                bottom={0}
-                w="full"
-                bg={colors.glassBg}
-                p={1}
-                textAlign="center"
-              >
-                <Text fontSize="xs" color="white">
-                  {transaction.productType}
-                </Text>
-              </Box>
-            )}
-          </Box>
-          <VStack align="start" flex={1} spacing={1}>
-            <Text fontWeight="medium" noOfLines={2}>
-              {transaction.productName}
-            </Text>
-            <Text fontSize="sm" color="gray.500">
-              {new Date(transaction.createdAt).toLocaleString()}
-            </Text>
-          </VStack>
-        </HStack>
+        {transaction.productImage && (
+          <Image
+            src={convertToPublicUrl(transaction.productImage)}
+            alt={transaction.productType}
+            borderRadius="md"
+            objectFit="cover"
+          />
+        )}
 
         {/* Customer Info */}
-        <VStack w="full" align="start" spacing={1} bg={colors.hoverBg} p={3} borderRadius="md">
-          <Text fontSize="xs" color="gray.500">Customer Details</Text>
-          <Text fontWeight="medium">{transaction.customerDetails.name}</Text>
-          <Text fontSize="sm">{transaction.customerDetails.email}</Text>
-          {transaction.customerDetails.phone && (
-            <Text fontSize="sm">{transaction.customerDetails.phone}</Text>
-          )}
-        </VStack>
+        <Box w="full" p={3} bg="gray.50" borderRadius="md">
+          <VStack align="start" spacing={1}>
+            <Text fontSize="sm" color="gray.500">Customer</Text>
+            <Text fontWeight="medium">{transaction.customerDetails.name}</Text>
+            <Text fontSize="sm">{transaction.customerDetails.email}</Text>
+            {transaction.customerDetails.phone && (
+              <Text fontSize="sm">{transaction.customerDetails.phone}</Text>
+            )}
+          </VStack>
+        </Box>
 
-        {/* Payment Info */}
-        <SimpleGrid columns={2} w="full" spacing={4}>
-          <VStack align="start" spacing={0}>
-            <Text fontSize="xs" color="gray.500">Payment Method</Text>
-            <Text>{transaction.paymentMethod}</Text>
-          </VStack>
-          <VStack align="start" spacing={0}>
-            <Text fontSize="xs" color="gray.500">Reference</Text>
-            <Text noOfLines={1}>{transaction.flutterwaveReference || 'N/A'}</Text>
-          </VStack>
-        </SimpleGrid>
+        {/* Status Badges */}
+        <HStack w="full" justify="space-between">
+          <Badge colorScheme={STATUS_CONFIG[transaction.status?.toLowerCase()]?.colorScheme || 'gray'}>
+            {STATUS_CONFIG[transaction.status?.toLowerCase()]?.label || transaction.status}
+          </Badge>
+          <Badge colorScheme={PAYMENT_STATUS_CONFIG[transaction.paymentStatus?.toLowerCase()]?.colorScheme || 'gray'}>
+            {PAYMENT_STATUS_CONFIG[transaction.paymentStatus?.toLowerCase()]?.label || transaction.paymentStatus}
+          </Badge>
+        </HStack>
 
         {/* Actions */}
-        <HStack w="full" spacing={2} pt={2} borderTop="1px" borderColor={colors.borderColor}>
-          <Button
-            size="sm"
-            variant="ghost"
-            leftIcon={<ViewIcon />}
+        <HStack w="full" spacing={2}>
+          <IconButton
+            icon={<ViewIcon />}
             onClick={() => onView('view', transaction)}
-            flex={1}
-          >
-            View
-          </Button>
-          <Button
-            size="sm"
-            variant="ghost"
-            leftIcon={<EditIcon />}
+          />
+          <IconButton
+            icon={<EditIcon />}
             onClick={() => onEdit('edit', transaction)}
-            flex={1}
-          >
-            Edit
-          </Button>
+          />
           <IconButton
             icon={<DeleteIcon />}
-            variant="ghost"
-            colorScheme="red"
-            size="sm"
             onClick={() => onDelete('delete', transaction)}
-            aria-label="Delete transaction"
+            colorScheme="red"
           />
         </HStack>
       </VStack>
@@ -251,7 +173,7 @@ const TransactionTable = ({
                 <HStack>
                   {transaction.productImage && (
                     <Image
-                      src={transaction.productImage}
+                      src={convertToPublicUrl(transaction.productImage)}
                       alt={transaction.productName}
                       boxSize="40px"
                       objectFit="cover"
