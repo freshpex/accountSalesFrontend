@@ -10,6 +10,7 @@ import customerReducer from '../app/customer/redux/reducer';
 import helpReducer from '../app/help/redux/reducer';
 import transactionReducer from '../app/transaction/redux/reducer';
 import layoutReducer from '../components/layout/redux/reducer';
+import userDashboardReducer from '../app/userDashboard/redux/reducer';
 
 const rootReducer = combineReducers({
   register: registerReducer,
@@ -23,6 +24,7 @@ const rootReducer = combineReducers({
   help: helpReducer,
   transaction: transactionReducer,
   layout: layoutReducer,
+  userDashboard: userDashboardReducer,
 });
 
 export default rootReducer;
@@ -37,3 +39,4 @@ export const selectProductState = (state) => state.product;
 export const selectCustomerState = (state) => state.customer;
 export const selectTransactionState = (state) => state.transaction;
 export const selectHelpState = (state) => state.help;
+export const selectUserDashboardState = (state) => state.userDashboard;

@@ -21,6 +21,7 @@ const ChangePassword = lazy(() => import('./app/authentication/ForgotPassword/ch
 const ProductDetail = lazy(() => import(/* webpackChunkName: "product-detail" */ './app/product/pages/ProductDetail'));
 const PaymentCallback = lazy(() => import('./app/payment/PaymentCallback'));
 const EscrowDetails = lazy(() => import(/* webpackChunkName: "escrow" */ './app/product/pages/EscrowDetails.jsx'));
+const UserDashboard  = lazy(() => import('./app/userDashboard/UserDashboard.jsx'));
 
 const AppRoutes = () => {
   return (
@@ -51,7 +52,8 @@ const AppRoutes = () => {
           <Route path="/transaction" element={<Transaction />} />
           <Route path="/customers" element={<Customers />} />
           <Route path="/sales-report" element={<SalesReport />} />
-          <Route path="/escrow/:escrowId" element={<EscrowDetails />} />
+          <Route path="/escrow/:escrowId" element={<EscrowDetails />} />          
+          <Route path="/userdashboard" element={<UserDashboard />} />
         </Route>
 
         {/* 404 and catch-all route */}

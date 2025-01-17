@@ -10,6 +10,7 @@ import customerSagas from '../app/customer/redux/saga';
 import helpSagas from '../app/help/redux/saga';
 import transactionSagas from '../app/transaction/redux/saga';
 import { watchLayout } from '../components/layout/redux/saga';
+import userDashboardSaga from '../app/userDashboard/redux/saga';
 
 export default function* rootSaga() {
   yield all([
@@ -24,6 +25,7 @@ export default function* rootSaga() {
     fork(helpSagas),
     fork(transactionSagas),
     fork(watchLayout),
+    fork(userDashboardSaga),
     // Add other sagas here
   ]);
 }

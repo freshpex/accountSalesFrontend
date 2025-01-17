@@ -157,4 +157,9 @@ export const ApiEndpoints = {
   ESCROW_DETAILS: '/api/v1/escrow',
   ESCROW: '/api/v1/escrow',
   TRANSACTION_PRODUCTS: '/api/v1/products/available',
+  overview: '/api/v1/user/dashboard/overview',
+  metrics: '/api/v1/user/dashboard/metrics',
+  spendingChart: '/api/v1/user/dashboard/spending-chart',
+  recentActivity: '/api/v1/user/dashboard/recent-activity',
+  updateLastSeen: '/api/v1/user/dashboard/update-last-seen'
 };

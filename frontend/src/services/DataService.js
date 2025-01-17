@@ -10,8 +10,10 @@ const api = axios.create({
   },
 });
 
+// Add request interceptor
 api.interceptors.request.use(
   async (config) => {
+    console.log(`Making ${config.method.toUpperCase()} request to: ${config.url}`);
     const token = await getWithExpiry("x-access-token");
     // console.log('Token:', token);
     if (token) {
@@ -26,6 +28,7 @@ api.interceptors.request.use(
 
 api.interceptors.response.use(
   (response) => {
+    console.log(`Response from ${response.config.url}:`, response.data);
     // Add success flag if not present
     if (response.data && !('success' in response.data)) {
       response.data = { success: true, data: response.data };
@@ -34,6 +37,7 @@ api.interceptors.response.use(
   },
   (error) => {
     if (error.response?.status === 401) {
+      console.log('Error', error)
       localStorage.clear();
       window.location.href = '/login';
     }
