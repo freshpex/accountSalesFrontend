@@ -357,9 +357,10 @@ const TransactionModal = ({ isOpen, onClose, data, action, onSave, onDelete }) =
                     isDisabled={isReadOnly}
                     bg={isReadOnly ? "gray.100" : colors.bgColor}
                   >
-                    <option value="Paid">Paid</option>
-                    <option value="Unpaid">Unpaid</option>
                     <option value="Pending">Pending</option>
+                    <option value="Paid">Paid</option>
+                    <option value="failed">Failed</option>
+                    <option value="refunded">Refunded</option>
                   </Select>
                 </FormControl>
 
@@ -371,9 +372,11 @@ const TransactionModal = ({ isOpen, onClose, data, action, onSave, onDelete }) =
                     isDisabled={isReadOnly}
                     bg={isReadOnly ? "gray.100" : colors.bgColor}
                   >
-                    <option value="Completed">Completed</option>
-                    <option value="Shipping">Shipping</option>
+                    <option value="Completed">pending</option>
+                    <option value="Shipping">processing</option>
+                    <option value="Shipping">completed</option>
                     <option value="Cancelled">Cancelled</option>
+                    <option value="Shipping">failed</option>
                   </Select>
                 </FormControl>
               </HStack>

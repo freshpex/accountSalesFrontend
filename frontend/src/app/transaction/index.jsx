@@ -3,10 +3,12 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
   Box, Container, Flex, Input, InputGroup, InputLeftElement,
   Text, Menu, MenuButton, MenuList, MenuItem, Breadcrumb, BreadcrumbItem,
-  BreadcrumbLink, Button, Stack, Tabs, TabList, Tab,
+  BreadcrumbLink, Button, TabList, Tabs, Tab, VStack, Icon, HStack, Grid, SimpleGrid
 } from '@chakra-ui/react';
 import { SearchIcon, ChevronDownIcon } from '@chakra-ui/icons';
-import { FiArchive } from 'react-icons/fi';
+import { FiArchive, FiInbox, FiCheckCircle, FiClock, FiXCircle } from 'react-icons/fi';
+import { AddIcon } from '@chakra-ui/icons';
+import { motion } from 'framer-motion';
 import TransactionModal from './modal/TransactionModal';
 import TransactionTable from './components/tables';
 import { getStatusColor, getPaymentColor } from '../../utils/utils';
@@ -31,22 +33,52 @@ import {
 import { useColors } from '../../utils/colors';
 
 const TransactionTabs = () => {
+  const colors = useColors();
   const [activeTab, setActiveTab] = useState('all');
   const stats = useSelector(getTransactionStats);
 
   const tabs = [
-    { id: 'all', label: 'All', count: stats?.all || 0 },
-    { id: 'completed', label: 'Completed', count: stats?.completed || 0 },
-    { id: 'pending', label: 'Pending', count: stats?.pending || 0 },
-    { id: 'failed', label: 'Failed', count: stats?.failed || 0 },
+    { id: 'all', label: 'All', count: stats?.all || 0, icon: FiInbox },
+    { id: 'completed', label: 'Completed', count: stats?.completed || 0, icon: FiCheckCircle },
+    { id: 'pending', label: 'Pending', count: stats?.pending || 0, icon: FiClock },
+    { id: 'failed', label: 'Failed', count: stats?.failed || 0, icon: FiXCircle },
   ];
 
   return (
-    <Tabs onChange={setActiveTab} value={activeTab}>
-      <TabList>
+    <Tabs 
+      onChange={setActiveTab} 
+      value={activeTab}
+      variant="unstyled"
+      w="100%"
+    >
+      <TabList
+        bg={colors.cardBg}
+        p={2}
+        borderRadius="lg"
+        border="1px solid"
+        borderColor={colors.borderColor}
+        display="flex"
+        gap={2}
+      >
         {tabs.map(tab => (
-          <Tab key={tab.id}>
-            {tab.label} ({tab.count})
+          <Tab
+            key={tab.id}
+            flex={1}
+            py={3}
+            px={4}
+            borderRadius="md"
+            _selected={{
+              bg: colors.accentLight,
+              color: colors.buttonPrimaryBg,
+              fontWeight: "600",
+            }}
+            transition="all 0.2s"
+          >
+            <VStack spacing={1}>
+              <Icon as={tab.icon} boxSize={5} />
+              <Text fontSize="sm">{tab.label}</Text>
+              <Text fontSize="xs" fontWeight="bold">{tab.count}</Text>
+            </VStack>
           </Tab>
         ))}
       </TabList>
@@ -60,8 +92,6 @@ const Transaction = () => {
   const stats = useSelector(getTransactionStats);
   const meta = useSelector(getTransactionMeta);
   const loading = useSelector(getLoading);
-
-  console.log('Transactions:', transactions);
   
   const [selectedItems, setSelectedItems] = useState([]);
 
@@ -180,95 +210,85 @@ const Transaction = () => {
     return (
       <>
         {/* Search and Actions */}
-        <Flex 
-          direction={{ base: "column", md: "row" }} 
-          justify="space-between" 
-          gap={3} 
-          mb={4}
-          w="100%"
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3 }}
         >
-          <InputGroup maxW={{ base: "100%", md: "400px" }}>
-            <InputLeftElement pointerEvents="none">
-              <SearchIcon color="gray.400" />
-            </InputLeftElement>
-            <Input
-              placeholder="Search..."
-              value={searchQuery}
-              onChange={(e) => handleSearch(e.target.value)}
-            />
-          </InputGroup>
-
-          <Stack 
-            direction={{ base: "row", md: "row" }} 
-            spacing={2} 
-            w={{ base: "100%", md: "auto" }}
-            overflowX={{ base: "auto", md: "visible" }}
-            pb={{ base: 2, md: 0 }}
-            sx={{
-              '::-webkit-scrollbar': {
-                display: 'none'
-              }
-            }}
+          <Grid
+            templateColumns={{ base: "1fr", md: "1fr auto" }}
+            gap={4}
+            mb={6}
           >
-            <Menu>
-              <MenuButton 
-                as={Button} 
-                rightIcon={<ChevronDownIcon />}
+            <InputGroup
+              bg={colors.cardBg}
+              borderRadius="lg"
+              border="1px solid"
+              borderColor={colors.borderColor}
+            >
+              <InputLeftElement pointerEvents="none">
+                <SearchIcon color="gray.400" />
+              </InputLeftElement>
+              <Input
+                placeholder="Search transactions..."
+                border="none"
+                _focus={{ boxShadow: "none" }}
+                value={searchQuery}
+                onChange={(e) => handleSearch(e.target.value)}
+              />
+            </InputGroup>
+
+            <HStack spacing={2}>
+              <Menu>
+                <MenuButton 
+                  as={Button} 
+                  rightIcon={<ChevronDownIcon />}
+                  minW="auto"
+                  size="sm"
+                >
+                  Filter
+                </MenuButton>
+                <MenuList>
+                  <MenuItem>
+                    <Text>Payment Status</Text>
+                    <Menu placement="right-start">
+                      <MenuButton as={Box} w="full" cursor="pointer">
+                        Payment Status
+                      </MenuButton>
+                      <MenuList>
+                        <MenuItem onClick={() => handleFilter('payment', 'Paid')}>Paid</MenuItem>
+                        <MenuItem onClick={() => handleFilter('payment', 'Unpaid')}>Unpaid</MenuItem>
+                        <MenuItem onClick={() => handleFilter('payment', 'Pending')}>Pending</MenuItem>
+                        <MenuItem onClick={() => handleFilter('payment', null)}>Clear</MenuItem>
+                      </MenuList>
+                    </Menu>
+                  </MenuItem>
+                  <MenuItem>
+                    <Input
+                      type="date"
+                      onChange={(e) => handleFilter('date', e.target.value)}
+                      bg={colors.bgColor}
+                      color={colors.textColor}
+                    />
+                  </MenuItem>
+                  <MenuItem onClick={handleClearFilters}>
+                    Clear All Filters
+                  </MenuItem>
+                </MenuList>
+              </Menu>
+
+              <Button 
+                onClick={handleExport} 
+                leftIcon={<ChevronDownIcon />}
+                isDisabled={!transactions.length}
                 minW="auto"
                 size="sm"
               >
-                Filter
-              </MenuButton>
-              <MenuList>
-                <MenuItem>
-                  <Text>Payment Status</Text>
-                  <Menu placement="right-start">
-                    <MenuButton as={Box} w="full" cursor="pointer">
-                      Payment Status
-                    </MenuButton>
-                    <MenuList>
-                      <MenuItem onClick={() => handleFilter('payment', 'Paid')}>Paid</MenuItem>
-                      <MenuItem onClick={() => handleFilter('payment', 'Unpaid')}>Unpaid</MenuItem>
-                      <MenuItem onClick={() => handleFilter('payment', 'Pending')}>Pending</MenuItem>
-                      <MenuItem onClick={() => handleFilter('payment', null)}>Clear</MenuItem>
-                    </MenuList>
-                  </Menu>
-                </MenuItem>
-                <MenuItem>
-                  <Input
-                    type="date"
-                    onChange={(e) => handleFilter('date', e.target.value)}
-                    bg={colors.bgColor}
-                    color={colors.textColor}
-                  />
-                </MenuItem>
-                <MenuItem onClick={handleClearFilters}>
-                  Clear All Filters
-                </MenuItem>
-              </MenuList>
-            </Menu>
-
-            <Button 
-              onClick={handleExport} 
-              leftIcon={<ChevronDownIcon />}
-              isDisabled={!transactions.length}
-              minW="auto"
-              size="sm"
-            >
-              Export
-            </Button>
-
-            <Button 
-              colorScheme="blue" 
-              leftIcon={<ChevronDownIcon />}
-              onClick={() => handleModalOpen('add')}
-              minW="auto"
-              size="sm"
-            >
-              New
-            </Button>
-          </Stack>
-        </Flex>
+                Export
+              </Button>
+            </HStack>
+          </Grid>
+        </motion.div>
 
         {/* Tabs */}
         <Box 
@@ -305,6 +325,7 @@ const Transaction = () => {
             getStatusColor={getStatusColor}
             getPaymentColor={getPaymentColor}
             onEdit={handleModalOpen}
+            colors={colors}
           />
         </Box>
       </>
@@ -329,28 +350,48 @@ const Transaction = () => {
   };
 
   return (
-    <Container 
-      maxW="100%"
-      p={0}
-      bg={colors.bgColor} 
-      color={colors.textColor}
-    >
-      {/* Header */}
-      <Box px={3} py={4}>
-        <Text fontSize={{ base: "xl", md: "2xl" }} mb={2}>
-          Transactions
-        </Text>
-        <Breadcrumb display={{ base: "none", md: "flex" }} fontSize="sm" color="gray.500">
-          <BreadcrumbItem>
-            <BreadcrumbLink href="#">Dashboard</BreadcrumbLink>
-          </BreadcrumbItem>
-          <BreadcrumbItem isCurrentPage>
-            <BreadcrumbLink href="#">All Transactions</BreadcrumbLink>
-          </BreadcrumbItem>
-        </Breadcrumb>
+    <Container maxW="100%" p={0}>
+      <Box
+        bg={colors.glassBg}
+        backdropFilter="blur(10px)"
+        position="sticky"
+        top={0}
+        zIndex={10}
+        borderBottom="1px solid"
+        borderColor={colors.borderColor}
+        px={6}
+        py={4}
+      >
+        <Flex direction="column" gap={4}>
+          <Flex justify="space-between" align="center">
+            <VStack align="start" spacing={1}>
+              <Text fontSize="2xl" fontWeight="bold">
+                Transactions
+              </Text>
+              <Breadcrumb fontSize="sm" color="gray.500">
+                <BreadcrumbItem>
+                  <BreadcrumbLink href="#">Dashboard</BreadcrumbLink>
+                </BreadcrumbItem>
+                <BreadcrumbItem isCurrentPage>
+                  <BreadcrumbLink href="#">All Transactions</BreadcrumbLink>
+                </BreadcrumbItem>
+              </Breadcrumb>
+            </VStack>
+            <Button
+              leftIcon={<AddIcon />}
+              onClick={() => handleModalOpen('add')}
+              bg={colors.buttonPrimaryBg}
+              color="white"
+              _hover={{ bg: colors.buttonPrimaryHover }}
+              size="sm"
+            >
+              New Transaction
+            </Button>
+          </Flex>
+        </Flex>
       </Box>
 
-      <Box px={3}>
+      <Box p={6}>
         {renderContent()}
       </Box>
 
@@ -362,6 +403,7 @@ const Transaction = () => {
         action={modalAction}
         onSave={handleSaveTransaction}
         onDelete={handleDeleteTransaction}
+        colors={colors}
       />
     </Container>
   );

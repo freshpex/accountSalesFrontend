@@ -55,29 +55,37 @@ const steps = [
 ];
 
 // Add custom styles for mobile stepper
-const MobileStep = ({ title, description, isActive, isComplete }) => (
-  <Box 
-    p={4} 
-    bg={isActive ? 'blue.50' : 'white'}
-    borderRadius="md"
-    borderWidth="1px"
-    mb={4}
-  >
-    <HStack spacing={4}>
-      <Circle 
-        size="40px" 
-        bg={isComplete ? 'green.500' : isActive ? 'blue.500' : 'gray.200'}
-        color="white"
-      >
-        <Icon as={isComplete ? FiCheck : FiClock} />
-      </Circle>
-      <VStack align="start" spacing={0}>
-        <Text fontWeight="bold">{title}</Text>
-        <Text fontSize="sm" color="gray.600">{description}</Text>
-      </VStack>
-    </HStack>
-  </Box>
-);
+const MobileStep = ({ title, description, isActive, isComplete }) => {
+  const colors = useColors();
+  
+  return (
+    <Box 
+      p={4} 
+      bg={isActive ? colors.escrowStepActive : 
+          isComplete ? colors.escrowStepComplete : 
+          colors.escrowStepBg}
+      borderRadius="md"
+      borderWidth="1px"
+      borderColor={colors.borderColor}
+      mb={4}
+      transition="all 0.2s"
+    >
+      <HStack spacing={4}>
+        <Circle 
+          size="40px" 
+          bg={isComplete ? 'green.500' : isActive ? 'blue.500' : 'gray.200'}
+          color="white"
+        >
+          <Icon as={isComplete ? FiCheck : FiClock} />
+        </Circle>
+        <VStack align="start" spacing={0}>
+          <Text fontWeight="bold" color={colors.textColor}>{title}</Text>
+          <Text fontSize="sm" color={colors.textColor}>{description}</Text>
+        </VStack>
+      </HStack>
+    </Box>
+  );
+};
 
 const EscrowDetails = () => {
   const dispatch = useDispatch();
@@ -293,9 +301,11 @@ const EscrowDetails = () => {
           <Box 
             w="full" 
             p={{ base: 4, md: 6 }} 
-            bg={colors.bgColor} 
+            bg={colors.escrowCardBg} 
             borderRadius="lg" 
             borderWidth="1px"
+            borderColor={colors.borderColor}
+            boxShadow={colors.cardShadow}
           >
             {/* Desktop Stepper */}
             <Box display={{ base: 'none', md: 'block' }}>
@@ -314,8 +324,8 @@ const EscrowDetails = () => {
                       />
                     </StepIndicator>
                     <Box flexShrink='0'>
-                      <StepTitle>{step.title}</StepTitle>
-                      <StepDescription>{step.description}</StepDescription>
+                      <StepTitle color={colors.textColor}>{step.title}</StepTitle>
+                      <StepDescription color={colors.textColor}>{step.description}</StepDescription>
                     </Box>
                   </Step>
                 ))}

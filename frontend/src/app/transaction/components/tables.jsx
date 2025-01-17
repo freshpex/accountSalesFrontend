@@ -22,8 +22,71 @@ import { motion } from 'framer-motion';
 import { useColors } from '../../../utils/colors';
 import { STATUS_CONFIG, PAYMENT_STATUS_CONFIG } from '../../../utils/constants';
 import { convertToPublicUrl } from '../../../utils/supabase';
+import { useState } from 'react';
 
 const MotionBox = motion(Box);
+
+const ImageWithZoom = ({ src, alt }) => {
+  const colors = useColors();
+  const [isOpen, setIsOpen] = useState(false);
+
+  return (
+    <Box position="relative">
+      <motion.div
+        whileHover={{ scale: 1.05 }}
+        transition={{ duration: 0.2 }}
+      >
+        <Image
+          src={src}
+          alt={alt}
+          boxSize="40px"
+          objectFit="cover"
+          borderRadius="md"
+          cursor="pointer"
+          onClick={() => setIsOpen(true)}
+          border="1px solid"
+          borderColor={colors.imageBorder}
+          _hover={{
+            boxShadow: colors.cardHoverShadow
+          }}
+        />
+      </motion.div>
+      
+      {isOpen && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+        >
+          <Box
+            position="fixed"
+            top="0"
+            left="0"
+            right="0"
+            bottom="0"
+            bg={colors.glassHover}
+            zIndex="modal"
+            onClick={() => setIsOpen(false)}
+            display="flex"
+            alignItems="center"
+            justifyContent="center"
+            backdropFilter="blur(5px)"
+          >
+            <Image
+              src={src}
+              alt={alt}
+              maxH="80vh"
+              maxW="90vw"
+              objectFit="contain"
+              borderRadius="lg"
+              boxShadow={colors.cardShadow}
+            />
+          </Box>
+        </motion.div>
+      )}
+    </Box>
+  );
+};
 
 const TransactionTable = ({ 
   data = [],
@@ -44,6 +107,20 @@ const TransactionTable = ({
   const isMobile = useBreakpointValue({ base: true, md: false });
   const colors = useColors();
 
+  const tableAnimation = {
+    initial: { opacity: 0 },
+    animate: { opacity: 1 },
+    exit: { opacity: 0 },
+    transition: { duration: 0.2 }
+  };
+
+  const rowAnimation = {
+    initial: { opacity: 0, y: 20 },
+    animate: { opacity: 1, y: 0 },
+    exit: { opacity: 0, y: -20 },
+    transition: { duration: 0.2 }
+  };
+
   const renderStatus = (status, paymentStatus) => {
     const statusConfig = STATUS_CONFIG[status?.toLowerCase()] || STATUS_CONFIG.pending;
     const paymentConfig = PAYMENT_STATUS_CONFIG[paymentStatus?.toLowerCase()] || PAYMENT_STATUS_CONFIG.pending;
@@ -62,13 +139,46 @@ const TransactionTable = ({
 
   const renderMobileCard = (transaction) => (
     <MotionBox
-      key={transaction.id}
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -20 }}
-      layout
+      {...rowAnimation}
+      bg={colors.cardBg}
+      p={4}
+      borderRadius="xl"
+      border="1px solid"
+      borderColor={colors.borderColor}
+      mb={4}
+      position="relative"
+      overflow="hidden"
+      boxShadow={colors.cardShadow}
+      _hover={{
+        borderColor: colors.borderHover,
+        transform: "translateY(-2px)",
+        boxShadow: colors.cardHoverShadow,
+        transition: "all 0.2s"
+      }}
     >
-      <VStack spacing={4}>
+      <VStack spacing={4} align="stretch">
+        {transaction.productImage && (
+          <Box
+            position="relative"
+            h="200px"
+            bg={colors.imageCardBg}
+            borderRadius="lg"
+            overflow="hidden"
+          >
+            <Image
+              src={convertToPublicUrl(transaction.productImage)}
+              alt={transaction.productType}
+              w="100%"
+              h="100%"
+              objectFit="cover"
+              transition="transform 0.3s"
+              _hover={{
+                transform: "scale(1.05)"
+              }}
+            />
+          </Box>
+        )}
+
         {/* Header with ID and Amount */}
         <Flex justify="space-between" w="full">
           <VStack align="start">
@@ -80,16 +190,6 @@ const TransactionTable = ({
             <Text fontWeight="bold">{transaction.currency} {transaction.amount}</Text>
           </VStack>
         </Flex>
-
-        {/* Product Info */}
-        {transaction.productImage && (
-          <Image
-            src={convertToPublicUrl(transaction.productImage)}
-            alt={transaction.productType}
-            borderRadius="md"
-            objectFit="cover"
-          />
-        )}
 
         {/* Customer Info */}
         <Box w="full" p={3} bg="gray.50" borderRadius="md">
@@ -134,133 +234,164 @@ const TransactionTable = ({
   );
 
   const renderDesktopTable = () => (
-    <Box>
-      <Table>
-        <Thead>
-          <Tr>
-            <Th>
-              <Checkbox
-                isChecked={data.length > 0 && selectedItems.length === data.length}
-                isIndeterminate={selectedItems.length > 0 && selectedItems.length < data.length}
-                onChange={onSelectAll}
-              />
-            </Th>
-            <Th>Transaction ID</Th>
-            <Th>Product</Th>
-            <Th>Customer</Th>
-            <Th>Amount</Th>
-            <Th>Payment Method</Th>
-            <Th>Date</Th>
-            <Th>Status</Th>
-            <Th>Actions</Th>
-          </Tr>
-        </Thead>
-        <Tbody>
-          {data.map((transaction) => (
-            <Tr key={transaction.id}>
-              <Td>
+    <MotionBox {...tableAnimation}>
+      <Box
+        borderRadius="xl"
+        overflow="hidden"
+        border="1px solid"
+        borderColor={colors.borderColor}
+        boxShadow={colors.cardShadow}
+      >
+        <Table variant="simple">
+          <Thead bg={colors.tableHeaderBg}>
+            <Tr>
+              <Th>
                 <Checkbox
-                  isChecked={selectedItems.includes(transaction.id)}
-                  onChange={() => onSelectItem(transaction.id)}
+                  isChecked={data.length > 0 && selectedItems.length === data.length}
+                  isIndeterminate={selectedItems.length > 0 && selectedItems.length < data.length}
+                  onChange={onSelectAll}
                 />
-              </Td>
-              <Td>
-                <Text color="blue.500" fontWeight="medium">
-                  {transaction.transactionId}
-                </Text>
-              </Td>
-              <Td>
-                <HStack>
-                  {transaction.productImage && (
-                    <Image
-                      src={convertToPublicUrl(transaction.productImage)}
-                      alt={transaction.productName}
-                      boxSize="40px"
-                      objectFit="cover"
-                      borderRadius="md"
-                    />
-                  )}
-                  <Text>{transaction.productName}</Text>
-                </HStack>
-              </Td>
-              <Td>
-                <VStack align="start" spacing={0}>
-                  <Text>{transaction.customerDetails?.name}</Text>
-                  <Text fontSize="sm" color="gray.500">
-                    {transaction.customerDetails?.email}
-                  </Text>
-                </VStack>
-              </Td>
-              <Td>
-                <Text fontWeight="medium">
-                  {transaction.currency} {transaction.price?.toFixed(2)}
-                </Text>
-              </Td>
-              <Td>{transaction.paymentMethod}</Td>
-              <Td>
-                <VStack align="start" spacing={0}>
-                  <Text>{new Date(transaction.date).toLocaleDateString()}</Text>
-                  <Text fontSize="sm" color="gray.500">
-                    {new Date(transaction.date).toLocaleTimeString()}
-                  </Text>
-                </VStack>
-              </Td>
-              <Td>{renderStatus(transaction.status, transaction.payment)}</Td>
-              <Td>
-                <HStack>
-                  <IconButton
-                    icon={<ViewIcon />}
-                    onClick={() => onView('view', transaction)}
-                    aria-label="View"
-                    size="sm"
-                  />
-                  <IconButton
-                    icon={<EditIcon />}
-                    onClick={() => onEdit('edit', transaction)}
-                    aria-label="Edit"
-                    size="sm"
-                  />
-                  <IconButton
-                    icon={<DeleteIcon />}
-                    onClick={() => onDelete('delete', transaction)}
-                    aria-label="Delete"
-                    size="sm"
-                    colorScheme="red"
-                  />
-                </HStack>
-              </Td>
+              </Th>
+              <Th>Transaction ID</Th>
+              <Th>Product</Th>
+              <Th>Customer</Th>
+              <Th>Amount</Th>
+              <Th>Payment Method</Th>
+              <Th>Date</Th>
+              <Th>Status</Th>
+              <Th>Actions</Th>
             </Tr>
-          ))}
-        </Tbody>
-      </Table>
-      
-      {/* Pagination */}
-      <Flex justify="space-between" align="center" mt={4}>
-        <Text fontSize="sm">
-          Showing {Math.min((currentPage - 1) * pageSize + 1, totalItems)} to{' '}
-          {Math.min(currentPage * pageSize, totalItems)} of {totalItems} entries
-        </Text>
-        <HStack>
-          <Button
-            onClick={() => onPageChange(currentPage - 1)}
-            isDisabled={currentPage === 1}
-            size="sm"
-          >
-            Previous
-          </Button>
-          <Text>
-            Page {currentPage} of {totalPages}
-          </Text>
-          <Button
-            onClick={() => onPageChange(currentPage + 1)}
-            isDisabled={currentPage === totalPages}
-            size="sm"
-          >
-            Next
-          </Button>
-        </HStack>
-      </Flex>
-    </Box>
+          </Thead>
+          <Tbody>
+            {data.map((transaction) => (
+              <Tr
+                key={transaction.id}
+                _hover={{
+                  bg: colors.tableRowHoverBg,
+                  transition: "all 0.2s"
+                }}
+                css={{
+                  "&:hover td": {
+                    borderColor: colors.borderHover
+                  }
+                }}
+              >
+                <Td>
+                  <Checkbox
+                    isChecked={selectedItems.includes(transaction.id)}
+                    onChange={() => onSelectItem(transaction.id)}
+                    colorScheme="blue"
+                  />
+                </Td>
+                <Td>
+                  <motion.div whileHover={{ scale: 1.02 }}>
+                    <Text
+                      color={colors.buttonPrimaryBg}
+                      fontWeight="medium"
+                      cursor="pointer"
+                      onClick={() => onView('view', transaction)}
+                    >
+                      {transaction.transactionId}
+                    </Text>
+                  </motion.div>
+                </Td>
+                <Td>
+                  <HStack spacing={3}>
+                    {transaction.productImage && (
+                      <ImageWithZoom
+                        src={convertToPublicUrl(transaction.productImage)}
+                        alt={transaction.productName}
+                      />
+                    )}
+                    <Text fontWeight="medium">{transaction.productName}</Text>
+                  </HStack>
+                </Td>
+                <Td>
+                  <VStack align="start" spacing={0}>
+                    <Text>{transaction.customerDetails?.name}</Text>
+                    <Text fontSize="sm" color="gray.500">
+                      {transaction.customerDetails?.email}
+                    </Text>
+                  </VStack>
+                </Td>
+                <Td>
+                  <Text fontWeight="medium">
+                    {transaction.currency} {transaction.price?.toFixed(2)}
+                  </Text>
+                </Td>
+                <Td>{transaction.paymentMethod}</Td>
+                <Td>
+                  <VStack align="start" spacing={0}>
+                    <Text>{new Date(transaction.date).toLocaleDateString()}</Text>
+                    <Text fontSize="sm" color="gray.500">
+                      {new Date(transaction.date).toLocaleTimeString()}
+                    </Text>
+                  </VStack>
+                </Td>
+                <Td>{renderStatus(transaction.status, transaction.payment)}</Td>
+                <Td>
+                  <HStack>
+                    <IconButton
+                      icon={<ViewIcon />}
+                      onClick={() => onView('view', transaction)}
+                      aria-label="View"
+                      size="sm"
+                    />
+                    <IconButton
+                      icon={<EditIcon />}
+                      onClick={() => onEdit('edit', transaction)}
+                      aria-label="Edit"
+                      size="sm"
+                    />
+                    <IconButton
+                      icon={<DeleteIcon />}
+                      onClick={() => onDelete('delete', transaction)}
+                      aria-label="Delete"
+                      size="sm"
+                      colorScheme="red"
+                    />
+                  </HStack>
+                </Td>
+              </Tr>
+            ))}
+          </Tbody>
+        </Table>
+        
+        {/* Pagination */}
+        <Box
+          bg={colors.tableHeaderBg}
+          p={4}
+          borderTop="1px solid"
+          borderColor={colors.borderColor}
+        >
+          <Flex justify="space-between" align="center">
+            <Text fontSize="sm">
+              Showing {Math.min((currentPage - 1) * pageSize + 1, totalItems)} to{' '}
+              {Math.min(currentPage * pageSize, totalItems)} of {totalItems} entries
+            </Text>
+            <HStack>
+              <Button
+                onClick={() => onPageChange(currentPage - 1)}
+                isDisabled={currentPage === 1}
+                size="sm"
+              >
+                Previous
+              </Button>
+              <Text>
+                Page {currentPage} of {totalPages}
+              </Text>
+              <Button
+                onClick={() => onPageChange(currentPage + 1)}
+                isDisabled={currentPage === totalPages}
+                size="sm"
+              >
+                Next
+              </Button>
+            </HStack>
+          </Flex>
+        </Box>
+      </Box>
+    </MotionBox>
   );
 
   return isMobile ? (

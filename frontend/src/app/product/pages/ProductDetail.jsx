@@ -366,7 +366,10 @@ const ProductDetail = () => {
               <Box
                 borderRadius="lg"
                 overflow="hidden"
-                bg={colors.bgColor}
+                bg={colors.productCardBg}
+                borderWidth="1px"
+                borderColor={colors.borderColor}
+                boxShadow={colors.cardShadow}
                 p={4}
               >
                 <ImageGallery
@@ -376,107 +379,172 @@ const ProductDetail = () => {
               </Box>
 
               {/* Product Information Tabs */}
-              <Tabs colorScheme="blue" isLazy>
-                <TabList>
-                  <Tab>Details</Tab>
-                  <Tab>Statistics</Tab>
-                  <Tab>Security</Tab>
-                </TabList>
+              <Box
+                bg={colors.productCardBg}
+                borderRadius="lg"
+                borderWidth="1px"
+                borderColor={colors.borderColor}
+                boxShadow={colors.cardShadow}
+                overflow="hidden"
+              >
+                <Tabs colorScheme="blue" isLazy>
+                  <TabList bg={colors.productTabBg}>
+                    <Tab
+                      _selected={{
+                        bg: colors.productTabSelected,
+                        color: colors.buttonPrimaryBg
+                      }}
+                      _hover={{
+                        bg: colors.productTabHover
+                      }}
+                    >
+                      Details
+                    </Tab>
+                    <Tab>Statistics</Tab>
+                    <Tab>Security</Tab>
+                  </TabList>
 
-                <TabPanels>
-                  <TabPanel>
-                    <VStack align="stretch" spacing={4}>
-                      <Heading size="md">Account Information</Heading>
-                      <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4}>
-                        <StatBox
-                          icon={FiUser}
-                          label="Username"
-                          value={product.username}
-                        />
-                        <StatBox
-                          icon={FiCalendar}
-                          label="Account Age"
-                          value={`${product.age} years`}
-                        />
-                        <StatBox
-                          icon={FiUsers}
-                          label="Followers"
-                          value={product.followers.toLocaleString()}
-                        />
-                        <StatBox
-                          icon={FiPercent}
-                          label="Engagement Rate"
-                          value={`${product.engagement}%`}
-                        />
-                        <StatBox
-                          icon={FiMapPin}
-                          label="Region"
-                          value={product.region}
-                        />
-                      </SimpleGrid>
+                  <TabPanels>
+                    <TabPanel>
+                      <VStack align="stretch" spacing={4}>
+                        <Heading size="md" color={colors.textColor}>Account Information</Heading>
+                        <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4}>
+                          {/* Update StatBox component */}
+                          <Box
+                            p={4}
+                            bg={colors.statCardBg}
+                            borderRadius="md"
+                            borderWidth="1px"
+                            borderColor={colors.borderColor}
+                            _hover={{ bg: colors.statCardHover }}
+                          >
+                            <StatBox
+                              icon={FiUser}
+                              label="Username"
+                              value={product.username}
+                            />
+                          </Box>
+                          <Box
+                            p={4}
+                            bg={colors.statCardBg}
+                            borderRadius="md"
+                            borderWidth="1px"
+                            borderColor={colors.borderColor}
+                            _hover={{ bg: colors.statCardHover }}
+                          >
+                            <StatBox
+                              icon={FiCalendar}
+                              label="Account Age"
+                              value={`${product.age} years`}
+                            />
+                          </Box>
+                          <Box
+                            p={4}
+                            bg={colors.statCardBg}
+                            borderRadius="md"
+                            borderWidth="1px"
+                            borderColor={colors.borderColor}
+                            _hover={{ bg: colors.statCardHover }}
+                          >
+                            <StatBox
+                              icon={FiUsers}
+                              label="Followers"
+                              value={product.followers.toLocaleString()}
+                            />
+                          </Box>
+                          <Box
+                            p={4}
+                            bg={colors.statCardBg}
+                            borderRadius="md"
+                            borderWidth="1px"
+                            borderColor={colors.borderColor}
+                            _hover={{ bg: colors.statCardHover }}
+                          >
+                            <StatBox
+                              icon={FiPercent}
+                              label="Engagement Rate"
+                              value={`${product.engagement}%`}
+                            />
+                          </Box>
+                          <Box
+                            p={4}
+                            bg={colors.statCardBg}
+                            borderRadius="md"
+                            borderWidth="1px"
+                            borderColor={colors.borderColor}
+                            _hover={{ bg: colors.statCardHover }}
+                          >
+                            <StatBox
+                              icon={FiMapPin}
+                              label="Region"
+                              value={product.region}
+                            />
+                          </Box>
+                        </SimpleGrid>
 
-                      <Divider />
+                        <Divider />
 
-                      <Box>
-                        <Heading size="md" mb={4}>Description</Heading>
-                        <Text>{product.about}</Text>
-                      </Box>
-                    </VStack>
-                  </TabPanel>
+                        <Box>
+                          <Heading size="md" mb={4}>Description</Heading>
+                          <Text>{product.about}</Text>
+                        </Box>
+                      </VStack>
+                    </TabPanel>
 
-                  <TabPanel>
-                    <VStack align="stretch" spacing={4}>
-                      <Heading size="md">Account Statistics</Heading>
-                      <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4}>
-                        <StatisticCard
-                          title="Average Likes"
-                          value={product.stats.averageLikes || Math.floor(product.followers * (product.engagement / 100))}
-                          change="+5%"
-                        />
-                        <StatisticCard
-                          title="Average Comments"
-                          value={product.stats.averageComments || Math.floor(product.followers * 0.01)}
-                          change="+3%"
-                        />
-                        <StatisticCard
-                          title="Monthly Growth"
-                          value={Math.floor(product.followers * 0.03)}
-                          change="+2.5%"
-                        />
-                        <StatisticCard
-                          title="Reach"
-                          value={Math.floor(product.followers * 0.3)}
-                          change="+4%"
-                        />
-                      </SimpleGrid>
-                    </VStack>
-                  </TabPanel>
+                    <TabPanel>
+                      <VStack align="stretch" spacing={4}>
+                        <Heading size="md">Account Statistics</Heading>
+                        <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4}>
+                          <StatisticCard
+                            title="Average Likes"
+                            value={product.stats.averageLikes || Math.floor(product.followers * (product.engagement / 100))}
+                            change="+5%"
+                          />
+                          <StatisticCard
+                            title="Average Comments"
+                            value={product.stats.averageComments || Math.floor(product.followers * 0.01)}
+                            change="+3%"
+                          />
+                          <StatisticCard
+                            title="Monthly Growth"
+                            value={Math.floor(product.followers * 0.03)}
+                            change="+2.5%"
+                          />
+                          <StatisticCard
+                            title="Reach"
+                            value={Math.floor(product.followers * 0.3)}
+                            change="+4%"
+                          />
+                        </SimpleGrid>
+                      </VStack>
+                    </TabPanel>
 
-                  <TabPanel>
-                    <VStack align="stretch" spacing={4}>
-                      <Heading size="md">Security Features</Heading>
-                      <List spacing={3}>
-                        <SecurityFeature
-                          text="2FA Enabled"
-                          isAvailable={product.security.twoFactorEnabled || false}
-                        />
-                        <SecurityFeature
-                          text="Original Email Available"
-                          isAvailable={product.security.originalEmailAvailable || false}
-                        />
-                        <SecurityFeature
-                          text="Account Recovery Options"
-                          isAvailable={true}
-                        />
-                        <SecurityFeature
-                          text="Previous Password History"
-                          isAvailable={false}
-                        />
-                      </List>
-                    </VStack>
-                  </TabPanel>
-                </TabPanels>
-              </Tabs>
+                    <TabPanel>
+                      <VStack align="stretch" spacing={4}>
+                        <Heading size="md">Security Features</Heading>
+                        <List spacing={3}>
+                          <SecurityFeature
+                            text="2FA Enabled"
+                            isAvailable={product.security.twoFactorEnabled || false}
+                          />
+                          <SecurityFeature
+                            text="Original Email Available"
+                            isAvailable={product.security.originalEmailAvailable || false}
+                          />
+                          <SecurityFeature
+                            text="Account Recovery Options"
+                            isAvailable={true}
+                          />
+                          <SecurityFeature
+                            text="Previous Password History"
+                            isAvailable={false}
+                          />
+                        </List>
+                      </VStack>
+                    </TabPanel>
+                  </TabPanels>
+                </Tabs>
+              </Box>
             </VStack>
           </GridItem>
 
@@ -487,9 +555,10 @@ const ProductDetail = () => {
               top="20px"
               p={6}
               borderRadius="lg"
-              bg={colors.bgColor}
+              bg={colors.productCardBg}
               borderWidth="1px"
               borderColor={colors.borderColor}
+              boxShadow={colors.cardShadow}
             >
               <VStack align="stretch" spacing={6}>
                 <HStack justify="space-between">
@@ -552,7 +621,7 @@ const ProductDetail = () => {
         isCentered
       >
         <ModalOverlay />
-        <ModalContent bg={colors.bgColor}>
+        <ModalContent bg={colors.productCardBg}>
           <ModalBody p={0}>
             <Image
             src={selectedImage}

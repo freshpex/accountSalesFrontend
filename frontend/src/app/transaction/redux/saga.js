@@ -106,38 +106,21 @@ function* updateTransactionSaga({ payload }) {
   try {
     const { id, data } = payload;
     
-    // Validate required fields
     if (!id) {
       throw new Error('Transaction ID is required for update');
     }
 
-    // Format the data for update
-    const formattedData = {
-      status: data.status?.toLowerCase(),
-      paymentStatus: data.paymentStatus?.toLowerCase(),
-      paymentMethod: data.paymentMethod,
-      notes: data.notes,
-      amount: Number(data.amount),
-      metadata: {
-        productName: data.metadata?.productName,
-        customerName: data.metadata?.customerName
-      }
-    };
-
     const response = yield call(
       api.put,
       `${ApiEndpoints.TRANSACTIONS}/${id}`,
-      formattedData
+      data
     );
 
     yield put(update_transaction_success(response.data));
     toast.success('Transaction updated successfully');
-    
-    // Refresh the transactions list
     yield put(fetch_transactions());
   } catch (error) {
-    console.error('Update transaction error:', error);
-    const errorMessage = error.response?.data?.error || 'Failed to update transaction';
+    const errorMessage = error.response?.data?.error || error.message;
     toast.error(errorMessage);
     yield put(update_transaction_error(errorMessage));
   }
@@ -150,14 +133,11 @@ function* deleteTransactionSaga({ payload }) {
     }
 
     yield call(api.delete, `${ApiEndpoints.TRANSACTIONS}/${payload}`);
-    
     yield put(delete_transaction_success(payload));
     toast.success("Transaction deleted successfully");
-    
     yield put(fetch_transactions());
   } catch (error) {
-    console.error('Delete transaction error:', error);
-    const errorMessage = error.response?.data?.error || "Failed to delete transaction";
+    const errorMessage = error.response?.data?.error || error.message;
     toast.error(errorMessage);
     yield put(delete_transaction_error(errorMessage));
   }
