@@ -21,14 +21,20 @@ const PaymentCallback = () => {
 
   const verifyPayment = useCallback(async (params) => {
     try {
-      console.log('Verifying payment with params:', params.toString());
+      console.log('Full payment params:', {
+        transaction_id: params.get('transaction_id'),
+        tx_ref: params.get('tx_ref'),
+        status: params.get('status'),
+        productId: params.get('productId')
+      });
       
       const response = await api.post('/api/v1/transactions/callback', {
         transaction_id: params.get('transaction_id'),
-        tx_ref: params.get('tx_ref')
-      }, {
-        headers: {
-          'Content-Type': 'application/json'
+        tx_ref: params.get('tx_ref'),
+        // Add any additional params that might help identify the product
+        meta: {
+          productId: params.get('productId'),
+          checkoutUrl: window.location.href
         }
       });
 

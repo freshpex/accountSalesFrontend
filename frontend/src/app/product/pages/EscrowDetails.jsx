@@ -96,9 +96,6 @@ const EscrowDetails = () => {
     dispatch(fetch_profile());
   }, [dispatch]);
 
-console.log("Product detail", product);
-console.log("customer details", profile);
-
   const { activeStep, setActiveStep } = useSteps({
     index: 1,
     count: steps.length
@@ -162,7 +159,7 @@ console.log("customer details", profile);
         customerId: profile._id,
       },
       customer: {
-        email: profile.email || '',
+        email: profile.email || 'customer@gamil.com',
         phone_number: profile.phoneNumber || '',
         name: `${profile.firstName} ${profile.lastName}`.trim() || 'Anonymous',
       },

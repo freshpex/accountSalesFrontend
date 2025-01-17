@@ -74,6 +74,8 @@ const ProductDetail = () => {
   const colors = useColors();
   const [selectedImage, setSelectedImage] = useState(null);
   const profile = useSelector(getProfile);
+
+  console.log('Product:', product);
   
   useEffect(() => {
       dispatch(fetch_profile());
@@ -205,6 +207,15 @@ const ProductDetail = () => {
     try {
       await loadFlutterwaveScript();
       
+      // Get correct product ID - MongoDB usually uses _id
+      const productId = product._id || product.id;
+      
+      console.log('Product Details:', {
+        id: productId,
+        type: product.type,
+        price: product.price
+      });
+
       const config = {
         public_key: import.meta.env.VITE_FLUTTERWAVE_PUBLIC_KEY,
         tx_ref: `TX_${Date.now()}_${Math.floor(Math.random() * 1000)}`,
@@ -213,7 +224,7 @@ const ProductDetail = () => {
         payment_options: 'card,banktransfer,ussd',
         redirect_url: `${window.location.origin}/payment/callback`,
         meta: {
-          productId: product.id,
+          productId: productId,
           productType: product.type,
           userId: profile.userId,
           customerId: profile._id,
