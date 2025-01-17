@@ -21,7 +21,8 @@ import {
   create_ticket,
   add_response,
   update_ticket_status,
-  mark_notification_read 
+  mark_notification_read,
+  delete_ticket 
 } from './redux/reducer';
 import { FiMail, FiInbox } from 'react-icons/fi';
 import LoadingSpinner from '../../components/LoadingSpinner';
@@ -77,6 +78,10 @@ const Help = () => {
 
   const handleNotificationRead = (notificationId) => {
     dispatch(mark_notification_read(notificationId));
+  };
+
+  const handleDeleteTicket = (ticketId) => {
+    dispatch(delete_ticket(ticketId));
   };
 
   const filteredTickets = tickets?.filter(ticket => {
@@ -143,6 +148,7 @@ const Help = () => {
                 tickets={filteredTickets}
                 onStatusUpdate={handleStatusUpdate}
                 onAddResponse={handleAddResponse}
+                onDelete={handleDeleteTicket}
                 statusColors={ticketStatusColors}
                 priorityColors={ticketPriorityColors}
               />

@@ -17,6 +17,7 @@ import {
   Divider,
   Select,
 } from '@chakra-ui/react';
+import { useSelector } from 'react-redux';
 import { ticketStatusColors, ticketPriorityColors } from '../data';
 import { useColors } from '../../../utils/colors';
 
@@ -25,21 +26,32 @@ const TicketDetail = ({
   onClose, 
   ticket, 
   onStatusUpdate, 
-  onAddResponse 
+  onAddResponse,
+  onDelete 
 }) => {
   const [reply, setReply] = useState('');
   const [status, setStatus] = useState(ticket?.status);
   const colors = useColors();
+  const currentUser = useSelector(state => state.accountSettings.data.profile);
+  const isAdmin = currentUser?.role === 'admin';
 
-  const customerName = ticket?.customer?.name;
-  const customerAvatar = ticket?.customer?.avatar || '';
+  const customerName = ticket?.customerDetails?.name || 'Anonymous User';
+  const customerEmail = ticket?.customerDetails?.email;
+  const customerAvatar = ticket?.customerDetails?.profilePicture;
 
   console.log('ticket', ticket);
 
   const handleReply = () => {
     onAddResponse(ticket._id, {
       message: reply,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
+      sender: isAdmin ? 'admin' : 'customer',
+      senderDetails: {
+        id: currentUser._id,
+        name: `${currentUser.firstName} ${currentUser.lastName}`,
+        email: currentUser.email,
+        role: currentUser.role
+      }
     });
     setReply('');
   };
@@ -50,6 +62,13 @@ const TicketDetail = ({
     onStatusUpdate(ticket._id, newStatus);
   };
 
+  const handleDelete = () => {
+    if (window.confirm('Are you sure you want to delete this ticket?')) {
+      onDelete(ticket._id);
+      onClose();
+    }
+  };
+
   return (
     <Modal isOpen={isOpen} onClose={onClose} size="xl" scrollBehavior="inside">
       <ModalOverlay />
@@ -57,16 +76,25 @@ const TicketDetail = ({
         <ModalHeader>
           <HStack justify="space-between">
             <Text>Ticket Details</Text>
-            <Select
-              width="150px"
-              value={status}
-              onChange={handleStatusChange}
-              size="sm"
-            >
-              <option value="open">Open</option>
-              <option value="pending">Pending</option>
-              <option value="resolved">Resolved</option>
-            </Select>
+            <HStack>
+              <Select
+                width="150px"
+                value={status}
+                onChange={handleStatusChange}
+                size="sm"
+              >
+                <option value="open">Open</option>
+                <option value="pending">Pending</option>
+                <option value="resolved">Resolved</option>
+              </Select>
+              <Button
+                colorScheme="red"
+                size="sm"
+                onClick={handleDelete}
+              >
+                Delete
+              </Button>
+            </HStack>
           </HStack>
         </ModalHeader>
         <ModalCloseButton />
@@ -89,7 +117,7 @@ const TicketDetail = ({
                   </Badge>
                 </HStack>
                 <Text color="gray.600">
-                  {customerName} - {new Date(ticket?.createdAt).toLocaleString()}
+                  {customerName} ({customerEmail}) - {new Date(ticket?.createdAt).toLocaleString()}
                 </Text>
               </Box>
             </HStack>
@@ -102,21 +130,21 @@ const TicketDetail = ({
 
             {ticket?.responses?.map((response) => (
               <Box 
-                key={response.id}
+                key={response._id || response.timestamp}
                 p={4}
-                bg={response.sender === 'support' ? 'blue.50' : 'gray.50'}
+                bg={response.sender === 'admin' ? 'blue.50' : 'gray.50'}
                 borderRadius="md"
               >
                 <HStack spacing={4} mb={2}>
                   <Avatar 
                     size="sm" 
-                    name={response.sender === 'support' ? 'Support Team' : customerName}
+                    name={response.senderDetails?.name || (response.sender === 'admin' ? 'Support Team' : customerName)}
                   />
                   <Text fontWeight="bold">
-                    {response.sender === 'support' ? 'Support Team' : customerName}
+                    {response.senderDetails?.name || (response.sender === 'admin' ? 'Support Team' : customerName)}
                   </Text>
                   <Text color="gray.600" fontSize="sm">
-                    {new Date(response.timestamp).toLocaleString()}
+                    {new Date(response.timestamp || response.createdAt).toLocaleString()}
                   </Text>
                 </HStack>
                 <Text ml={12}>{response.message}</Text>

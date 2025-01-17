@@ -95,6 +95,25 @@ export const helpSlice = createSlice({
       if (notification) {
         notification.read = true;
       }
+    },
+    delete_ticket: (state) => {
+      state.ui.loading = true;
+      state.ui.error = null;
+    },
+    delete_ticket_success: (state, action) => {
+      state.ui.loading = false;
+      state.ui.success = true;
+      state.data.tickets = state.data.tickets.filter(
+        ticket => ticket._id !== action.payload
+      );
+      // Update stats
+      if (state.data.stats) {
+        state.data.stats.total--;
+      }
+    },
+    delete_ticket_error: (state, action) => {
+      state.ui.loading = false;
+      state.ui.error = action.payload;
     }
   }
 });
@@ -110,7 +129,10 @@ export const {
   add_response_success,
   add_response_error,
   update_ticket_status,
-  mark_notification_read
+  mark_notification_read,
+  delete_ticket,
+  delete_ticket_success,
+  delete_ticket_error
 } = helpSlice.actions;
 
 export default helpSlice.reducer;

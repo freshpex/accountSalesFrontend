@@ -134,6 +134,7 @@ export const ApiEndpoints = {
   CUSTOMER_ACTIVITY: '/api/v1/users/:id/activity',
   CUSTOMER_SEGMENT: '/api/v1/users/:id/segment',
   HELP_TICKETS: '/api/v1/help-tickets',
+  HELP_TICKET_RESPONSE: (id) => `/api/v1/help-tickets/${id}/response`,
   SALES_REPORT: '/api/v1/sales/report',
   PROFILE: '/api/v1/user/profile',
   SECURITY: '/api/v1/user/security',

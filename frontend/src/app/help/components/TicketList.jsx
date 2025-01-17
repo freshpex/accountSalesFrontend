@@ -20,16 +20,7 @@ const TicketList = ({ tickets = [], onStatusUpdate, onAddResponse, statusColors,
   console.log('ticket List', tickets);
 
   const handleTicketClick = (ticket) => {
-    const ticketWithCustomer = {
-      ...ticket,
-      customer: {
-        name: 'Anonymous User',
-        email: ticket.customerId || 'No email',
-        avatar: '',
-        ...ticket.customer
-      }
-    };
-    setSelectedTicket(ticketWithCustomer);
+    setSelectedTicket(ticket);
     onOpen();
   };
 

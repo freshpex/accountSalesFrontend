@@ -10,7 +10,10 @@ import {
   add_response_success,
   add_response_error,
   update_ticket_status,
-  mark_notification_read
+  mark_notification_read,
+  delete_ticket,
+  delete_ticket_success,
+  delete_ticket_error
 } from "./reducer";
 import { ApiEndpoints } from "../../../store/types";
 import api from "../../../services/DataService";
@@ -64,14 +67,20 @@ function* addResponseSaga({ payload }) {
     const { ticketId, response } = payload;
     const result = yield call(
       api.post,
-      `${ApiEndpoints.HELP_TICKETS}/${ticketId}/responses`,
+      `${ApiEndpoints.HELP_TICKETS}/${ticketId}/response`, 
       response
     );
-    yield put(add_response_success({
-      ticketId,
-      response: result.data
-    }));
-    toast.success("Response added successfully");
+    
+    if (result.data) {
+      yield put(add_response_success({
+        ticketId,
+        response: result.data
+      }));
+      toast.success("Response added successfully");
+      yield put(fetch_tickets());
+    } else {
+      throw new Error('Invalid response from server');
+    }
   } catch (error) {
     const errorMessage = error.response?.data?.error || "Failed to add response";
     toast.error(errorMessage);
@@ -104,12 +113,25 @@ function* markNotificationReadSaga({ payload }) {
   }
 }
 
+function* deleteTicketSaga({ payload }) {
+  try {
+    yield call(api.delete, `${ApiEndpoints.HELP_TICKETS}/${payload}`);
+    yield put(delete_ticket_success(payload));
+    toast.success('Ticket deleted successfully');
+  } catch (error) {
+    const errorMessage = error.response?.data?.error || 'Failed to delete ticket';
+    toast.error(errorMessage);
+    yield put(delete_ticket_error(errorMessage));
+  }
+}
+
 function* helpSagas() {
   yield takeLatest(fetch_tickets.type, fetchTicketsSaga);
   yield takeLatest(create_ticket.type, createTicketSaga);
   yield takeLatest(add_response.type, addResponseSaga);
   yield takeLatest(update_ticket_status.type, updateTicketStatusSaga);
   yield takeLatest(mark_notification_read.type, markNotificationReadSaga);
+  yield takeLatest(delete_ticket.type, deleteTicketSaga);
 }
 
 export default helpSagas;
