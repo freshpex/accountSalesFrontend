@@ -36,6 +36,15 @@ export const ActionTypes = {
   DELETE_TRANSACTION: 'transaction/delete_transaction',
   DELETE_TRANSACTION_SUCCESS: 'transaction/delete_transaction_success',
   DELETE_TRANSACTION_ERROR: 'transaction/delete_transaction_error',
+  FETCH_TRANSACTION_PRODUCTS: 'transaction/fetch_transaction_products',
+  FETCH_TRANSACTION_PRODUCTS_SUCCESS: 'transaction/fetch_transaction_products_success',
+  FETCH_TRANSACTION_PRODUCTS_ERROR: 'transaction/fetch_transaction_products_error',
+  TRANSACTION_CREATE: 'transaction/create_transaction',
+  TRANSACTION_CREATE_SUCCESS: 'transaction/create_transaction_success',
+  TRANSACTION_CREATE_ERROR: 'transaction/create_transaction_error',
+  TRANSACTION_UPDATE: 'transaction/update_transaction',
+  TRANSACTION_UPDATE_SUCCESS: 'transaction/update_transaction_success',
+  TRANSACTION_UPDATE_ERROR: 'transaction/update_transaction_error',
   
   // Product actions
   FETCH_PRODUCTS: 'product/fetch_products',
@@ -147,4 +156,5 @@ export const ApiEndpoints = {
   PRODUCT_DETAIL: '/api/v1/products/:id',
   ESCROW_DETAILS: '/api/v1/escrow',
   ESCROW: '/api/v1/escrow',
+  TRANSACTION_PRODUCTS: '/api/v1/products/available',
 };

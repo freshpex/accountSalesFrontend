@@ -209,13 +209,6 @@ const ProductDetail = () => {
       
       // Get correct product ID - MongoDB usually uses _id
       const productId = product._id || product.id;
-      
-      console.log('Product Details:', {
-        id: productId,
-        type: product.type,
-        price: product.price
-      });
-
       const config = {
         public_key: import.meta.env.VITE_FLUTTERWAVE_PUBLIC_KEY,
         tx_ref: `TX_${Date.now()}_${Math.floor(Math.random() * 1000)}`,

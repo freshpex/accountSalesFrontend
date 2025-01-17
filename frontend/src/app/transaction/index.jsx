@@ -36,6 +36,8 @@ const Transaction = () => {
   const stats = useSelector(getTransactionStats);
   const meta = useSelector(getTransactionMeta);
   const loading = useSelector(getLoading);
+
+  console.log('Transactions:', transactions);
   
   const [selectedItems, setSelectedItems] = useState([]);
 

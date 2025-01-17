@@ -72,3 +72,18 @@ export const getUpdateStatus = createSelector(
     success: state.ui.success
   })
 );
+
+export const getTransactionProducts = createSelector(
+  transactionState,
+  (state) => state.transactionProducts
+);
+
+export const getProductLoading = createSelector(
+  transactionState,
+  (state) => state.productLoading
+);
+
+export const getProductError = createSelector(
+  transactionState,
+  (state) => state.productError
+);

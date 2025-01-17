@@ -28,7 +28,10 @@ const initialState = {
     status: 'all',
     page: 1,
     limit: 10
-  }
+  },
+  transactionProducts: [],
+  productLoading: false,
+  productError: null
 };
 
 export const transactionSlice = createSlice({
@@ -110,6 +113,18 @@ export const transactionSlice = createSlice({
     },
     set_page: (state, action) => {
       state.filters.page = action.payload;
+    },
+    fetch_transaction_products: (state) => {
+      state.productLoading = true;
+      state.productError = null;
+    },
+    fetch_transaction_products_success: (state, action) => {
+      state.productLoading = false;
+      state.transactionProducts = action.payload;
+    },
+    fetch_transaction_products_error: (state, action) => {
+      state.productLoading = false;
+      state.productError = action.payload;
     }
   }
 });
@@ -129,7 +144,10 @@ export const {
   delete_transaction_error,
   update_filters,
   reset_filters,
-  set_page
+  set_page,
+  fetch_transaction_products,
+  fetch_transaction_products_success,
+  fetch_transaction_products_error
 } = transactionSlice.actions;
 
 export default transactionSlice.reducer;

@@ -22,7 +22,7 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import { ViewIcon, DeleteIcon, ChevronLeftIcon, ChevronRightIcon, EditIcon } from '@chakra-ui/icons';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useColors } from '../../../utils/colors';
 
 const MotionBox = motion(Box);
@@ -30,8 +30,8 @@ const MotionBox = motion(Box);
 const TransactionTable = ({
   data = [],
   selectedItems = [],
-  onSelectAll = () => {},
-  onSelectItem = () => {},
+  onSelectAll,
+  onSelectItem,
   currentPage = 1,
   totalPages = 1,
   pageSize = 10,
@@ -46,17 +46,34 @@ const TransactionTable = ({
   const isMobile = useBreakpointValue({ base: true, md: false });
   const colors = useColors();
 
-  // Add these checks at the beginning
-  const handleSelectAll = () => {
-    if (typeof onSelectAll === 'function') {
-      onSelectAll();
-    }
-  };
+  const renderStatus = (status, payment) => {
+    // Status badge setup
+    const statusConfig = {
+      completed: { color: 'green', label: 'Completed' },
+      pending: { color: 'yellow', label: 'Pending' },
+      cancelled: { color: 'red', label: 'Cancelled' },
+      processing: { color: 'blue', label: 'Processing' },
+      failed: { color: 'red', label: 'Failed' }
+    };
 
-  const handleSelectItem = (id) => {
-    if (typeof onSelectItem === 'function') {
-      onSelectItem(id);
-    }
+    // Payment badge setup
+    const paymentConfig = {
+      paid: { color: 'green', label: 'Paid' },
+      pending: { color: 'yellow', label: 'Pending' },
+      failed: { color: 'red', label: 'Failed' },
+      refunded: { color: 'purple', label: 'Refunded' }
+    };
+
+    return (
+      <HStack spacing={2}>
+        <Badge {...getStatusColor(status)} fontSize="xs">
+          {statusConfig[status]?.label || status}
+        </Badge>
+        <Badge {...getPaymentColor(payment)} fontSize="xs">
+          {paymentConfig[payment]?.label || payment}
+        </Badge>
+      </HStack>
+    );
   };
 
   const renderMobileCard = (transaction) => (
@@ -64,92 +81,123 @@ const TransactionTable = ({
       key={transaction.id}
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3 }}
-      bg={colors.bgColor}
-      p={3}
-      mb={3}
-      borderRadius="lg"
-      borderWidth="1px"
-      borderColor={colors.borderColor}
-      shadow="sm"
+      exit={{ opacity: 0, y: -20 }}
+      layout
     >
-      <VStack align="stretch" spacing={3}>
+      <VStack spacing={4} p={4} bg={colors.cardBg} borderRadius="xl" position="relative">
+        {/* Status Badge - Floating */}
+        <HStack 
+          position="absolute" 
+          top={-2} 
+          right={-2} 
+          spacing={2} 
+          bg={colors.glassBg} 
+          p={2} 
+          borderRadius="full"
+          backdropFilter="blur(8px)"
+        >
+          {renderStatus(transaction.status, transaction.paymentStatus)}
+        </HStack>
+
         {/* Header */}
-        <Flex justify="space-between" align="center">
+        <HStack w="full" justify="space-between">
           <VStack align="start" spacing={0}>
-            <Text fontWeight="medium" fontSize="sm">
-              #{transaction.transactionId || 'N/A'}
-            </Text>
-            <Text fontSize="xs" color="gray.500">
-              {new Date(transaction.date).toLocaleDateString()}
+            <Text fontSize="xs" color="gray.500">Transaction ID</Text>
+            <Text fontWeight="bold" color="blue.500">
+              #{transaction.transactionId}
             </Text>
           </VStack>
-          <Badge
-            {...getStatusColor(transaction?.status || 'pending')}
-            fontSize="xs"
-          >
-            {transaction?.status || 'Pending'}
-          </Badge>
-        </Flex>
+          <VStack align="end" spacing={0}>
+            <Text fontSize="xs" color="gray.500">Amount</Text>
+            <Text fontWeight="bold" fontSize="lg">
+              {transaction.currency} {transaction.amount?.toLocaleString()}
+            </Text>
+          </VStack>
+        </HStack>
 
         {/* Product Info */}
-        <Flex gap={3}>
-          <Image
-            src={transaction.productImage}
-            alt={transaction.productName}
-            boxSize="50px"
-            objectFit="cover"
-            borderRadius="md"
-            fallbackSrc="/placeholder.png"
-          />
-          <Box flex={1}>
+        <HStack w="full" spacing={4}>
+          <Box 
+            position="relative" 
+            w="80px" 
+            h="80px"
+            borderRadius="lg"
+            overflow="hidden"
+          >
+            <Image
+              src={transaction.productImage}
+              alt={transaction.productName}
+              layout="fill"
+              objectFit="cover"
+              fallbackSrc="/placeholder.png"
+            />
+            {transaction.productType && (
+              <Box
+                position="absolute"
+                bottom={0}
+                w="full"
+                bg={colors.glassBg}
+                p={1}
+                textAlign="center"
+              >
+                <Text fontSize="xs" color="white">
+                  {transaction.productType}
+                </Text>
+              </Box>
+            )}
+          </Box>
+          <VStack align="start" flex={1} spacing={1}>
             <Text fontWeight="medium" noOfLines={2}>
               {transaction.productName}
             </Text>
-            <Text fontSize="lg" fontWeight="bold" color="blue.500">
-              ${transaction.price?.toFixed(2)}
+            <Text fontSize="sm" color="gray.500">
+              {new Date(transaction.createdAt).toLocaleString()}
             </Text>
-          </Box>
-        </Flex>
+          </VStack>
+        </HStack>
 
-        {/* Details Grid */}
-        <SimpleGrid columns={2} spacing={3} mt={2}>
-          <Box>
-            <Text fontSize="xs" color="gray.500">Customer</Text>
-            <Text fontSize="sm" fontWeight="medium">{transaction.customer}</Text>
-          </Box>
-          <Box>
-            <Text fontSize="xs" color="gray.500">Payment</Text>
-            <Badge
-              {...getPaymentColor(transaction?.payment || 'pending')}
-              borderRadius="full"
-              px={2}
-              py={0.5}
-              fontSize="xs"
-            >
-              {transaction?.payment || 'Pending'}
-            </Badge>
-          </Box>
+        {/* Customer Info */}
+        <VStack w="full" align="start" spacing={1} bg={colors.hoverBg} p={3} borderRadius="md">
+          <Text fontSize="xs" color="gray.500">Customer Details</Text>
+          <Text fontWeight="medium">{transaction.customerDetails.name}</Text>
+          <Text fontSize="sm">{transaction.customerDetails.email}</Text>
+          {transaction.customerDetails.phone && (
+            <Text fontSize="sm">{transaction.customerDetails.phone}</Text>
+          )}
+        </VStack>
+
+        {/* Payment Info */}
+        <SimpleGrid columns={2} w="full" spacing={4}>
+          <VStack align="start" spacing={0}>
+            <Text fontSize="xs" color="gray.500">Payment Method</Text>
+            <Text>{transaction.paymentMethod}</Text>
+          </VStack>
+          <VStack align="start" spacing={0}>
+            <Text fontSize="xs" color="gray.500">Reference</Text>
+            <Text noOfLines={1}>{transaction.flutterwaveReference || 'N/A'}</Text>
+          </VStack>
         </SimpleGrid>
 
         {/* Actions */}
-        <Flex justify="space-between" align="center" mt={2} pt={2} borderTopWidth={1}>
-          <HStack spacing={1}>
-            <IconButton
-              icon={<ViewIcon />}
-              variant="ghost"
-              size="sm"
-              onClick={() => onView('view', transaction)}
-              aria-label="View details"
-            />
-            <IconButton
-              icon={<EditIcon />}
-              variant="ghost"
-              size="sm"
-              onClick={() => onEdit('edit', transaction)}
-              aria-label="Edit transaction"
-            />
-          </HStack>
+        <HStack w="full" spacing={2} pt={2} borderTop="1px" borderColor={colors.borderColor}>
+          <Button
+            size="sm"
+            variant="ghost"
+            leftIcon={<ViewIcon />}
+            onClick={() => onView('view', transaction)}
+            flex={1}
+          >
+            View
+          </Button>
+          <Button
+            size="sm"
+            variant="ghost"
+            leftIcon={<EditIcon />}
+            onClick={() => onEdit('edit', transaction)}
+            flex={1}
+          >
+            Edit
+          </Button>
           <IconButton
             icon={<DeleteIcon />}
             variant="ghost"
@@ -158,211 +206,147 @@ const TransactionTable = ({
             onClick={() => onDelete('delete', transaction)}
             aria-label="Delete transaction"
           />
-        </Flex>
+        </HStack>
       </VStack>
     </MotionBox>
   );
 
   const renderDesktopTable = () => (
-    <Box
-      position="relative"
-      overflowX="auto"
-      borderWidth="1px"
-      borderRadius="lg"
-      borderColor={colors.borderColor}
-    >
-      <Table variant="simple" sx={{
-        'th, td': {
-          whiteSpace: 'nowrap',
-        },
-        'thead': {
-          position: 'sticky',
-          top: 0,
-          zIndex: 1,
-          backgroundColor: colors.bgColor,
-        }
-      }}>
-        <Thead bg={colors.bgColor}>
+    <Box>
+      <Table>
+        <Thead>
           <Tr>
-            <Th w="40px">
+            <Th>
               <Checkbox
                 isChecked={data.length > 0 && selectedItems.length === data.length}
                 isIndeterminate={selectedItems.length > 0 && selectedItems.length < data.length}
-                onChange={handleSelectAll}
-                colorScheme="blue"
+                onChange={onSelectAll}
               />
             </Th>
-            <Th>Transaction</Th>
+            <Th>Transaction ID</Th>
+            <Th>Product</Th>
             <Th>Customer</Th>
-            <Th>Price</Th>
+            <Th>Amount</Th>
+            <Th>Payment Method</Th>
             <Th>Date</Th>
-            <Th>Created</Th>
-            <Th>Updated</Th>
-            <Th>Payment</Th>
             <Th>Status</Th>
-            <Th>Action</Th>
+            <Th>Actions</Th>
           </Tr>
         </Thead>
         <Tbody>
-          {(data || []).map((transaction) => (
-            <Tr
-              key={transaction.id || transaction._id}
-              as="tr"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.2 }}
-              _hover={{ bg: colors.activeColor }}
-            >
+          {data.map((transaction) => (
+            <Tr key={transaction.id}>
               <Td>
                 <Checkbox
-                  isChecked={selectedItems.includes(transaction.id || transaction._id)}
-                  onChange={() => handleSelectItem(transaction.id || transaction._id)}
-                  colorScheme="blue"
+                  isChecked={selectedItems.includes(transaction.id)}
+                  onChange={() => onSelectItem(transaction.id)}
                 />
               </Td>
               <Td>
-                <HStack spacing={3}>
+                <Text color="blue.500" fontWeight="medium">
+                  {transaction.transactionId}
+                </Text>
+              </Td>
+              <Td>
+                <HStack>
                   {transaction.productImage && (
                     <Image
                       src={transaction.productImage}
-                      alt={transaction.productName || 'Product'}
+                      alt={transaction.productName}
                       boxSize="40px"
                       objectFit="cover"
                       borderRadius="md"
-                      fallbackSrc="/placeholder.png"
                     />
                   )}
-                  <Box>
-                    <Text color="blue.500" fontWeight="medium">
-                      {transaction.transactionId || 'N/A'}
-                    </Text>
-                    <Text fontSize="sm" color="gray.600">
-                      {transaction.productName || 'N/A'}
-                    </Text>
-                  </Box>
+                  <Text>{transaction.productName}</Text>
                 </HStack>
               </Td>
-              <Td>{transaction.customer || 'N/A'}</Td>
-              <Td>₦{transaction.price?.toFixed(2) || '0.00'}</Td>
-              <Td>{new Date(transaction.date).toLocaleDateString()}</Td>
-              <Td>{new Date(transaction.createdDate).toLocaleString()}</Td>
-              <Td>{new Date(transaction.updatedDate).toLocaleString()}</Td>
               <Td>
-                <Badge
-                  px={2}
-                  py={1}
-                  borderRadius="full"
-                  {...getPaymentColor(transaction?.payment || 'pending')}
-                >
-                  {transaction?.payment || 'Pending'}
-                </Badge>
+                <VStack align="start" spacing={0}>
+                  <Text>{transaction.customerDetails?.name}</Text>
+                  <Text fontSize="sm" color="gray.500">
+                    {transaction.customerDetails?.email}
+                  </Text>
+                </VStack>
               </Td>
               <Td>
-                <Badge
-                  px={2}
-                  py={1}
-                  borderRadius="full"
-                  {...getStatusColor(transaction?.status || 'pending')}
-                >
-                  {transaction?.status || 'Pending'}
-                </Badge>
+                <Text fontWeight="medium">
+                  {transaction.currency} {transaction.price?.toFixed(2)}
+                </Text>
               </Td>
+              <Td>{transaction.paymentMethod}</Td>
               <Td>
-                <HStack spacing={2}>
-                  <Tooltip label="View Details">
-                    <IconButton
-                      icon={<ViewIcon />}
-                      variant="ghost"
-                      colorScheme="blue"
-                      size="sm"
-                      onClick={() => onView('view', transaction)}
-                    />
-                  </Tooltip>
-                  <Tooltip label="Edit">
-                    <IconButton
-                      icon={<EditIcon />}
-                      variant="ghost"
-                      colorScheme="green"
-                      size="sm"
-                      onClick={() => onEdit('edit', transaction)}
-                    />
-                  </Tooltip>
-                  <Tooltip label="Delete">
-                    <IconButton
-                      icon={<DeleteIcon />}
-                      variant="ghost"
-                      colorScheme="red"
-                      size="sm"
-                      onClick={() => onDelete('delete', transaction)}
-                    />
-                  </Tooltip>
+                <VStack align="start" spacing={0}>
+                  <Text>{new Date(transaction.date).toLocaleDateString()}</Text>
+                  <Text fontSize="sm" color="gray.500">
+                    {new Date(transaction.date).toLocaleTimeString()}
+                  </Text>
+                </VStack>
+              </Td>
+              <Td>{renderStatus(transaction.status, transaction.payment)}</Td>
+              <Td>
+                <HStack>
+                  <IconButton
+                    icon={<ViewIcon />}
+                    onClick={() => onView('view', transaction)}
+                    aria-label="View"
+                    size="sm"
+                  />
+                  <IconButton
+                    icon={<EditIcon />}
+                    onClick={() => onEdit('edit', transaction)}
+                    aria-label="Edit"
+                    size="sm"
+                  />
+                  <IconButton
+                    icon={<DeleteIcon />}
+                    onClick={() => onDelete('delete', transaction)}
+                    aria-label="Delete"
+                    size="sm"
+                    colorScheme="red"
+                  />
                 </HStack>
               </Td>
             </Tr>
           ))}
         </Tbody>
       </Table>
+      
+      {/* Pagination */}
+      <Flex justify="space-between" align="center" mt={4}>
+        <Text fontSize="sm">
+          Showing {Math.min((currentPage - 1) * pageSize + 1, totalItems)} to{' '}
+          {Math.min(currentPage * pageSize, totalItems)} of {totalItems} entries
+        </Text>
+        <HStack>
+          <Button
+            onClick={() => onPageChange(currentPage - 1)}
+            isDisabled={currentPage === 1}
+            size="sm"
+          >
+            Previous
+          </Button>
+          <Text>
+            Page {currentPage} of {totalPages}
+          </Text>
+          <Button
+            onClick={() => onPageChange(currentPage + 1)}
+            isDisabled={currentPage === totalPages}
+            size="sm"
+          >
+            Next
+          </Button>
+        </HStack>
+      </Flex>
     </Box>
   );
 
-  return (
-    <Box>
-      <Stack spacing={6}>
-        {isMobile ? (
-          <Stack spacing={4}>
-            {data?.map(renderMobileCard)}
-          </Stack>
-        ) : (
-          renderDesktopTable()
-        )}
-
-        <Flex
-          justify="space-between"
-          align="center"
-          p={4}
-          bg={colors.bgColor}
-          borderRadius="lg"
-          shadow="sm"
-        >
-          <Text color="gray.600" fontSize="sm">
-            Showing {(currentPage - 1) * pageSize + 1} to {Math.min(currentPage * pageSize, totalItems)} of {totalItems} entries
-          </Text>
-          <HStack spacing={2}>
-            <Button
-              size="sm"
-              onClick={() => onPageChange(currentPage - 1)}
-              isDisabled={currentPage === 1}
-              leftIcon={<ChevronLeftIcon />}
-              variant="outline"
-              colorScheme="blue"
-            >
-              Previous
-            </Button>
-            <Select
-              size="sm"
-              value={currentPage}
-              onChange={(e) => onPageChange(Number(e.target.value))}
-              w="70px"
-              borderRadius="md"
-            >
-              {Array.from({ length: totalPages }, (_, i) => (
-                <option key={i + 1} value={i + 1}>{i + 1}</option>
-              ))}
-            </Select>
-            <Button
-              size="sm"
-              onClick={() => onPageChange(currentPage + 1)}
-              isDisabled={currentPage === totalPages}
-              rightIcon={<ChevronRightIcon />}
-              variant="outline"
-              colorScheme="blue"
-            >
-              Next
-            </Button>
-          </HStack>
-        </Flex>
-      </Stack>
-    </Box>
+  return isMobile ? (
+    <VStack spacing={4}>
+      {data.map(renderMobileCard)}
+    </VStack>
+  ) : (
+    renderDesktopTable()
   );
 };
 

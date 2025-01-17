@@ -11,14 +11,14 @@ import {
   update_transaction_error,
   delete_transaction,
   delete_transaction_success,
-  delete_transaction_error
+  delete_transaction_error,
+  fetch_transaction_products,
+  fetch_transaction_products_success,
+  fetch_transaction_products_error
 } from "./reducer";
 import { ApiEndpoints } from "../../../store/types";
 import api from "../../../services/DataService";
 import toast from "react-hot-toast";
-
-// Helper function to validate MongoDB ObjectId format
-const isValidObjectId = (id) => /^[0-9a-fA-F]{24}$/.test(id);
 
 function* fetchTransactionsSaga({ payload }) {
   try {
@@ -51,34 +51,35 @@ function* fetchTransactionsSaga({ payload }) {
   }
 }
 
+function* fetchTransactionProductsSaga() {
+  try {
+    const response = yield call(api.get, ApiEndpoints.TRANSACTION_PRODUCTS);
+    yield put(fetch_transaction_products_success(response.data));
+  } catch (error) {
+    yield put(fetch_transaction_products_error(error.message));
+  }
+}
+
 function* addTransactionSaga({ payload }) {
   try {
+    // Format data according to backend expectations
     const formattedData = {
       productId: payload.productId,
       amount: Number(payload.amount),
-      quantity: Number(payload.quantity || 1),
-      status: payload.status.toLowerCase(),
-      paymentStatus: payload.paymentStatus.toLowerCase(),
+      currency: payload.currency,
       paymentMethod: payload.paymentMethod,
-      notes: payload.notes,
-      metadata: {
-        productName: payload.metadata.productName,
-        customerName: payload.metadata.customerName
-      }
+      paymentStatus: payload.paymentStatus,
+      customerDetails: payload.customerDetails,
+      metadata: payload.metadata,
+      notes: payload.notes
     };
-
-    // Validate required fields
-    if (!formattedData.productId || !isValidObjectId(formattedData.productId)) {
-      throw new Error('Valid Product ID is required');
-    }
 
     const response = yield call(api.post, ApiEndpoints.TRANSACTIONS, formattedData);
     yield put(add_transaction_success(response.data));
     toast.success("Transaction created successfully");
   } catch (error) {
-    const errorMessage = error.response?.data?.error || error.message;
-    toast.error(errorMessage);
-    yield put(add_transaction_error(errorMessage));
+    yield put(add_transaction_error(error.response?.data?.error || "Failed to create transaction"));
+    toast.error(error.response?.data?.error || "Failed to create transaction");
   }
 }
 
@@ -148,6 +149,7 @@ function* transactionSagas() {
   yield takeLatest(add_transaction.type, addTransactionSaga);
   yield takeLatest(update_transaction.type, updateTransactionSaga);
   yield takeLatest(delete_transaction.type, deleteTransactionSaga);
+  yield takeLatest(fetch_transaction_products.type, fetchTransactionProductsSaga);
 }
 
 export default transactionSagas;
