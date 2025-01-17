@@ -88,6 +88,7 @@ const TransactionTabs = () => {
 
 const Transaction = () => {
   const dispatch = useDispatch();
+  const profile = useSelector(state => state.accountSettings.data.profile);
   const transactions = useSelector(getTransactions);
   const stats = useSelector(getTransactionStats);
   const meta = useSelector(getTransactionMeta);
@@ -142,6 +143,10 @@ const Transaction = () => {
     dispatch(delete_transaction(data.id || data._id));
     handleModalClose();
   };
+
+  useEffect(() => {
+    setPage(1);
+  }, [selectedTab, searchQuery, filters]);
 
   useEffect(() => {
     dispatch(fetch_transactions({ 
@@ -201,94 +206,96 @@ const Transaction = () => {
           title="No Transactions Found"
           sub="Get started by adding your first transaction"
           icon={<FiArchive size={50} />}
-          btnText="Add Transaction"
-          handleClick={() => handleModalOpen('add')}
+          isLink={true}
+          link='/product/instagram'
         />
       );
     }
 
     return (
       <>
-        {/* Search and Actions */}
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3 }}
-        >
-          <Grid
-            templateColumns={{ base: "1fr", md: "1fr auto" }}
-            gap={4}
-            mb={6}
+        {/* Hide export and bulk actions for non-admin users */}
+        {profile?.role === 'admin' && (
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3 }}
           >
-            <InputGroup
-              bg={colors.cardBg}
-              borderRadius="lg"
-              border="1px solid"
-              borderColor={colors.borderColor}
+            <Grid
+              templateColumns={{ base: "1fr", md: "1fr auto" }}
+              gap={4}
+              mb={6}
             >
-              <InputLeftElement pointerEvents="none">
-                <SearchIcon color="gray.400" />
-              </InputLeftElement>
-              <Input
-                placeholder="Search transactions..."
-                border="none"
-                _focus={{ boxShadow: "none" }}
-                value={searchQuery}
-                onChange={(e) => handleSearch(e.target.value)}
-              />
-            </InputGroup>
+              <InputGroup
+                bg={colors.cardBg}
+                borderRadius="lg"
+                border="1px solid"
+                borderColor={colors.borderColor}
+              >
+                <InputLeftElement pointerEvents="none">
+                  <SearchIcon color="gray.400" />
+                </InputLeftElement>
+                <Input
+                  placeholder="Search transactions..."
+                  border="none"
+                  _focus={{ boxShadow: "none" }}
+                  value={searchQuery}
+                  onChange={(e) => handleSearch(e.target.value)}
+                />
+              </InputGroup>
 
-            <HStack spacing={2}>
-              <Menu>
-                <MenuButton 
-                  as={Button} 
-                  rightIcon={<ChevronDownIcon />}
+              <HStack spacing={2}>
+                <Menu>
+                  <MenuButton 
+                    as={Button} 
+                    rightIcon={<ChevronDownIcon />}
+                    minW="auto"
+                    size="sm"
+                  >
+                    Filter
+                  </MenuButton>
+                  <MenuList>
+                    <MenuItem>
+                      <Text>Payment Status</Text>
+                      <Menu placement="right-start">
+                        <MenuButton as={Box} w="full" cursor="pointer">
+                          Payment Status
+                        </MenuButton>
+                        <MenuList>
+                          <MenuItem onClick={() => handleFilter('payment', 'Paid')}>Paid</MenuItem>
+                          <MenuItem onClick={() => handleFilter('payment', 'Unpaid')}>Unpaid</MenuItem>
+                          <MenuItem onClick={() => handleFilter('payment', 'Pending')}>Pending</MenuItem>
+                          <MenuItem onClick={() => handleFilter('payment', null)}>Clear</MenuItem>
+                        </MenuList>
+                      </Menu>
+                    </MenuItem>
+                    <MenuItem>
+                      <Input
+                        type="date"
+                        onChange={(e) => handleFilter('date', e.target.value)}
+                        bg={colors.bgColor}
+                        color={colors.textColor}
+                      />
+                    </MenuItem>
+                    <MenuItem onClick={handleClearFilters}>
+                      Clear All Filters
+                    </MenuItem>
+                  </MenuList>
+                </Menu>
+
+                <Button 
+                  onClick={handleExport} 
+                  leftIcon={<ChevronDownIcon />}
+                  isDisabled={!transactions.length}
                   minW="auto"
                   size="sm"
                 >
-                  Filter
-                </MenuButton>
-                <MenuList>
-                  <MenuItem>
-                    <Text>Payment Status</Text>
-                    <Menu placement="right-start">
-                      <MenuButton as={Box} w="full" cursor="pointer">
-                        Payment Status
-                      </MenuButton>
-                      <MenuList>
-                        <MenuItem onClick={() => handleFilter('payment', 'Paid')}>Paid</MenuItem>
-                        <MenuItem onClick={() => handleFilter('payment', 'Unpaid')}>Unpaid</MenuItem>
-                        <MenuItem onClick={() => handleFilter('payment', 'Pending')}>Pending</MenuItem>
-                        <MenuItem onClick={() => handleFilter('payment', null)}>Clear</MenuItem>
-                      </MenuList>
-                    </Menu>
-                  </MenuItem>
-                  <MenuItem>
-                    <Input
-                      type="date"
-                      onChange={(e) => handleFilter('date', e.target.value)}
-                      bg={colors.bgColor}
-                      color={colors.textColor}
-                    />
-                  </MenuItem>
-                  <MenuItem onClick={handleClearFilters}>
-                    Clear All Filters
-                  </MenuItem>
-                </MenuList>
-              </Menu>
-
-              <Button 
-                onClick={handleExport} 
-                leftIcon={<ChevronDownIcon />}
-                isDisabled={!transactions.length}
-                minW="auto"
-                size="sm"
-              >
-                Export
-              </Button>
-            </HStack>
-          </Grid>
-        </motion.div>
+                  Export
+                </Button>
+              </HStack>
+            </Grid>
+          </motion.div>
+        )}
 
         {/* Tabs */}
         <Box 
@@ -377,16 +384,6 @@ const Transaction = () => {
                 </BreadcrumbItem>
               </Breadcrumb>
             </VStack>
-            <Button
-              leftIcon={<AddIcon />}
-              onClick={() => handleModalOpen('add')}
-              bg={colors.buttonPrimaryBg}
-              color="white"
-              _hover={{ bg: colors.buttonPrimaryHover }}
-              size="sm"
-            >
-              New Transaction
-            </Button>
           </Flex>
         </Flex>
       </Box>

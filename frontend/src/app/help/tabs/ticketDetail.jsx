@@ -31,6 +31,11 @@ const TicketDetail = ({
   const [status, setStatus] = useState(ticket?.status);
   const colors = useColors();
 
+  const customerName = ticket?.customer?.name;
+  const customerAvatar = ticket?.customer?.avatar || '';
+
+  console.log('ticket', ticket);
+
   const handleReply = () => {
     onAddResponse(ticket._id, {
       message: reply,
@@ -70,8 +75,8 @@ const TicketDetail = ({
             <HStack spacing={4}>
               <Avatar 
                 size="lg" 
-                name={ticket?.customer.name} 
-                src={ticket?.customer.avatar}
+                name={customerName}
+                src={customerAvatar}
               />
               <Box>
                 <HStack spacing={2}>
@@ -84,7 +89,7 @@ const TicketDetail = ({
                   </Badge>
                 </HStack>
                 <Text color="gray.600">
-                  {ticket?.customer.name} - {new Date(ticket?.createdAt).toLocaleString()}
+                  {customerName} - {new Date(ticket?.createdAt).toLocaleString()}
                 </Text>
               </Box>
             </HStack>
@@ -105,10 +110,10 @@ const TicketDetail = ({
                 <HStack spacing={4} mb={2}>
                   <Avatar 
                     size="sm" 
-                    name={response.sender === 'support' ? 'Support Team' : ticket.customer.name}
+                    name={response.sender === 'support' ? 'Support Team' : customerName}
                   />
                   <Text fontWeight="bold">
-                    {response.sender === 'support' ? 'Support Team' : ticket.customer.name}
+                    {response.sender === 'support' ? 'Support Team' : customerName}
                   </Text>
                   <Text color="gray.600" fontSize="sm">
                     {new Date(response.timestamp).toLocaleString()}

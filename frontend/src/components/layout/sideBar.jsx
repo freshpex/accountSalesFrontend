@@ -65,7 +65,7 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar, isCollapsed, toggleCollapse }) 
                 mr={2}
               />
               <Text fontSize="lg" fontWeight="bold" color={textColor}>
-                ScotTech
+                ScottTech
               </Text>
             </Flex>
 
@@ -91,7 +91,7 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar, isCollapsed, toggleCollapse }) 
                   Company
                 </Text>
                 <Text fontSize="sm" fontWeight="medium" color={textColor}>
-                  ScotTech
+                  ScottTech
                 </Text>
               </Box>
             </Flex>
@@ -123,23 +123,23 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar, isCollapsed, toggleCollapse }) 
                   <Flex align="center" gap={3}>
                     <Avatar
                       src={profilePicture}
-                      name={`${profile?.firstName} ${profile?.lastName}` || "User"}
+                      name={`${profile?.firstName} ${profile?.lastName}`}
                       size="sm"
                     />
                     <Box flex="1" textAlign="left">
-                      <Text fontSize="sm" color="gray.700">
-                        {`${profile?.firstName} ${profile?.lastName}` || "User"}
+                      <Text fontSize="sm" color={textColor}>
+                        {`${profile?.firstName} ${profile?.lastName}`}
                       </Text>
                       <Text fontSize="xs" color={textColor}>
-                        {profile?.role || "Role"}
+                        {profile?.role === 'user' ? 'Member' : profile?.role || "Role"}
                       </Text>
                     </Box>
                     <ChevronDownIcon />
                   </Flex>
                 </MenuButton>
                 <MenuList>
-                  <MenuItem onClick={() => navigate('/settings')}>Profile</MenuItem>
-                  <MenuItem onClick={handleLogout}>Logout</MenuItem>
+                  <MenuItem onClick={() => navigate('/settings')} color={textColor}>Profile</MenuItem>
+                  <MenuItem onClick={handleLogout} color={textColor}>Logout</MenuItem>
                 </MenuList>
               </Menu>
             </Box>
@@ -170,8 +170,8 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar, isCollapsed, toggleCollapse }) 
               w="auto"
             />
             {!isCollapsed && (
-              <Text fontSize="lg" fontWeight="bold">
-                ScotTech
+              <Text fontSize="lg" fontWeight="bold" color={textColor}>
+                ScottTech
               </Text>
             )}
           </Flex>
@@ -205,7 +205,7 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar, isCollapsed, toggleCollapse }) 
               <Text fontSize="xs" color={textColor}>
                 Company
               </Text>
-              <Text fontSize="sm" fontWeight="medium">
+              <Text fontSize="sm" fontWeight="medium" color={textColor}>
                 social Store
               </Text>
             </Box>
@@ -239,16 +239,16 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar, isCollapsed, toggleCollapse }) 
               <Flex align="center" gap={3}>
                 <Avatar
                   src={profilePicture}
-                  name={`${profile?.firstName} ${profile?.lastName}` || "User"}
+                  name={`${profile?.firstName} ${profile?.lastName}`}
                   size="sm"
                 />
                 {!isCollapsed && (
                   <Box flex="1" textAlign="left">
-                    <Text fontSize="sm" color="gray.700">
-                      {`${profile?.firstName} ${profile?.lastName}` || "User"}
+                    <Text fontSize="sm" color={textColor}>
+                      {`${profile?.firstName} ${profile?.lastName}`}
                     </Text>
                     <Text fontSize="xs" color={textColor}>
-                      {profile?.role || "Role"}
+                      {profile?.role === 'user' ? 'Member' : profile?.role || "Role"}
                     </Text>
                   </Box>
                 )}
@@ -256,8 +256,8 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar, isCollapsed, toggleCollapse }) 
               </Flex>
             </MenuButton>
             <MenuList>
-              <MenuItem onClick={() => navigate('/settings')}>Profile</MenuItem>
-              <MenuItem onClick={handleLogout}>Logout</MenuItem>
+              <MenuItem onClick={() => navigate('/settings')} color={textColor}>Profile</MenuItem>
+              <MenuItem onClick={handleLogout} color={textColor}>Logout</MenuItem>
             </MenuList>
           </Menu>
         </Box>
@@ -269,11 +269,12 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar, isCollapsed, toggleCollapse }) 
 const SidebarContent = ({ isCollapsed, activeColor, textColor }) => {
   const [expandedSection, setExpandedSection] = useState("Product");
   const navigate = useNavigate();
+  const profile = useSelector(selectProfile);
+  const userRole = profile?.role || 'user';
 
   const handleSectionClick = (title, route) => {
     setExpandedSection(expandedSection === title ? null : title);
     if (route) {
-      // If it's the main product route, navigate to default tab
       if (route === '/product') {
         navigate('/product/instagram');
       } else {
@@ -282,9 +283,20 @@ const SidebarContent = ({ isCollapsed, activeColor, textColor }) => {
     }
   };
 
+  const filteredSidebarData = sidebarData.map(section => ({
+    ...section,
+    items: section.items.filter(item => {
+      // Hide Customers and Sales Report for non-admin users
+      if (userRole !== 'admin' && (item.title === 'Customers' || item.title === 'Sales Report')) {
+        return false;
+      }
+      return true;
+    })
+  }));
+
   return (
     <VStack align="stretch" spacing={1} px={2}>
-      {sidebarData.map((section) => (
+      {filteredSidebarData.map((section) => (
         <Box key={section.section}>
           {!isCollapsed && (
             <Text

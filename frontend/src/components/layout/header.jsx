@@ -206,16 +206,16 @@ const Header = ({ toggleSidebar }) => {
             <Flex align="center" textAlign="right">
               <Avatar
                 borderRadius="10px"
-                name={`${profile?.firstName} ${profile?.lastName}` || "User"}
+                name={`${profile?.firstName} ${profile?.lastName}`}
                 src={profilePicture}
                 size="sm"
               />
               <Box ml={2} display={{ base: "none", md: "block" }}>
                 <Text fontSize="sm" color="gray.700">
-                  {`${profile?.firstName} ${profile?.lastName}` || "User"}
+                  {`${profile?.firstName} ${profile?.lastName}`}
                 </Text>
                 <Text fontSize="xs" color="gray.500">
-                  {profile?.role || "Role"}
+                  {profile?.role === 'user' ? 'Member' : profile?.role || "Role"}
                 </Text>
               </Box>
             </Flex>

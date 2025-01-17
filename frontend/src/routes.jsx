@@ -1,5 +1,6 @@
-import { Routes, Route, Navigate, Outlet } from 'react-router-dom';
-import { lazy, Suspense } from 'react';
+import { Routes, Route, Navigate, Outlet, useNavigate } from 'react-router-dom';
+import { lazy, Suspense, useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import Layout from './components/layout';
 import ProtectedRoute from './components/protectedRoute';
 import SuspenseLoadingUI from './UI';
@@ -23,6 +24,19 @@ const PaymentCallback = lazy(() => import('./app/payment/PaymentCallback'));
 const EscrowDetails = lazy(() => import(/* webpackChunkName: "escrow" */ './app/product/pages/EscrowDetails.jsx'));
 const UserDashboard  = lazy(() => import('./app/userDashboard/UserDashboard.jsx'));
 
+const AdminRoute = ({ children }) => {
+  const profile = useSelector(state => state.accountSettings.data.profile);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (profile?.role !== 'admin') {
+      navigate('/userdashboard');
+    }
+  }, [profile, navigate]);
+
+  return children;
+};
+
 const AppRoutes = () => {
   return (
     <Suspense fallback={<SuspenseLoadingUI />}>
@@ -44,14 +58,26 @@ const AppRoutes = () => {
             </Layout>
           </ProtectedRoute>
         }>
-          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/dashboard" element={
+            <AdminRoute>
+              <Dashboard />
+            </AdminRoute>
+          } />
           <Route path="/help" element={<Help />} />
           <Route path="/settings" element={<AccountSettings />} />
           <Route path="/product/*" element={<Products />} />
           <Route path="/product/:type/:id" element={<ProductDetail />} />
           <Route path="/transaction" element={<Transaction />} />
-          <Route path="/customers" element={<Customers />} />
-          <Route path="/sales-report" element={<SalesReport />} />
+          <Route path="/customers" element={
+            <AdminRoute>
+              <Customers />
+            </AdminRoute>
+          } />
+          <Route path="/sales-report" element={
+            <AdminRoute>
+              <SalesReport />
+            </AdminRoute>
+          } />
           <Route path="/escrow/:escrowId" element={<EscrowDetails />} />          
           <Route path="/userdashboard" element={<UserDashboard />} />
         </Route>

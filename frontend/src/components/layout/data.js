@@ -25,8 +25,18 @@ export const sidebarData = [
         ],
       },
       { title: "Transaction", icon: HiOutlineDocumentText, route: "/transaction" },
-      { title: "Customers", icon: HiOutlineUsers, route: "/customers" },
-      { title: "Sales Report", icon: HiOutlineChartBar, route: "/sales-report" },
+      { 
+        title: "Customers", 
+        icon: HiOutlineUsers, 
+        route: "/customers",
+        requireAdmin: true
+      },
+      { 
+        title: "Sales Report", 
+        icon: HiOutlineChartBar, 
+        route: "/sales-report",
+        requireAdmin: true
+      },
     ],
   },
   {

@@ -25,7 +25,7 @@ function* loginSaga({ payload }) {
       toast.success('Login successful!');
 
       setTimeout(() => {
-        window.location.href = data.user.role === "admin" ? "/adminDashboard" : "/dashboard";
+        window.location.href = data.user.role === "admin" ? "/dashboard" : "/userdashboard";
       }, 1000);
     } else {
       throw new Error(response.data.error || 'Login failed');

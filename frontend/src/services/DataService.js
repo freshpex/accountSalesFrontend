@@ -13,7 +13,7 @@ const api = axios.create({
 // Add request interceptor
 api.interceptors.request.use(
   async (config) => {
-    console.log(`Making ${config.method.toUpperCase()} request to: ${config.url}`);
+    // console.log(`Making ${config.method.toUpperCase()} request to: ${config.url}`);
     const token = await getWithExpiry("x-access-token");
     // console.log('Token:', token);
     if (token) {
@@ -28,7 +28,7 @@ api.interceptors.request.use(
 
 api.interceptors.response.use(
   (response) => {
-    console.log(`Response from ${response.config.url}:`, response.data);
+    // console.log(`Response from ${response.config.url}:`, response.data);
     if (response.data && !('success' in response.data)) {
       response.data = { success: true, data: response.data };
     }

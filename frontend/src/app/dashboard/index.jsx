@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import {
   Box, Flex, Text, Grid, Container, useColorModeValue
 } from '@chakra-ui/react';
@@ -30,7 +31,9 @@ import SalesTarget from './components/SalesTarget';
 
 const Dashboard = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const metrics = useSelector(getDashboardMetrics);
+  const profile = useSelector(state => state.accountSettings.data.profile);
   const salesTarget = useSelector(getSalesTarget);
   const salesTrends = useSelector(getSalesTrends);
   const customerGrowth = useSelector(getCustomerGrowth);
@@ -44,8 +47,13 @@ const Dashboard = () => {
   const borderColor = useColorModeValue('gray.100', 'gray.700');
 
   useEffect(() => {
+    if (profile?.role !== 'admin') {
+      navigate('/userdashboard');
+      return;
+    }
+
     dispatch(fetch_dashboard_data());
-  }, [dispatch]);
+  }, [dispatch, profile, navigate]);
 
   useEffect(() => {
     dispatch(fetch_sales_metrics({ timeRange }));

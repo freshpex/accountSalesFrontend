@@ -67,7 +67,7 @@ const Account = () => {
   const handlePictureUpload = async (event) => {
     const file = event.target.files?.[0];
     if (file) {
-      if (file.size > 2 * 1024 * 1024) { // 2MB limit
+      if (file.size > 2 * 1024 * 1024) {
         toast({
           title: "File too large",
           description: "Please select an image under 2MB",
@@ -78,7 +78,7 @@ const Account = () => {
       }
 
       const formData = new FormData();
-      formData.append('image', file); // Make sure this matches backend expectation
+      formData.append('image', file);
       
       try {
         dispatch(upload_profile_picture(formData));

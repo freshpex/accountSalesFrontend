@@ -23,6 +23,7 @@ import { useColors } from '../../../utils/colors';
 import { STATUS_CONFIG, PAYMENT_STATUS_CONFIG } from '../../../utils/constants';
 import { convertToPublicUrl } from '../../../utils/supabase';
 import { useState } from 'react';
+import { useSelector } from 'react-redux';
 
 const MotionBox = motion(Box);
 
@@ -106,6 +107,8 @@ const TransactionTable = ({
  }) => {
   const isMobile = useBreakpointValue({ base: true, md: false });
   const colors = useColors();
+  const profile = useSelector(state => state.accountSettings.data.profile);
+  const isAdmin = profile?.role === 'admin';
 
   const tableAnimation = {
     initial: { opacity: 0 },
@@ -245,13 +248,15 @@ const TransactionTable = ({
         <Table variant="simple">
           <Thead bg={colors.tableHeaderBg}>
             <Tr>
-              <Th>
-                <Checkbox
-                  isChecked={data.length > 0 && selectedItems.length === data.length}
-                  isIndeterminate={selectedItems.length > 0 && selectedItems.length < data.length}
-                  onChange={onSelectAll}
-                />
-              </Th>
+              {isAdmin && (
+                <Th>
+                  <Checkbox
+                    isChecked={data.length > 0 && selectedItems.length === data.length}
+                    isIndeterminate={selectedItems.length > 0 && selectedItems.length < data.length}
+                    onChange={onSelectAll}
+                  />
+                </Th>
+              )}
               <Th>Transaction ID</Th>
               <Th>Product</Th>
               <Th>Customer</Th>
@@ -276,13 +281,15 @@ const TransactionTable = ({
                   }
                 }}
               >
-                <Td>
-                  <Checkbox
-                    isChecked={selectedItems.includes(transaction.id)}
-                    onChange={() => onSelectItem(transaction.id)}
-                    colorScheme="blue"
-                  />
-                </Td>
+                {isAdmin && (
+                  <Td>
+                    <Checkbox
+                      isChecked={selectedItems.includes(transaction.id)}
+                      onChange={() => onSelectItem(transaction.id)}
+                      colorScheme="blue"
+                    />
+                  </Td>
+                )}
                 <Td>
                   <motion.div whileHover={{ scale: 1.02 }}>
                     <Text
@@ -337,19 +344,23 @@ const TransactionTable = ({
                       aria-label="View"
                       size="sm"
                     />
-                    <IconButton
-                      icon={<EditIcon />}
-                      onClick={() => onEdit('edit', transaction)}
-                      aria-label="Edit"
-                      size="sm"
-                    />
-                    <IconButton
-                      icon={<DeleteIcon />}
-                      onClick={() => onDelete('delete', transaction)}
-                      aria-label="Delete"
-                      size="sm"
-                      colorScheme="red"
-                    />
+                    {isAdmin && (
+                      <>
+                        <IconButton
+                          icon={<EditIcon />}
+                          onClick={() => onEdit('edit', transaction)}
+                          aria-label="Edit"
+                          size="sm"
+                        />
+                        <IconButton
+                          icon={<DeleteIcon />}
+                          onClick={() => onDelete('delete', transaction)}
+                          aria-label="Delete"
+                          size="sm"
+                          colorScheme="red"
+                        />
+                      </>
+                    )}
                   </HStack>
                 </Td>
               </Tr>

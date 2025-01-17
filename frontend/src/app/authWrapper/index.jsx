@@ -1,4 +1,3 @@
-import React from "react";
 import { getWithExpiry } from "src/utils/store";
 import { useLocation, Outlet, Navigate } from "react-router-dom";
 
