@@ -31,14 +31,11 @@ const PaymentCallback = () => {
       const response = await api.post('/api/v1/transactions/callback', {
         transaction_id: params.get('transaction_id'),
         tx_ref: params.get('tx_ref'),
-        // Add any additional params that might help identify the product
         meta: {
           productId: params.get('productId'),
           checkoutUrl: window.location.href
         }
       });
-
-      console.log('Payment verification response:', response.data);
 
       if (response.data.success) {
         setStatus('success');
@@ -62,16 +59,8 @@ const PaymentCallback = () => {
         throw new Error(response.data.error || 'Payment verification failed');
       }
     } catch (error) {
-      console.error('Payment verification error:', error);
       setStatus('failed');
       setError(error.response?.data?.error || error.message);
-      toast({
-        title: 'Payment Error',
-        description: error.response?.data?.error || error.message,
-        status: 'error',
-        duration: 5000,
-        isClosable: true,
-      });
     }
   }, [navigate, toast]);
 

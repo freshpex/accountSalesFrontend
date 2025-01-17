@@ -32,22 +32,30 @@ function* fetchTransactionsSaga({ payload }) {
       }
     });
 
-    console.log('Raw transactions response:', response);
-
-    // Extract data from nested structure
+    // Ensure we handle both possible response structures
     const responseData = response.data?.data || response.data;
     
     const formattedData = {
       items: responseData?.items || [],
-      meta: responseData?.meta || { currentPage: 1, totalPages: 1, totalItems: 0 },
-      stats: responseData?.stats || { all: 0, shipping: 0, completed: 0, cancelled: 0 }
+      meta: responseData?.meta || { 
+        currentPage: Number(params.page || 1),
+        totalPages: 1,
+        totalItems: responseData?.items?.length || 0
+      },
+      stats: responseData?.stats || { 
+        all: responseData?.items?.length || 0,
+        pending: 0,
+        completed: 0,
+        cancelled: 0
+      }
     };
 
-    console.log('Formatted transaction data:', formattedData);
     yield put(fetch_transactions_success(formattedData));
   } catch (error) {
     console.error('Fetch transactions error:', error);
-    yield put(fetch_transactions_error(error.message));
+    const errorMessage = error.response?.data?.error || error.message;
+    yield put(fetch_transactions_error(errorMessage));
+    toast.error(`Failed to fetch transactions: ${errorMessage}`);
   }
 }
 
@@ -70,16 +78,27 @@ function* addTransactionSaga({ payload }) {
       paymentMethod: payload.paymentMethod,
       paymentStatus: payload.paymentStatus,
       customerDetails: payload.customerDetails,
-      metadata: payload.metadata,
+      metadata: {
+        ...payload.metadata,
+        customerName: payload.customerDetails.name,
+        customerEmail: payload.customerDetails.email
+      },
       notes: payload.notes
     };
 
     const response = yield call(api.post, ApiEndpoints.TRANSACTIONS, formattedData);
+    
+    if (response.data.error) {
+      throw new Error(response.data.error);
+    }
+    
     yield put(add_transaction_success(response.data));
     toast.success("Transaction created successfully");
+    yield put(fetch_transactions()); // Refresh the list
   } catch (error) {
-    yield put(add_transaction_error(error.response?.data?.error || "Failed to create transaction"));
-    toast.error(error.response?.data?.error || "Failed to create transaction");
+    const errorMessage = error.response?.data?.error || error.message;
+    yield put(add_transaction_error(errorMessage));
+    toast.error(errorMessage);
   }
 }
 
