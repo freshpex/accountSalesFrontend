@@ -12,7 +12,7 @@ export default function TextLogo({ extraClasses }) {
             className={`text-700 text-primary font-bold font-['Integral_CF',_sans-serif] | py-[10px] leading-tight | cursor-pointer ${extraClasses}`}
             style={{ textTransform: 'none' }}
         >
-            ScottTech
+            ScotTech
         </Link>
     );
 }

@@ -225,6 +225,37 @@ export default function PrimaryFooter() {
                                 </Navigation>
                             </motion.div>
                         </div>
+
+                        <div className="space-y-8">
+                            {/* title */}
+                            <h3 className="text-600 font-bold">Legal</h3>
+
+                            {/* Legal navigation */}
+                            <motion.div
+                                variants={navLinkContainerVariant}
+                                initial="hidden"
+                                whileInView="visible"
+                            >
+                                <Navigation
+                                    ariaLabel="legal navigation"
+                                    navExtraClasses=""
+                                    ulExtraClasses="flex flex-col gap-3"
+                                >
+                                    {[
+                                        ['Terms of Service', '/terms'],
+                                        ['Privacy Policy', '/privacy'],
+                                        ['Account Settings', '/settings'],
+                                    ].map(([navItem, url], index) => (
+                                        <motion.li
+                                            variants={navLinkChildVariant}
+                                            key={index}
+                                        >
+                                            <a className="cursor-pointer font-medium transition-all hover:text-primary hover:underline hover:underline-offset-2" href={url}>{navItem}</a>
+                                        </motion.li>
+                                    ))}
+                                </Navigation>
+                            </motion.div>
+                        </div>
                     </div>
 
                     <div className="space-y-8">
@@ -232,8 +263,8 @@ export default function PrimaryFooter() {
                         <h3 className="text-600 font-bold">Stay Updated</h3>
 
                         {/* description */}
-                        <p className="text-neutral-600 leading-relaxed">
-                            Subscribe to our newsletter for the latest account listings, market trends, and exclusive deals on premium social media accounts.
+                        <p className="text-neutral-600 leading-relaxed"></p>
+                         <p>   Subscribe to our newsletter for the latest account listings, market trends, and exclusive deals on premium social media accounts.
                         </p>
 
                         {/* email subscription */}
