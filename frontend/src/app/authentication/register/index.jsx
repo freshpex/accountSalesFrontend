@@ -96,6 +96,11 @@ const Register = () => {
     }
   };
 
+  const handleGoogleSignUp = () => {
+    // Fix: Remove undefined from URL
+    window.location.href = `${import.meta.env.VITE_API_URL}/api/v1/user/auth/google`;
+  };
+
   useEffect(() => {
     if (error) {
       toast({
@@ -125,7 +130,7 @@ const Register = () => {
       <Stack spacing={2} alignItems="center">
         <Stack align="center" spacing={2}>
           <Image src="/logo.svg" alt="Logo" h="100px" />
-          <Text fontSize="2xl" fontWeight="bold">Create your account</Text>
+          <Text fontSize="xl">Create your account</Text>
         </Stack>
 
         <Box w="full" p={8} borderRadius="lg" bg={colors.bgColor} color={colors.textColor} boxShadow="sm">
@@ -133,8 +138,8 @@ const Register = () => {
             <Button
               w="full"
               variant="outline"
-              lefticon={<FcGoogle />}
-              onClick={() => console.log('Google sign up')}
+              leftIcon={<FcGoogle />}
+              onClick={handleGoogleSignUp}
             >
               Sign up with Google
             </Button>

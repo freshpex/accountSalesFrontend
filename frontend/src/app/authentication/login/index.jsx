@@ -35,6 +35,11 @@ const Login = () => {
   const [password, setPassword] = useState('');
   const colors = useColors();
 
+  const handleGoogleSignIn = () => {
+    // Fix: Remove undefined from URL
+    window.location.href = `${import.meta.env.VITE_API_URL}/api/v1/user/auth/google`;
+  };
+
   useEffect(() => {
     if (error) {
       toast({
@@ -72,7 +77,7 @@ const Login = () => {
         {/* Sign In Form */}
         <Box w="full" p={8} borderRadius="lg" bg={colors.bgColor} color={colors.textColor} boxShadow="sm">
           <Stack spacing={4}>
-            <Text fontSize="2xl" fontWeight="bold" textAlign="center">
+            <Text fontSize="xl" fontWeight="bold" textAlign="center">
               Sign In
             </Text>
             
@@ -80,8 +85,8 @@ const Login = () => {
             <Button
               w="full"
               variant="outline"
-              lefticon={<FcGoogle />}
-              onClick={() => console.log('Google sign in')}
+              leftIcon={<FcGoogle />}
+              onClick={handleGoogleSignIn}
             >
               Sign in with Google
             </Button>

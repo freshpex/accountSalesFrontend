@@ -37,6 +37,8 @@
     "node-cron": "^3.0.3",
     "node-fetch": "^2.7.0",
     "node-mailjet": "^6.0.6",
+    "passport": "^0.7.0",
+    "passport-google-oauth20": "^2.0.0",
     "qrcode": "^1.5.4",
     "speakeasy": "^2.0.0",
     "stripe": "^10.2.0"

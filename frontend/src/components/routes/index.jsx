@@ -1,9 +1,10 @@
 import { Routes, Route, Navigate, Outlet } from 'react-router-dom';
 import { lazy, Suspense } from 'react';
-import AdminRoute from './AdminRoute/index.jsx';
+import AdminRoute from './adminRoute/index.jsx';
 import Layout from '../layout';
 import ProtectedRoute from '../routes/protectedRoute/index.jsx';
 import SuspenseLoadingUI from '../../UI';
+import GoogleCallback from '../../app/authentication/GoogleCallback.jsx';
 
 // Lazy load components with proper chunks naming
 const LandingPage = lazy(() => import(/* webpackChunkName: "landing" */ '../../pages/landingPage'));
@@ -40,6 +41,7 @@ const AppRoutes = () => {
         <Route path="/payment/callback" element={<PaymentCallback />} />
         <Route path="/privacy" element={<Privacy />} />
         <Route path="/terms" element={<Terms />} />
+        <Route path="/auth/google/callback" element={<GoogleCallback />} />
 
         {/* Protected Routes with Layout */}
         <Route element={

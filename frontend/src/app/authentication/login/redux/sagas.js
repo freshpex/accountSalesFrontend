@@ -37,8 +37,43 @@ function* loginSaga({ payload }) {
   }
 }
 
+function* handleGoogleCallback({ payload }) {
+  try {
+    const { token } = payload;
+    if (token) {
+      // Store the token
+      setWithExpiry("x-access-token", `Bearer ${token}`);
+      
+      // Get user data
+      const response = yield call(api.get, '/api/v1/user/profile');
+      
+      if (response.data.success) {
+        const userData = response.data.data;
+        setWithExpiry("email", userData.email);
+        
+        yield put(login_success({
+          user: userData,
+          userToken: token
+        }));
+        
+        toast.success('Login successful!');
+        
+        // Redirect based on user role
+        setTimeout(() => {
+          window.location.href = userData.role === 'admin' ? '/dashboard' : '/userdashboard';
+        }, 1000);
+      }
+    }
+  } catch (error) {
+    console.error('Google auth error:', error);
+    toast.error('Google authentication failed');
+    yield put(login_error(error.message));
+  }
+}
+
 function* loginSagas() {
   yield takeLatest(login_user.type, loginSaga);
+  yield takeLatest('HANDLE_GOOGLE_CALLBACK', handleGoogleCallback);
 }
 
 export default loginSagas;
