@@ -1,21 +1,39 @@
 {
   "rewrites": [
     {
+      "source": "/api/v1/:path*",
+      "destination": "https://accountsalesb.vercel.app/api/v1/:path*"
+    },
+    {
+      "source": "/auth/:path*",
+      "destination": "https://accountsalesb.vercel.app/api/v1/user/auth/:path*"
+    },
+    {
       "source": "/api/:path*",
       "destination": "https://accountsalesb.vercel.app/api/:path*"
     },
     {
-      "source": "/auth/google",
-      "destination": "https://accountsalesb.vercel.app/api/v1/user/auth/google"
-    },
-    {
-      "source": "/auth/google/callback/:path*",
-      "destination": "https://accountsalesb.vercel.app/api/v1/user/auth/google/callback/:path*"
-    },
+      "source": "/(.*)",
+      "destination": "/"
+    }
+  ],
+  "headers": [
     {
       "source": "/(.*)",
-      "destination": "/index.html"
+      "headers": [
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "*"
+        },
+        {
+          "key": "Access-Control-Allow-Methods",
+          "value": "GET, POST, PUT, DELETE, OPTIONS"
+        },
+        {
+          "key": "Access-Control-Allow-Headers",
+          "value": "X-Requested-With, Content-Type, Authorization"
+        }
+      ]
     }
-    
   ]
 }
