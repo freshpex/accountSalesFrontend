@@ -1,5 +1,25 @@
 {
   "rewrites": [
-    { "source": "/(.*)", "destination": "/index.html" }
-  ]
+    {
+      "source": "/api/:path*",
+      "destination": "https://accountsalesb.vercel.app/api/:path*"
+    },
+    {
+      "source": "/auth/google",
+      "destination": "https://accountsalesb.vercel.app/api/v1/user/auth/google"
+    },
+    {
+      "source": "/auth/google/callback",
+      "destination": "https://accountsalesb.vercel.app/api/v1/user/auth/google/callback"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ],
+  "env": {
+    "VITE_API_URL": "https://accountsalesb.vercel.app/api/v1",
+    "VITE_FRONTEND_URL": "https://scottech.vercel.app",
+    "VITE_GOOGLE_CALLBACK_URL": "https://scottech.vercel.app/auth/google/callback"
+  }
 }
