@@ -24,7 +24,7 @@ import {
 } from '@chakra-ui/react';
 import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons';
 import { FcGoogle } from 'react-icons/fc';
-import { Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { useColors } from '../../../utils/colors';
 
 const Login = () => {
@@ -39,11 +39,11 @@ const Login = () => {
   const colors = useColors();
   const isMobile = useBreakpointValue({ base: true, md: false });
   const borderColor = useColorModeValue('gray.200', 'gray.700');
+  const navigate = useNavigate();
 
   const handleGoogleSignIn = () => {
-    const backendUrl = import.meta.env.VITE_API_URL;
-    // Ensure we're using the full backend URL for Google auth
-    window.location.href = `${backendUrl}/user/auth/google`;
+    // Use navigate instead of direct window.location
+    navigate('/auth/google/callback');
   };
 
   useEffect(() => {
