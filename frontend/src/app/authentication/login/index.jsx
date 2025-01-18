@@ -41,7 +41,9 @@ const Login = () => {
   const borderColor = useColorModeValue('gray.200', 'gray.700');
 
   const handleGoogleSignIn = () => {
-    window.location.href = `${import.meta.env.VITE_API_URL}/user/auth/google`;
+    const backendUrl = import.meta.env.VITE_API_URL;
+    // Ensure we're using the full backend URL for Google auth
+    window.location.href = `${backendUrl}/user/auth/google`;
   };
 
   useEffect(() => {
