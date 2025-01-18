@@ -92,7 +92,6 @@ export const userDashboardSlice = createSlice({
       state.recentActivity.loading = false;
       state.recentActivity.error = null;
       state.recentActivity.data = Array.isArray(action.payload) ? action.payload : [];
-      console.log('Recent activity data:', state.recentActivity.data); // Debug log
     },
     fetch_recent_activity_error: (state, action) => {
       state.recentActivity.loading = false;

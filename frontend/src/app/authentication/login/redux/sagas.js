@@ -9,8 +9,7 @@ function* loginSaga({ payload }) {
     const response = yield call(api.post, `/api/v1/user/signin`, payload);
     
     if (response.data.success) {
-      const { data } = response.data;
-      
+      const { data } = response.data;      
       
       if (!data) {
         throw new Error('Invalid response format from server');
@@ -24,7 +23,6 @@ function* loginSaga({ payload }) {
       
       toast.success('Login successful!');
 
-      console.log(data)
       setTimeout(() => {
         window.location.href = data.user.role === "admin" ? "/settings" : "/userdashboard";
       }, 1000);
