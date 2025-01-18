@@ -13,11 +13,14 @@ import {
   InputGroup,
   InputRightElement,
   Link,
-  Stack,
   Text,
   Image,
   IconButton,
   useToast,
+  useBreakpointValue,
+  VStack,
+  useColorModeValue,
+  HStack,
 } from '@chakra-ui/react';
 import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons';
 import { FcGoogle } from 'react-icons/fc';
@@ -34,6 +37,8 @@ const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const colors = useColors();
+  const isMobile = useBreakpointValue({ base: true, md: false });
+  const borderColor = useColorModeValue('gray.200', 'gray.700');
 
   const handleGoogleSignIn = () => {
     window.location.href = `${import.meta.env.VITE_API_URL}/user/auth/google`;
@@ -66,98 +71,160 @@ const Login = () => {
   };
 
   return (
-    <Container maxW="md" py={12}>
-      <Stack spacing={4} alignItems="center">
-        {/* Logo */}
-        <Stack align="center" spacing={2}>
-          <Image src="/logo.svg"  h="100px" />
-        </Stack>
-
-        {/* Sign In Form */}
-        <Box w="full" p={8} borderRadius="lg" bg={colors.bgColor} color={colors.textColor} boxShadow="sm">
-          <Stack spacing={4}>
-            <Text fontSize="xl" fontWeight="bold" textAlign="center">
-              Sign In
+    <Container maxW="md" py={{ base: 4, md: 12 }} px={{ base: 4, md: 6 }}>
+      <VStack spacing={6} align="stretch">
+        {/* Logo & Title Section */}
+        <VStack spacing={3} align="center">
+          <Box 
+            position="relative" 
+            w="full" 
+            h={{ base: "80px", md: "100px" }}
+            display="flex"
+            justifyContent="center"
+          >
+            <Image 
+              src="/logo.svg" 
+              alt="Logo" 
+              h="full"
+              style={{ objectFit: 'contain' }}
+            />
+          </Box>
+          <VStack spacing={2}>
+            <Text 
+              fontSize={{ base: "xl", md: "2xl" }}
+              fontWeight="bold"
+              bgGradient="linear(to-r, blue.400, purple.500)"
+              bgClip="text"
+            >
+              Welcome Back
             </Text>
-            
+            <Text fontSize="sm" color={colors.textColor} textAlign="center">
+              Sign in to continue to your account
+            </Text>
+          </VStack>
+        </VStack>
+
+        {/* Main Form Box */}
+        <Box 
+          w="full" 
+          p={{ base: 6, md: 8 }} 
+          borderRadius="2xl"
+          bg={colors.bgColor}
+          boxShadow="lg"
+          border="1px"
+          borderColor={borderColor}
+        >
+          <VStack spacing={6}>
             {/* Google Sign In Button */}
             <Button
               w="full"
+              h="50px"
               variant="outline"
-              leftIcon={<FcGoogle />}
+              leftIcon={<FcGoogle size="24px" />}
               onClick={handleGoogleSignIn}
+              _hover={{
+                transform: 'translateY(-2px)',
+                boxShadow: 'md'
+              }}
+              transition="all 0.2s"
             >
               Sign in with Google
             </Button>
 
-            <Stack direction="row" align="center" justify="center">
+            <HStack w="full">
               <Divider />
-              <Text px={2} color={colors.textColor}>
+              <Text px={2} color={colors.textColor} fontSize="sm">
                 Or
               </Text>
               <Divider />
-            </Stack>
+            </HStack>
 
-            <FormControl>
-              <Input
-                type="email"
-                placeholder="Email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
-            </FormControl>
-
-            <FormControl>
-              <InputGroup>
+            <VStack spacing={4} w="full">
+              <FormControl>
                 <Input
-                  type={showPassword ? 'text' : 'password'}
-                  placeholder="Password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  type="email"
+                  placeholder="Email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  size="lg"
+                  borderRadius="lg"
                 />
-                <InputRightElement>
-                  <IconButton
-                    icon={showPassword ? <ViewOffIcon /> : <ViewIcon />}
-                    variant="ghost"
-                    onClick={() => setShowPassword(!showPassword)}
-                    aria-label={showPassword ? 'Hide password' : 'Show password'}
+              </FormControl>
+
+              <FormControl>
+                <InputGroup size="lg">
+                  <Input
+                    type={showPassword ? 'text' : 'password'}
+                    placeholder="Password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    borderRadius="lg"
                   />
-                </InputRightElement>
-              </InputGroup>
-            </FormControl>
+                  <InputRightElement width="3rem">
+                    <IconButton
+                      h="1.75rem"
+                      size="sm"
+                      variant="ghost"
+                      onClick={() => setShowPassword(!showPassword)}
+                      icon={showPassword ? <ViewOffIcon /> : <ViewIcon />}
+                      aria-label={showPassword ? 'Hide password' : 'Show password'}
+                    />
+                  </InputRightElement>
+                </InputGroup>
+              </FormControl>
 
-            <Stack direction="row" justify="space-between" align="center">
-              <Checkbox>Remember me?</Checkbox>
-              <Link 
-                as={RouterLink} 
-                to="/forgot-password" 
-                color="blue.500" 
-                fontSize="sm"
+              <HStack justify="space-between" w="full" py={2}>
+                <Checkbox size="sm">Remember me</Checkbox>
+                <Link 
+                  as={RouterLink} 
+                  to="/forgot-password" 
+                  color="blue.400"
+                  fontSize="sm"
+                  _hover={{ color: 'blue.500', textDecoration: 'none' }}
+                >
+                  Forgot Password?
+                </Link>
+              </HStack>
+
+              <Button
+                w="full"
+                h="50px"
+                bg="blue.500"
+                color="white"
+                _hover={{
+                  bg: 'blue.600',
+                  transform: 'translateY(-2px)',
+                  boxShadow: 'lg'
+                }}
+                onClick={handleSubmit}
+                isLoading={loading}
+                isDisabled={loading}
+                fontSize="md"
+                borderRadius="xl"
+                transition="all 0.2s"
               >
-                Forgot Password?
-              </Link>
-            </Stack>
-
-            <Button
-              bg="blue.500"
-              color={colors.textColor}
-              _hover={{ bg: 'blue.600' }}
-              onClick={handleSubmit}
-              isLoading={loading}
-              isDisabled={loading}
-            >
-              Sign In
-            </Button>
-
-            <Text textAlign="center" bg={colors.bgColor} color={colors.textColor}>
-              Do not have an account?{' '}
-              <Link color="blue.500" href="/register">
-                Sign Up
-              </Link>
-            </Text>
-          </Stack>
+                Sign In
+              </Button>
+            </VStack>
+          </VStack>
         </Box>
-      </Stack>
+
+        {/* Footer */}
+        <HStack justify="center" pt={4} spacing={1}>
+          <Text fontSize="sm" color={colors.textColor}>
+            Don`t have an account?
+          </Text>
+          <Link
+            as={RouterLink}
+            to="/register"
+            color="blue.400"
+            fontWeight="semibold"
+            _hover={{ color: 'blue.500', textDecoration: 'none' }}
+          >
+            Sign Up
+          </Link>
+        </HStack>
+      </VStack>
     </Container>
   );
 };

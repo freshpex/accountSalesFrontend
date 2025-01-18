@@ -198,7 +198,7 @@ const Register = () => {
             <HStack w="full">
               <Divider />
               <Text px={2} color={colors.textColor} fontSize="sm">
-                Or continue with
+                Or
               </Text>
               <Divider />
             </HStack>
@@ -303,7 +303,7 @@ const Register = () => {
                   name="phoneNumber"
                   value={formData.phoneNumber}
                   onChange={handleChange}
-                  placeholder="+62"
+                  placeholder="+2341234567890"
                   size="lg"
                   borderRadius="lg"
                 />
