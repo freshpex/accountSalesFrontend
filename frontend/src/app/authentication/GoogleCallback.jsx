@@ -17,6 +17,7 @@ const GoogleCallback = () => {
       try {
         dispatch({ type: 'HANDLE_GOOGLE_CALLBACK', payload: { token } });
       } catch (err) {
+        console.log('error', err)
         console.error('Google callback error:', err);
         navigate('/login?error=Authentication failed');
       }
