@@ -97,8 +97,8 @@ const Register = () => {
   };
 
   const handleGoogleSignUp = () => {
-    // Fix: Remove undefined from URL
-    window.location.href = `${import.meta.env.VITE_API_URL}/api/v1/user/auth/google`;
+    // Fix: Use correct URL structure
+    window.location.href = `${import.meta.env.VITE_API_URL}/user/auth/google`;
   };
 
   useEffect(() => {
