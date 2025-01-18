@@ -97,7 +97,6 @@ const Register = () => {
   };
 
   const handleGoogleSignUp = () => {
-    // Fix: Use correct URL structure
     window.location.href = `${import.meta.env.VITE_API_URL}/user/auth/google`;
   };
 

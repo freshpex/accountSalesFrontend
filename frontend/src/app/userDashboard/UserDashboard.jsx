@@ -90,7 +90,7 @@ const WelcomeCard = ({ user }) => {
             <Heading size="lg" color={colors.textColor}>
               {user.firstName} {user.lastName}
             </Heading>
-            <Badge colorScheme="purple">{user.segment} Member</Badge>
+            <Badge colorScheme="purple">{user.segment} {user.role}</Badge>
           </VStack>
         </HStack>
         
@@ -345,13 +345,6 @@ const UserDashboard = () => {
     dispatch(fetchDashboardSpendingChart());
     dispatch(fetchDashboardRecentActivity());
   }, [dispatch]);
-
-  // Debug logs
-  useEffect(() => {
-    console.log('Current overview:', overview);
-    console.log('Current metrics:', metrics);
-    console.log('Current spendingChart:', spendingChart);
-  }, [overview, metrics, spendingChart]);
 
   if (loading?.overviewLoading) {
     return <LoadingSpinner />;

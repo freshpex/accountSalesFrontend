@@ -36,7 +36,6 @@ const Login = () => {
   const colors = useColors();
 
   const handleGoogleSignIn = () => {
-    // Fix: Use correct URL structure
     window.location.href = `${import.meta.env.VITE_API_URL}/user/auth/google`;
   };
 

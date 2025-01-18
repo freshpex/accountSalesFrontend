@@ -24,8 +24,9 @@ function* loginSaga({ payload }) {
       
       toast.success('Login successful!');
 
+      console.log(data)
       setTimeout(() => {
-        window.location.href = data.user.role === "admin" ? "/dashboard" : "/userdashboard";
+        window.location.href = data.user.role === "admin" ? "/settings" : "/userdashboard";
       }, 1000);
     } else {
       throw new Error(response.data.error || 'Login failed');
@@ -39,35 +40,39 @@ function* loginSaga({ payload }) {
 
 function* handleGoogleCallback({ payload }) {
   try {
-    const { token } = payload;
-    if (token) {
-      // Store the token
-      setWithExpiry("x-access-token", `Bearer ${token}`);
+    if (!payload.token) {
+      throw new Error('No token provided');
+    }
+
+    // Store the token
+    setWithExpiry("x-access-token", `Bearer ${payload.token}`);
+    
+    // Get user data
+    const response = yield call(api.get, '/api/v1/user/profile');
+    
+    if (response.data.success) {
+      const userData = response.data.data;
+      setWithExpiry("email", userData.email);
       
-      // Get user data
-      const response = yield call(api.get, '/api/v1/user/profile');
+      yield put(login_success({
+        user: userData,
+        userToken: payload.token
+      }));
       
-      if (response.data.success) {
-        const userData = response.data.data;
-        setWithExpiry("email", userData.email);
-        
-        yield put(login_success({
-          user: userData,
-          userToken: token
-        }));
-        
-        toast.success('Login successful!');
-        
-        // Redirect based on user role
-        setTimeout(() => {
-          window.location.href = userData.role === 'admin' ? '/dashboard' : '/userdashboard';
-        }, 1000);
+      toast.success('Login successful!');
+      
+      // Redirect based on user role and business name
+      if (userData.businessName === 'Not Set') {
+        window.location.href = '/complete-profile';
+      } else {
+        window.location.href = userData.role === 'admin' ? '/settings' : '/userdashboard';
       }
     }
   } catch (error) {
     console.error('Google auth error:', error);
     toast.error('Google authentication failed');
     yield put(login_error(error.message));
+    window.location.href = '/login';
   }
 }
 

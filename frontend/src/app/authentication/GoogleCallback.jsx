@@ -1,10 +1,12 @@
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { Box, Spinner, Text } from '@chakra-ui/react';
 
 const GoogleCallback = () => {
   const dispatch = useDispatch();
   const location = useLocation();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
@@ -12,21 +14,28 @@ const GoogleCallback = () => {
     const error = params.get('error');
 
     if (token) {
-      dispatch({ type: 'HANDLE_GOOGLE_CALLBACK', payload: { token } });
+      try {
+        dispatch({ type: 'HANDLE_GOOGLE_CALLBACK', payload: { token } });
+      } catch (err) {
+        console.error('Google callback error:', err);
+        navigate('/login?error=Authentication failed');
+      }
     } else if (error) {
-      dispatch({ type: 'login_error', payload: error });
+      navigate(`/login?error=${error}`);
     }
-  }, [dispatch, location]);
+  }, [dispatch, location, navigate]);
 
   return (
-    <div style={{ 
-      display: 'flex', 
-      justifyContent: 'center', 
-      alignItems: 'center', 
-      height: '100vh' 
-    }}>
-      Processing login...
-    </div>
+    <Box 
+      display="flex" 
+      flexDirection="column"
+      alignItems="center" 
+      justifyContent="center" 
+      height="100vh"
+    >
+      <Spinner size="xl" mb={4} />
+      <Text>Processing authentication...</Text>
+    </Box>
   );
 };
 
