@@ -25,7 +25,8 @@ import {
   AlertDialogContent,
   AlertDialogOverlay,
   FormErrorMessage,
-  Heading
+  Heading,
+  Spinner
 } from "@chakra-ui/react";
 import { FaImage } from "react-icons/fa";
 import { getLoading } from '../redux/selector';
@@ -52,6 +53,7 @@ const AddProduct = ({ isOpen, onClose, data, action, onSave, onDelete }) => {
   const [averageComments, setAverageComments] = useState("");
   const [twoFactorEnabled, setTwoFactorEnabled] = useState(false);
   const [originalEmailAvailable, setOriginalEmailAvailable] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const isReadOnly = action === 'view';
   const colors = useColors();
@@ -126,38 +128,43 @@ const AddProduct = ({ isOpen, onClose, data, action, onSave, onDelete }) => {
   const { handleAddProduct, handleUpdateProduct, handleDeleteProduct } = useProductActions();
 
   const handleSave = async () => {
-    const productData = {
-      username,
-      type,
-      age: Number(age),
-      followers: Number(follower),
-      status: status || 'available',
-      price: Number(price),
-      region,
-      about,
-      engagement: Number(engagement) || 0
-    };
+    try {
+      setIsSubmitting(true);
+      const productData = {
+        username,
+        type,
+        age: Number(age),
+        followers: Number(follower),
+        status: status || 'available',
+        price: Number(price),
+        region,
+        about,
+        engagement: Number(engagement) || 0
+      };
 
-    if (action === 'edit') {
-      const existingImages = images.filter(img => typeof img === 'string');
-      const newImages = images.filter(img => img instanceof File);
-      
-      productData.existingImages = existingImages;
-      productData.newImages = newImages;
-    } else {
-      productData.images = images.filter(img => img instanceof File);
-    }
+      if (action === 'edit') {
+        const existingImages = images.filter(img => typeof img === 'string');
+        const newImages = images.filter(img => img instanceof File);
+        
+        productData.existingImages = existingImages;
+        productData.newImages = newImages;
+      } else {
+        productData.images = images.filter(img => img instanceof File);
+      }
 
-    let success;
-    if (action === 'add') {
-      success = await handleAddProduct(productData);
-    } else if (action === 'edit') {
-      success = await handleUpdateProduct(data.id, productData);
-    }
+      let success;
+      if (action === 'add') {
+        success = await handleAddProduct(productData);
+      } else if (action === 'edit') {
+        success = await handleUpdateProduct(data.id, productData);
+      }
 
-    if (success) {
-      onClose();
-      toast.success(`Product ${action === 'add' ? 'added' : 'updated'} successfully`);
+      if (success) {
+        onClose();
+        toast.success(`Product ${action === 'add' ? 'added' : 'updated'} successfully`);
+      }
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -203,9 +210,15 @@ const AddProduct = ({ isOpen, onClose, data, action, onSave, onDelete }) => {
     };
   }, [imagesPreviews]);
 
-  const handleDeleteConfirm = () => {
-    onDelete(data.id);
-    onDeleteClose();
+  const handleDeleteConfirm = async () => {
+    try {
+      setIsSubmitting(true);
+      await onDelete(data.id);
+      onDeleteClose();
+      toast.success('Product deleted successfully');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const renderActionButtons = () => {
@@ -219,18 +232,31 @@ const AddProduct = ({ isOpen, onClose, data, action, onSave, onDelete }) => {
 
     return (
       <>
-        <Button variant="outline" onClick={onClose} mr={3}>
+        <Button 
+          variant="outline" 
+          onClick={onClose} 
+          mr={3}
+          isDisabled={isSubmitting}
+        >
           Cancel
         </Button>
         {action === 'delete' ? (
-          <Button colorScheme="red" onClick={onDeleteOpen}>
+          <Button 
+            colorScheme="red" 
+            onClick={onDeleteOpen}
+            isLoading={isSubmitting}
+            loadingText="Deleting..."
+            spinner={<Spinner size="sm" />}
+          >
             Delete
           </Button>
         ) : (
           <Button
             colorScheme="blue"
             onClick={handleSave}
-            isLoading={loading}
+            isLoading={isSubmitting}
+            loadingText={action === 'add' ? 'Creating...' : 'Saving...'}
+            spinner={<Spinner size="sm" />}
           >
             {action === 'add' ? 'Create Product' : 'Save Changes'}
           </Button>
@@ -239,13 +265,79 @@ const AddProduct = ({ isOpen, onClose, data, action, onSave, onDelete }) => {
     );
   };
 
+  const alertDialogButtons = (
+    <AlertDialogFooter>
+      <Button 
+        ref={cancelRef} 
+        onClick={onDeleteClose}
+        isDisabled={isSubmitting}
+      >
+        Cancel
+      </Button>
+      <Button 
+        colorScheme="red" 
+        onClick={handleDeleteConfirm} 
+        ml={3}
+        isLoading={isSubmitting}
+        loadingText="Deleting..."
+        spinner={<Spinner size="sm" />}
+      >
+        Delete
+      </Button>
+    </AlertDialogFooter>
+  );
+
   if (!isOpen) return null;
 
   return (
     <>
-      <Modal isOpen={isOpen} onClose={onClose} size="6xl">
+      <Modal 
+        isOpen={isOpen} 
+        onClose={onClose} 
+        size="6xl"
+        closeOnOverlayClick={!isSubmitting}
+        closeOnEsc={!isSubmitting}
+      >
         <ModalOverlay />
-        <ModalContent maxW="1200px" maxH="90vh" overflowY="auto" bg={colors.bgColor} color={colors.textColor}>
+        <ModalContent
+          maxW="1200px"
+          maxH="90vh"
+          overflowY="auto"
+          bg={colors.bgColor}
+          color={colors.textColor}
+          position="relative"
+        >
+          {isSubmitting && (
+            <Box
+              position="absolute"
+              top={0}
+              left={0}
+              right={0}
+              bottom={0}
+              bg="blackAlpha.300"
+              zIndex={2}
+              display="flex"
+              alignItems="center"
+              justifyContent="center"
+              backdropFilter="blur(2px)"
+            >
+              <VStack spacing={4}>
+                <Spinner
+                  thickness="4px"
+                  speed="0.65s"
+                  emptyColor="gray.200"
+                  color="blue.500"
+                  size="xl"
+                />
+                <Text fontWeight="medium">
+                  {action === 'add' ? 'Creating product...' :
+                   action === 'edit' ? 'Updating product...' :
+                   'Deleting product...'}
+                </Text>
+              </VStack>
+            </Box>
+          )}
+
           <ModalHeader>
             {action === "add" && "Add"}
             {action === "view" && "View"}
@@ -544,6 +636,8 @@ const AddProduct = ({ isOpen, onClose, data, action, onSave, onDelete }) => {
         isOpen={isDeleteOpen}
         leastDestructiveRef={cancelRef}
         onClose={onDeleteClose}
+        closeOnOverlayClick={!isSubmitting}
+        closeOnEsc={!isSubmitting}
       >
         <AlertDialogOverlay>
           <AlertDialogContent>
@@ -551,14 +645,7 @@ const AddProduct = ({ isOpen, onClose, data, action, onSave, onDelete }) => {
             <AlertDialogBody>
               Are you sure you want to delete this product? This action cannot be undone.
             </AlertDialogBody>
-            <AlertDialogFooter>
-              <Button ref={cancelRef} onClick={onDeleteClose}>
-                Cancel
-              </Button>
-              <Button colorScheme="red" onClick={handleDeleteConfirm} ml={3}>
-                Delete
-              </Button>
-            </AlertDialogFooter>
+            {alertDialogButtons}
           </AlertDialogContent>
         </AlertDialogOverlay>
       </AlertDialog>
