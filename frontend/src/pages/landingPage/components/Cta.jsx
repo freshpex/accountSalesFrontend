@@ -6,6 +6,7 @@ import nft2 from "../../../assets/images/nfts/nft2.png";
 import nft3 from "../../../assets/images/nfts/nft3.png";
 import Picture from "./common/Picture";
 import ContainedButton from "./common/buttons/ContainedButton";
+import { Link } from "react-router-dom";
 
 const pictureContainerVariant = {
     hidden: {},
@@ -98,12 +99,14 @@ export default function Cta() {
                             Access a marketplace of verified social media accounts. Whether you`re looking to purchase an established Instagram, TikTok, YouTube, or other social media presence, we provide secure transactions and verified accounts with real followers.
                         </p>
 
-                        <ContainedButton
-                            type="button"
-                            extraClasses="px-10 py-5 font-medium text-600 leading-tight"
-                        >
-                            Sign Up Now
-                        </ContainedButton>
+                        <Link to='/register'>
+                            <ContainedButton
+                                type="button"
+                                extraClasses="px-10 py-5 font-medium text-600 leading-tight"
+                            >
+                                Sign Up Now
+                            </ContainedButton>
+                        </Link>
                     </motion.div>
                 </div>
             </div>

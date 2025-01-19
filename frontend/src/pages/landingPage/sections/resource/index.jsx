@@ -3,6 +3,7 @@ import OutlinedButton from "../../components/common/buttons/OutlinedButton";
 import Filter from "./Filter";
 import ResourceNftCard from "./ResourceNftCard";
 import { nftData } from "./data.js";
+import { Link } from "react-router-dom";
 
 const pictureContainerVariant = {
     hidden: {},
@@ -73,12 +74,14 @@ const Resource = () => {
                         }
                     </motion.div>
 
-                    <OutlinedButton
-                        type="button"
-                        extraClasses="px-10 py-5 text-600 font-medium bg-neutral-300 leading-tight mx-auto"
-                    >
-                        Load More
-                    </OutlinedButton>
+                    <Link to='/product/instagram'>
+                        <OutlinedButton
+                            type="button"
+                            extraClasses="px-10 py-5 text-600 font-medium bg-neutral-300 leading-tight mx-auto"
+                        >
+                            Load More
+                        </OutlinedButton>
+                    </Link>
                 </div>
             </div>
         </section>

@@ -3,6 +3,7 @@ import dotsBg from "../../../../assets/images/miscellaneous/dots.png";
 import Picture from "../../components/common/Picture";
 import ContainedButton from "../../components/common/buttons/ContainedButton";
 import Slider from "./Slider";
+import { Link } from "react-router-dom";
 
 const Hero = () => {
     return (
@@ -25,12 +26,14 @@ const Hero = () => {
 
                             <p className="text-600 text-neutral-600 leading-relaxed | max-w-[470px] mb-10">Secure marketplace for verified social media accounts. Purchase established accounts with real followers. Instagram, TikTok, YouTube, Facebook, and WhatsApp Business accounts available.</p>
 
-                            <ContainedButton
-                                type="button"
-                                extraClasses="min-[1224px]:max-[1300px]:hidden | px-10 py-5 text-600 font-medium leading-tight"
-                            >
-                                Explore Now
-                            </ContainedButton>
+                            <Link to='/product/instagram'>
+                                <ContainedButton
+                                    type="button"
+                                    extraClasses="min-[1224px]:max-[1300px]:hidden | px-10 py-5 text-600 font-medium leading-tight"
+                                >
+                                    Explore Now
+                                </ContainedButton>
+                            </Link>
                         </div>
 
                         <div className="grow | space-y-6 | mobile-lg:max-w-[400px]">
@@ -49,12 +52,14 @@ const Hero = () => {
                                 </div>
                             </div>
 
-                            <ContainedButton
-                                type="button"
-                                extraClasses="min-[1300px]:hidden max-[1224px]:hidden | px-10 py-5 text-600 font-medium leading-tight"
-                            >
-                                Explore Now
-                            </ContainedButton>
+                            <Link to='/product/instagram'>
+                                <ContainedButton
+                                    type="button"
+                                    extraClasses="min-[1300px]:hidden max-[1224px]:hidden | px-10 py-5 text-600 font-medium leading-tight"
+                                >
+                                    Explore Now
+                                </ContainedButton>
+                                </Link>
                         </div>
                     </motion.div>
 

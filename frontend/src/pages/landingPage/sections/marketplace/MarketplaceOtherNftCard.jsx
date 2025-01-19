@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import Picture from "../../components/common/Picture";
 import OutlinedButton from "../../components/common/buttons/OutlinedButton";
+import { Link } from "react-router-dom";
 
 export default function MarketplaceOtherNftCard({ nftCardItem, extraClasses }) {
     const { nftImg, ownerImg, title, stockCount, price, motionDelay } = nftCardItem || {};
@@ -44,13 +45,14 @@ export default function MarketplaceOtherNftCard({ nftCardItem, extraClasses }) {
                         <p className="font-medium text-neutral-900/60">1 of {stockCount}</p>
                     </div>
                 </div>
-
+                <Link to='/product/instagram'>
                 <OutlinedButton
                     type="button"
                     extraClasses="px-[18px] py-3 font-semibold bg-neutral-100 leading-[100%]"
                 >
                     Purchase Account
                 </OutlinedButton>
+                </Link>
             </div>
         </motion.div>
     );

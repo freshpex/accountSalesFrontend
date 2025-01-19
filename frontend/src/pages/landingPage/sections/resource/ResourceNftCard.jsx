@@ -1,5 +1,6 @@
 import Picture from "../../components/common/Picture";
 import TextButton from "../../components/common/buttons/TextButton";
+import { Link } from "react-router-dom";
 
 export default function ResourceNftCard({ item }) {
     const { img, avatar, title, price, nftNumber, totalNftNumber, timeLeft } = item || {};
@@ -47,12 +48,14 @@ export default function ResourceNftCard({ item }) {
                 <div className="pt-[11px] border-t border-solid border-neutral-300 flex flex-wrap items-center mobile-lg:max-[635px]:justify-center max-[305px]:justify-center justify-between gap-4">
                     <p className="text-200 text-primary bg-primary/5 font-medium leading-5 px-3 py-[4.5px] rounded-full">{timeLeft} left</p>
 
+                    <Link to='/product/instagram'>
                     <TextButton
                         type="button"
                         extraClasses="text-500 text-primary font-medium leading-tight"
                     >
                         Purchase Now
                     </TextButton>
+                    </Link>
                 </div>
             </div>
         </div>
