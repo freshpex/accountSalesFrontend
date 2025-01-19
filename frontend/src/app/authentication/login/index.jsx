@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { login_user } from './redux/reducer';
-import { getLoading, getError, getSuccess } from './redux/selector';
+import { getLoading, getError } from './redux/selector';
 import {
   Box,
   Button,
@@ -17,7 +17,6 @@ import {
   Image,
   IconButton,
   useToast,
-  useBreakpointValue,
   VStack,
   useColorModeValue,
   HStack,
@@ -32,12 +31,10 @@ const Login = () => {
   const toast = useToast();
   const loading = useSelector(getLoading);
   const error = useSelector(getError);
-  const success = useSelector(getSuccess);
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const colors = useColors();
-  const isMobile = useBreakpointValue({ base: true, md: false });
   const borderColor = useColorModeValue('gray.200', 'gray.700');
 
   const handleGoogleSignIn = () => {
@@ -46,15 +43,9 @@ const Login = () => {
 
   useEffect(() => {
     if (error) {
-      toast({
-        title: 'Login Error',
-        description: error,
-        status: 'error',
-        duration: 5000,
-        isClosable: true,
-      });
+      console.log(error)
     }
-  }, [error, toast]);
+  }, [error]);
 
   const handleSubmit = (e) => {
     e.preventDefault();

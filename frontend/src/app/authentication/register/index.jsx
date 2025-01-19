@@ -21,11 +21,9 @@ import {
   Select,
   Checkbox,
   Grid,
-  useToast,
   HStack,
   VStack,
   Flex,
-  useBreakpointValue,
   useColorModeValue,
 } from '@chakra-ui/react';
 import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons';
@@ -37,7 +35,6 @@ const Register = () => {
   const loading = useSelector(getLoading);
   const error = useSelector(getError);
   const success = useSelector(getSuccess);
-  const toast = useToast();
   const colors = useColors();
   const [showPassword, setShowPassword] = useState(false);
   // const bgColor = useColorModeValue("white", "gray.900");
@@ -110,29 +107,15 @@ const Register = () => {
 
   useEffect(() => {
     if (error) {
-      toast({
-        title: 'Registration Error',
-        description: error,
-        status: 'error',
-        duration: 5000,
-        isClosable: true,
-      });
+      console.log(error);
     }
-  }, [error, toast]);
+  }, [error]);
 
   useEffect(() => {
     if (success) {
-      toast({
-        title: 'Registration Successful',
-        description: "You'll be redirected to login shortly",
-        status: 'success',
-        duration: 3000,
-        isClosable: true,
-      });
+      console.log(success)
     }
-  }, [success, toast]);
-
-  const isMobile = useBreakpointValue({ base: true, md: false });
+  }, [success]);
 
   return (
     <Container maxW="md" py={{ base: 4, md: 12 }} px={{ base: 4, md: 6 }}>
