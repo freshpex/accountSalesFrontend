@@ -76,14 +76,14 @@ const SocialMediaTab = ({
   getProducts,
   getLoading 
 }) => {
+  const platformKey = platform?.toLowerCase() || 'all';
+  const config = platformConfig[platformKey] || platformConfig.all;
   const products = useSelector(getProducts) || [];
   const loading = useSelector(getLoading);
   const [selectedItems, setSelectedItems] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [filteredPosts, setFilteredPosts] = useState([]);
   const itemsPerPage = 10;
-
-  const config = platformConfig[platform.toLowerCase()] || platformConfig.all;
 
   useEffect(() => {
     if (products) {

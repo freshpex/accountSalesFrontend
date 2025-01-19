@@ -103,14 +103,9 @@ const Product = () => {
   
   useEffect(() => {
     if (selectedCategory) {
-      if (selectedCategory === 'all') {
-        navigate(`/product/all`);
-      } else if (['instagram', 'facebook', 'twitter', 'whatsapp'].includes(selectedCategory)) {
-        selectedCategory === selectedCategory; 
-        navigate(`/product/${selectedCategory}`);
-      }
+      navigate(`/product/${selectedCategory}`);
     }
-  }, [selectedCategory, updateFilters, navigate]);
+  }, [selectedCategory, navigate]);
 
   const handleModalOpen = (action, post = null) => {
     if (post && post.images) {
@@ -262,8 +257,8 @@ const Product = () => {
         animate={{ scale: 1 }}
         style={{
           position: 'fixed',
-          bottom: '2rem',
-          right: '2rem',
+          top: '5rem',
+          right: '0.2rem',
           zIndex: 10
         }}
       >
