@@ -51,6 +51,7 @@ import { FiInstagram, FiFacebook, FiTwitter } from 'react-icons/fi';
 import { FaWhatsapp } from 'react-icons/fa';
 import { CheckIcon } from '@chakra-ui/icons';
 import { convertToPublicUrl } from '../../utils/supabase';
+import { selectProfile } from '../../app/accountSettings.jsx/redux/selector';
 
 const platformSelectors = {
   all: getAllProducts,
@@ -74,6 +75,8 @@ const categories = [
 const Product = () => {
   const dispatch = useDispatch();
   const loading = useSelector(getLoading);
+  const profile = useSelector(selectProfile);
+  const isAdmin = profile?.role === 'admin';
   // const platformStats = useSelector(getPlatformStats);
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize] = useState(10);
@@ -231,35 +234,37 @@ const Product = () => {
 
 
   const FloatingActionButton = () => (
-    <motion.div
-      initial={{ scale: 0 }}
-      animate={{ scale: 1 }}
-      style={{
-        position: 'fixed',
-        bottom: '2rem',
-        right: '2rem',
-        zIndex: 10
-      }}
-    >
-      <Menu>
-        <MenuButton
-          as={IconButton}
-          icon={<AddIcon />}
-          colorScheme="blue"
-          rounded="full"
-          w="60px"
-          h="60px"
-          shadow="lg"
-        />
-        <MenuList>
-          <MenuItem onClick={() => handleModalOpen('add')}>New Product</MenuItem>
-          <MenuItem onClick={handleExport}>Export Data</MenuItem>
-          <MenuItem onClick={() => setViewMode(viewMode === 'grid' ? 'list' : 'grid')}>
-            Toggle View
-          </MenuItem>
-        </MenuList>
-      </Menu>
-    </motion.div>
+    isAdmin && (
+      <motion.div
+        initial={{ scale: 0 }}
+        animate={{ scale: 1 }}
+        style={{
+          position: 'fixed',
+          bottom: '2rem',
+          right: '2rem',
+          zIndex: 10
+        }}
+      >
+        <Menu>
+          <MenuButton
+            as={IconButton}
+            icon={<AddIcon />}
+            colorScheme="blue"
+            rounded="full"
+            w="60px"
+            h="60px"
+            shadow="lg"
+          />
+          <MenuList>
+            <MenuItem onClick={() => handleModalOpen('add')}>New Product</MenuItem>
+            <MenuItem onClick={handleExport}>Export Data</MenuItem>
+            <MenuItem onClick={() => setViewMode(viewMode === 'grid' ? 'list' : 'grid')}>
+              Toggle View
+            </MenuItem>
+          </MenuList>
+        </Menu>
+      </motion.div>
+    )
   );
 
   const CategoryChips = () => {
@@ -349,14 +354,16 @@ const Product = () => {
             </Breadcrumb>
           </Box>
 
-          <Button 
-            colorScheme="blue" 
-            leftIcon={<ChevronDownIcon />} 
-            onClick={() => handleModalOpen('add')}
-            w={{ base: "full", md: "auto" }}
-          >
-            New Post
-          </Button>
+          {isAdmin && (
+            <Button 
+              colorScheme="blue" 
+              leftIcon={<ChevronDownIcon />} 
+              onClick={() => handleModalOpen('add')}
+              w={{ base: "full", md: "auto" }}
+            >
+              New Post
+            </Button>
+          )}
         </Flex>
 
         <Stack 

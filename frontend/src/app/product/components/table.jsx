@@ -39,6 +39,8 @@ import { LazyLoadImage } from 'react-lazy-load-image-component';
 import { useInView } from 'react-intersection-observer';
 import { useSwipeable } from 'react-swipeable';
 import { useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { selectProfile } from '../../../app/accountSettings.jsx/redux/selector';
 
 const MotionBox = motion(Box);
 
@@ -158,6 +160,8 @@ const DataTable = ({
   const borderColor = useColorModeValue('gray.200', 'gray.700');
   const hoverBg = useColorModeValue('gray.50', 'gray.700');
   const navigate = useNavigate();
+  const profile = useSelector(selectProfile);
+  const isAdmin = profile?.role === 'admin';
 
   if (!data?.length) {
     return (
@@ -321,21 +325,25 @@ const DataTable = ({
             size="sm"
             onClick={() => onView(item)}
           />
-          <IconButton
-            icon={<EditIcon />}
-            variant="ghost"
-            colorScheme="green"
-            size="sm"
-            onClick={() => onEdit(item)}
-          />
+          {isAdmin && (
+            <>
+              <IconButton
+                icon={<EditIcon />}
+                variant="ghost"
+                colorScheme="green"
+                size="sm"
+                onClick={() => onEdit(item)}
+              />
+              <IconButton
+                icon={<DeleteIcon />}
+                variant="ghost"
+                colorScheme="red"
+                size="sm"
+                onClick={() => onDelete(item)}
+              />
+            </>
+          )}
         </HStack>
-        <IconButton
-          icon={<DeleteIcon />}
-          variant="ghost"
-          colorScheme="red"
-          size="sm"
-          onClick={() => onDelete(item)}
-        />
       </Flex>
     </MotionBox>
   );
@@ -514,30 +522,34 @@ const DataTable = ({
                       }}
                     />
                   </Tooltip>
-                  <Tooltip label="Edit">
-                    <IconButton
-                      icon={<EditIcon />}
-                      variant="ghost"
-                      colorScheme="green"
-                      size="sm"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        onEdit(item);
-                      }}
-                    />
-                  </Tooltip>
-                  <Tooltip label="Delete">
-                    <IconButton
-                      icon={<DeleteIcon />}
-                      variant="ghost"
-                      colorScheme="red"
-                      size="sm"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        onDelete(item);
-                      }}
-                    />
-                  </Tooltip>
+                  {isAdmin && (
+                    <>
+                      <Tooltip label="Edit">
+                        <IconButton
+                          icon={<EditIcon />}
+                          variant="ghost"
+                          colorScheme="green"
+                          size="sm"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            onEdit(item);
+                          }}
+                        />
+                      </Tooltip>
+                      <Tooltip label="Delete">
+                        <IconButton
+                          icon={<DeleteIcon />}
+                          variant="ghost"
+                          colorScheme="red"
+                          size="sm"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            onDelete(item);
+                          }}
+                        />
+                      </Tooltip>
+                    </>
+                  )}
                 </HStack>
               </Td>
             </Tr>
