@@ -74,8 +74,6 @@ const ProductDetail = () => {
   const colors = useColors();
   const [selectedImage, setSelectedImage] = useState(null);
   const profile = useSelector(getProfile);
-
-  console.log('Product:', product);
   
   useEffect(() => {
       dispatch(fetch_profile());

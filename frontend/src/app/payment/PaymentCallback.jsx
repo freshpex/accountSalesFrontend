@@ -68,7 +68,7 @@ const PaymentCallback = () => {
     const params = new URLSearchParams(location.search);
     const status = params.get('status');
 
-    if (status === 'successful') {
+    if (status === 'successful' || status === 'completed') {
       verifyPayment(params);
     } else {
       setStatus('failed');

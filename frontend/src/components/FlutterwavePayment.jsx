@@ -95,12 +95,15 @@ const FlutterwavePayment = ({ config, onSuccess, onError, onClose }) => {
         ...config,
         callback: async (response) => {
           try {
-            if (response.status === 'successful') {
+            if (response) {
               // Verify payment with backend
               const verifyResponse = await api.post('/api/v1/transactions/callback', {
                 transaction_id: response.transaction_id,
-                tx_ref: response.tx_ref
+                tx_ref: response.tx_ref,
+                payment_type: response.payment_type
               });
+
+              console.log('Payment verification response:', verifyResponse);
 
               if (verifyResponse.data.success) {
                 // Update transaction status
@@ -121,9 +124,10 @@ const FlutterwavePayment = ({ config, onSuccess, onError, onClose }) => {
             } else {
               // Handle failed payment
               await handleTransactionUpdate(response, 'failed');
-              throw new Error('Payment was not successful');
+              throw new Error('Please hold on while admin verify your payment');
             }
           } catch (error) {
+            console.error('Payment callback error:', error);
             onError(error);
           }
         },
