@@ -51,7 +51,7 @@ import {
 } from './redux/reducer';
 import LoadingSpinner from '../../components/LoadingSpinner';
 import { useColors } from '../../utils/colors';
-import { FiInstagram, FiFacebook, FiTwitter } from 'react-icons/fi';
+import { FiInstagram, FiFacebook, FiTwitter, FiPackage } from 'react-icons/fi';
 import { FaWhatsapp, FaYoutube, FaTiktok, FaPhone } from 'react-icons/fa';
 import { CheckIcon } from '@chakra-ui/icons';
 import { convertToPublicUrl } from '../../utils/supabase';
@@ -70,6 +70,7 @@ const platformSelectors = {
 };
 
 const categories = [
+  { id: 'all', label: 'All Products', icon: FiPackage },
   { id: 'instagram', label: 'Instagram', icon: FiInstagram },
   { id: 'facebook', label: 'Facebook', icon: FiFacebook },
   { id: 'twitter', label: 'Twitter', icon: FiTwitter },
@@ -101,6 +102,43 @@ const Product = () => {
   const [selectedCategory, setSelectedCategory] = useState(null);
   const navigate = useNavigate();
   
+  const validCategories = [
+    'instagram',
+    'facebook',
+    'twitter',
+    'whatsapp',
+    'youtube',
+    'tiktok',
+    'foreignnumber',
+    'whatsappnumber'
+  ];
+
+  useEffect(() => {
+    if (selectedCategory) {
+      navigate(`/product/${selectedCategory}`);
+    }
+    
+    const path = location.pathname.split('/').pop();
+    if (validCategories.includes(path)) {
+      setSelectedCategory(path);
+    } else {
+      setSelectedCategory('all');
+    }
+
+    const tabMap = {
+      'all': 0,
+      'instagram': 1,
+      'facebook': 2,
+      'twitter': 3,
+      'whatsapp': 4,
+      'youtube': 5,
+      'tiktok': 6,
+      'foreignnumber': 7,
+      'whatsappnumber': 8
+    };
+    setTabIndex(tabMap[path] || 0);
+  }, [location.pathname]);
+
   useEffect(() => {
     if (selectedCategory) {
       navigate(`/product/${selectedCategory}`);
@@ -145,39 +183,6 @@ const Product = () => {
   };
 
   useEffect(() => {
-    const path = location.pathname.split('/').pop();
-    const validCategories = [
-      'all', 
-      'instagram', 
-      'facebook', 
-      'twitter', 
-      'whatsapp',
-      'youtube',
-      'tiktok',
-      'foreignnumber',
-      'whatsappnumber'
-    ];
-    
-    if (validCategories.includes(path)) {
-      setSelectedCategory(path);
-    } else {
-      setSelectedCategory('all');
-    }
-
-    const tabMap = {
-      'instagram': 0,
-      'facebook': 1,
-      'twitter': 2,
-      'whatsapp': 3,
-      'youtube': 4,
-      'tiktok': 5,
-      'foreignnumber': 6,
-      'whatsappnumber': 7
-    };
-    setTabIndex(tabMap[path] || 0);
-  }, [location.pathname]);
-
-  useEffect(() => {
     dispatch(fetch_products({
       platform: location.pathname.split('/').pop(),
       status: filters.status,
@@ -186,10 +191,10 @@ const Product = () => {
     }));
   }, [dispatch, location.pathname, filters, currentPage, pageSize]);
 
-  const getCurrentPlatform = () => {
+  const getCurrentPlatform = useCallback(() => {
     const platform = location.pathname.split('/').pop();
-    return platform === 'all' ? 'all' : platform;
-  };
+    return validCategories.includes(platform) ? platform : 'all';
+  }, [location]);
 
   const applyFilters = useCallback((data) => {
     if (!data) return [];

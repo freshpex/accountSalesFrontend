@@ -2,17 +2,17 @@ import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { Box } from '@chakra-ui/react';
 import { FaWhatsapp, FaYoutube, FaTiktok, FaPhone } from 'react-icons/fa';
-import { FiInstagram, FiTwitter, FiFacebook } from 'react-icons/fi';
+import { FiInstagram, FiTwitter, FiFacebook, FiPackage } from 'react-icons/fi';
 import DataTable from './table';
 import EmptyStatePage from '../../../components/emptyState';
 import LoadingSpinner from '../../../components/LoadingSpinner';
 
 const platformConfig = {
   all: {
-    icon: null,
+    icon: FiPackage,
     color: '#718096',
     title: 'All Products',
-    subtitle: 'Start by adding your first product'
+    subtitle: 'View all your products in one place'
   },
   instagram: {
     icon: FiInstagram,
@@ -93,6 +93,11 @@ const SocialMediaTab = ({
       setCurrentPage(1);
     }
   }, [searchQuery, filters, applyFilters, onDataFiltered, products]);
+
+  useEffect(() => {
+    console.log('Current platform:', platformKey);
+    console.log('Products:', products);
+  }, [platformKey, products]);
 
   if (loading) {
     return <LoadingSpinner />;

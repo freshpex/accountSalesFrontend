@@ -16,7 +16,11 @@ export const getAllProducts = createSelector(
       console.warn('Products is not an array:', products);
       return [];
     }
-    return products;
+    
+    return products.map(product => ({
+      ...product,
+      type: product.type?.toLowerCase()
+    }));
   }
 );
 
