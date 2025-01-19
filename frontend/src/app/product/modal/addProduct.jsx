@@ -287,7 +287,11 @@ const AddProduct = ({ isOpen, onClose, data, action, onSave, onDelete }) => {
                     <option value="instagram">Instagram</option>
                     <option value="twitter">Twitter</option>
                     <option value="facebook">Facebook</option>
-                    <option value="whatsapp">Whatsapp</option>
+                    <option value="whatsapp">WhatsApp</option>
+                    <option value="youtube">YouTube</option>
+                    <option value="tiktok">TikTok</option>
+                    <option value="foreignnumber">Foreign Number</option>
+                    <option value="whatsappnumber">WhatsApp Number</option>
                   </Select>
                   <FormErrorMessage>{formErrors.type}</FormErrorMessage>
                 </FormControl>

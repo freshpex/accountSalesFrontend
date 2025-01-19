@@ -81,6 +81,38 @@ export const getWhatsappProducts = createSelector(
   }
 );
 
+export const getYoutubeProducts = createSelector(
+  getProducts,
+  (products) => {
+    if (!Array.isArray(products)) return [];
+    return products.filter(p => p?.type?.toLowerCase() === 'youtube');
+  }
+);
+
+export const getTiktokProducts = createSelector(
+  getProducts,
+  (products) => {
+    if (!Array.isArray(products)) return [];
+    return products.filter(p => p?.type?.toLowerCase() === 'tiktok');
+  }
+);
+
+export const getForeignNumberProducts = createSelector(
+  getProducts,
+  (products) => {
+    if (!Array.isArray(products)) return [];
+    return products.filter(p => p?.type?.toLowerCase() === 'foreignnumber');
+  }
+);
+
+export const getWhatsappNumberProducts = createSelector(
+  getProducts,
+  (products) => {
+    if (!Array.isArray(products)) return [];
+    return products.filter(p => p?.type?.toLowerCase() === 'whatsappnumber');
+  }
+);
+
 export const getTableSettings = createSelector(
   productState,
   (state) => state.tableSettings
@@ -169,6 +201,10 @@ export const getPlatformStats = createSelector(
     facebook: state.data.stats.facebook || 0,
     twitter: state.data.stats.twitter || 0,
     whatsapp: state.data.stats.whatsapp || 0,
+    youtube: state.data.stats.youtube || 0,
+    tiktok: state.data.stats.tiktok || 0,
+    foreignnumber: state.data.stats.foreignnumber || 0,
+    whatsappnumber: state.data.stats.whatsappnumber || 0,
     total: state.data.stats.total || 0
   })
 );

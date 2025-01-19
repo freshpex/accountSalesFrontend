@@ -36,6 +36,10 @@ import {
   getFacebookProducts,
   getTwitterProducts,
   getWhatsappProducts,
+  getYoutubeProducts,
+  getTiktokProducts,
+  getForeignNumberProducts,
+  getWhatsappNumberProducts,
   getLoading,
   getAllProducts
 } from './redux/selector';
@@ -48,7 +52,7 @@ import {
 import LoadingSpinner from '../../components/LoadingSpinner';
 import { useColors } from '../../utils/colors';
 import { FiInstagram, FiFacebook, FiTwitter } from 'react-icons/fi';
-import { FaWhatsapp } from 'react-icons/fa';
+import { FaWhatsapp, FaYoutube, FaTiktok, FaPhone } from 'react-icons/fa';
 import { CheckIcon } from '@chakra-ui/icons';
 import { convertToPublicUrl } from '../../utils/supabase';
 import { selectProfile } from '../../app/accountSettings.jsx/redux/selector';
@@ -58,18 +62,22 @@ const platformSelectors = {
   instagram: getInstagramProducts,
   facebook: getFacebookProducts,
   twitter: getTwitterProducts,
-  whatsapp: getWhatsappProducts
+  whatsapp: getWhatsappProducts,
+  youtube: getYoutubeProducts,
+  tiktok: getTiktokProducts,
+  foreignnumber: getForeignNumberProducts,
+  whatsappnumber: getWhatsappNumberProducts
 };
 
 const categories = [
-  // { id: 'all', label: 'All', icon: null },
   { id: 'instagram', label: 'Instagram', icon: FiInstagram },
   { id: 'facebook', label: 'Facebook', icon: FiFacebook },
   { id: 'twitter', label: 'Twitter', icon: FiTwitter },
   { id: 'whatsapp', label: 'WhatsApp', icon: FaWhatsapp },
-  // { id: 'popular', label: 'Popular', icon: null },
-  // { id: 'recent', label: 'Recent', icon: null },
-  // { id: 'trending', label: 'Trending', icon: null },
+  { id: 'youtube', label: 'YouTube', icon: FaYoutube },
+  { id: 'tiktok', label: 'TikTok', icon: FaTiktok },
+  { id: 'foreignnumber', label: 'Foreign Number', icon: FaPhone },
+  { id: 'whatsappnumber', label: 'WhatsApp Number', icon: FaWhatsapp },
 ];
 
 const Product = () => {
@@ -143,7 +151,17 @@ const Product = () => {
 
   useEffect(() => {
     const path = location.pathname.split('/').pop();
-    const validCategories = ['all', 'instagram', 'facebook', 'twitter', 'whatsapp'];
+    const validCategories = [
+      'all', 
+      'instagram', 
+      'facebook', 
+      'twitter', 
+      'whatsapp',
+      'youtube',
+      'tiktok',
+      'foreignnumber',
+      'whatsappnumber'
+    ];
     
     if (validCategories.includes(path)) {
       setSelectedCategory(path);
@@ -155,7 +173,11 @@ const Product = () => {
       'instagram': 0,
       'facebook': 1,
       'twitter': 2,
-      'whatsapp': 3
+      'whatsapp': 3,
+      'youtube': 4,
+      'tiktok': 5,
+      'foreignnumber': 6,
+      'whatsappnumber': 7
     };
     setTabIndex(tabMap[path] || 0);
   }, [location.pathname]);

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { Box } from '@chakra-ui/react';
-import { FaWhatsapp } from 'react-icons/fa';
+import { FaWhatsapp, FaYoutube, FaTiktok, FaPhone } from 'react-icons/fa';
 import { FiInstagram, FiTwitter, FiFacebook } from 'react-icons/fi';
 import DataTable from './table';
 import EmptyStatePage from '../../../components/emptyState';
@@ -37,6 +37,30 @@ const platformConfig = {
     color: '#25D366',
     title: 'WhatsApp Products',
     subtitle: 'Start by adding your first WhatsApp product'
+  },
+  youtube: {
+    icon: FaYoutube,
+    color: '#FF0000',
+    title: 'YouTube Products',
+    subtitle: 'Start by adding your first YouTube product'
+  },
+  tiktok: {
+    icon: FaTiktok,
+    color: '#000000',
+    title: 'TikTok Products',
+    subtitle: 'Start by adding your first TikTok product'
+  },
+  foreignnumber: {
+    icon: FaPhone,
+    color: '#4A5568',
+    title: 'Foreign Numbers',
+    subtitle: 'Start by adding your first foreign number'
+  },
+  whatsappnumber: {
+    icon: FaWhatsapp,
+    color: '#25D366',
+    title: 'WhatsApp Numbers',
+    subtitle: 'Start by adding your first WhatsApp number'
   }
 };
 
