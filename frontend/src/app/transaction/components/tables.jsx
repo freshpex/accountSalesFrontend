@@ -102,8 +102,8 @@ const TransactionTable = ({
   onView,
   onEdit,
   onDelete,
-  getStatusColor,
-  getPaymentColor
+  // getStatusColor,
+  // getPaymentColor
  }) => {
   const isMobile = useBreakpointValue({ base: true, md: false });
   const colors = useColors();
@@ -329,9 +329,9 @@ const TransactionTable = ({
                 <Td>{transaction.paymentMethod}</Td>
                 <Td>
                   <VStack align="start" spacing={0}>
-                    <Text>{new Date(transaction.date).toLocaleDateString()}</Text>
+                    <Text>{new Date(transaction.updatedAt).toLocaleDateString()}</Text>
                     <Text fontSize="sm" color="gray.500">
-                      {new Date(transaction.date).toLocaleTimeString()}
+                      {new Date(transaction.updatedAt).toLocaleTimeString()}
                     </Text>
                   </VStack>
                 </Td>

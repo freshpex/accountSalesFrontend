@@ -26,6 +26,10 @@ const EscrowDetails = lazy(() => import(/* webpackChunkName: "escrow" */ '../../
 const UserDashboard  = lazy(() => import('../../app/userDashboard/UserDashboard.jsx'));
 const Privacy = lazy(() => import('../../pages/legal/Privacy'));
 const Terms = lazy(() => import('../../pages/legal/Terms'));
+const PurchasedAccountDetails = lazy(() => import(
+  /* webpackChunkName: "purchased-account" */ 
+  '../../app/product/pages/PurchasedAccountDetails'
+));
 
 const AppRoutes = () => {
   return (
@@ -74,10 +78,11 @@ const AppRoutes = () => {
           } />
           <Route path="/escrow/:escrowId" element={<EscrowDetails />} />          
           <Route path="/userdashboard" element={<UserDashboard />} />
+          <Route path="/purchased-account/:purchaseId" element={<PurchasedAccountDetails />} />
         </Route>
 
         {/* 404 and catch-all route */}
-        <Route path="*" element={<Navigate to="/" replace />} />
+        <Route path="*" element={<Navigate to="/product/all" replace />} />
       </Routes>
     </Suspense>
   );

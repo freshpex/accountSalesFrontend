@@ -212,3 +212,12 @@ export const getPlatformStats = createSelector(
     total: state.data.stats.total || 0
   })
 );
+
+export const getPurchasedCredentials = createSelector(
+  productState,
+  state => ({
+    loading: state.ui.loading,
+    error: state.ui.error,
+    data: state.ui.data
+  })
+);

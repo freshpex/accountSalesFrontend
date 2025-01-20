@@ -73,7 +73,7 @@ const ActivityItem = ({ activity }) => {
         <Box>
           <Text fontSize="sm" fontWeight="medium">{activity.message}</Text>
           <Text fontSize="xs" color="gray.500">
-            {new Date(activity.time).toLocaleString()}
+            {new Date(activity.createdAt).toLocaleString()}
           </Text>
         </Box>
       </Flex>

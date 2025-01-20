@@ -36,7 +36,13 @@ const initialState = {
   },
   transactionProducts: [],
   loading: false,
-  error: null
+  error: null,
+  credentials: null,
+  purchasedCredentials: {
+    loading: false,
+    error: null,
+    data: null
+  }
 };
 
 export const productSlice = createSlice({
@@ -262,6 +268,35 @@ export const productSlice = createSlice({
     },
     clear_payment_status: (state) => {
       state.ui.paymentStatus = null;
+    },
+    fetch_product_credentials: (state) => {
+      state.ui.loading = true;
+      state.ui.error = null;
+    },
+    fetch_product_credentials_success: (state, action) => {
+      state.ui.loading = false;
+      state.ui.success = true;
+      state.credentials = action.payload;
+    },
+    fetch_product_credentials_error: (state, action) => {
+      state.ui.loading = false;
+      state.ui.error = action.payload;
+      state.credentials = null;
+    },
+    fetch_purchased_credentials: (state) => {
+      state.purchasedCredentials.loading = true;
+      state.purchasedCredentials.error = null;
+    },
+    fetch_purchased_credentials_success: (state, action) => {
+      state.purchasedCredentials.loading = false;
+      state.purchasedCredentials.data = action.payload;
+    },
+    fetch_purchased_credentials_error: (state, action) => {
+      state.purchasedCredentials.loading = false;
+      state.purchasedCredentials.error = action.payload;
+    },
+    clear_purchased_credentials: (state) => {
+      state.purchasedCredentials = initialState.purchasedCredentials;
     }
   }
 });
@@ -307,7 +342,14 @@ fetch_transaction_products_error,
   clear_purchase_status,
   clear_escrow_status,
   set_payment_status,
-  clear_payment_status
+  clear_payment_status,
+  fetch_product_credentials,
+  fetch_product_credentials_success,
+  fetch_product_credentials_error,
+  fetch_purchased_credentials,
+  fetch_purchased_credentials_success,
+  fetch_purchased_credentials_error,
+  clear_purchased_credentials
 } = productSlice.actions;
 
 export default productSlice.reducer;

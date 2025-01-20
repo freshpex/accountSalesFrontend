@@ -21,12 +21,16 @@ const PaymentCallback = () => {
 
   const verifyPayment = useCallback(async (params) => {
     try {
-      console.log('Full payment params:', {
-        transaction_id: params.get('transaction_id'),
-        tx_ref: params.get('tx_ref'),
-        status: params.get('status'),
-        productId: params.get('productId')
-      });
+      // console.log('Full payment params:', {
+      //   transaction_id: params.get('transaction_id'),
+      //   tx_ref: params.get('tx_ref'),
+      //   status: params.get('status'),
+      //   productId: params.get('productId')
+      // });
+
+      let productId = params.get('productId')
+      // When initiating payment
+      localStorage.setItem('currentProductId', productId);
       
       const response = await api.post('/api/v1/transactions/callback', {
         transaction_id: params.get('transaction_id'),
@@ -39,21 +43,21 @@ const PaymentCallback = () => {
 
       if (response.data.success) {
         setStatus('success');
+        
+        const transactionId = response.data.transaction?.transactionId || 
+                             response.data.transaction?.id ||
+                             params.get('tx_ref');
+        
         toast({
           title: 'Payment Successful',
-          description: 'Your transaction has been completed successfully',
+          description: 'Redirecting to view account credentials...',
           status: 'success',
-          duration: 5000,
-          isClosable: true,
+          duration: 3000,
         });
         
-        // Add delay before redirect
+        // Navigate using the transaction ID
         setTimeout(() => {
-          if (response.data.transaction?.escrowId) {
-            navigate(`/escrow/${response.data.transaction.escrowId}`);
-          } else {
-            navigate('/transaction');
-          }
+          navigate(`/purchased-account/${transactionId}`);
         }, 2000);
       } else {
         throw new Error(response.data.error || 'Payment verification failed');

@@ -3,11 +3,11 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
   Box, Container, Flex, Input, InputGroup, InputLeftElement,
   Text, Menu, MenuButton, MenuList, MenuItem, Breadcrumb, BreadcrumbItem,
-  BreadcrumbLink, Button, TabList, Tabs, Tab, VStack, Icon, HStack, Grid, SimpleGrid
+  BreadcrumbLink, Button, TabList, Tabs, Tab, VStack, Icon, HStack, Grid,
 } from '@chakra-ui/react';
 import { SearchIcon, ChevronDownIcon } from '@chakra-ui/icons';
 import { FiArchive, FiInbox, FiCheckCircle, FiClock, FiXCircle } from 'react-icons/fi';
-import { AddIcon } from '@chakra-ui/icons';
+// import { AddIcon } from '@chakra-ui/icons';
 import { motion } from 'framer-motion';
 import TransactionModal from './modal/TransactionModal';
 import TransactionTable from './components/tables';
@@ -93,7 +93,6 @@ const Transaction = () => {
   const stats = useSelector(getTransactionStats);
   const meta = useSelector(getTransactionMeta);
   const loading = useSelector(getLoading);
-  
   const [selectedItems, setSelectedItems] = useState([]);
 
   const [searchQuery, setSearchQuery] = useState('');

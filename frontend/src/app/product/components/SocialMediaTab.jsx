@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import { Box } from '@chakra-ui/react';
+import { Box, Badge } from '@chakra-ui/react';
 import { FaWhatsapp, FaYoutube, FaTiktok, FaPhone } from 'react-icons/fa';
 import { FiInstagram, FiTwitter, FiFacebook, FiPackage } from 'react-icons/fi';
 import DataTable from './table';
@@ -94,11 +94,6 @@ const SocialMediaTab = ({
     }
   }, [searchQuery, filters, applyFilters, onDataFiltered, products]);
 
-  useEffect(() => {
-    console.log('Current platform:', platformKey);
-    console.log('Products:', products);
-  }, [platformKey, products]);
-
   if (loading) {
     return <LoadingSpinner />;
   }
@@ -159,6 +154,32 @@ const SocialMediaTab = ({
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
+
+  const ProductCard = ({ product }) => {
+    return (
+      <Box>
+        {/* ...existing product display code... */}
+        
+        {/* Add Credentials Status Indicator */}
+        {product.hasCredentials && (
+          <Badge 
+            colorScheme="green" 
+            position="absolute" 
+            top={2} 
+            right={2}
+            fontSize="xs"
+          >
+            Has Credentials
+          </Badge>
+        )}
+      </Box>
+    );
+  };
+
+  const productsList = products.map(product => ({
+    ...product,
+    hasCredentials: Boolean(product.accountCredentials?.email)
+  }));
 
   return (
     <Box>

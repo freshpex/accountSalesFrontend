@@ -54,6 +54,10 @@ const AddProduct = ({ isOpen, onClose, data, action, onSave, onDelete }) => {
   const [twoFactorEnabled, setTwoFactorEnabled] = useState(false);
   const [originalEmailAvailable, setOriginalEmailAvailable] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [accountEmail, setAccountEmail] = useState("");
+  const [accountPassword, setAccountPassword] = useState("");
+  const [accountPhoneNumber, setAccountPhoneNumber] = useState("");
+  const [additionalInfo, setAdditionalInfo] = useState("");
 
   const isReadOnly = action === 'view';
   const colors = useColors();
@@ -106,6 +110,10 @@ const AddProduct = ({ isOpen, onClose, data, action, onSave, onDelete }) => {
       setAverageComments(data.stats?.averageComments || '');
       setTwoFactorEnabled(data.security?.twoFactorEnabled || false);
       setOriginalEmailAvailable(data.security?.originalEmailAvailable || false);
+      setAccountEmail(data.accountCredentials?.accountEmail || '');
+      setAccountPassword(data.accountCredentials?.accountPassword || '');
+      setAccountPhoneNumber(data.accountCredentials?.accountPhoneNumber || '');
+      setAdditionalInfo(data.accountCredentials?.additionalInfo || '');
     } else {
       setUsername('');
       setType('');
@@ -122,6 +130,10 @@ const AddProduct = ({ isOpen, onClose, data, action, onSave, onDelete }) => {
       setAverageComments('');
       setTwoFactorEnabled(false);
       setOriginalEmailAvailable(false);
+      setAccountEmail('');
+      setAccountPassword('');
+      setAccountPhoneNumber('');
+      setAdditionalInfo('');
     }
   }, [data]);
 
@@ -131,15 +143,38 @@ const AddProduct = ({ isOpen, onClose, data, action, onSave, onDelete }) => {
     try {
       setIsSubmitting(true);
       const productData = {
-        username,
         type,
-        age: Number(age),
-        followers: Number(follower),
+        ...(username && { username }),
+        ...(age && !isNaN(Number(age)) && { age: Number(age) }),
+        ...(follower && !isNaN(Number(follower)) && { followers: Number(follower) }),
         status: status || 'available',
-        price: Number(price),
-        region,
-        about,
-        engagement: Number(engagement) || 0
+        ...(price && !isNaN(Number(price)) && { price: Number(price) }),
+        ...(region && { region }),
+        ...(about && { about }),
+        ...(engagement && !isNaN(Number(engagement)) && { engagement: Number(engagement) }),
+
+        ...(accountEmail || accountPassword || accountPhoneNumber || additionalInfo) && {
+          accountEmail,
+          accountPassword,
+          accountPhoneNumber,
+          additionalInfo
+        },
+
+        security: {
+          twoFactorEnabled,
+          originalEmailAvailable
+        },
+
+        ...((averageLikes || averageComments) && {
+          stats: {
+            ...(averageLikes && !isNaN(Number(averageLikes)) && { 
+              averageLikes: Number(averageLikes) 
+            }),
+            ...(averageComments && !isNaN(Number(averageComments)) && { 
+              averageComments: Number(averageComments) 
+            })
+          }
+        })
       };
 
       if (action === 'edit') {
@@ -163,6 +198,9 @@ const AddProduct = ({ isOpen, onClose, data, action, onSave, onDelete }) => {
         onClose();
         toast.success(`Product ${action === 'add' ? 'added' : 'updated'} successfully`);
       }
+    } catch (error) {
+      console.error('Save error:', error);
+      toast.error(error.message || 'Failed to save product');
     } finally {
       setIsSubmitting(false);
     }
@@ -462,6 +500,51 @@ const AddProduct = ({ isOpen, onClose, data, action, onSave, onDelete }) => {
                     step="0.01"
                     value={engagement}
                     onChange={(e) => setEngagement(e.target.value)}
+                    isReadOnly={isReadOnly}
+                    bg={isReadOnly ? "gray.100" : colors.bgColor}
+                  />
+                </FormControl>
+
+                <FormControl>
+                  <FormLabel>Account Email</FormLabel>
+                  <Input
+                    placeholder="Enter account email"
+                    value={accountEmail}
+                    onChange={(e) => setAccountEmail(e.target.value)}
+                    isReadOnly={isReadOnly}
+                    bg={isReadOnly ? "gray.100" : colors.bgColor}
+                  />
+                </FormControl>
+
+                <FormControl>
+                  <FormLabel>Account Password</FormLabel>
+                  <Input
+                    placeholder="Enter account password"
+                    value={accountPassword}
+                    onChange={(e) => setAccountPassword(e.target.value)}
+                    type="password"
+                    isReadOnly={isReadOnly}
+                    bg={isReadOnly ? "gray.100" : colors.bgColor}
+                  />
+                </FormControl>
+
+                <FormControl>
+                  <FormLabel>Account Phone Number</FormLabel>
+                  <Input
+                    placeholder="Enter account phone number"
+                    value={accountPhoneNumber}
+                    onChange={(e) => setAccountPhoneNumber(e.target.value)}
+                    isReadOnly={isReadOnly}
+                    bg={isReadOnly ? "gray.100" : colors.bgColor}
+                  />
+                </FormControl>
+
+                <FormControl>
+                  <FormLabel>Additional Information</FormLabel>
+                  <Input
+                    placeholder="Enter any additional account information"
+                    value={additionalInfo}
+                    onChange={(e) => setAdditionalInfo(e.target.value)}
                     isReadOnly={isReadOnly}
                     bg={isReadOnly ? "gray.100" : colors.bgColor}
                   />

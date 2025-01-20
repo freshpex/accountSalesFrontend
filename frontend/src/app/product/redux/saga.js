@@ -29,8 +29,12 @@ import {
   request_escrow_error,
   set_purchase_status,
   set_escrow_status,
-  set_payment_status,
-  clear_payment_status
+  fetch_product_credentials,
+  fetch_product_credentials_success,
+  fetch_product_credentials_error,
+  fetch_purchased_credentials,
+  fetch_purchased_credentials_success,
+  fetch_purchased_credentials_error
 } from "./reducer";
 import { ApiEndpoints } from "../../../store/types";
 import api from "../../../services/DataService";
@@ -270,6 +274,44 @@ function* deleteProductSaga({ payload }) {
   }
 }
 
+function* fetchProductCredentialsSaga({ payload }) {
+  try {
+    const { productId } = payload;
+    const response = yield call(api.get, `/api/v1/products/transaction/${productId}/credentials`);
+    
+    if (response.data.success) {
+      yield put(fetch_product_credentials_success(response.data.data));
+    } else {
+      throw new Error(response.data.error || 'Failed to fetch credentials');
+    }
+  } catch (error) {
+    yield put(fetch_product_credentials_error(
+      error.response?.data?.error || error.message
+    ));
+  }
+}
+
+function* fetchPurchasedCredentialsSaga({ payload }) {
+  try {
+    const { transactionId } = payload;
+    const response = yield call(
+      api.get, 
+      `/api/v1/products/transaction/${transactionId}/credentials`
+    );
+    
+    if (response.data.success) {
+      yield put(fetch_purchased_credentials_success(response.data.data));
+    } else {
+      throw new Error(response.data.error || 'Failed to fetch credentials');
+    }
+  } catch (error) {
+    yield put(fetch_purchased_credentials_error(
+      error.response?.data?.error || error.message
+    ));
+    toast.error('Failed to fetch account credentials');
+  }
+}
+
 function* productSagas() {
   yield takeLatest(fetch_products.type, fetchProductsSaga);
   yield takeLatest(fetch_products_transaction.type, fetchProductsTransactionSaga);
@@ -280,6 +322,8 @@ function* productSagas() {
   yield takeLatest(add_product.type, addProductSaga);
   yield takeLatest(update_product.type, updateProductSaga);
   yield takeLatest(delete_product.type, deleteProductSaga);
+  yield takeLatest(fetch_product_credentials.type, fetchProductCredentialsSaga);
+  yield takeLatest(fetch_purchased_credentials.type, fetchPurchasedCredentialsSaga);
 }
 
 export default productSagas;

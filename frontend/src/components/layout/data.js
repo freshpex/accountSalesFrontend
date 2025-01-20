@@ -18,6 +18,7 @@ export const sidebarData = [
         icon: HiOutlineShoppingCart,
         route: "/product",
         subItems: [
+          { name: "All", route: "/product/all" },
           { name: "Instagram", route: "/product/instagram" },
           { name: "Twitter(X)", route: "/product/twitter" },
           { name: "Facebook", route: "/product/facebook" },
