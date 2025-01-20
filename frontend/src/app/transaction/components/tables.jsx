@@ -218,19 +218,23 @@ const TransactionTable = ({
 
         {/* Actions */}
         <HStack w="full" spacing={2}>
-          <IconButton
-            icon={<ViewIcon />}
-            onClick={() => onView('view', transaction)}
-          />
-          <IconButton
-            icon={<EditIcon />}
-            onClick={() => onEdit('edit', transaction)}
-          />
-          <IconButton
-            icon={<DeleteIcon />}
-            onClick={() => onDelete('delete', transaction)}
-            colorScheme="red"
-          />
+        {isAdmin && (
+          <>
+            <IconButton
+              icon={<ViewIcon />}
+              onClick={() => onView('view', transaction)}
+            />
+            <IconButton
+              icon={<EditIcon />}
+              onClick={() => onEdit('edit', transaction)}
+            />
+            <IconButton
+              icon={<DeleteIcon />}
+              onClick={() => onDelete('delete', transaction)}
+              colorScheme="red"
+            />
+            </>
+            )}
         </HStack>
       </VStack>
     </MotionBox>
@@ -337,15 +341,15 @@ const TransactionTable = ({
                 </Td>
                 <Td>{renderStatus(transaction.status, transaction.payment)}</Td>
                 <Td>
-                  <HStack>
-                    <IconButton
-                      icon={<ViewIcon />}
-                      onClick={() => onView('view', transaction)}
-                      aria-label="View"
-                      size="sm"
-                    />
+                  <HStack>                    
                     {isAdmin && (
                       <>
+                        <IconButton
+                          icon={<ViewIcon />}
+                          onClick={() => onView('view', transaction)}
+                          aria-label="View"
+                          size="sm"
+                        />
                         <IconButton
                           icon={<EditIcon />}
                           onClick={() => onEdit('edit', transaction)}

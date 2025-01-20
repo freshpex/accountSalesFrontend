@@ -317,16 +317,16 @@ const DataTable = ({
 
       {/* Action buttons */}
       <Flex justify="space-between" align="center" mt={2} onClick={e => e.stopPropagation()}>
-        <HStack spacing={2}>
-          <IconButton
-            icon={<ViewIcon />}
-            variant="ghost"
-            colorScheme="blue"
-            size="sm"
-            onClick={() => onView(item)}
-          />
+        <HStack spacing={2}>          
           {isAdmin && (
             <>
+              <IconButton
+                icon={<ViewIcon />}
+                variant="ghost"
+                colorScheme="blue"
+                size="sm"
+                onClick={() => onView(item)}
+              />
               <IconButton
                 icon={<EditIcon />}
                 variant="ghost"
@@ -510,20 +510,20 @@ const DataTable = ({
               ))}
               <Td onClick={e => e.preventDefault()}>
                 <HStack spacing={2}>
-                  <Tooltip label="View Details">
-                    <IconButton
-                      icon={<ViewIcon />}
-                      variant="ghost"
-                      colorScheme="blue"
-                      size="sm"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        onView(item);
-                      }}
-                    />
-                  </Tooltip>
                   {isAdmin && (
                     <>
+                    <Tooltip label="View Details">
+                      <IconButton
+                        icon={<ViewIcon />}
+                        variant="ghost"
+                        colorScheme="blue"
+                        size="sm"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          onView(item);
+                        }}
+                      />
+                    </Tooltip>
                       <Tooltip label="Edit">
                         <IconButton
                           icon={<EditIcon />}
