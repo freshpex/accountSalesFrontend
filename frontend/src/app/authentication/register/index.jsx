@@ -102,7 +102,7 @@ const Register = () => {
   };
 
   const handleGoogleSignUp = () => {
-      window.location.href = 'https://accountsalesb.vercel.app/api/v1/user/auth/google'
+      window.location.href = `${import.meta.env.VITE_APP_API_URL}/api/v1/user/auth/google`
     };
 
   useEffect(() => {

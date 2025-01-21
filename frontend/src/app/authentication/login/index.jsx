@@ -38,7 +38,7 @@ const Login = () => {
   const borderColor = useColorModeValue('gray.200', 'gray.700');
 
   const handleGoogleSignIn = () => {
-    window.location.href = 'https://accountsalesb.vercel.app/api/v1/user/auth/google'
+    window.location.href = `${import.meta.env.VITE_APP_API_URL}/api/v1/user/auth/google`
   };
 
   useEffect(() => {
