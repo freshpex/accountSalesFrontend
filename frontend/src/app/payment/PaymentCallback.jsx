@@ -21,50 +21,68 @@ const PaymentCallback = () => {
 
   const verifyPayment = useCallback(async (params) => {
     try {
-      // console.log('Full payment params:', {
-      //   transaction_id: params.get('transaction_id'),
-      //   tx_ref: params.get('tx_ref'),
-      //   status: params.get('status'),
-      //   productId: params.get('productId')
-      // });
+      setStatus('processing');
 
-      let productId = params.get('productId')
-      // When initiating payment
-      localStorage.setItem('currentProductId', productId);
-      
-      const response = await api.post('/api/v1/transactions/callback', {
-        transaction_id: params.get('transaction_id'),
-        tx_ref: params.get('tx_ref'),
-        meta: {
-          productId: params.get('productId'),
-          checkoutUrl: window.location.href
+      const maxRetries = 3;
+      let retryCount = 0;
+      let lastError;
+
+      while (retryCount < maxRetries) {
+        try {
+          const response = await api.post('/api/v1/transactions/callback', {
+            transaction_id: params.get('transaction_id'),
+            tx_ref: params.get('tx_ref'),
+            meta: {
+              productId: params.get('productId'),
+              checkoutUrl: window.location.href
+            }
+          });
+
+          if (response.data.success) {
+            setStatus('success');
+            
+            const transactionId = response.data.transaction?.transactionId || 
+                                 response.data.transaction?.id ||
+                                 params.get('tx_ref');
+            
+            toast({
+              title: 'Payment Successful',
+              description: 'Redirecting to view account credentials...',
+              status: 'success',
+              duration: 3000,
+            });
+            
+            setTimeout(() => {
+              navigate(`/purchased-account/${transactionId}`);
+            }, 2000);
+            
+            return;
+          }
+          
+          throw new Error(response.data.error || 'Payment verification failed');
+        } catch (error) {
+          lastError = error;
+          retryCount++;
+          if (retryCount < maxRetries) {
+            await new Promise(resolve => setTimeout(resolve, 2000));
+            continue;
+          }
+          throw error;
         }
-      });
-
-      if (response.data.success) {
-        setStatus('success');
-        
-        const transactionId = response.data.transaction?.transactionId || 
-                             response.data.transaction?.id ||
-                             params.get('tx_ref');
-        
-        toast({
-          title: 'Payment Successful',
-          description: 'Redirecting to view account credentials...',
-          status: 'success',
-          duration: 3000,
-        });
-        
-        // Navigate using the transaction ID
-        setTimeout(() => {
-          navigate(`/purchased-account/${transactionId}`);
-        }, 2000);
-      } else {
-        throw new Error(response.data.error || 'Payment verification failed');
       }
+
+      throw lastError;
     } catch (error) {
+      console.error('Payment verification error:', error);
       setStatus('failed');
-      setError(error.response?.data?.error || error.message);
+      setError(error.response?.data?.error || error.message || 'Payment verification failed');
+      
+      toast({
+        title: 'Payment Error',
+        description: error.response?.data?.error || error.message || 'Payment verification failed',
+        status: 'error',
+        duration: 5000,
+      });
     }
   }, [navigate, toast]);
 
