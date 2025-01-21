@@ -41,6 +41,7 @@ import { useSwipeable } from 'react-swipeable';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { selectProfile } from '../../../app/accountSettings.jsx/redux/selector';
+import { FiShoppingCart } from 'react-icons/fi';
 
 const MotionBox = motion(Box);
 
@@ -317,7 +318,18 @@ const DataTable = ({
 
       {/* Action buttons */}
       <Flex justify="space-between" align="center" mt={2} onClick={e => e.stopPropagation()}>
-        <HStack spacing={2}>          
+        <HStack spacing={2}>
+        <IconButton
+          icon={<FiShoppingCart />}
+          variant="ghost"
+          colorScheme="blue"
+          size="sm"
+          onClick={(e) => {
+            if (!e.defaultPrevented) {
+              navigate(`/product/${item.type}/${item.id}`);
+            }
+          }}
+          />      
           {isAdmin && (
             <>
               <IconButton
@@ -510,6 +522,17 @@ const DataTable = ({
               ))}
               <Td onClick={e => e.preventDefault()}>
                 <HStack spacing={2}>
+                <IconButton
+                  icon={<FiShoppingCart />}
+                  variant="ghost"
+                  colorScheme="blue"
+                  size="sm"
+                  onClick={(e) => {
+                    if (!e.defaultPrevented) {
+                      navigate(`/product/${item.type}/${item.id}`);
+                    }
+                  }}
+                  />
                   {isAdmin && (
                     <>
                     <Tooltip label="View Details">
