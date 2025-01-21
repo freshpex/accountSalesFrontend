@@ -38,8 +38,9 @@ const Login = () => {
   const borderColor = useColorModeValue('gray.200', 'gray.700');
 
   const handleGoogleSignIn = () => {
-    const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
-    window.location.href = `${apiUrl}/api/v1/user/auth/google`;
+    window.location.href = import.meta.env.NODE_ENV === 'production' 
+      ? `${import.meta.env.VITE_API_URL}/api/v1/user/auth/google/callback`
+      : 'http://localhost:5000/api/v1/user/auth/google'
   };
 
   useEffect(() => {
