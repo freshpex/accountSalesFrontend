@@ -19,7 +19,6 @@ import {
   ModalOverlay,
   ModalContent,
   ModalBody,
-  useDisclosure,
   List,
   ListItem,
   ListIcon,
@@ -46,7 +45,7 @@ import {
   FiCheck,
   FiAlertTriangle,
 } from 'react-icons/fi';
-import { fetch_single_product, clear_selected_product, initiate_purchase, request_escrow, clear_purchase_status, clear_escrow_status } from '../redux/reducer';
+import { fetch_single_product, clear_selected_product, request_escrow, clear_purchase_status, clear_escrow_status } from '../redux/reducer';
 import ImageGallery from '../components/ImageGallery';
 import { motion } from 'framer-motion';
 import { useColors } from '../../../utils/colors';
@@ -54,7 +53,6 @@ import {
   getSelectedProduct,
   getProductDetailLoading,
   getProductDetailError,
-  getProductPurchaseStatus,
   getEscrowStatus
 } from '../redux/selector';
 import { getProfile } from '../../accountSettings.jsx/redux/selector';
@@ -205,7 +203,6 @@ const ProductDetail = () => {
     try {
       await loadFlutterwaveScript();
       
-      // Get correct product ID - MongoDB usually uses _id
       const productId = product._id || product.id;
       const config = {
         public_key: import.meta.env.VITE_FLUTTERWAVE_PUBLIC_KEY,
@@ -272,7 +269,6 @@ const ProductDetail = () => {
 
   const handleFlutterwaveSuccess = async (response) => {
     try {
-      console.log('Flutterwave response:', response); // Debugging
 
       // Verify payment status
       const verifyResponse = await fetch('/api/v1/transactions/callback', {
@@ -328,8 +324,6 @@ const ProductDetail = () => {
         productId: id,
         type: 'product_purchase'
       }));
-
-      console.log('Escrow request status:', escrowStatus);
       
       if (escrowStatus.escrowData?.escrowId) {
         navigate(`/escrow/${escrowStatus.escrowData.escrowId}`);

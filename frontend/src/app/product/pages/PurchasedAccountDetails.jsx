@@ -1,11 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
-import {
-  fetch_purchased_credentials,
-  clear_purchased_credentials
-} from '../redux/reducer';
-import { getPurchasedCredentials } from '../redux/selector';
 import {
   Box,
   Container,

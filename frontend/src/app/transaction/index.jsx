@@ -31,6 +31,7 @@ import {
   reset_filters
 } from './redux/reducer';
 import { useColors } from '../../utils/colors';
+import TransactionLookup from '../../components/TransactionLookup';
 
 const TransactionTabs = () => {
   const colors = useColors();
@@ -388,6 +389,8 @@ const Transaction = () => {
       </Box>
 
       <Box p={6}>
+        <TransactionLookup />
+        
         {renderContent()}
       </Box>
 

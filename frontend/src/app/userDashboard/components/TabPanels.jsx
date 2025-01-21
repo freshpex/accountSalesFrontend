@@ -76,7 +76,6 @@ const getActivityIcon = (type) => {
 export const OverviewPanel = ({ data, metrics, spendingChart, isLoading }) => {
   const colors = useColors();
   const chartRef = useRef(null);
-  const isMobile = useBreakpointValue({ base: true, md: false });
 
   if (isLoading) {
     return <LoadingSpinner />;
@@ -118,7 +117,7 @@ export const OverviewPanel = ({ data, metrics, spendingChart, isLoading }) => {
           <VStack align="start" spacing={0} flex={1}>
             <Text fontSize="sm">{activity.description}</Text>
             <Text fontSize="xs" color="gray.500">
-              {formatDate(activity.time)}
+              {formatDate(activity.date)}
             </Text>
           </VStack>
           {activity.type === 'transaction' && (

@@ -9,15 +9,16 @@ import {
 } from '@chakra-ui/react';
 import { EmailIcon, BellIcon } from '@chakra-ui/icons';
 import { useColors } from '../../../utils/colors';
+import { useCallback } from 'react';
 
 const NotificationList = ({ notifications, onNotificationRead }) => {
-  const handleClick = (notification) => {
+  const colors = useColors();
+
+  const handleClick = useCallback((notification) => {
     if (!notification.read) {
       onNotificationRead(notification._id);
     }
-  };
-
-  const colors = useColors();
+  }, [onNotificationRead]);
 
   return (
     <VStack spacing={4} align="stretch">
@@ -28,9 +29,9 @@ const NotificationList = ({ notifications, onNotificationRead }) => {
           borderWidth={1}
           borderRadius="lg"
           bg={notification.read ? colors.bgColor : colors.activeColor}
-          cursor="pointer"
-          onClick={() => handleClick(notification)}
-          _hover={{ shadow: "sm" }}
+          cursor={notification.read ? 'default' : 'pointer'}
+          onClick={() => !notification.read && handleClick(notification)}
+          _hover={{ shadow: notification.read ? "none" : "sm" }}
           color={colors.textColor}
         >
           <Flex justify="space-between" align="center">

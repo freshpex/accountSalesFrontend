@@ -327,7 +327,7 @@ const TransactionTable = ({
                 </Td>
                 <Td>
                   <Text fontWeight="medium">
-                    {transaction.currency} {transaction.price?.toFixed(2)}
+                    {transaction.currency} {transaction.amount?.toFixed(2)}
                   </Text>
                 </Td>
                 <Td>{transaction.paymentMethod}</Td>

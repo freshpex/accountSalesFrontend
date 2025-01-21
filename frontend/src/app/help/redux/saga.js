@@ -105,10 +105,14 @@ function* updateTicketStatusSaga({ payload }) {
 
 function* markNotificationReadSaga({ payload }) {
   try {
+    // const response = yield call(api.patch, `${ApiEndpoints.NOTIFICATIONS}/${payload}/read`);
+    
+    // if (response.data) {
+    //   yield put(mark_notification_read(payload));
+    // }
     yield call(api.patch, `${ApiEndpoints.NOTIFICATIONS}/${payload}/read`);
-    yield put(mark_notification_read(payload));
-    toast.success("Notification marked as read");
   } catch (error) {
+    console.error('Mark notification read error:', error);
     toast.error("Failed to mark notification as read");
   }
 }

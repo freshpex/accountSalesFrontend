@@ -8,50 +8,50 @@ const FlutterwavePayment = ({ config, onSuccess, onError, onClose }) => {
   const handleTransactionUpdate = async (response, status) => {
     try {
       // Create transaction record
-      const transactionData = {
-        productId: config.meta.productId,
-        escrowId: config.meta.escrowId,
-        customerId: config.meta.customerId,
-        userId: config.meta.userId,
-        amount: config.amount,
-        currency: config.currency,
-        paymentMethod: response.payment_type || 'card',
-        status: status,
-        paymentStatus: status === 'completed' ? 'paid' : status,
-        flutterwaveReference: response.flw_ref || response.transaction_id,
-        flutterwaveTxRef: response.tx_ref,
-        customerDetails: {
-          name: `${config.customer.firstName} ${config.customer.lastName}`.trim() || config.customer.name,
-          email: config.customer.email || 'customer@gmail.com',
-          phone: config.customer.phone_number || '',
-          address: config.customer.address || '',
-          country: config.customer.country || '',
-          userId: config.meta.userId,
-          profileId: config.meta.customerId,
-          metadata: {
-            gender: config.customer.gender || '',
-            birthDate: config.customer.birthDate || null,
-            profilePicture: config.customer.profilePicture || ''
-          }
-        },
-        metadata: {
-          productName: config.customizations.description,
-          customerName: config.customer.name,
-          paymentType: response.payment_type,
-          transactionId: response.transaction_id,
-          txRef: response.tx_ref,
-          flutterwave: {
-            cardDetails: response.card ? {
-              last4: response.card.last_4digits,
-              issuer: response.card.issuer,
-              type: response.card.type,
-              country: response.card.country
-            } : null
-          }
-        },
-        tx_ref: response.tx_ref,
-        transaction_id: response.transaction_id
-      };
+      // const transactionData = {
+      //   productId: config.meta.productId,
+      //   escrowId: config.meta.escrowId,
+      //   customerId: config.meta.customerId,
+      //   userId: config.meta.userId,
+      //   amount: config.amount,
+      //   currency: config.currency,
+      //   paymentMethod: response.payment_type || 'card',
+      //   status: status,
+      //   paymentStatus: status === 'completed' ? 'paid' : status,
+      //   flutterwaveReference: response.flw_ref || response.transaction_id,
+      //   flutterwaveTxRef: response.tx_ref,
+      //   customerDetails: {
+      //     name: `${config.customer.firstName} ${config.customer.lastName}`.trim() || config.customer.name,
+      //     email: config.customer.email || 'customer@gmail.com',
+      //     phone: config.customer.phone_number || '',
+      //     address: config.customer.address || '',
+      //     country: config.customer.country || '',
+      //     userId: config.meta.userId,
+      //     profileId: config.meta.customerId,
+      //     metadata: {
+      //       gender: config.customer.gender || '',
+      //       birthDate: config.customer.birthDate || null,
+      //       profilePicture: config.customer.profilePicture || ''
+      //     }
+      //   },
+      //   metadata: {
+      //     productName: config.customizations.description,
+      //     customerName: config.customer.name,
+      //     paymentType: response.payment_type,
+      //     transactionId: response.transaction_id,
+      //     txRef: response.tx_ref,
+      //     flutterwave: {
+      //       cardDetails: response.card ? {
+      //         last4: response.card.last_4digits,
+      //         issuer: response.card.issuer,
+      //         type: response.card.type,
+      //         country: response.card.country
+      //       } : null
+      //     }
+      //   },
+      //   tx_ref: response.tx_ref,
+      //   transaction_id: response.transaction_id
+      // };
 
       // Send transaction data to backend
       const transactionResponse = await api.post('/api/v1/transactions/callback', {
