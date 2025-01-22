@@ -204,6 +204,19 @@ const ProductDetail = () => {
       await loadFlutterwaveScript();
       
       const productId = product._id || product.id;
+      
+      // Store payment data for callback
+      const paymentData = {
+        productId,
+        userId: profile.userId,
+        customerId: profile._id,
+        amount: product.price,
+        customerEmail: profile.email,
+        customerName: `${profile.firstName} ${profile.lastName}`.trim()
+      };
+      
+      localStorage.setItem('paymentData', JSON.stringify(paymentData));
+
       const config = {
         public_key: import.meta.env.VITE_FLUTTERWAVE_PUBLIC_KEY,
         tx_ref: `TX_${Date.now()}_${Math.floor(Math.random() * 1000)}`,
