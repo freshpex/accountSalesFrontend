@@ -25,9 +25,14 @@ import { sidebarData, company } from "./data";
 import SidebarCloseButton from "../assets/icons/SidebarCloseButton";
 import { selectProfile } from "../app/accountSettings.jsx/redux/selector";
 import { logout } from "./redux/actions";
-import { convertToPublicUrl } from '../utils/supabase';
+import { convertToPublicUrl } from "../utils/supabase";
 
-const Sidebar = ({ isSidebarOpen, toggleSidebar, isCollapsed, toggleCollapse }) => {
+const Sidebar = ({
+  isSidebarOpen,
+  toggleSidebar,
+  isCollapsed,
+  toggleCollapse,
+}) => {
   const dispatch = useDispatch();
   const profile = useSelector(selectProfile);
   const { colorMode, toggleColorMode } = useColorMode();
@@ -39,12 +44,12 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar, isCollapsed, toggleCollapse }) 
 
   const handleLogout = () => {
     dispatch(logout());
-    navigate('/login');
+    navigate("/login");
   };
 
-  const profilePicture = profile?.profilePicture ? 
-    convertToPublicUrl(profile.profilePicture) : 
-    "https://via.placeholder.com/150";
+  const profilePicture = profile?.profilePicture
+    ? convertToPublicUrl(profile.profilePicture)
+    : "https://via.placeholder.com/150";
 
   return (
     <>
@@ -116,7 +121,7 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar, isCollapsed, toggleCollapse }) 
                   onChange={toggleColorMode}
                 />
               </Flex>
-              
+
               {/* User Menu */}
               <Menu>
                 <MenuButton w="full">
@@ -131,15 +136,24 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar, isCollapsed, toggleCollapse }) 
                         {`${profile?.firstName} ${profile?.lastName}`}
                       </Text>
                       <Text fontSize="xs" color={textColor}>
-                        {profile?.role === 'user' ? 'Member' : profile?.role || "Role"}
+                        {profile?.role === "user"
+                          ? "Member"
+                          : profile?.role || "Role"}
                       </Text>
                     </Box>
                     <ChevronDownIcon />
                   </Flex>
                 </MenuButton>
                 <MenuList>
-                  <MenuItem onClick={() => navigate('/settings')} color={textColor}>Profile</MenuItem>
-                  <MenuItem onClick={handleLogout} color={textColor}>Logout</MenuItem>
+                  <MenuItem
+                    onClick={() => navigate("/settings")}
+                    color={textColor}
+                  >
+                    Profile
+                  </MenuItem>
+                  <MenuItem onClick={handleLogout} color={textColor}>
+                    Logout
+                  </MenuItem>
                 </MenuList>
               </Menu>
             </Box>
@@ -162,13 +176,7 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar, isCollapsed, toggleCollapse }) 
         {/* Logo Section */}
         <Flex align="center" justify="space-between" p={4}>
           <Flex align="center" gap={2}>
-            <Box
-              as="img"
-              src="/logo.svg"
-              alt="Culters"
-              h="6"
-              w="auto"
-            />
+            <Box as="img" src="/logo.svg" alt="Culters" h="6" w="auto" />
             {!isCollapsed && (
               <Text fontSize="lg" fontWeight="bold" color={textColor}>
                 ScottTech
@@ -248,7 +256,9 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar, isCollapsed, toggleCollapse }) 
                       {`${profile?.firstName} ${profile?.lastName}`}
                     </Text>
                     <Text fontSize="xs" color={textColor}>
-                      {profile?.role === 'user' ? 'Member' : profile?.role || "Role"}
+                      {profile?.role === "user"
+                        ? "Member"
+                        : profile?.role || "Role"}
                     </Text>
                   </Box>
                 )}
@@ -256,8 +266,12 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar, isCollapsed, toggleCollapse }) 
               </Flex>
             </MenuButton>
             <MenuList>
-              <MenuItem onClick={() => navigate('/settings')} color={textColor}>Profile</MenuItem>
-              <MenuItem onClick={handleLogout} color={textColor}>Logout</MenuItem>
+              <MenuItem onClick={() => navigate("/settings")} color={textColor}>
+                Profile
+              </MenuItem>
+              <MenuItem onClick={handleLogout} color={textColor}>
+                Logout
+              </MenuItem>
             </MenuList>
           </Menu>
         </Box>
@@ -270,28 +284,31 @@ const SidebarContent = ({ isCollapsed, activeColor, textColor }) => {
   const [expandedSection, setExpandedSection] = useState("Product");
   const navigate = useNavigate();
   const profile = useSelector(selectProfile);
-  const userRole = profile?.role || 'user';
+  const userRole = profile?.role || "user";
 
   const handleSectionClick = (title, route) => {
     setExpandedSection(expandedSection === title ? null : title);
     if (route) {
-      if (route === '/product') {
-        navigate('/product/instagram');
+      if (route === "/product") {
+        navigate("/product/instagram");
       } else {
         navigate(route);
       }
     }
   };
 
-  const filteredSidebarData = sidebarData.map(section => ({
+  const filteredSidebarData = sidebarData.map((section) => ({
     ...section,
-    items: section.items.filter(item => {
+    items: section.items.filter((item) => {
       // Hide Customers and Sales Report for non-admin users
-      if (userRole !== 'admin' && (item.title === 'Customers' || item.title === 'Sales Report')) {
+      if (
+        userRole !== "admin" &&
+        (item.title === "Customers" || item.title === "Sales Report")
+      ) {
         return false;
       }
       return true;
-    })
+    }),
   }));
 
   return (
@@ -318,7 +335,9 @@ const SidebarContent = ({ isCollapsed, activeColor, textColor }) => {
                 py={2}
                 cursor="pointer"
                 borderRadius="md"
-                bg={expandedSection === item.title ? activeColor : "transparent"}
+                bg={
+                  expandedSection === item.title ? activeColor : "transparent"
+                }
                 _hover={{ bg: activeColor }}
                 onClick={() => handleSectionClick(item.title, item.route)}
               >
@@ -341,23 +360,25 @@ const SidebarContent = ({ isCollapsed, activeColor, textColor }) => {
                   </>
                 )}
               </Flex>
-              {!isCollapsed && expandedSection === item.title && item.subItems && (
-                <VStack align="stretch" ml={8} mt={1} spacing={1}>
-                  {item.subItems.map((subItem) => (
-                    <Text
-                      key={subItem.name}
-                      fontSize="sm"
-                      color={textColor}
-                      py={1}
-                      _hover={{ color: "blue.500" }}
-                      cursor="pointer"
-                      onClick={() => navigate(subItem.route)}
-                    >
-                      {subItem.name}
-                    </Text>
-                  ))}
-                </VStack>
-              )}
+              {!isCollapsed &&
+                expandedSection === item.title &&
+                item.subItems && (
+                  <VStack align="stretch" ml={8} mt={1} spacing={1}>
+                    {item.subItems.map((subItem) => (
+                      <Text
+                        key={subItem.name}
+                        fontSize="sm"
+                        color={textColor}
+                        py={1}
+                        _hover={{ color: "blue.500" }}
+                        cursor="pointer"
+                        onClick={() => navigate(subItem.route)}
+                      >
+                        {subItem.name}
+                      </Text>
+                    ))}
+                  </VStack>
+                )}
             </Box>
           ))}
         </Box>

@@ -7,7 +7,7 @@ const initialState = {
     success: false,
     purchaseStatus: null,
     escrowStatus: null,
-    paymentStatus: null
+    paymentStatus: null,
   },
   data: {
     products: [],
@@ -16,13 +16,13 @@ const initialState = {
       facebook: 0,
       twitter: 0,
       whatsapp: 0,
-      total: 0
+      total: 0,
     },
     meta: {
       currentPage: 1,
       totalPages: 1,
-      totalItems: 0
-    }
+      totalItems: 0,
+    },
   },
   selectedProduct: null,
   tableSettings: {
@@ -32,7 +32,7 @@ const initialState = {
     totalItems: 0,
     selectedItems: [],
     sortBy: null,
-    sortOrder: 'asc'
+    sortOrder: "asc",
   },
   transactionProducts: [],
   loading: false,
@@ -41,8 +41,8 @@ const initialState = {
   purchasedCredentials: {
     loading: false,
     error: null,
-    data: null
-  }
+    data: null,
+  },
 };
 
 export const productSlice = createSlice({
@@ -60,30 +60,30 @@ export const productSlice = createSlice({
     fetch_products_success: (state, action) => {
       state.ui.loading = false;
       state.ui.success = true;
-      
+
       // Ensure products array is properly set
-      state.data.products = Array.isArray(action.payload.items) 
-        ? action.payload.items 
+      state.data.products = Array.isArray(action.payload.items)
+        ? action.payload.items
         : [];
-      
+
       // Update stats
       state.data.stats = {
         ...initialState.data.stats,
-        ...action.payload.stats
+        ...action.payload.stats,
       };
-      
+
       // Update meta
       state.data.meta = {
         ...initialState.data.meta,
-        ...action.payload.meta
+        ...action.payload.meta,
       };
-      
+
       // Update table settings
       state.tableSettings = {
         ...state.tableSettings,
         currentPage: action.payload.meta?.currentPage || 1,
         totalPages: action.payload.meta?.totalPages || 1,
-        totalItems: action.payload.meta?.totalItems || 0
+        totalItems: action.payload.meta?.totalItems || 0,
       };
     },
     fetch_products_error: (state, action) => {
@@ -101,10 +101,10 @@ export const productSlice = createSlice({
       // Ensure we have valid data
       if (action.payload) {
         const productType = action.payload.type?.toLowerCase();
-        
+
         state.data.products.unshift({
           ...action.payload,
-          type: productType
+          type: productType,
         });
 
         if (productType && state.data.stats[productType] !== undefined) {
@@ -124,7 +124,9 @@ export const productSlice = createSlice({
     update_product_success: (state, action) => {
       state.ui.loading = false;
       state.ui.success = true;
-      const index = state.data.products.findIndex(p => p.id === action.payload._id || p.id === action.payload.id);
+      const index = state.data.products.findIndex(
+        (p) => p.id === action.payload._id || p.id === action.payload.id,
+      );
       if (index !== -1) {
         const oldType = state.data.products[index].type;
         const newType = action.payload.type;
@@ -135,7 +137,7 @@ export const productSlice = createSlice({
         // Ensure consistent id format
         state.data.products[index] = {
           ...action.payload,
-          id: action.payload._id || action.payload.id
+          id: action.payload._id || action.payload.id,
         };
       }
     },
@@ -150,12 +152,14 @@ export const productSlice = createSlice({
     delete_product_success: (state, action) => {
       state.ui.loading = false;
       state.ui.success = true;
-      const product = state.data.products.find(p => p.id === action.payload);
+      const product = state.data.products.find((p) => p.id === action.payload);
       if (product) {
         state.data.stats[product.type]--;
         state.data.stats.total--;
       }
-      state.data.products = state.data.products.filter(p => p.id !== action.payload);
+      state.data.products = state.data.products.filter(
+        (p) => p.id !== action.payload,
+      );
     },
     delete_product_error: (state, action) => {
       state.ui.loading = false;
@@ -177,7 +181,7 @@ export const productSlice = createSlice({
     update_table_settings: (state, action) => {
       state.tableSettings = {
         ...state.tableSettings,
-        ...action.payload
+        ...action.payload,
       };
     },
     select_table_items: (state, action) => {
@@ -244,7 +248,7 @@ export const productSlice = createSlice({
       state.ui.success = true;
       state.escrowData = {
         escrowId: action.payload.escrowId,
-        success: action.payload.success
+        success: action.payload.success,
       };
     },
     request_escrow_error: (state, action) => {
@@ -297,8 +301,8 @@ export const productSlice = createSlice({
     },
     clear_purchased_credentials: (state) => {
       state.purchasedCredentials = initialState.purchasedCredentials;
-    }
-  }
+    },
+  },
 });
 
 export const {
@@ -326,7 +330,7 @@ export const {
   set_product_sort,
   fetch_transaction_products,
   fetch_transaction_products_success,
-fetch_transaction_products_error,
+  fetch_transaction_products_error,
   fetch_single_product,
   fetch_single_product_success,
   fetch_single_product_error,
@@ -349,7 +353,7 @@ fetch_transaction_products_error,
   fetch_purchased_credentials,
   fetch_purchased_credentials_success,
   fetch_purchased_credentials_error,
-  clear_purchased_credentials
+  clear_purchased_credentials,
 } = productSlice.actions;
 
 export default productSlice.reducer;

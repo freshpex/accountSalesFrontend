@@ -15,7 +15,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { getLoading, getError } from "./redux/selector";
 import { forgot_password } from "./redux/reducer";
 import * as Yup from "yup";
-import { useColors } from '../../../utils/colors';
+import { useColors } from "../../../utils/colors";
 
 const ResetPassword = () => {
   const dispatch = useDispatch();
@@ -57,7 +57,11 @@ const ResetPassword = () => {
           w={{ base: "full", md: "400px" }}
           borderRadius={"10px"}
         >
-          <Text textStyle={"heading"} olor={colors.textColor} textAlign={"center"}>
+          <Text
+            textStyle={"heading"}
+            olor={colors.textColor}
+            textAlign={"center"}
+          >
             Reset Password
           </Text>
           <Text

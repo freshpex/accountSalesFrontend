@@ -63,7 +63,11 @@ const ChangePassword = () => {
           w={{ base: "full", md: "400px" }}
           borderRadius={"10px"}
         >
-          <Text textStyle={"heading"} color={colors.textColor}textAlign={"center"}>
+          <Text
+            textStyle={"heading"}
+            color={colors.textColor}
+            textAlign={"center"}
+          >
             Set New Password
           </Text>
           <Text

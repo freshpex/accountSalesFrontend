@@ -4,16 +4,16 @@ const initialState = {
   ui: {
     loading: false,
     error: null,
-    success: false
+    success: false,
   },
   data: {
     userId: null,
-    message: null
+    message: null,
   },
   googleAuth: {
     loading: false,
-    error: null
-  }
+    error: null,
+  },
 };
 
 export const registerReducerSlice = createSlice({
@@ -48,7 +48,7 @@ export const registerReducerSlice = createSlice({
     google_auth_error: (state, action) => {
       state.googleAuth.loading = false;
       state.googleAuth.error = action.payload;
-    }
+    },
   },
 });
 
@@ -59,7 +59,7 @@ export const {
   reset_register,
   google_auth_start,
   google_auth_success,
-  google_auth_error
+  google_auth_error,
 } = registerReducerSlice.actions;
 
 export default registerReducerSlice.reducer;

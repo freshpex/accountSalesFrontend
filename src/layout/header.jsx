@@ -28,10 +28,13 @@ import {
 } from "react-icons/md";
 import { selectProfile } from "../app/accountSettings.jsx/redux/selector";
 import { logout } from "./redux/actions";
-import { convertToPublicUrl } from '../utils/supabase';
-import { format } from 'date-fns';
+import { convertToPublicUrl } from "../utils/supabase";
+import { format } from "date-fns";
 import { getUnreadNotifications, getTickets } from "../app/help/redux/selector";
-import { fetch_tickets, mark_notification_read } from "../app/help/redux/reducer";
+import {
+  fetch_tickets,
+  mark_notification_read,
+} from "../app/help/redux/reducer";
 
 const Header = ({ toggleSidebar }) => {
   const dispatch = useDispatch();
@@ -42,7 +45,7 @@ const Header = ({ toggleSidebar }) => {
 
   const notifications = useSelector(getUnreadNotifications);
   const tickets = useSelector(getTickets);
-  const unreadMessages = tickets?.filter(t => t.status === 'open').length;
+  const unreadMessages = tickets?.filter((t) => t.status === "open").length;
 
   useEffect(() => {
     dispatch(fetch_tickets());
@@ -50,7 +53,7 @@ const Header = ({ toggleSidebar }) => {
 
   const handleLogout = () => {
     dispatch(logout());
-    navigate('/login');
+    navigate("/login");
   };
 
   const handleNotificationClick = (notificationId) => {
@@ -58,22 +61,27 @@ const Header = ({ toggleSidebar }) => {
   };
 
   const renderNotificationItem = (notification) => (
-    <MenuItem 
-      key={notification._id} 
+    <MenuItem
+      key={notification._id}
       onClick={() => handleNotificationClick(notification._id)}
     >
       <VStack align="start" spacing={1}>
         <Text fontWeight="medium">{notification.title}</Text>
-        <Text fontSize="sm" color="gray.500">{notification.message}</Text>
+        <Text fontSize="sm" color="gray.500">
+          {notification.message}
+        </Text>
         <Text fontSize="xs" color="gray.400">
-          {format(new Date(notification.createdAt), 'MMM d, yyyy h:mm a')}
+          {format(new Date(notification.createdAt), "MMM d, yyyy h:mm a")}
         </Text>
       </VStack>
     </MenuItem>
   );
 
   const renderMessageItem = (ticket) => (
-    <MenuItem key={ticket._id} onClick={() => navigate(`/help?ticket=${ticket._id}`)}>
+    <MenuItem
+      key={ticket._id}
+      onClick={() => navigate(`/help?ticket=${ticket._id}`)}
+    >
       <VStack align="start" spacing={1}>
         <Text fontWeight="medium">{ticket.subject}</Text>
         <Text fontSize="sm" color="gray.500" noOfLines={1}>
@@ -86,17 +94,12 @@ const Header = ({ toggleSidebar }) => {
     </MenuItem>
   );
 
-  const profilePicture = profile?.profilePicture ? 
-    convertToPublicUrl(profile.profilePicture) : 
-    "https://via.placeholder.com/150";
+  const profilePicture = profile?.profilePicture
+    ? convertToPublicUrl(profile.profilePicture)
+    : "https://via.placeholder.com/150";
 
   return (
-    <Flex
-      px={8}
-      py={2}
-      align="center"
-      justify="space-between"
-    >
+    <Flex px={8} py={2} align="center" justify="space-between">
       {/* Sidebar Toggle Button */}
       <IconButton
         icon={<MdMenu />}
@@ -151,7 +154,7 @@ const Header = ({ toggleSidebar }) => {
           <MenuList w="350px">
             {tickets?.slice(0, 5).map(renderMessageItem)}
             <MenuDivider />
-            <MenuItem onClick={() => navigate('/help')} color="blue.400">
+            <MenuItem onClick={() => navigate("/help")} color="blue.400">
               View All Messages
             </MenuItem>
           </MenuList>
@@ -190,7 +193,10 @@ const Header = ({ toggleSidebar }) => {
                 {notifications.length > 5 && (
                   <>
                     <MenuDivider />
-                    <MenuItem onClick={() => navigate('/help?tab=notifications')} color="blue.400">
+                    <MenuItem
+                      onClick={() => navigate("/help?tab=notifications")}
+                      color="blue.400"
+                    >
                       View All Notifications
                     </MenuItem>
                   </>
@@ -215,14 +221,16 @@ const Header = ({ toggleSidebar }) => {
                   {`${profile?.firstName} ${profile?.lastName}`}
                 </Text>
                 <Text fontSize="xs" color="gray.500">
-                  {profile?.role === 'user' ? 'Member' : profile?.role || "Role"}
+                  {profile?.role === "user"
+                    ? "Member"
+                    : profile?.role || "Role"}
                 </Text>
               </Box>
             </Flex>
           </MenuButton>
           <MenuList>
-            <MenuItem onClick={() => navigate('/settings')}>Profile</MenuItem>
-            <MenuItem onClick={() => navigate('/settings')}>Settings</MenuItem>
+            <MenuItem onClick={() => navigate("/settings")}>Profile</MenuItem>
+            <MenuItem onClick={() => navigate("/settings")}>Settings</MenuItem>
             <MenuItem onClick={handleLogout}>Logout</MenuItem>
           </MenuList>
         </Menu>

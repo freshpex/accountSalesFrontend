@@ -16,14 +16,14 @@ import {
   Flex,
   Image,
   VStack,
-} from '@chakra-ui/react';
-import { ViewIcon, DeleteIcon, EditIcon } from '@chakra-ui/icons';
-import { motion } from 'framer-motion';
-import { useColors } from '../../../utils/colors';
-import { STATUS_CONFIG, PAYMENT_STATUS_CONFIG } from '../../../utils/constants';
-import { convertToPublicUrl } from '../../../utils/supabase';
-import { useState } from 'react';
-import { useSelector } from 'react-redux';
+} from "@chakra-ui/react";
+import { ViewIcon, DeleteIcon, EditIcon } from "@chakra-ui/icons";
+import { motion } from "framer-motion";
+import { useColors } from "../../../utils/colors";
+import { STATUS_CONFIG, PAYMENT_STATUS_CONFIG } from "../../../utils/constants";
+import { convertToPublicUrl } from "../../../utils/supabase";
+import { useState } from "react";
+import { useSelector } from "react-redux";
 
 const MotionBox = motion(Box);
 
@@ -33,10 +33,7 @@ const ImageWithZoom = ({ src, alt }) => {
 
   return (
     <Box position="relative">
-      <motion.div
-        whileHover={{ scale: 1.05 }}
-        transition={{ duration: 0.2 }}
-      >
+      <motion.div whileHover={{ scale: 1.05 }} transition={{ duration: 0.2 }}>
         <Image
           src={src}
           alt={alt}
@@ -48,11 +45,11 @@ const ImageWithZoom = ({ src, alt }) => {
           border="1px solid"
           borderColor={colors.imageBorder}
           _hover={{
-            boxShadow: colors.cardHoverShadow
+            boxShadow: colors.cardHoverShadow,
           }}
         />
       </motion.div>
-      
+
       {isOpen && (
         <motion.div
           initial={{ opacity: 0 }}
@@ -89,7 +86,7 @@ const ImageWithZoom = ({ src, alt }) => {
   );
 };
 
-const TransactionTable = ({ 
+const TransactionTable = ({
   data = [],
   selectedItems = [],
   onSelectAll,
@@ -104,29 +101,32 @@ const TransactionTable = ({
   onDelete,
   // getStatusColor,
   // getPaymentColor
- }) => {
+}) => {
   const isMobile = useBreakpointValue({ base: true, md: false });
   const colors = useColors();
-  const profile = useSelector(state => state.accountSettings.data.profile);
-  const isAdmin = profile?.role === 'admin';
+  const profile = useSelector((state) => state.accountSettings.data.profile);
+  const isAdmin = profile?.role === "admin";
 
   const tableAnimation = {
     initial: { opacity: 0 },
     animate: { opacity: 1 },
     exit: { opacity: 0 },
-    transition: { duration: 0.2 }
+    transition: { duration: 0.2 },
   };
 
   const rowAnimation = {
     initial: { opacity: 0, y: 20 },
     animate: { opacity: 1, y: 0 },
     exit: { opacity: 0, y: -20 },
-    transition: { duration: 0.2 }
+    transition: { duration: 0.2 },
   };
 
   const renderStatus = (status, paymentStatus) => {
-    const statusConfig = STATUS_CONFIG[status?.toLowerCase()] || STATUS_CONFIG.pending;
-    const paymentConfig = PAYMENT_STATUS_CONFIG[paymentStatus?.toLowerCase()] || PAYMENT_STATUS_CONFIG.pending;
+    const statusConfig =
+      STATUS_CONFIG[status?.toLowerCase()] || STATUS_CONFIG.pending;
+    const paymentConfig =
+      PAYMENT_STATUS_CONFIG[paymentStatus?.toLowerCase()] ||
+      PAYMENT_STATUS_CONFIG.pending;
 
     return (
       <HStack spacing={2}>
@@ -156,7 +156,7 @@ const TransactionTable = ({
         borderColor: colors.borderHover,
         transform: "translateY(-2px)",
         boxShadow: colors.cardHoverShadow,
-        transition: "all 0.2s"
+        transition: "all 0.2s",
       }}
     >
       <VStack spacing={4} align="stretch">
@@ -176,7 +176,7 @@ const TransactionTable = ({
               objectFit="cover"
               transition="transform 0.3s"
               _hover={{
-                transform: "scale(1.05)"
+                transform: "scale(1.05)",
               }}
             />
           </Box>
@@ -185,19 +185,27 @@ const TransactionTable = ({
         {/* Header with ID and Amount */}
         <Flex justify="space-between" w="full">
           <VStack align="start">
-            <Text fontSize="sm" color="gray.500">Transaction ID</Text>
+            <Text fontSize="sm" color="gray.500">
+              Transaction ID
+            </Text>
             <Text fontWeight="semibold">{transaction.transactionId}</Text>
           </VStack>
           <VStack align="end">
-            <Text fontSize="sm" color="gray.500">Amount</Text>
-            <Text fontWeight="bold">{transaction.currency} {transaction.amount}</Text>
+            <Text fontSize="sm" color="gray.500">
+              Amount
+            </Text>
+            <Text fontWeight="bold">
+              {transaction.currency} {transaction.amount}
+            </Text>
           </VStack>
         </Flex>
 
         {/* Customer Info */}
         <Box w="full" p={3} bg="gray.50" borderRadius="md">
           <VStack align="start" spacing={1}>
-            <Text fontSize="sm" color="gray.500">Customer</Text>
+            <Text fontSize="sm" color="gray.500">
+              Customer
+            </Text>
             <Text fontWeight="medium">{transaction.customerDetails.name}</Text>
             <Text fontSize="sm">{transaction.customerDetails.email}</Text>
             {transaction.customerDetails.phone && (
@@ -208,33 +216,45 @@ const TransactionTable = ({
 
         {/* Status Badges */}
         <HStack w="full" justify="space-between">
-          <Badge colorScheme={STATUS_CONFIG[transaction.status?.toLowerCase()]?.colorScheme || 'gray'}>
-            {STATUS_CONFIG[transaction.status?.toLowerCase()]?.label || transaction.status}
+          <Badge
+            colorScheme={
+              STATUS_CONFIG[transaction.status?.toLowerCase()]?.colorScheme ||
+              "gray"
+            }
+          >
+            {STATUS_CONFIG[transaction.status?.toLowerCase()]?.label ||
+              transaction.status}
           </Badge>
-          <Badge colorScheme={PAYMENT_STATUS_CONFIG[transaction.paymentStatus?.toLowerCase()]?.colorScheme || 'gray'}>
-            {PAYMENT_STATUS_CONFIG[transaction.paymentStatus?.toLowerCase()]?.label || transaction.paymentStatus}
+          <Badge
+            colorScheme={
+              PAYMENT_STATUS_CONFIG[transaction.paymentStatus?.toLowerCase()]
+                ?.colorScheme || "gray"
+            }
+          >
+            {PAYMENT_STATUS_CONFIG[transaction.paymentStatus?.toLowerCase()]
+              ?.label || transaction.paymentStatus}
           </Badge>
         </HStack>
 
         {/* Actions */}
         <HStack w="full" spacing={2}>
-        {isAdmin && (
-          <>
-            <IconButton
-              icon={<ViewIcon />}
-              onClick={() => onView('view', transaction)}
-            />
-            <IconButton
-              icon={<EditIcon />}
-              onClick={() => onEdit('edit', transaction)}
-            />
-            <IconButton
-              icon={<DeleteIcon />}
-              onClick={() => onDelete('delete', transaction)}
-              colorScheme="red"
-            />
+          {isAdmin && (
+            <>
+              <IconButton
+                icon={<ViewIcon />}
+                onClick={() => onView("view", transaction)}
+              />
+              <IconButton
+                icon={<EditIcon />}
+                onClick={() => onEdit("edit", transaction)}
+              />
+              <IconButton
+                icon={<DeleteIcon />}
+                onClick={() => onDelete("delete", transaction)}
+                colorScheme="red"
+              />
             </>
-            )}
+          )}
         </HStack>
       </VStack>
     </MotionBox>
@@ -255,8 +275,13 @@ const TransactionTable = ({
               {isAdmin && (
                 <Th>
                   <Checkbox
-                    isChecked={data.length > 0 && selectedItems.length === data.length}
-                    isIndeterminate={selectedItems.length > 0 && selectedItems.length < data.length}
+                    isChecked={
+                      data.length > 0 && selectedItems.length === data.length
+                    }
+                    isIndeterminate={
+                      selectedItems.length > 0 &&
+                      selectedItems.length < data.length
+                    }
                     onChange={onSelectAll}
                   />
                 </Th>
@@ -277,12 +302,12 @@ const TransactionTable = ({
                 key={transaction.id}
                 _hover={{
                   bg: colors.tableRowHoverBg,
-                  transition: "all 0.2s"
+                  transition: "all 0.2s",
                 }}
                 css={{
                   "&:hover td": {
-                    borderColor: colors.borderHover
-                  }
+                    borderColor: colors.borderHover,
+                  },
                 }}
               >
                 {isAdmin && (
@@ -300,7 +325,7 @@ const TransactionTable = ({
                       color={colors.buttonPrimaryBg}
                       fontWeight="medium"
                       cursor="pointer"
-                      onClick={() => onView('view', transaction)}
+                      onClick={() => onView("view", transaction)}
                     >
                       {transaction.transactionId}
                     </Text>
@@ -333,7 +358,9 @@ const TransactionTable = ({
                 <Td>{transaction.paymentMethod}</Td>
                 <Td>
                   <VStack align="start" spacing={0}>
-                    <Text>{new Date(transaction.updatedAt).toLocaleDateString()}</Text>
+                    <Text>
+                      {new Date(transaction.updatedAt).toLocaleDateString()}
+                    </Text>
                     <Text fontSize="sm" color="gray.500">
                       {new Date(transaction.updatedAt).toLocaleTimeString()}
                     </Text>
@@ -341,24 +368,24 @@ const TransactionTable = ({
                 </Td>
                 <Td>{renderStatus(transaction.status, transaction.payment)}</Td>
                 <Td>
-                  <HStack>                    
+                  <HStack>
                     {isAdmin && (
                       <>
                         <IconButton
                           icon={<ViewIcon />}
-                          onClick={() => onView('view', transaction)}
+                          onClick={() => onView("view", transaction)}
                           aria-label="View"
                           size="sm"
                         />
                         <IconButton
                           icon={<EditIcon />}
-                          onClick={() => onEdit('edit', transaction)}
+                          onClick={() => onEdit("edit", transaction)}
                           aria-label="Edit"
                           size="sm"
                         />
                         <IconButton
                           icon={<DeleteIcon />}
-                          onClick={() => onDelete('delete', transaction)}
+                          onClick={() => onDelete("delete", transaction)}
                           aria-label="Delete"
                           size="sm"
                           colorScheme="red"
@@ -371,7 +398,7 @@ const TransactionTable = ({
             ))}
           </Tbody>
         </Table>
-        
+
         {/* Pagination */}
         <Box
           bg={colors.tableHeaderBg}
@@ -381,8 +408,9 @@ const TransactionTable = ({
         >
           <Flex justify="space-between" align="center">
             <Text fontSize="sm">
-              Showing {Math.min((currentPage - 1) * pageSize + 1, totalItems)} to{' '}
-              {Math.min(currentPage * pageSize, totalItems)} of {totalItems} entries
+              Showing {Math.min((currentPage - 1) * pageSize + 1, totalItems)}{" "}
+              to {Math.min(currentPage * pageSize, totalItems)} of {totalItems}{" "}
+              entries
             </Text>
             <HStack>
               <Button
@@ -410,9 +438,7 @@ const TransactionTable = ({
   );
 
   return isMobile ? (
-    <VStack spacing={4}>
-      {data.map(renderMobileCard)}
-    </VStack>
+    <VStack spacing={4}>{data.map(renderMobileCard)}</VStack>
   ) : (
     renderDesktopTable()
   );

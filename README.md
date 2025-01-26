@@ -10,24 +10,28 @@ A modern, full-featured social media account marketplace built with React and Ch
 ## ✨ Features
 
 - 🔐 **Secure Authentication**
+
   - Email/Password login
   - Google OAuth integration
   - Two-factor authentication
   - Password recovery
 
 - 💼 **Account Management**
+
   - Multi-platform account listings (Instagram, TikTok, etc.)
   - Detailed account metrics and analytics
   - Account verification system
   - Image galleries with lazy loading
 
 - 💰 **Transactions & Payments**
+
   - Secure payment processing via Flutterwave
   - Escrow system for safe trades
   - Transaction history and receipts
   - Multiple currency support
 
 - 👥 **User Dashboard**
+
   - Real-time analytics
   - Sales tracking
   - Customer management
@@ -52,22 +56,26 @@ A modern, full-featured social media account marketplace built with React and Ch
 ### Installation
 
 1. Clone the repository:
+
 ```bash
 git clone https://github.com/freshpex/accountSales.git
 cd accountsales
 ```
 
 2. Install dependencies:
+
 ```bash
 npm install
 ```
 
 3. Set up environment variables:
+
 ```bash
 cp .env.example .env
 ```
 
 4. Configure your environment variables:
+
 ```env
 VITE_APP_API_URL=your_api_url
 VITE_FLUTTERWAVE_PUBLIC_KEY=your_flutterwave_key
@@ -76,6 +84,7 @@ VITE_SUPABASE_ANON_KEY=your_supabase_key
 ```
 
 5. Start the development server:
+
 ```bash
 npm run dev
 ```
@@ -118,6 +127,7 @@ src/
 ## 📱 Features Breakdown
 
 ### Admin Dashboard
+
 - Sales analytics
 - Customer management
 - Product listings
@@ -125,6 +135,7 @@ src/
 - User management
 
 ### User Dashboard
+
 - Purchase history
 - Account management
 - Support tickets
@@ -132,6 +143,7 @@ src/
 - Security settings
 
 ### Product Features
+
 - Account listings
 - Detailed metrics
 - Image galleries
@@ -150,6 +162,7 @@ src/
 ## 🌐 API Integration
 
 The platform integrates with multiple APIs:
+
 - Backend REST API
 - Flutterwave Payment API
 - Supabase Storage API
@@ -189,4 +202,5 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 For support, email epekipoluenoch@gmail.com or [Freshpex](https://www.linkedin.com/in/enochepekipolu).
 
 ---
+
 Made with ❤️ by Your Freshpex

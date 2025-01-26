@@ -1,82 +1,82 @@
-import { useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
-import { Box, Badge } from '@chakra-ui/react';
-import { FaWhatsapp, FaYoutube, FaTiktok, FaPhone } from 'react-icons/fa';
-import { FiInstagram, FiTwitter, FiFacebook, FiPackage } from 'react-icons/fi';
-import DataTable from './table';
-import EmptyStatePage from '../../../components/emptyState';
-import LoadingSpinner from '../../../components/LoadingSpinner';
+import { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
+import { Box, Badge } from "@chakra-ui/react";
+import { FaWhatsapp, FaYoutube, FaTiktok, FaPhone } from "react-icons/fa";
+import { FiInstagram, FiTwitter, FiFacebook, FiPackage } from "react-icons/fi";
+import DataTable from "./table";
+import EmptyStatePage from "../../../components/emptyState";
+import LoadingSpinner from "../../../components/LoadingSpinner";
 
 const platformConfig = {
   all: {
     icon: FiPackage,
-    color: '#718096',
-    title: 'All Products',
-    subtitle: 'View all your products in one place'
+    color: "#718096",
+    title: "All Products",
+    subtitle: "View all your products in one place",
   },
   instagram: {
     icon: FiInstagram,
-    color: '#E1306C',
-    title: 'Instagram Products',
-    subtitle: 'Start by adding your first Instagram product'
+    color: "#E1306C",
+    title: "Instagram Products",
+    subtitle: "Start by adding your first Instagram product",
   },
   facebook: {
     icon: FiFacebook,
-    color: '#1877F2',
-    title: 'Facebook Products',
-    subtitle: 'Start by adding your first Facebook product'
+    color: "#1877F2",
+    title: "Facebook Products",
+    subtitle: "Start by adding your first Facebook product",
   },
   twitter: {
     icon: FiTwitter,
-    color: '#1DA1F2',
-    title: 'Twitter Products',
-    subtitle: 'Start by adding your first Twitter product'
+    color: "#1DA1F2",
+    title: "Twitter Products",
+    subtitle: "Start by adding your first Twitter product",
   },
   whatsapp: {
     icon: FaWhatsapp,
-    color: '#25D366',
-    title: 'WhatsApp Products',
-    subtitle: 'Start by adding your first WhatsApp product'
+    color: "#25D366",
+    title: "WhatsApp Products",
+    subtitle: "Start by adding your first WhatsApp product",
   },
   youtube: {
     icon: FaYoutube,
-    color: '#FF0000',
-    title: 'YouTube Products',
-    subtitle: 'Start by adding your first YouTube product'
+    color: "#FF0000",
+    title: "YouTube Products",
+    subtitle: "Start by adding your first YouTube product",
   },
   tiktok: {
     icon: FaTiktok,
-    color: '#000000',
-    title: 'TikTok Products',
-    subtitle: 'Start by adding your first TikTok product'
+    color: "#000000",
+    title: "TikTok Products",
+    subtitle: "Start by adding your first TikTok product",
   },
   foreignnumber: {
     icon: FaPhone,
-    color: '#4A5568',
-    title: 'Foreign Numbers',
-    subtitle: 'Start by adding your first foreign number'
+    color: "#4A5568",
+    title: "Foreign Numbers",
+    subtitle: "Start by adding your first foreign number",
   },
   whatsappnumber: {
     icon: FaWhatsapp,
-    color: '#25D366',
-    title: 'WhatsApp Numbers',
-    subtitle: 'Start by adding your first WhatsApp number'
-  }
+    color: "#25D366",
+    title: "WhatsApp Numbers",
+    subtitle: "Start by adding your first WhatsApp number",
+  },
 };
 
-const SocialMediaTab = ({ 
+const SocialMediaTab = ({
   platform,
-  searchQuery, 
-  filters, 
-  onDataFiltered, 
-  applyFilters, 
-  onViewPost, 
-  onEditPost, 
+  searchQuery,
+  filters,
+  onDataFiltered,
+  applyFilters,
+  onViewPost,
+  onEditPost,
   onDeletePost,
   getProducts,
-  getLoading 
+  getLoading,
 }) => {
-  const platformKey = platform?.toLowerCase() || 'all';
+  const platformKey = platform?.toLowerCase() || "all";
   const config = platformConfig[platformKey] || platformConfig.all;
   const products = useSelector(getProducts) || [];
   const loading = useSelector(getLoading);
@@ -110,62 +110,60 @@ const SocialMediaTab = ({
   }
 
   const columns = [
-    { key: 'username', label: 'Username' },
-    { key: 'images', label: 'Images' },
-    { key: 'type', label: 'Type' },
-    { key: 'engagement', label: 'Engagement' },
-    { key: 'followers', label: 'Followers' },
-    { key: 'age', label: 'Age' },
-    { key: 'price', label: 'Price' },
-    { key: 'region', label: 'Region' },
-    { key: 'status', label: 'Status' },
-    { key: 'about', label: 'About' }
+    { key: "username", label: "Username" },
+    { key: "images", label: "Images" },
+    { key: "type", label: "Type" },
+    { key: "engagement", label: "Engagement" },
+    { key: "followers", label: "Followers" },
+    { key: "age", label: "Age" },
+    { key: "price", label: "Price" },
+    { key: "region", label: "Region" },
+    { key: "status", label: "Status" },
+    { key: "about", label: "About" },
   ];
 
   const handleSelectAll = (e) => {
     if (e.target.checked) {
-      setSelectedItems(paginatedData.map(post => post.id));
+      setSelectedItems(paginatedData.map((post) => post.id));
     } else {
       setSelectedItems([]);
     }
   };
 
   const handleSelectItem = (id) => {
-    setSelectedItems(prev => 
-      prev.includes(id) 
-        ? prev.filter(item => item !== id)
-        : [...prev, id]
+    setSelectedItems((prev) =>
+      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id],
     );
   };
 
   const getStatusColor = (status) => {
     switch (status.toLowerCase()) {
-      case 'available':
-        return 'green';
-      case 'sold':
-        return 'gray';
+      case "available":
+        return "green";
+      case "sold":
+        return "gray";
       default:
-        return 'gray';
+        return "gray";
     }
   };
 
   const pageCount = Math.ceil(filteredPosts.length / itemsPerPage);
   const paginatedData = filteredPosts.slice(
     (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
+    currentPage * itemsPerPage,
   );
 
   const ProductCard = ({ product }) => {
     return (
       <Box>
         {/* ...existing product display code... */}
-        
+
         {/* Add Credentials Status Indicator */}
         {product.hasCredentials && (
-          <Badge 
-            colorScheme="green" 
-            position="absolute" 
-            top={2} 
+          <Badge
+            colorScheme="green"
+            position="absolute"
+            top={2}
             right={2}
             fontSize="xs"
           >
@@ -176,9 +174,9 @@ const SocialMediaTab = ({
     );
   };
 
-  const productsList = products.map(product => ({
+  const productsList = products.map((product) => ({
     ...product,
-    hasCredentials: Boolean(product.accountCredentials?.email)
+    hasCredentials: Boolean(product.accountCredentials?.email),
   }));
 
   return (

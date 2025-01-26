@@ -4,7 +4,7 @@ const initialState = {
   ui: {
     loading: false,
     error: null,
-    success: false
+    success: false,
   },
   data: {
     transactions: [],
@@ -13,25 +13,25 @@ const initialState = {
       shipping: 0,
       completed: 0,
       cancelled: 0,
-      pending: 0
+      pending: 0,
     },
     meta: {
       currentPage: 1,
       totalPages: 1,
-      totalItems: 0
-    }
+      totalItems: 0,
+    },
   },
   filters: {
-    search: '',
+    search: "",
     payment: null,
     date: null,
-    status: 'all',
+    status: "all",
     page: 1,
-    limit: 10
+    limit: 10,
   },
   transactionProducts: [],
   productLoading: false,
-  productError: null
+  productError: null,
 };
 
 export const transactionSlice = createSlice({
@@ -75,13 +75,13 @@ export const transactionSlice = createSlice({
       state.ui.loading = false;
       state.ui.success = true;
       const index = state.data.transactions.findIndex(
-        t => t.id === action.payload.id || t._id === action.payload._id
+        (t) => t.id === action.payload.id || t._id === action.payload._id,
       );
       if (index !== -1) {
         state.data.transactions[index] = {
           ...state.data.transactions[index],
           ...action.payload,
-          id: action.payload.id || action.payload._id
+          id: action.payload.id || action.payload._id,
         };
       }
     },
@@ -97,7 +97,7 @@ export const transactionSlice = createSlice({
       state.ui.loading = false;
       state.ui.success = true;
       state.data.transactions = state.data.transactions.filter(
-        t => t.id !== action.payload
+        (t) => t.id !== action.payload,
       );
     },
     delete_transaction_error: (state, action) => {
@@ -125,8 +125,8 @@ export const transactionSlice = createSlice({
     fetch_transaction_products_error: (state, action) => {
       state.productLoading = false;
       state.productError = action.payload;
-    }
-  }
+    },
+  },
 });
 
 export const {
@@ -147,7 +147,7 @@ export const {
   set_page,
   fetch_transaction_products,
   fetch_transaction_products_success,
-  fetch_transaction_products_error
+  fetch_transaction_products_error,
 } = transactionSlice.actions;
 
 export default transactionSlice.reducer;

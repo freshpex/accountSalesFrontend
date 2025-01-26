@@ -13,11 +13,11 @@ import {
   PinInputField,
   HStack,
   Image,
-} from '@chakra-ui/react';
-import { useState } from 'react';
+} from "@chakra-ui/react";
+import { useState } from "react";
 
 const TwoFactorSetupModal = ({ isOpen, onClose, qrCode, onVerify }) => {
-  const [pin, setPin] = useState('');
+  const [pin, setPin] = useState("");
 
   const handleVerify = () => {
     onVerify(pin);
@@ -45,8 +45,14 @@ const TwoFactorSetupModal = ({ isOpen, onClose, qrCode, onVerify }) => {
           </VStack>
         </ModalBody>
         <ModalFooter>
-          <Button variant="ghost" mr={3} onClick={onClose}>Cancel</Button>
-          <Button colorScheme="blue" onClick={handleVerify} isDisabled={pin.length !== 6}>
+          <Button variant="ghost" mr={3} onClick={onClose}>
+            Cancel
+          </Button>
+          <Button
+            colorScheme="blue"
+            onClick={handleVerify}
+            isDisabled={pin.length !== 6}
+          >
             Verify
           </Button>
         </ModalFooter>

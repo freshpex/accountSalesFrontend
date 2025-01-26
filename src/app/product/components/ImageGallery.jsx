@@ -1,10 +1,10 @@
-import PropTypes from 'prop-types';
-import { Box, Image, SimpleGrid, Text } from '@chakra-ui/react';
-import { FaImage } from 'react-icons/fa';
-import { convertToPublicUrl } from '../../../utils/supabase';
+import PropTypes from "prop-types";
+import { Box, Image, SimpleGrid, Text } from "@chakra-ui/react";
+import { FaImage } from "react-icons/fa";
+import { convertToPublicUrl } from "../../../utils/supabase";
 
 const ImageGallery = ({ images, onImageClick }) => {
-  const processedImages = images?.map(img => convertToPublicUrl(img)) || [];
+  const processedImages = images?.map((img) => convertToPublicUrl(img)) || [];
 
   if (!images || images.length === 0) {
     return (
@@ -43,7 +43,7 @@ const ImageGallery = ({ images, onImageClick }) => {
 
 ImageGallery.propTypes = {
   images: PropTypes.arrayOf(PropTypes.string).isRequired,
-  onImageClick: PropTypes.func.isRequired
+  onImageClick: PropTypes.func.isRequired,
 };
 
 export default ImageGallery;

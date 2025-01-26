@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import {
   Modal,
   ModalOverlay,
@@ -19,37 +19,46 @@ import {
   Flex,
   Spinner,
   SimpleGrid,
-} from '@chakra-ui/react';
-import { useColors } from '../../../utils/colors';
-import toast from 'react-hot-toast';
-import { fetch_transaction_products } from '../../product/redux/reducer';
+} from "@chakra-ui/react";
+import { useColors } from "../../../utils/colors";
+import toast from "react-hot-toast";
+import { fetch_transaction_products } from "../../product/redux/reducer";
 
-const TransactionModal = ({ isOpen, onClose, data, action, onSave, onDelete }) => {
+const TransactionModal = ({
+  isOpen,
+  onClose,
+  data,
+  action,
+  onSave,
+  onDelete,
+}) => {
   const dispatch = useDispatch();
-  const isReadOnly = action === 'view';
-  const isEdit = action === 'edit';
+  const isReadOnly = action === "view";
+  const isEdit = action === "edit";
   const colors = useColors();
-  
+
   const [formData, setFormData] = useState({
-    productId: '',
-    amount: '',
-    currency: 'NGN',
-    paymentMethod: 'card',
-    paymentStatus: 'pending',
-    status: 'pending',
+    productId: "",
+    amount: "",
+    currency: "NGN",
+    paymentMethod: "card",
+    paymentStatus: "pending",
+    status: "pending",
     customerDetails: {
-      name: '',
-      email: '',
-      phone: ''
+      name: "",
+      email: "",
+      phone: "",
     },
-    notes: ''
+    notes: "",
   });
 
   const [selectedProduct, setSelectedProduct] = useState(null);
-  const { transactionProducts: products, loading: isLoading } = useSelector(state => ({
-    transactionProducts: state.product.transactionProducts || [],
-    loading: state.product.loading
-  }));
+  const { transactionProducts: products, loading: isLoading } = useSelector(
+    (state) => ({
+      transactionProducts: state.product.transactionProducts || [],
+      loading: state.product.loading,
+    }),
+  );
 
   const [hasFetchedProducts, setHasFetchedProducts] = useState(false);
 
@@ -65,61 +74,61 @@ const TransactionModal = ({ isOpen, onClose, data, action, onSave, onDelete }) =
   }, [isOpen, hasFetchedProducts, dispatch]);
 
   useEffect(() => {
-    if (data && (action === 'edit' || action === 'view')) {
+    if (data && (action === "edit" || action === "view")) {
       setFormData({
-        productId: data.productId || '',
-        amount: data.amount || '',
-        currency: data.currency || 'NGN',
-        paymentMethod: data.paymentMethod || 'card',
-        paymentStatus: data.paymentStatus || 'pending',
-        status: data.status || 'pending',
+        productId: data.productId || "",
+        amount: data.amount || "",
+        currency: data.currency || "NGN",
+        paymentMethod: data.paymentMethod || "card",
+        paymentStatus: data.paymentStatus || "pending",
+        status: data.status || "pending",
         customerDetails: {
-          name: data.customerDetails?.name || '',
-          email: data.customerDetails?.email || '',
-          phone: data.customerDetails?.phone || ''
+          name: data.customerDetails?.name || "",
+          email: data.customerDetails?.email || "",
+          phone: data.customerDetails?.phone || "",
         },
-        notes: data.notes || '',
-        transactionId: data.transactionId || '',
-        id: data.id
+        notes: data.notes || "",
+        transactionId: data.transactionId || "",
+        id: data.id,
       });
 
       if (data.productId) {
-        const product = products.find(p => p._id === data.productId);
+        const product = products.find((p) => p._id === data.productId);
         setSelectedProduct(product);
       }
     }
   }, [data, action, products]);
 
   const handleChange = (field) => (e) => {
-    setFormData(prev => {
-      if (field.includes('metadata.')) {
-        const metadataField = field.split('.')[1];
+    setFormData((prev) => {
+      if (field.includes("metadata.")) {
+        const metadataField = field.split(".")[1];
         return {
           ...prev,
           metadata: {
             ...prev.metadata,
-            [metadataField]: e.target.value
-          }
+            [metadataField]: e.target.value,
+          },
         };
       }
       return {
         ...prev,
-        [field]: e.target.value
+        [field]: e.target.value,
       };
     });
   };
 
   const handleProductSelect = (e) => {
-    const selectedProduct = products.find(p => p._id === e.target.value);
+    const selectedProduct = products.find((p) => p._id === e.target.value);
     if (selectedProduct) {
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
         productId: selectedProduct._id,
         amount: selectedProduct.price || 0,
         metadata: {
           ...prev.metadata,
-          productName: selectedProduct.name
-        }
+          productName: selectedProduct.name,
+        },
       }));
     }
   };
@@ -127,39 +136,41 @@ const TransactionModal = ({ isOpen, onClose, data, action, onSave, onDelete }) =
   // Validate form before submission
   const validateForm = () => {
     const errors = {};
-    
+
     try {
       if (!formData.productId) {
-        errors.productId = 'Product ID is required';
+        errors.productId = "Product ID is required";
       }
-      
+
       if (!formData.amount || formData.amount <= 0) {
-        errors.amount = 'Valid amount is required';
+        errors.amount = "Valid amount is required";
       }
-      
+
       if (!formData.customerDetails?.name?.trim()) {
-        errors.customerName = 'Customer name is required';
+        errors.customerName = "Customer name is required";
       }
-      
+
       if (!formData.customerDetails?.email?.trim()) {
-        errors.email = 'Customer email is required';
-      } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.customerDetails.email)) {
-        errors.email = 'Valid email address is required';
+        errors.email = "Customer email is required";
+      } else if (
+        !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.customerDetails.email)
+      ) {
+        errors.email = "Valid email address is required";
       }
-      
+
       if (!formData.paymentMethod) {
-        errors.paymentMethod = 'Payment method is required';
+        errors.paymentMethod = "Payment method is required";
       }
 
       return {
         isValid: Object.keys(errors).length === 0,
-        errors
+        errors,
       };
     } catch (error) {
-      console.error('Validation error:', error);
+      console.error("Validation error:", error);
       return {
         isValid: false,
-        errors: { general: 'Validation failed. Please check all fields.' }
+        errors: { general: "Validation failed. Please check all fields." },
       };
     }
   };
@@ -167,10 +178,10 @@ const TransactionModal = ({ isOpen, onClose, data, action, onSave, onDelete }) =
   const handleSubmit = () => {
     try {
       const validation = validateForm();
-      
+
       if (!validation.isValid) {
         // Show all validation errors
-        Object.values(validation.errors).forEach(error => {
+        Object.values(validation.errors).forEach((error) => {
           toast.error(error);
         });
         return;
@@ -189,24 +200,24 @@ const TransactionModal = ({ isOpen, onClose, data, action, onSave, onDelete }) =
           email: formData.customerDetails.email.toLowerCase().trim(),
           phone: formData.customerDetails.phone,
           address: formData.customerDetails.address,
-          country: formData.customerDetails.country
+          country: formData.customerDetails.country,
         },
         metadata: {
           customerName: formData.customerDetails.name,
-          customerEmail: formData.customerDetails.email
+          customerEmail: formData.customerDetails.email,
         },
-        notes: formData.notes
+        notes: formData.notes,
       };
 
       if (isEdit) {
         submissionData.id = formData.id;
-        submissionData.action = 'edit';
+        submissionData.action = "edit";
       }
 
       onSave(submissionData);
     } catch (error) {
-      console.error('Submit error:', error);
-      toast.error('Failed to submit form. Please try again.');
+      console.error("Submit error:", error);
+      toast.error("Failed to submit form. Please try again.");
     }
   };
 
@@ -215,7 +226,7 @@ const TransactionModal = ({ isOpen, onClose, data, action, onSave, onDelete }) =
       return <option value="">No products available</option>;
     }
 
-    return products.map(product => (
+    return products.map((product) => (
       <option key={product._id} value={product._id}>
         {product.name} - ${product.price}
       </option>
@@ -239,33 +250,27 @@ const TransactionModal = ({ isOpen, onClose, data, action, onSave, onDelete }) =
   }
 
   return (
-    <Modal 
-      isOpen={isOpen} 
-      onClose={onClose} 
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
       size={{ base: "full", md: "6xl" }}
       motionPreset="slideInBottom"
     >
       <ModalOverlay />
-      <ModalContent 
+      <ModalContent
         maxW={{ base: "100%", md: "1200px" }}
         maxH={{ base: "100vh", md: "90vh" }}
         m={{ base: 0, md: 4 }}
         borderRadius={{ base: 0, md: "lg" }}
       >
-        <ModalHeader 
-          fontSize={{ base: "lg", md: "xl" }}
-          p={{ base: 4, md: 6 }}
-        >
-          {action === 'add' && 'New Transaction'}
-          {action === 'edit' && 'Edit Transaction'}
-          {action === 'view' && 'View Transaction'}
-          {action === 'delete' && 'Delete Transaction'}
+        <ModalHeader fontSize={{ base: "lg", md: "xl" }} p={{ base: 4, md: 6 }}>
+          {action === "add" && "New Transaction"}
+          {action === "edit" && "Edit Transaction"}
+          {action === "view" && "View Transaction"}
+          {action === "delete" && "Delete Transaction"}
         </ModalHeader>
-        <ModalBody 
-          px={{ base: 4, md: 6 }}
-          py={{ base: 2, md: 4 }}
-        >
-          {action === 'delete' ? (
+        <ModalBody px={{ base: 4, md: 6 }} py={{ base: 2, md: 4 }}>
+          {action === "delete" ? (
             <Text>Are you sure you want to delete this transaction?</Text>
           ) : (
             <VStack spacing={{ base: 4, md: 6 }}>
@@ -283,7 +288,7 @@ const TransactionModal = ({ isOpen, onClose, data, action, onSave, onDelete }) =
                 <FormControl>
                   <FormLabel>Transaction ID</FormLabel>
                   <Input
-                    value={formData?.transactionId || 'Will be generated'}
+                    value={formData?.transactionId || "Will be generated"}
                     isReadOnly={true}
                     bg="gray.100"
                   />
@@ -296,7 +301,9 @@ const TransactionModal = ({ isOpen, onClose, data, action, onSave, onDelete }) =
                   value={formData?.productId}
                   onChange={handleProductSelect}
                   isDisabled={isReadOnly || isLoading}
-                  placeholder={isLoading ? "Loading products..." : "Select a product"}
+                  placeholder={
+                    isLoading ? "Loading products..." : "Select a product"
+                  }
                 >
                   {renderProductOptions()}
                 </Select>
@@ -306,7 +313,7 @@ const TransactionModal = ({ isOpen, onClose, data, action, onSave, onDelete }) =
                 <FormLabel>Customer</FormLabel>
                 <Input
                   value={formData?.metadata?.customerName}
-                  onChange={handleChange('metadata.customerName')}
+                  onChange={handleChange("metadata.customerName")}
                   isReadOnly={isReadOnly}
                   bg={isReadOnly ? "gray.100" : colors.bgColor}
                 />
@@ -317,7 +324,7 @@ const TransactionModal = ({ isOpen, onClose, data, action, onSave, onDelete }) =
                 <Input
                   type="email"
                   value={formData.customerDetails.email}
-                  onChange={handleChange('customerDetails.email')}
+                  onChange={handleChange("customerDetails.email")}
                   isReadOnly={isReadOnly}
                   bg={isReadOnly ? "gray.100" : colors.bgColor}
                 />
@@ -328,7 +335,7 @@ const TransactionModal = ({ isOpen, onClose, data, action, onSave, onDelete }) =
                   <FormLabel>Price</FormLabel>
                   <Input
                     value={formData?.amount}
-                    onChange={handleChange('amount')}
+                    onChange={handleChange("amount")}
                     type="number"
                     isReadOnly={isReadOnly}
                     bg={isReadOnly ? "gray.100" : colors.bgColor}
@@ -340,7 +347,7 @@ const TransactionModal = ({ isOpen, onClose, data, action, onSave, onDelete }) =
                   <Input
                     type="date"
                     value={formData?.date}
-                    onChange={handleChange('date')}
+                    onChange={handleChange("date")}
                     isReadOnly={isReadOnly}
                     bg={isReadOnly ? "gray.100" : colors.bgColor}
                   />
@@ -352,7 +359,7 @@ const TransactionModal = ({ isOpen, onClose, data, action, onSave, onDelete }) =
                   <FormLabel>Payment Status</FormLabel>
                   <Select
                     value={formData?.paymentStatus}
-                    onChange={handleChange('paymentStatus')}
+                    onChange={handleChange("paymentStatus")}
                     isDisabled={isReadOnly}
                     bg={isReadOnly ? "gray.100" : colors.bgColor}
                   >
@@ -367,7 +374,7 @@ const TransactionModal = ({ isOpen, onClose, data, action, onSave, onDelete }) =
                   <FormLabel>Status</FormLabel>
                   <Select
                     value={formData?.status}
-                    onChange={handleChange('status')}
+                    onChange={handleChange("status")}
                     isDisabled={isReadOnly}
                     bg={isReadOnly ? "gray.100" : colors.bgColor}
                   >
@@ -383,12 +390,12 @@ const TransactionModal = ({ isOpen, onClose, data, action, onSave, onDelete }) =
           )}
         </ModalBody>
 
-        <ModalFooter 
+        <ModalFooter
           p={{ base: 4, md: 6 }}
           borderTop="1px"
           borderColor={colors.borderColor}
         >
-          {action === 'delete' ? (
+          {action === "delete" ? (
             <>
               <Button variant="ghost" mr={3} onClick={onClose}>
                 Cancel
@@ -397,7 +404,7 @@ const TransactionModal = ({ isOpen, onClose, data, action, onSave, onDelete }) =
                 Delete
               </Button>
             </>
-          ) : action === 'view' ? (
+          ) : action === "view" ? (
             <Button colorScheme="blue" onClick={onClose}>
               Close
             </Button>
@@ -407,7 +414,7 @@ const TransactionModal = ({ isOpen, onClose, data, action, onSave, onDelete }) =
                 Cancel
               </Button>
               <Button colorScheme="blue" onClick={handleSubmit}>
-                {isEdit ? 'Update' : 'Save'}
+                {isEdit ? "Update" : "Save"}
               </Button>
             </>
           )}

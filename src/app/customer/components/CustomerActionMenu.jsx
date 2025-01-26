@@ -1,20 +1,33 @@
-import { useState } from 'react';
-import { Menu, MenuButton, MenuList, MenuItem, IconButton, useDisclosure } from '@chakra-ui/react';
-import { FiMoreVertical, FiUser, FiEdit2, FiMail, FiPhone } from 'react-icons/fi';
-import UpdateSegmentModal from './UpdateSegmentModal';
-import ViewProfileModal from './ViewProfileModal';
+import { useState } from "react";
+import {
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
+  IconButton,
+  useDisclosure,
+} from "@chakra-ui/react";
+import {
+  FiMoreVertical,
+  FiUser,
+  FiEdit2,
+  FiMail,
+  FiPhone,
+} from "react-icons/fi";
+import UpdateSegmentModal from "./UpdateSegmentModal";
+import ViewProfileModal from "./ViewProfileModal";
 
 const CustomerActionMenu = ({ customer, onUpdateSegment }) => {
   const {
     isOpen: isUpdateOpen,
     onOpen: onUpdateOpen,
-    onClose: onUpdateClose
+    onClose: onUpdateClose,
   } = useDisclosure();
 
   const {
     isOpen: isViewOpen,
     onOpen: onViewOpen,
-    onClose: onViewClose
+    onClose: onViewClose,
   } = useDisclosure();
 
   const handleEmailClick = (e) => {
@@ -42,21 +55,21 @@ const CustomerActionMenu = ({ customer, onUpdateSegment }) => {
           onClick={(e) => e.stopPropagation()}
         />
         <MenuList onClick={(e) => e.stopPropagation()}>
-        <MenuItem icon={<FiUser />} onClick={onViewOpen}>
+          <MenuItem icon={<FiUser />} onClick={onViewOpen}>
             View Profile
           </MenuItem>
           <MenuItem icon={<FiEdit2 />} onClick={onUpdateOpen}>
             Update Segment
           </MenuItem>
-          <MenuItem 
-            icon={<FiMail />} 
+          <MenuItem
+            icon={<FiMail />}
             onClick={handleEmailClick}
             isDisabled={!customer.email}
           >
             Send Email
           </MenuItem>
-          <MenuItem 
-            icon={<FiPhone />} 
+          <MenuItem
+            icon={<FiPhone />}
             onClick={handlePhoneClick}
             isDisabled={!customer.phoneNumber}
           >

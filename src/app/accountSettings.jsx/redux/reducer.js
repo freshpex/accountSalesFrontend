@@ -4,7 +4,7 @@ const initialState = {
   ui: {
     loading: false,
     error: null,
-    success: false
+    success: false,
   },
   data: {
     profile: {
@@ -16,7 +16,7 @@ const initialState = {
       profilePicture: "",
       phoneNumber: "",
       country: "",
-      address: ""
+      address: "",
     },
     security: {
       twoFactorEnabled: false,
@@ -26,41 +26,41 @@ const initialState = {
         minLength: 8,
         requireUppercase: true,
         requireNumbers: true,
-        requireSpecial: true
-      }
+        requireSpecial: true,
+      },
     },
     notifications: {
       email: {
         newsUpdates: false,
         accountActivity: false,
-        promotions: false
+        promotions: false,
       },
       push: {
         newMessages: false,
         mentions: false,
-        reminders: false
+        reminders: false,
       },
       sms: {
         security: false,
-        orders: false
+        orders: false,
       },
       browser: {
         desktop: false,
         sound: false,
-        background: false
+        background: false,
       },
       preferences: {
-        emailFrequency: 'daily',
+        emailFrequency: "daily",
         pushEnabled: true,
         smsEnabled: false,
         quietHours: {
           enabled: false,
-          start: '22:00',
-          end: '07:00'
-        }
-      }
-    }
-  }
+          start: "22:00",
+          end: "07:00",
+        },
+      },
+    },
+  },
 };
 
 export const accountSettingsSlice = createSlice({
@@ -105,12 +105,18 @@ export const accountSettingsSlice = createSlice({
       state.ui.error = action.payload;
     },
     update_notification_preferences: (state, action) => {
-      state.data.notifications = { ...state.data.notifications, ...action.payload };
+      state.data.notifications = {
+        ...state.data.notifications,
+        ...action.payload,
+      };
     },
     update_notification_preferences_success: (state, action) => {
       state.ui.loading = false;
       state.ui.success = true;
-      state.data.notifications = { ...state.data.notifications, ...action.payload };
+      state.data.notifications = {
+        ...state.data.notifications,
+        ...action.payload,
+      };
     },
     update_notification_preferences_error: (state, action) => {
       state.ui.loading = false;
@@ -143,8 +149,8 @@ export const accountSettingsSlice = createSlice({
           ...state.data.notifications,
           [type]: {
             ...(state.data.notifications[type] || {}),
-            [setting]: value
-          }
+            [setting]: value,
+          },
         };
       }
     },
@@ -195,17 +201,21 @@ export const accountSettingsSlice = createSlice({
       state.ui.success = true;
       // Ensure we're getting the correct data structure
       state.data.notifications = action.payload || {
-        email: { newsUpdates: false, accountActivity: false, promotions: false },
+        email: {
+          newsUpdates: false,
+          accountActivity: false,
+          promotions: false,
+        },
         push: { newMessages: false, mentions: false, reminders: false },
         sms: { security: false, orders: false },
-        browser: { desktop: false, sound: false, background: false }
+        browser: { desktop: false, sound: false, background: false },
       };
     },
     fetch_notification_settings_error: (state, action) => {
       state.ui.loading = false;
       state.ui.error = action.payload;
-    }
-  }
+    },
+  },
 });
 
 export const {
@@ -238,7 +248,7 @@ export const {
   fetch_login_history_error,
   fetch_notification_settings,
   fetch_notification_settings_success,
-  fetch_notification_settings_error
+  fetch_notification_settings_error,
 } = accountSettingsSlice.actions;
 
 export default accountSettingsSlice.reducer;

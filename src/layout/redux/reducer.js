@@ -1,8 +1,8 @@
-import { ActionTypes } from '../../store/types';
+import { ActionTypes } from "../../store/types";
 
 const initialState = {
   isLoggingOut: false,
-  error: null
+  error: null,
 };
 
 const layoutReducer = (state = initialState, action) => {
@@ -11,18 +11,18 @@ const layoutReducer = (state = initialState, action) => {
       return {
         ...state,
         isLoggingOut: true,
-        error: null
+        error: null,
       };
     case ActionTypes.LOGOUT_SUCCESS:
       return {
         ...state,
-        isLoggingOut: false
+        isLoggingOut: false,
       };
     case ActionTypes.LOGOUT_ERROR:
       return {
         ...state,
         isLoggingOut: false,
-        error: action.payload
+        error: action.payload,
       };
     default:
       return state;

@@ -1,23 +1,30 @@
-import { useState, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import {
-  Box, Button, Flex, FormControl, FormLabel, Grid, Input,
-  Stack, Text, Image, IconButton, useToast
-} from '@chakra-ui/react';
-import { EditIcon } from '@chakra-ui/icons';
-import { FiUser } from 'react-icons/fi';
-import EmptyStatePage from '../../../components/emptyState';
-import {
-  getProfile,
-  getLoading
-} from '../redux/selector';
+  Box,
+  Button,
+  Flex,
+  FormControl,
+  FormLabel,
+  Grid,
+  Input,
+  Stack,
+  Text,
+  Image,
+  IconButton,
+  useToast,
+} from "@chakra-ui/react";
+import { EditIcon } from "@chakra-ui/icons";
+import { FiUser } from "react-icons/fi";
+import EmptyStatePage from "../../../components/emptyState";
+import { getProfile, getLoading } from "../redux/selector";
 import {
   fetch_profile,
   update_profile,
-  upload_profile_picture
-} from '../redux/reducer';
-import LoadingSpinner from '../../../components/LoadingSpinner';
-import { convertToPublicUrl } from '../../../utils/supabase';
+  upload_profile_picture,
+} from "../redux/reducer";
+import LoadingSpinner from "../../../components/LoadingSpinner";
+import { convertToPublicUrl } from "../../../utils/supabase";
 
 const Account = () => {
   const toast = useToast();
@@ -34,22 +41,24 @@ const Account = () => {
   useEffect(() => {
     if (profile) {
       setFormData({
-        firstName: profile.firstName || '',
-        lastName: profile.lastName || '',
-        gender: profile.gender || '',
-        birthDate: profile.birthDate ? new Date(profile.birthDate).toISOString().split('T')[0] : '',
-        phoneNumber: profile.phoneNumber || '',
-        country: profile.country || '',
-        address: profile.address || ''
+        firstName: profile.firstName || "",
+        lastName: profile.lastName || "",
+        gender: profile.gender || "",
+        birthDate: profile.birthDate
+          ? new Date(profile.birthDate).toISOString().split("T")[0]
+          : "",
+        phoneNumber: profile.phoneNumber || "",
+        country: profile.country || "",
+        address: profile.address || "",
       });
     }
   }, [profile]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
     setIsEditing(true);
   };
@@ -78,8 +87,8 @@ const Account = () => {
       }
 
       const formData = new FormData();
-      formData.append('image', file);
-      
+      formData.append("image", file);
+
       try {
         dispatch(upload_profile_picture(formData));
         toast({
@@ -132,7 +141,11 @@ const Account = () => {
         <Flex mb={6} alignItems="center">
           <Box position="relative">
             <Image
-              src={profile.profilePicture ? convertToPublicUrl(profile.profilePicture) : 'https://via.placeholder.com/150'}
+              src={
+                profile.profilePicture
+                  ? convertToPublicUrl(profile.profilePicture)
+                  : "https://via.placeholder.com/150"
+              }
               alt="Profile"
               boxSize="100px"
               borderRadius="full"
@@ -167,7 +180,7 @@ const Account = () => {
             <FormLabel>First Name</FormLabel>
             <Input
               name="firstName"
-              value={formData?.firstName || ''}
+              value={formData?.firstName || ""}
               onChange={handleInputChange}
               isDisabled={!isEditing}
             />
@@ -177,7 +190,7 @@ const Account = () => {
             <FormLabel>Last Name</FormLabel>
             <Input
               name="lastName"
-              value={formData?.lastName || ''}
+              value={formData?.lastName || ""}
               onChange={handleInputChange}
               isDisabled={!isEditing}
             />
@@ -187,7 +200,7 @@ const Account = () => {
             <FormLabel>Gender</FormLabel>
             <Input
               name="gender"
-              value={formData?.gender || ''}
+              value={formData?.gender || ""}
               onChange={handleInputChange}
               isDisabled={!isEditing}
             />
@@ -198,7 +211,7 @@ const Account = () => {
             <Input
               name="birthDate"
               type="date"
-              value={formData?.birthDate || ''}
+              value={formData?.birthDate || ""}
               onChange={handleInputChange}
               isDisabled={!isEditing}
             />
@@ -216,16 +229,10 @@ const Account = () => {
             </Button>
           ) : (
             <>
-              <Button
-                colorScheme="blue"
-                onClick={handleProfileUpdate}
-              >
+              <Button colorScheme="blue" onClick={handleProfileUpdate}>
                 Save Changes
               </Button>
-              <Button
-                variant="ghost"
-                onClick={handleCancel}
-              >
+              <Button variant="ghost" onClick={handleCancel}>
                 Cancel
               </Button>
             </>
@@ -243,9 +250,9 @@ const Account = () => {
             leftIcon={<EditIcon />}
             size="sm"
             variant="ghost"
-            onClick={() => setIsEditing(prev => !prev)}
+            onClick={() => setIsEditing((prev) => !prev)}
           >
-            {isEditing ? 'Cancel' : 'Edit'}
+            {isEditing ? "Cancel" : "Edit"}
           </Button>
         </Flex>
 
@@ -254,7 +261,7 @@ const Account = () => {
             <FormLabel>Phone Number</FormLabel>
             <Input
               name="phoneNumber"
-              value={formData?.phoneNumber || ''}
+              value={formData?.phoneNumber || ""}
               onChange={handleInputChange}
               isDisabled={!isEditing}
             />
@@ -264,7 +271,7 @@ const Account = () => {
             <FormLabel>Country</FormLabel>
             <Input
               name="country"
-              value={formData?.country || ''}
+              value={formData?.country || ""}
               onChange={handleInputChange}
               isDisabled={!isEditing}
             />
@@ -274,7 +281,7 @@ const Account = () => {
             <FormLabel>Address</FormLabel>
             <Input
               name="address"
-              value={formData?.address || ''}
+              value={formData?.address || ""}
               onChange={handleInputChange}
               isDisabled={!isEditing}
             />

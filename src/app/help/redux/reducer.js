@@ -4,7 +4,7 @@ const initialState = {
   ui: {
     loading: false,
     error: null,
-    success: false
+    success: false,
   },
   data: {
     tickets: [],
@@ -13,14 +13,14 @@ const initialState = {
       open: 0,
       pending: 0,
       resolved: 0,
-      total: 0
+      total: 0,
     },
     meta: {
       currentPage: 1,
       totalPages: 1,
-      totalItems: 0
-    }
-  }
+      totalItems: 0,
+    },
+  },
 };
 
 export const helpSlice = createSlice({
@@ -40,12 +40,12 @@ export const helpSlice = createSlice({
         open: 0,
         pending: 0,
         resolved: 0,
-        total: 0
+        total: 0,
       };
       state.data.meta = action.payload.meta || {
         currentPage: 1,
         totalPages: 1,
-        totalItems: 0
+        totalItems: 0,
       };
     },
     fetch_tickets_error: (state, action) => {
@@ -72,7 +72,9 @@ export const helpSlice = createSlice({
     },
     add_response_success: (state, action) => {
       state.ui.loading = false;
-      const ticket = state.data.tickets.find(t => t.id === action.payload.ticketId);
+      const ticket = state.data.tickets.find(
+        (t) => t.id === action.payload.ticketId,
+      );
       if (ticket) {
         ticket.responses.push(action.payload.response);
       }
@@ -83,26 +85,28 @@ export const helpSlice = createSlice({
     },
     update_ticket_status: (state, action) => {
       const { ticketId, status } = action.payload;
-      const ticket = state.data.tickets.find(t => t._id === ticketId);
+      const ticket = state.data.tickets.find((t) => t._id === ticketId);
       if (ticket) {
         const oldStatus = ticket.status.toLowerCase();
         const newStatus = status.toLowerCase();
-        
+
         state.data.stats[oldStatus]--;
         state.data.stats[newStatus]++;
-        
-        if (oldStatus === 'resolved') {
+
+        if (oldStatus === "resolved") {
           state.data.stats.resolved--;
         }
-        if (newStatus === 'resolved') {
+        if (newStatus === "resolved") {
           state.data.stats.resolved++;
         }
-        
+
         ticket.status = status;
       }
     },
     mark_notification_read: (state, action) => {
-      const notification = state.data.notifications.find(n => n._id === action.payload);
+      const notification = state.data.notifications.find(
+        (n) => n._id === action.payload,
+      );
       if (notification) {
         notification.read = true;
       }
@@ -115,7 +119,7 @@ export const helpSlice = createSlice({
       state.ui.loading = false;
       state.ui.success = true;
       state.data.tickets = state.data.tickets.filter(
-        ticket => ticket._id !== action.payload
+        (ticket) => ticket._id !== action.payload,
       );
       // Update stats
       if (state.data.stats) {
@@ -125,8 +129,8 @@ export const helpSlice = createSlice({
     delete_ticket_error: (state, action) => {
       state.ui.loading = false;
       state.ui.error = action.payload;
-    }
-  }
+    },
+  },
 });
 
 export const {
@@ -143,7 +147,7 @@ export const {
   mark_notification_read,
   delete_ticket,
   delete_ticket_success,
-  delete_ticket_error
+  delete_ticket_error,
 } = helpSlice.actions;
 
 export default helpSlice.reducer;

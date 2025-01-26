@@ -1,5 +1,5 @@
-import { useState, useEffect, useRef } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useState, useEffect, useRef } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import {
   Box,
   Container,
@@ -21,8 +21,8 @@ import {
   Alert,
   AlertIcon,
   Code,
-} from '@chakra-ui/react';
-import { motion } from 'framer-motion';
+} from "@chakra-ui/react";
+import { motion } from "framer-motion";
 import {
   FiLock,
   FiMail,
@@ -35,11 +35,11 @@ import {
   FiSmartphone,
   FiKey,
   FiShield,
-} from 'react-icons/fi';
-import { useColors } from '../../../utils/colors';
-import html2canvas from 'html2canvas';
-import jsPDF from 'jspdf';
-import api from '../../../services/DataService';
+} from "react-icons/fi";
+import { useColors } from "../../../utils/colors";
+import html2canvas from "html2canvas";
+import jsPDF from "jspdf";
+import api from "../../../services/DataService";
 
 const MotionBox = motion(Box);
 
@@ -55,10 +55,10 @@ const PurchasedAccountDetails = () => {
   const contentRef = useRef(null);
 
   const { hasCopied: hasEmailCopied, onCopy: onEmailCopy } = useClipboard(
-    credentials?.accountEmail || ''
+    credentials?.accountEmail || "",
   );
   const { hasCopied: hasPasswordCopied, onCopy: onPasswordCopy } = useClipboard(
-    credentials?.accountPassword || ''
+    credentials?.accountPassword || "",
   );
 
   useEffect(() => {
@@ -67,20 +67,22 @@ const PurchasedAccountDetails = () => {
         setLoading(true);
         setError(null);
 
-        const response = await api.get(`/api/v1/transactions/${purchaseId}/credentials`);
-        
+        const response = await api.get(
+          `/api/v1/transactions/${purchaseId}/credentials`,
+        );
+
         if (response.data.success) {
           setCredentials(response.data.data);
         } else {
-          throw new Error(response.data.error || 'Failed to fetch credentials');
+          throw new Error(response.data.error || "Failed to fetch credentials");
         }
       } catch (error) {
         const errorMessage = error.response?.data?.error || error.message;
         setError(errorMessage);
         toast({
-          title: 'Error',
+          title: "Error",
           description: errorMessage,
-          status: 'error',
+          status: "error",
           duration: 5000,
           isClosable: true,
         });
@@ -104,16 +106,16 @@ const PurchasedAccountDetails = () => {
     try {
       const content = contentRef.current;
       const canvas = await html2canvas(content);
-      const imgData = canvas.toDataURL('image/png');
+      const imgData = canvas.toDataURL("image/png");
       const pdf = new jsPDF({
-        orientation: 'portrait',
-        unit: 'px',
-        format: [canvas.width, canvas.height]
+        orientation: "portrait",
+        unit: "px",
+        format: [canvas.width, canvas.height],
       });
-      
-      pdf.addImage(imgData, 'PNG', 0, 0, canvas.width, canvas.height);
+
+      pdf.addImage(imgData, "PNG", 0, 0, canvas.width, canvas.height);
       pdf.save(`account-details-${purchaseId}.pdf`);
-      
+
       toast({
         title: "PDF Downloaded",
         description: "Your account details have been saved as PDF",
@@ -148,7 +150,7 @@ const PurchasedAccountDetails = () => {
           <AlertIcon />
           {error}
         </Alert>
-        <Button mt={4} onClick={() => navigate('/transaction')}>
+        <Button mt={4} onClick={() => navigate("/transaction")}>
           Back to Transactions
         </Button>
       </Container>
@@ -162,7 +164,7 @@ const PurchasedAccountDetails = () => {
           <AlertIcon />
           No credentials found for this purchase.
         </Alert>
-        <Button mt={4} onClick={() => navigate('/transaction')}>
+        <Button mt={4} onClick={() => navigate("/transaction")}>
           Back to Transactions
         </Button>
       </Container>
@@ -179,10 +181,10 @@ const PurchasedAccountDetails = () => {
       >
         <VStack spacing={8} align="stretch">
           {/* Header */}
-          <Box 
-            bg={colors.gradientBg} 
-            p={6} 
-            borderRadius="xl" 
+          <Box
+            bg={colors.gradientBg}
+            p={6}
+            borderRadius="xl"
             color="white"
             position="relative"
             overflow="hidden"
@@ -198,11 +200,7 @@ const PurchasedAccountDetails = () => {
             />
             <Heading size="lg">Account Details</Heading>
             <Text mt={2}>Purchase ID: {purchaseId}</Text>
-            <Badge 
-              colorScheme="green" 
-              variant="solid" 
-              mt={4}
-            >
+            <Badge colorScheme="green" variant="solid" mt={4}>
               Purchase Successful
             </Badge>
           </Box>
@@ -211,22 +209,30 @@ const PurchasedAccountDetails = () => {
           <Box p={6} borderWidth={1} borderRadius="xl" bg={colors.cardBg}>
             <VStack align="stretch" spacing={6}>
               <Heading size="md">Account Information</Heading>
-              
+
               <SimpleGrid columns={2} spacing={4}>
                 <Box>
-                  <Text fontWeight="bold" color={colors.labelColor}>Platform</Text>
+                  <Text fontWeight="bold" color={colors.labelColor}>
+                    Platform
+                  </Text>
                   <Text>{credentials?.platform}</Text>
                 </Box>
                 <Box>
-                  <Text fontWeight="bold" color={colors.labelColor}>Username</Text>
+                  <Text fontWeight="bold" color={colors.labelColor}>
+                    Username
+                  </Text>
                   <Text>{credentials?.username}</Text>
                 </Box>
                 <Box>
-                  <Text fontWeight="bold" color={colors.labelColor}>Account Age</Text>
+                  <Text fontWeight="bold" color={colors.labelColor}>
+                    Account Age
+                  </Text>
                   <Text>{credentials?.age} years</Text>
                 </Box>
                 <Box>
-                  <Text fontWeight="bold" color={colors.labelColor}>Followers</Text>
+                  <Text fontWeight="bold" color={colors.labelColor}>
+                    Followers
+                  </Text>
                   <Text>{credentials?.followers?.toLocaleString()}</Text>
                 </Box>
               </SimpleGrid>
@@ -243,7 +249,7 @@ const PurchasedAccountDetails = () => {
                   leftIcon={showCredentials ? <FiEyeOff /> : <FiEye />}
                   onClick={() => setShowCredentials(!showCredentials)}
                 >
-                  {showCredentials ? 'Hide' : 'Show'} Credentials
+                  {showCredentials ? "Hide" : "Show"} Credentials
                 </Button>
               </HStack>
 
@@ -315,10 +321,7 @@ const PurchasedAccountDetails = () => {
             >
               Download Details
             </Button>
-            <Button
-              variant="ghost"
-              onClick={() => navigate('/transaction')}
-            >
+            <Button variant="ghost" onClick={() => navigate("/transaction")}>
               View All Transactions
             </Button>
           </HStack>

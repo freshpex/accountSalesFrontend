@@ -1,33 +1,47 @@
-import { useState, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import {
-  Box, Container, Flex, Heading, Tab, TabList, TabPanel, TabPanels,
-  Tabs, Text, HStack, Badge, Input, Select, Button, useDisclosure
-} from '@chakra-ui/react';
-import { SearchIcon, AddIcon } from '@chakra-ui/icons';
-import { ticketPriorityColors, ticketStatusColors } from './data';
-import EmptyStatePage from '../../components/emptyState';
-import NewTicketModal from './components/NewTicketModal';
-import TicketList from './components/TicketList';
-import NotificationList from './components/NotificationList';
-import { 
-  getTickets, 
-  getTicketStats, 
+  Box,
+  Container,
+  Flex,
+  Heading,
+  Tab,
+  TabList,
+  TabPanel,
+  TabPanels,
+  Tabs,
+  Text,
+  HStack,
+  Badge,
+  Input,
+  Select,
+  Button,
+  useDisclosure,
+} from "@chakra-ui/react";
+import { SearchIcon, AddIcon } from "@chakra-ui/icons";
+import { ticketPriorityColors, ticketStatusColors } from "./data";
+import EmptyStatePage from "../../components/emptyState";
+import NewTicketModal from "./components/NewTicketModal";
+import TicketList from "./components/TicketList";
+import NotificationList from "./components/NotificationList";
+import {
+  getTickets,
+  getTicketStats,
   getNotifications,
-  getLoading 
-} from './redux/selector';
-import { 
+  getLoading,
+} from "./redux/selector";
+import {
   fetch_tickets,
   create_ticket,
   add_response,
   update_ticket_status,
   mark_notification_read,
-  delete_ticket 
-} from './redux/reducer';
-import { FiMail, FiInbox } from 'react-icons/fi';
-import LoadingSpinner from '../../components/LoadingSpinner';
-import { useColors } from '../../utils/colors';
-import { useLocation } from 'react-router-dom';
+  delete_ticket,
+} from "./redux/reducer";
+import { FiMail, FiInbox } from "react-icons/fi";
+import LoadingSpinner from "../../components/LoadingSpinner";
+import { useColors } from "../../utils/colors";
+import { useLocation } from "react-router-dom";
 
 const Help = () => {
   const dispatch = useDispatch();
@@ -36,7 +50,7 @@ const Help = () => {
   const notifications = useSelector(getNotifications);
   const loading = useSelector(getLoading);
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const [filters, setFilters] = useState({ status: 'all', search: '' });
+  const [filters, setFilters] = useState({ status: "all", search: "" });
   const colors = useColors();
   const [selectedTab, setSelectedTab] = useState(0);
   const location = useLocation();
@@ -47,17 +61,17 @@ const Help = () => {
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
-    const ticket = params.get('ticket');
-    const tab = params.get('tab');
-    
-    if (tab === 'notifications') {
+    const ticket = params.get("ticket");
+    const tab = params.get("tab");
+
+    if (tab === "notifications") {
       setSelectedTab(1);
     }
-    
+
     if (ticket) {
       const element = document.getElementById(`ticket-${ticket}`);
       if (element) {
-        element.scrollIntoView({ behavior: 'smooth' });
+        element.scrollIntoView({ behavior: "smooth" });
       }
     }
   }, [location]);
@@ -83,8 +97,9 @@ const Help = () => {
     dispatch(delete_ticket(ticketId));
   };
 
-  const filteredTickets = tickets?.filter(ticket => {
-    if (filters.status !== 'all' && ticket.status !== filters.status) return false;
+  const filteredTickets = tickets?.filter((ticket) => {
+    if (filters.status !== "all" && ticket.status !== filters.status)
+      return false;
     if (filters.search) {
       const searchLower = filters.search.toLowerCase();
       return (
@@ -106,9 +121,9 @@ const Help = () => {
           <Tab>Support Tickets ({stats?.total})</Tab>
           <Tab>
             Notifications
-            {notifications.filter(n => !n.read).length > 0 && (
+            {notifications.filter((n) => !n.read).length > 0 && (
               <Badge ml={2} colorScheme="red" borderRadius="full">
-                {notifications.filter(n => !n.read).length}
+                {notifications.filter((n) => !n.read).length}
               </Badge>
             )}
           </Tab>
@@ -122,7 +137,9 @@ const Help = () => {
                   placeholder="Search tickets..."
                   maxW="400px"
                   value={filters.search}
-                  onChange={(e) => setFilters(prev => ({ ...prev, search: e.target.value }))}
+                  onChange={(e) =>
+                    setFilters((prev) => ({ ...prev, search: e.target.value }))
+                  }
                   leftelement={<SearchIcon color="gray.400" />}
                   bg={colors.bgColor}
                   color={colors.textColor}
@@ -130,7 +147,9 @@ const Help = () => {
                 <Select
                   maxW="200px"
                   value={filters.status}
-                  onChange={(e) => setFilters(prev => ({ ...prev, status: e.target.value }))}
+                  onChange={(e) =>
+                    setFilters((prev) => ({ ...prev, status: e.target.value }))
+                  }
                   bg={colors.bgColor}
                   color={colors.textColor}
                 >
@@ -154,7 +173,11 @@ const Help = () => {
             ) : (
               <EmptyStatePage
                 title="No Tickets Found"
-                sub={filters.search ? "No tickets match your search criteria" : "You haven't created any support tickets yet"}
+                sub={
+                  filters.search
+                    ? "No tickets match your search criteria"
+                    : "You haven't created any support tickets yet"
+                }
                 icon={<FiInbox size={50} />}
                 btnText="Create New Ticket"
                 handleClick={onOpen}
@@ -182,17 +205,20 @@ const Help = () => {
   };
 
   return (
-    <Container maxW="container.xl" py={8} bg={colors.bgColor} color={colors.textColor}>
+    <Container
+      maxW="container.xl"
+      py={8}
+      bg={colors.bgColor}
+      color={colors.textColor}
+    >
       <Flex justify="space-between" align="center" mb={8}>
         <Box>
           <Heading size="lg">Help & Support</Heading>
-          <Text color="gray.600">Get help with your account and transactions</Text>
+          <Text color="gray.600">
+            Get help with your account and transactions
+          </Text>
         </Box>
-        <Button
-          leftIcon={<AddIcon />}
-          colorScheme="blue"
-          onClick={onOpen}
-        >
+        <Button leftIcon={<AddIcon />} colorScheme="blue" onClick={onOpen}>
           New Ticket
         </Button>
       </Flex>

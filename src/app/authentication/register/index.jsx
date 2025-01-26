@@ -1,8 +1,8 @@
-import { useState, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { Link as RouterLink } from 'react-router-dom';
-import { register_user } from './redux/reducer';
-import { getLoading, getError, getSuccess } from './redux/selector';
+import { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { Link as RouterLink } from "react-router-dom";
+import { register_user } from "./redux/reducer";
+import { getLoading, getError, getSuccess } from "./redux/selector";
 import {
   Box,
   Button,
@@ -25,10 +25,10 @@ import {
   VStack,
   Flex,
   useColorModeValue,
-} from '@chakra-ui/react';
-import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons';
-import { FcGoogle } from 'react-icons/fc';
-import { useColors } from '../../../utils/colors';
+} from "@chakra-ui/react";
+import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
+import { FcGoogle } from "react-icons/fc";
+import { useColors } from "../../../utils/colors";
 
 const Register = () => {
   const dispatch = useDispatch();
@@ -37,43 +37,46 @@ const Register = () => {
   const success = useSelector(getSuccess);
   const colors = useColors();
   const [showPassword, setShowPassword] = useState(false);
-  
+
   const borderColor = useColorModeValue("gray.100", "gray.700");
   const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
-    password: '',
-    phoneNumber: '',
-    businessName: '',
-    businessType: '',
-    address: '',
-    city: '',
-    country: '',
-    agreeToTerms: false
+    firstName: "",
+    lastName: "",
+    email: "",
+    password: "",
+    phoneNumber: "",
+    businessName: "",
+    businessType: "",
+    address: "",
+    city: "",
+    country: "",
+    agreeToTerms: false,
   });
   const [errors, setErrors] = useState({});
 
   const handleChange = (e) => {
     const { name, value, checked } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: name === 'agreeToTerms' ? checked : value
+      [name]: name === "agreeToTerms" ? checked : value,
     }));
     if (errors[name]) {
-      setErrors(prev => ({ ...prev, [name]: '' }));
+      setErrors((prev) => ({ ...prev, [name]: "" }));
     }
   };
 
   const validateForm = () => {
     const newErrors = {};
-    if (!formData.firstName) newErrors.firstName = 'First name is required';
-    if (!formData.lastName) newErrors.lastName = 'Last name is required';
-    if (!formData.email) newErrors.email = 'Email is required';
-    if (!formData.password) newErrors.password = 'Password is required';
-    if (formData.password.length < 8) newErrors.password = 'Password must be at least 8 characters';
-    if (!formData.businessName) newErrors.businessName = 'Business name is required';
-    if (!formData.agreeToTerms) newErrors.agreeToTerms = 'You must agree to the terms and conditions';
+    if (!formData.firstName) newErrors.firstName = "First name is required";
+    if (!formData.lastName) newErrors.lastName = "Last name is required";
+    if (!formData.email) newErrors.email = "Email is required";
+    if (!formData.password) newErrors.password = "Password is required";
+    if (formData.password.length < 8)
+      newErrors.password = "Password must be at least 8 characters";
+    if (!formData.businessName)
+      newErrors.businessName = "Business name is required";
+    if (!formData.agreeToTerms)
+      newErrors.agreeToTerms = "You must agree to the terms and conditions";
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -92,16 +95,16 @@ const Register = () => {
         businessType: formData.businessType,
         address: formData.address,
         city: formData.city,
-        country: formData.country
+        country: formData.country,
       };
-      
+
       dispatch(register_user(registrationData));
     }
   };
 
   const handleGoogleSignUp = () => {
-      window.location.href = `${import.meta.env.VITE_APP_API_URL}/api/v1/user/auth/google`
-    };
+    window.location.href = `${import.meta.env.VITE_APP_API_URL}/api/v1/user/auth/google`;
+  };
 
   useEffect(() => {
     if (error) {
@@ -111,7 +114,7 @@ const Register = () => {
 
   useEffect(() => {
     if (success) {
-      console.log(success)
+      console.log(success);
     }
   }, [success]);
 
@@ -120,22 +123,22 @@ const Register = () => {
       <VStack spacing={6} align="stretch">
         {/* Logo & Title Section */}
         <VStack spacing={3} align="center">
-          <Box 
-            position="relative" 
-            w="full" 
+          <Box
+            position="relative"
+            w="full"
             h={{ base: "80px", md: "100px" }}
             display="flex"
             justifyContent="center"
           >
-            <Image 
-              src="/logo.svg" 
-              alt="Logo" 
+            <Image
+              src="/logo.svg"
+              alt="Logo"
               h="full"
-              style={{ objectFit: 'contain' }}
+              style={{ objectFit: "contain" }}
             />
           </Box>
           <VStack spacing={2}>
-            <Text 
+            <Text
               fontSize={{ base: "xl", md: "2xl" }}
               fontWeight="bold"
               bgGradient="linear(to-r, blue.400, purple.500)"
@@ -150,9 +153,9 @@ const Register = () => {
         </VStack>
 
         {/* Main Form Box */}
-        <Box 
-          w="full" 
-          p={{ base: 4, md: 8 }} 
+        <Box
+          w="full"
+          p={{ base: 4, md: 8 }}
           borderRadius="2xl"
           bg={colors.bgColor}
           boxShadow="lg"
@@ -168,8 +171,8 @@ const Register = () => {
               leftIcon={<FcGoogle size="24px" />}
               onClick={handleGoogleSignUp}
               _hover={{
-                transform: 'translateY(-2px)',
-                boxShadow: 'md'
+                transform: "translateY(-2px)",
+                boxShadow: "md",
               }}
               transition="all 0.2s"
             >
@@ -187,7 +190,11 @@ const Register = () => {
             {/* Form Fields */}
             <VStack spacing={4} w="full">
               {/* Name Fields */}
-              <Grid templateColumns={{ base: '1fr', md: 'repeat(2, 1fr)' }} gap={4} w="full">
+              <Grid
+                templateColumns={{ base: "1fr", md: "repeat(2, 1fr)" }}
+                gap={4}
+                w="full"
+              >
                 <FormControl isRequired isInvalid={!!errors.firstName}>
                   <FormLabel fontSize="sm">First Name</FormLabel>
                   <Input
@@ -231,7 +238,7 @@ const Register = () => {
                 <InputGroup>
                   <Input
                     name="password"
-                    type={showPassword ? 'text' : 'password'}
+                    type={showPassword ? "text" : "password"}
                     value={formData.password}
                     onChange={handleChange}
                     size="lg"
@@ -242,7 +249,9 @@ const Register = () => {
                       icon={showPassword ? <ViewOffIcon /> : <ViewIcon />}
                       variant="ghost"
                       onClick={() => setShowPassword(!showPassword)}
-                      aria-label={showPassword ? 'Hide password' : 'Show password'}
+                      aria-label={
+                        showPassword ? "Hide password" : "Show password"
+                      }
                     />
                   </InputRightElement>
                 </InputGroup>
@@ -301,23 +310,23 @@ const Register = () => {
                       size="lg"
                     />
                     <Text fontSize="sm" color={colors.textColor}>
-                      I agree to the{' '}
-                      <Link 
-                        as={RouterLink} 
-                        to="/terms" 
+                      I agree to the{" "}
+                      <Link
+                        as={RouterLink}
+                        to="/terms"
                         color="blue.400"
                         textDecoration="underline"
-                        _hover={{ color: 'blue.500' }}
+                        _hover={{ color: "blue.500" }}
                       >
                         Terms of Service
-                      </Link>
-                      {' '}and{' '}
+                      </Link>{" "}
+                      and{" "}
                       <Link
                         as={RouterLink}
                         to="/privacy"
                         color="blue.400"
                         textDecoration="underline"
-                        _hover={{ color: 'blue.500' }}
+                        _hover={{ color: "blue.500" }}
                       >
                         Privacy Policy
                       </Link>
@@ -332,9 +341,9 @@ const Register = () => {
                   bg="blue.500"
                   color="white"
                   _hover={{
-                    bg: 'blue.600',
-                    transform: 'translateY(-2px)',
-                    boxShadow: 'lg'
+                    bg: "blue.600",
+                    transform: "translateY(-2px)",
+                    boxShadow: "lg",
                   }}
                   onClick={handleSubmit}
                   isDisabled={!formData.agreeToTerms || loading}
@@ -361,7 +370,7 @@ const Register = () => {
             to="/login"
             color="blue.400"
             fontWeight="semibold"
-            _hover={{ color: 'blue.500', textDecoration: 'none' }}
+            _hover={{ color: "blue.500", textDecoration: "none" }}
           >
             Sign In
           </Link>

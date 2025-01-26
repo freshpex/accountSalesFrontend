@@ -25,18 +25,22 @@ export const sidebarData = [
           { name: "WhatsApp", route: "/product/whatsapp" },
         ],
       },
-      { title: "Transaction", icon: HiOutlineDocumentText, route: "/transaction" },
-      { 
-        title: "Customers", 
-        icon: HiOutlineUsers, 
-        route: "/customers",
-        requireAdmin: true
+      {
+        title: "Transaction",
+        icon: HiOutlineDocumentText,
+        route: "/transaction",
       },
-      { 
-        title: "Sales Report", 
-        icon: HiOutlineChartBar, 
+      {
+        title: "Customers",
+        icon: HiOutlineUsers,
+        route: "/customers",
+        requireAdmin: true,
+      },
+      {
+        title: "Sales Report",
+        icon: HiOutlineChartBar,
         route: "/sales-report",
-        requireAdmin: true
+        requireAdmin: true,
       },
     ],
   },
@@ -52,7 +56,8 @@ export const sidebarData = [
 export const userData = {
   name: "Guy Hawkins",
   role: "Admin",
-  avatar: "https://th.bing.com/th/id/OIP.LYJc5Mjvt8qrGGPxjmq2JAHaFj?w=263&h=197&c=7&r=0&o=5&dpr=1.2&pid=1.7",
+  avatar:
+    "https://th.bing.com/th/id/OIP.LYJc5Mjvt8qrGGPxjmq2JAHaFj?w=263&h=197&c=7&r=0&o=5&dpr=1.2&pid=1.7",
 };
 
 export const company = {

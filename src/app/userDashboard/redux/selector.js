@@ -7,23 +7,24 @@ export const getUserDashboardOverview = createSelector(
   (state) => ({
     data: state.overview.data,
     loading: state.overview.loading,
-    error: state.overview.error
-  })
+    error: state.overview.error,
+  }),
 );
 
 export const getUserDashboardMetrics = createSelector(
   userDashboardState,
-  (state) => state.metrics.data || {
-    totalSpent: 0,
-    totalTransactions: 0,
-    averageSpend: 0,
-    lastTransaction: null
-  }
+  (state) =>
+    state.metrics.data || {
+      totalSpent: 0,
+      totalTransactions: 0,
+      averageSpend: 0,
+      lastTransaction: null,
+    },
 );
 
 export const getUserSpendingChartData = createSelector(
   userDashboardState,
-  (state) => state.spendingChart.data || { labels: [], datasets: [] }
+  (state) => state.spendingChart.data || { labels: [], datasets: [] },
 );
 
 export const getUserRecentActivity = createSelector(
@@ -31,8 +32,8 @@ export const getUserRecentActivity = createSelector(
   (state) => ({
     data: state.recentActivity?.data || [],
     loading: state.recentActivity?.loading || false,
-    error: state.recentActivity?.error || null
-  })
+    error: state.recentActivity?.error || null,
+  }),
 );
 
 export const getUserLoadingStates = createSelector(
@@ -41,8 +42,8 @@ export const getUserLoadingStates = createSelector(
     overviewLoading: state.overview.loading,
     metricsLoading: state.metrics.loading,
     chartLoading: state.spendingChart.loading,
-    activityLoading: state.recentActivity.loading
-  })
+    activityLoading: state.recentActivity.loading,
+  }),
 );
 
 export const getUserErrorStates = createSelector(
@@ -51,9 +52,9 @@ export const getUserErrorStates = createSelector(
     overviewError: state.overview.error,
     metricsError: state.metrics.error,
     chartError: state.spendingChart.error,
-    activityError: state.recentActivity.error
-  })
+    activityError: state.recentActivity.error,
+  }),
 );
 
-export const getUserSegment = (state) => 
-  state.dashboard.overview.data?.user?.segment || 'bronze';
+export const getUserSegment = (state) =>
+  state.dashboard.overview.data?.user?.segment || "bronze";

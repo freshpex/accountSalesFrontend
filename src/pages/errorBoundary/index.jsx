@@ -1,6 +1,13 @@
-import React from 'react';
-import { keyframes } from '@emotion/react';
-import { ChakraProvider, Box, Text, Button, Heading, VStack } from '@chakra-ui/react';
+import React from "react";
+import { keyframes } from "@emotion/react";
+import {
+  ChakraProvider,
+  Box,
+  Text,
+  Button,
+  Heading,
+  VStack,
+} from "@chakra-ui/react";
 
 const float = keyframes`
   0% { transform: translateY(0px) }
@@ -11,11 +18,11 @@ const float = keyframes`
 class ErrorBoundary extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { 
-      hasError: false, 
-      error: null, 
+    this.state = {
+      hasError: false,
+      error: null,
       errorInfo: null,
-      countdown: 10 
+      countdown: 10,
     };
   }
 
@@ -26,15 +33,15 @@ class ErrorBoundary extends React.Component {
   componentDidCatch(error, errorInfo) {
     this.setState({
       error: error,
-      errorInfo: errorInfo
+      errorInfo: errorInfo,
     });
-    console.error('Error caught by boundary:', error, errorInfo);
+    console.error("Error caught by boundary:", error, errorInfo);
   }
 
   handleReset = () => {
     this.setState({ hasError: false, error: null, errorInfo: null });
-    window.location.href = '/';
-  }
+    window.location.href = "/";
+  };
 
   componentDidUpdate(prevProps, prevState) {
     if (this.state.hasError && !prevState.hasError) {
@@ -48,10 +55,10 @@ class ErrorBoundary extends React.Component {
         clearInterval(this.countdownTimer);
         this.handleReset();
       } else {
-        this.setState(prev => ({ countdown: prev.countdown - 1 }));
+        this.setState((prev) => ({ countdown: prev.countdown - 1 }));
       }
     }, 1000);
-  }
+  };
 
   componentWillUnmount() {
     if (this.countdownTimer) {
@@ -124,33 +131,34 @@ class ErrorBoundary extends React.Component {
               >
                 Return to Home
               </Button>
-              {import.meta.env.NODE_ENV === 'development' && this.state.error && (
-                <Box
-                  mt={6}
-                  p={6}
-                  bg="rgba(0,0,0,0.05)"
-                  borderRadius="xl"
-                  maxW="600px"
-                  maxH="200px"
-                  overflow="auto"
-                  css={{
-                    '&::-webkit-scrollbar': {
-                      width: '4px',
-                    },
-                    '&::-webkit-scrollbar-track': {
-                      background: 'transparent',
-                    },
-                    '&::-webkit-scrollbar-thumb': {
-                      background: '#718096',
-                      borderRadius: '24px',
-                    },
-                  }}
-                >
-                  <Text color="red.500" fontFamily="mono" fontSize="sm">
-                    {this.state.error.toString()}
-                  </Text>
-                </Box>
-              )}
+              {import.meta.env.NODE_ENV === "development" &&
+                this.state.error && (
+                  <Box
+                    mt={6}
+                    p={6}
+                    bg="rgba(0,0,0,0.05)"
+                    borderRadius="xl"
+                    maxW="600px"
+                    maxH="200px"
+                    overflow="auto"
+                    css={{
+                      "&::-webkit-scrollbar": {
+                        width: "4px",
+                      },
+                      "&::-webkit-scrollbar-track": {
+                        background: "transparent",
+                      },
+                      "&::-webkit-scrollbar-thumb": {
+                        background: "#718096",
+                        borderRadius: "24px",
+                      },
+                    }}
+                  >
+                    <Text color="red.500" fontFamily="mono" fontSize="sm">
+                      {this.state.error.toString()}
+                    </Text>
+                  </Box>
+                )}
             </VStack>
           </Box>
         </ChakraProvider>

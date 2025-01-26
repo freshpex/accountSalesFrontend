@@ -15,19 +15,20 @@ function* forgotPasswordSaga({ payload }) {
     const response = yield call(
       api.patch,
       `/api/v1/user/forgot-password`,
-      payload
+      payload,
     );
     yield put({
       type: forgot_password_success.type,
-      payload: response.data
+      payload: response.data,
     });
-    window.location.href = '/email-check';
+    window.location.href = "/email-check";
   } catch (error) {
-    const errorMessage = error?.response?.data?.error || 'Failed to send reset link';
+    const errorMessage =
+      error?.response?.data?.error || "Failed to send reset link";
     toast.error(errorMessage);
     yield put({
       type: forgot_password_error.type,
-      payload: errorMessage
+      payload: errorMessage,
     });
   }
 }
@@ -38,21 +39,22 @@ function* resetPasswordSaga({ payload }) {
     const response = yield call(
       api.patch,
       `/api/v1/user/reset-password/${id}`,
-      data
+      data,
     );
     yield put({
       type: change_password_success.type,
-      payload: response.data
+      payload: response.data,
     });
-    toast.success('Password changed successfully');
+    toast.success("Password changed successfully");
     yield delay(1000);
-    window.location.href = '/login';
+    window.location.href = "/login";
   } catch (error) {
-    const errorMessage = error?.response?.data?.error || 'Failed to reset password';
+    const errorMessage =
+      error?.response?.data?.error || "Failed to reset password";
     toast.error(errorMessage);
     yield put({
       type: change_password_error.type,
-      payload: errorMessage
+      payload: errorMessage,
     });
   }
 }

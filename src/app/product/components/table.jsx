@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import PropTypes from 'prop-types';
+import { useState } from "react";
+import PropTypes from "prop-types";
 import {
   Table,
   Thead,
@@ -27,21 +27,31 @@ import {
   SimpleGrid,
   VStack,
   AspectRatio,
-  Heading
-} from '@chakra-ui/react';
-import { ViewIcon, EditIcon, DeleteIcon, ChevronLeftIcon, ChevronRightIcon, TimeIcon, CheckIcon, WarningIcon, ArrowForwardIcon } from '@chakra-ui/icons';
-import { motion } from 'framer-motion';
-import { FiPackage } from 'react-icons/fi';
-import EmptyStatePage from '../../../components/emptyState';
-import SupabaseImage from '../../../components/SupabaseImage';
-import Masonry from 'react-masonry-css';
-import { LazyLoadImage } from 'react-lazy-load-image-component';
-import { useInView } from 'react-intersection-observer';
-import { useSwipeable } from 'react-swipeable';
-import { useNavigate } from 'react-router-dom';
-import { useSelector } from 'react-redux';
-import { selectProfile } from '../../../app/accountSettings.jsx/redux/selector';
-import { FiShoppingCart } from 'react-icons/fi';
+  Heading,
+} from "@chakra-ui/react";
+import {
+  ViewIcon,
+  EditIcon,
+  DeleteIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  TimeIcon,
+  CheckIcon,
+  WarningIcon,
+  ArrowForwardIcon,
+} from "@chakra-ui/icons";
+import { motion } from "framer-motion";
+import { FiPackage } from "react-icons/fi";
+import EmptyStatePage from "../../../components/emptyState";
+import SupabaseImage from "../../../components/SupabaseImage";
+import Masonry from "react-masonry-css";
+import { LazyLoadImage } from "react-lazy-load-image-component";
+import { useInView } from "react-intersection-observer";
+import { useSwipeable } from "react-swipeable";
+import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { selectProfile } from "../../../app/accountSettings.jsx/redux/selector";
+import { FiShoppingCart } from "react-icons/fi";
 
 const MotionBox = motion(Box);
 
@@ -58,18 +68,22 @@ const StatusBadge = ({ status }) => (
     size="md"
     variant="subtle"
     colorScheme={
-      status?.toLowerCase() === 'available' ? 'green' :
-      status?.toLowerCase() === 'sold' ? 'gray' :
-      'yellow'
+      status?.toLowerCase() === "available"
+        ? "green"
+        : status?.toLowerCase() === "sold"
+          ? "gray"
+          : "yellow"
     }
   >
-    <TagLeftIcon 
-      boxSize="12px" 
+    <TagLeftIcon
+      boxSize="12px"
       as={
-        status?.toLowerCase() === 'available' ? CheckIcon :
-        status?.toLowerCase() === 'sold' ? TimeIcon :
-        WarningIcon
-      } 
+        status?.toLowerCase() === "available"
+          ? CheckIcon
+          : status?.toLowerCase() === "sold"
+            ? TimeIcon
+            : WarningIcon
+      }
     />
     <TagLabel>{status}</TagLabel>
   </Tag>
@@ -77,7 +91,9 @@ const StatusBadge = ({ status }) => (
 
 const Stat = ({ label, value }) => (
   <VStack align="start" spacing={1}>
-    <Text fontSize="sm" color="gray.500">{label}</Text>
+    <Text fontSize="sm" color="gray.500">
+      {label}
+    </Text>
     <Text fontWeight="medium">{value}</Text>
   </VStack>
 );
@@ -93,10 +109,10 @@ const ImageGallery = ({ images }) => {
             src={image}
             effect="blur"
             style={{
-              objectFit: 'cover',
-              width: '100%',
-              height: '100%',
-              borderRadius: '8px'
+              objectFit: "cover",
+              width: "100%",
+              height: "100%",
+              borderRadius: "8px",
             }}
           />
         </AspectRatio>
@@ -107,39 +123,40 @@ const ImageGallery = ({ images }) => {
 
 // Component prop types
 StatusBadge.propTypes = {
-  status: PropTypes.string.isRequired
+  status: PropTypes.string.isRequired,
 };
 
 Stat.propTypes = {
   label: PropTypes.string.isRequired,
-  value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired
+  value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
 };
 
 ImageGallery.propTypes = {
-  images: PropTypes.arrayOf(PropTypes.string)
+  images: PropTypes.arrayOf(PropTypes.string),
 };
 
 // Update the ImageRenderer component
 const ImageRenderer = ({ images, size = { base: "100px", md: "50px" } }) => {
   if (!images) return null;
-  
+
   const imageArray = Array.isArray(images) ? images : [images];
-  
+
   return (
     <Wrap spacing={2}>
-      {imageArray.map((imageUrl, index) => (
-        imageUrl && (
-          <WrapItem key={index}>
-            <SupabaseImage
-              src={imageUrl}
-              alt={`Product ${index + 1}`}
-              boxSize={size}
-              objectFit="cover"
-              borderRadius="md"
-            />
-          </WrapItem>
-        )
-      ))}
+      {imageArray.map(
+        (imageUrl, index) =>
+          imageUrl && (
+            <WrapItem key={index}>
+              <SupabaseImage
+                src={imageUrl}
+                alt={`Product ${index + 1}`}
+                boxSize={size}
+                objectFit="cover"
+                borderRadius="md"
+              />
+            </WrapItem>
+          ),
+      )}
     </Wrap>
   );
 };
@@ -153,16 +170,16 @@ const DataTable = ({
   currentPage,
   pageSize,
   onPageChange,
-  viewMode
+  viewMode,
 }) => {
   const [selectedItems, setSelectedItems] = useState([]);
   const isMobile = useBreakpointValue({ base: true, md: false });
-  const bgCard = useColorModeValue('white', 'gray.800');
-  const borderColor = useColorModeValue('gray.200', 'gray.700');
-  const hoverBg = useColorModeValue('gray.50', 'gray.700');
+  const bgCard = useColorModeValue("white", "gray.800");
+  const borderColor = useColorModeValue("gray.200", "gray.700");
+  const hoverBg = useColorModeValue("gray.50", "gray.700");
   const navigate = useNavigate();
   const profile = useSelector(selectProfile);
-  const isAdmin = profile?.role === 'admin';
+  const isAdmin = profile?.role === "admin";
 
   if (!data?.length) {
     return (
@@ -175,50 +192,55 @@ const DataTable = ({
   }
 
   const handleSelectAll = (e) => {
-    setSelectedItems(
-      e.target.checked ? data.map(item => item.id) : []
-    );
+    setSelectedItems(e.target.checked ? data.map((item) => item.id) : []);
   };
 
   const handleSelectItem = (id) => {
     setSelectedItems(
       selectedItems.includes(id)
-        ? selectedItems.filter(item => item !== id)
-        : [...selectedItems, id]
+        ? selectedItems.filter((item) => item !== id)
+        : [...selectedItems, id],
     );
   };
 
   const renderCellContent = (item, column) => {
     const value = item[column.key];
 
-    if (column.key === 'images') {
+    if (column.key === "images") {
       return <ImageRenderer images={value} />;
     }
 
-    if (column.key === 'status') {
+    if (column.key === "status") {
       return (
         <Tag
           size="md"
           variant="subtle"
           colorScheme={
-            value?.toLowerCase() === 'available' ? 'green' :
-            value?.toLowerCase() === 'sold' ? 'gray' :
-            'yellow'
+            value?.toLowerCase() === "available"
+              ? "green"
+              : value?.toLowerCase() === "sold"
+                ? "gray"
+                : "yellow"
           }
         >
-          <TagLeftIcon boxSize="12px" as={
-            value?.toLowerCase() === 'available' ? CheckIcon :
-            value?.toLowerCase() === 'sold' ? TimeIcon :
-            WarningIcon
-          } />
+          <TagLeftIcon
+            boxSize="12px"
+            as={
+              value?.toLowerCase() === "available"
+                ? CheckIcon
+                : value?.toLowerCase() === "sold"
+                  ? TimeIcon
+                  : WarningIcon
+            }
+          />
           <TagLabel>{value}</TagLabel>
         </Tag>
       );
     }
 
-    if (value && (typeof value === 'string' || Array.isArray(value))) {
-      const hasImages = Array.isArray(value) 
-        ? value.some(url => isValidImageUrl(url))
+    if (value && (typeof value === "string" || Array.isArray(value))) {
+      const hasImages = Array.isArray(value)
+        ? value.some((url) => isValidImageUrl(url))
         : isValidImageUrl(value);
 
       if (hasImages) {
@@ -226,8 +248,8 @@ const DataTable = ({
       }
     }
 
-    if (column.key === 'engagement') {
-      return <Text>{value ? `${value}%` : '0%'}</Text>;
+    if (column.key === "engagement") {
+      return <Text>{value ? `${value}%` : "0%"}</Text>;
     }
 
     return <Text>{value}</Text>;
@@ -252,13 +274,18 @@ const DataTable = ({
         }
       }}
       _hover={{
-        transform: 'translateY(-2px)',
-        shadow: 'md',
-        borderColor: 'blue.400',
+        transform: "translateY(-2px)",
+        shadow: "md",
+        borderColor: "blue.400",
       }}
     >
       {/* Header section */}
-      <Flex justify="space-between" align="center" mb={4} onClick={e => e.stopPropagation()}>
+      <Flex
+        justify="space-between"
+        align="center"
+        mb={4}
+        onClick={(e) => e.stopPropagation()}
+      >
         <HStack spacing={3}>
           <Checkbox
             isChecked={selectedItems.includes(item.id)}
@@ -267,16 +294,20 @@ const DataTable = ({
           />
           <Box>
             <Text fontWeight="bold">{item.username}</Text>
-            <Text fontSize="sm" color="gray.500">{item.type}</Text>
+            <Text fontSize="sm" color="gray.500">
+              {item.type}
+            </Text>
           </Box>
         </HStack>
         <Tag
           size="md"
           variant="subtle"
           colorScheme={
-            item.status?.toLowerCase() === 'available' ? 'green' :
-            item.status?.toLowerCase() === 'sold' ? 'gray' :
-            'yellow'
+            item.status?.toLowerCase() === "available"
+              ? "green"
+              : item.status?.toLowerCase() === "sold"
+                ? "gray"
+                : "yellow"
           }
         >
           <TagLabel>{item.status}</TagLabel>
@@ -286,50 +317,68 @@ const DataTable = ({
       {/* Images section */}
       {item.images && (
         <Box mb={4}>
-          <ImageRenderer images={item.images} size={{ base: "80px", sm: "100px" }} />
+          <ImageRenderer
+            images={item.images}
+            size={{ base: "80px", sm: "100px" }}
+          />
         </Box>
       )}
 
       {/* Details grid */}
       <SimpleGrid columns={2} spacing={4} mb={4}>
         <VStack align="start" spacing={1}>
-          <Text fontSize="sm" color="gray.500">Followers</Text>
+          <Text fontSize="sm" color="gray.500">
+            Followers
+          </Text>
           <Text fontWeight="medium">{item.followers}</Text>
         </VStack>
         <VStack align="start" spacing={1}>
-          <Text fontSize="sm" color="gray.500">Price</Text>
+          <Text fontSize="sm" color="gray.500">
+            Price
+          </Text>
           <Text fontWeight="medium">{item.price}</Text>
         </VStack>
         <VStack align="start" spacing={1}>
-          <Text fontSize="sm" color="gray.500">Age</Text>
+          <Text fontSize="sm" color="gray.500">
+            Age
+          </Text>
           <Text>{item.age}</Text>
         </VStack>
         <VStack align="start" spacing={1}>
-          <Text fontSize="sm" color="gray.500">Engagement</Text>
+          <Text fontSize="sm" color="gray.500">
+            Engagement
+          </Text>
           <Text>{item.engagement}%</Text>
         </VStack>
       </SimpleGrid>
 
       {/* About section */}
       <Box mb={4}>
-        <Text fontSize="sm" color="gray.500">About</Text>
+        <Text fontSize="sm" color="gray.500">
+          About
+        </Text>
         <Text noOfLines={2}>{item.about}</Text>
       </Box>
 
       {/* Action buttons */}
-      <Flex justify="space-between" align="center" mt={2} onClick={e => e.stopPropagation()}>
+      <Flex
+        justify="space-between"
+        align="center"
+        mt={2}
+        onClick={(e) => e.stopPropagation()}
+      >
         <HStack spacing={2}>
-        <IconButton
-          icon={<FiShoppingCart />}
-          variant="ghost"
-          colorScheme="blue"
-          size="sm"
-          onClick={(e) => {
-            if (!e.defaultPrevented) {
-              navigate(`/product/${item.type}/${item.id}`);
-            }
-          }}
-          />      
+          <IconButton
+            icon={<FiShoppingCart />}
+            variant="ghost"
+            colorScheme="blue"
+            size="sm"
+            onClick={(e) => {
+              if (!e.defaultPrevented) {
+                navigate(`/product/${item.type}/${item.id}`);
+              }
+            }}
+          />
           {isAdmin && (
             <>
               <IconButton
@@ -363,13 +412,13 @@ const DataTable = ({
   const ProductCard = ({ item }) => {
     const [ref, inView] = useInView({
       threshold: 0.1,
-      triggerOnce: true
+      triggerOnce: true,
     });
 
     const swipeHandlers = useSwipeable({
       onSwipedLeft: () => onDelete(item),
       onSwipedRight: () => onEdit(item),
-      preventDefaultTouchmoveEvent: true
+      preventDefaultTouchmoveEvent: true,
     });
 
     return (
@@ -388,25 +437,20 @@ const DataTable = ({
           position="relative"
         >
           {/* Hero Image */}
-          <AspectRatio ratio={16/9}>
+          <AspectRatio ratio={16 / 9}>
             <LazyLoadImage
               src={item.images?.[0]}
               effect="blur"
               style={{
-                objectFit: 'cover',
-                width: '100%',
-                height: '100%'
+                objectFit: "cover",
+                width: "100%",
+                height: "100%",
               }}
             />
           </AspectRatio>
 
           {/* Quick Action Overlay */}
-          <HStack
-            position="absolute"
-            top={4}
-            right={4}
-            spacing={2}
-          >
+          <HStack position="absolute" top={4} right={4} spacing={2}>
             <IconButton
               icon={<ViewIcon />}
               rounded="full"
@@ -459,12 +503,12 @@ const DataTable = ({
         default: 4,
         1100: 3,
         700: 2,
-        500: 1
+        500: 1,
       }}
       className="masonry-grid"
       columnClassName="masonry-grid_column"
     >
-      {data.map(item => (
+      {data.map((item) => (
         <ProductCard key={item.id} item={item} />
       ))}
     </Masonry>
@@ -473,7 +517,7 @@ const DataTable = ({
   // Render desktop table view
   const renderDesktopTable = () => (
     <Box
-      position="relative" 
+      position="relative"
       overflowX="auto"
       borderWidth="1px"
       borderRadius="lg"
@@ -485,7 +529,9 @@ const DataTable = ({
             <Th w="40px">
               <Checkbox
                 isChecked={selectedItems.length === data.length}
-                isIndeterminate={selectedItems.length > 0 && selectedItems.length < data.length}
+                isIndeterminate={
+                  selectedItems.length > 0 && selectedItems.length < data.length
+                }
                 onChange={handleSelectAll}
                 colorScheme="blue"
               />
@@ -508,7 +554,7 @@ const DataTable = ({
                 }
               }}
             >
-              <Td onClick={e => e.preventDefault()}>
+              <Td onClick={(e) => e.preventDefault()}>
                 <Checkbox
                   isChecked={selectedItems.includes(item.id)}
                   onChange={() => handleSelectItem(item.id)}
@@ -516,37 +562,35 @@ const DataTable = ({
                 />
               </Td>
               {columns.map((column) => (
-                <Td key={column.key}>
-                  {renderCellContent(item, column)}
-                </Td>
+                <Td key={column.key}>{renderCellContent(item, column)}</Td>
               ))}
-              <Td onClick={e => e.preventDefault()}>
+              <Td onClick={(e) => e.preventDefault()}>
                 <HStack spacing={2}>
-                <IconButton
-                  icon={<FiShoppingCart />}
-                  variant="ghost"
-                  colorScheme="blue"
-                  size="sm"
-                  onClick={(e) => {
-                    if (!e.defaultPrevented) {
-                      navigate(`/product/${item.type}/${item.id}`);
-                    }
-                  }}
+                  <IconButton
+                    icon={<FiShoppingCart />}
+                    variant="ghost"
+                    colorScheme="blue"
+                    size="sm"
+                    onClick={(e) => {
+                      if (!e.defaultPrevented) {
+                        navigate(`/product/${item.type}/${item.id}`);
+                      }
+                    }}
                   />
                   {isAdmin && (
                     <>
-                    <Tooltip label="View Details">
-                      <IconButton
-                        icon={<ViewIcon />}
-                        variant="ghost"
-                        colorScheme="blue"
-                        size="sm"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          onView(item);
-                        }}
-                      />
-                    </Tooltip>
+                      <Tooltip label="View Details">
+                        <IconButton
+                          icon={<ViewIcon />}
+                          variant="ghost"
+                          colorScheme="blue"
+                          size="sm"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            onView(item);
+                          }}
+                        />
+                      </Tooltip>
                       <Tooltip label="Edit">
                         <IconButton
                           icon={<EditIcon />}
@@ -594,8 +638,13 @@ const DataTable = ({
       borderRadius="lg"
       shadow="sm"
     >
-      <Text color="gray.600" fontSize="sm" textAlign={{ base: "center", sm: "left" }}>
-        Showing {(currentPage - 1) * pageSize + 1} to {Math.min(currentPage * pageSize, data.length)} of {data.length} entries
+      <Text
+        color="gray.600"
+        fontSize="sm"
+        textAlign={{ base: "center", sm: "left" }}
+      >
+        Showing {(currentPage - 1) * pageSize + 1} to{" "}
+        {Math.min(currentPage * pageSize, data.length)} of {data.length} entries
       </Text>
       <HStack spacing={2} justify={{ base: "center", sm: "flex-end" }}>
         <Button
@@ -617,7 +666,9 @@ const DataTable = ({
           borderRadius="md"
         >
           {Array.from({ length: Math.ceil(data.length / pageSize) }, (_, i) => (
-            <option key={i + 1} value={i + 1}>{i + 1}</option>
+            <option key={i + 1} value={i + 1}>
+              {i + 1}
+            </option>
           ))}
         </Select>
         <Button
@@ -638,12 +689,12 @@ const DataTable = ({
   // Main render
   return (
     <Box>
-      {viewMode === 'grid' ? renderMasonryGrid() : (
+      {viewMode === "grid" ? (
+        renderMasonryGrid()
+      ) : (
         <Stack spacing={6}>
           {isMobile ? (
-            <Stack spacing={4}>
-              {data?.map(renderMobileCard)}
-            </Stack>
+            <Stack spacing={4}>{data?.map(renderMobileCard)}</Stack>
           ) : (
             renderDesktopTable()
           )}
@@ -656,18 +707,22 @@ const DataTable = ({
 };
 
 DataTable.propTypes = {
-  data: PropTypes.arrayOf(PropTypes.shape({
-    id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
-    status: PropTypes.string,
-    [PropTypes.string]: PropTypes.oneOfType([
-      PropTypes.string,
-      PropTypes.array
-    ])
-  })).isRequired,
-  columns: PropTypes.arrayOf(PropTypes.shape({
-    key: PropTypes.string.isRequired,
-    label: PropTypes.string.isRequired
-  })).isRequired,
+  data: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+      status: PropTypes.string,
+      [PropTypes.string]: PropTypes.oneOfType([
+        PropTypes.string,
+        PropTypes.array,
+      ]),
+    }),
+  ).isRequired,
+  columns: PropTypes.arrayOf(
+    PropTypes.shape({
+      key: PropTypes.string.isRequired,
+      label: PropTypes.string.isRequired,
+    }),
+  ).isRequired,
   onView: PropTypes.func.isRequired,
   onEdit: PropTypes.func.isRequired,
   onDelete: PropTypes.func.isRequired,
@@ -675,7 +730,7 @@ DataTable.propTypes = {
   currentPage: PropTypes.number.isRequired,
   pageSize: PropTypes.number.isRequired,
   onPageChange: PropTypes.func.isRequired,
-  viewMode: PropTypes.string.isRequired
+  viewMode: PropTypes.string.isRequired,
 };
 
 export default DataTable;

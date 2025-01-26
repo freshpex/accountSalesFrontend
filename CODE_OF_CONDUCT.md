@@ -9,17 +9,17 @@ community a harassment-free experience for everyone.
 
 Examples of behavior that contributes to a positive environment:
 
-* Being respectful and inclusive
-* Being welcoming to new contributors
-* Giving and gracefully accepting constructive feedback
-* Focusing on what is best for the community
+- Being respectful and inclusive
+- Being welcoming to new contributors
+- Giving and gracefully accepting constructive feedback
+- Focusing on what is best for the community
 
 Examples of unacceptable behavior:
 
-* Harassment of any kind
-* Unauthorized commercial use of the codebase
-* Publishing others' private information
-* Other conduct which could reasonably be considered inappropriate
+- Harassment of any kind
+- Unauthorized commercial use of the codebase
+- Publishing others' private information
+- Other conduct which could reasonably be considered inappropriate
 
 ## Enforcement Responsibilities
 

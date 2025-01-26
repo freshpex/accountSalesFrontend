@@ -1,54 +1,60 @@
-import { useState, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import {
-  Box, Flex, Text, Grid, Container, useColorModeValue
-} from '@chakra-ui/react';
+  Box,
+  Flex,
+  Text,
+  Grid,
+  Container,
+  useColorModeValue,
+} from "@chakra-ui/react";
 import {
-  FiDollarSign, FiUsers, FiShoppingBag, FiPackage, FiActivity
-} from 'react-icons/fi';
-import EmptyStatePage from '../../components/emptyState';
-import MetricCard from '../../components/cards/MetricCard';
-import SalesChart from './components/SalesChart';
-import RecentActivities from './components/RecentActivities';
-import PopularProducts from './components/PopularProducts';
-import RegionalGrowth from './components/RegionalGrowth';
-import { 
+  FiDollarSign,
+  FiUsers,
+  FiShoppingBag,
+  FiPackage,
+  FiActivity,
+} from "react-icons/fi";
+import EmptyStatePage from "../../components/emptyState";
+import MetricCard from "../../components/cards/MetricCard";
+import SalesChart from "./components/SalesChart";
+import RecentActivities from "./components/RecentActivities";
+import PopularProducts from "./components/PopularProducts";
+import RegionalGrowth from "./components/RegionalGrowth";
+import {
   getDashboardMetrics,
   getSalesTarget,
   getSalesTrends,
   getCustomerGrowth,
   getPopularProducts,
   getRecentActivities,
-  getLoading 
-} from './redux/selector';
-import { 
-  fetch_dashboard_data, 
-  fetch_sales_metrics,
-} from './redux/reducer';
-import LoadingSpinner from '../../components/LoadingSpinner';
-import SalesTarget from './components/SalesTarget';
+  getLoading,
+} from "./redux/selector";
+import { fetch_dashboard_data, fetch_sales_metrics } from "./redux/reducer";
+import LoadingSpinner from "../../components/LoadingSpinner";
+import SalesTarget from "./components/SalesTarget";
 
 const Dashboard = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const metrics = useSelector(getDashboardMetrics);
-  const profile = useSelector(state => state.accountSettings.data.profile);
+  const profile = useSelector((state) => state.accountSettings.data.profile);
   const salesTarget = useSelector(getSalesTarget);
   const salesTrends = useSelector(getSalesTrends);
   const customerGrowth = useSelector(getCustomerGrowth);
   const popularProducts = useSelector(getPopularProducts);
   const recentActivities = useSelector(getRecentActivities);
   const loading = useSelector(getLoading);
-  
-  const [timeRange, setTimeRange] = useState('weekly');
-  const bgColor = useColorModeValue('gray.50', 'gray.900');
-  const headerBgColor = useColorModeValue('white', 'gray.800');
-  const borderColor = useColorModeValue('gray.100', 'gray.700');
+
+  const [timeRange, setTimeRange] = useState("weekly");
+  const bgColor = useColorModeValue("gray.50", "gray.900");
+  const headerBgColor = useColorModeValue("white", "gray.800");
+  const borderColor = useColorModeValue("gray.100", "gray.700");
 
   useEffect(() => {
-    if (profile?.role !== 'admin') {
-      navigate('/userdashboard');
+    if (profile?.role !== "admin") {
+      navigate("/userdashboard");
       return;
     }
 
@@ -77,7 +83,11 @@ const Dashboard = () => {
     return (
       <>
         <Grid
-          templateColumns={{ base: '1fr', md: 'repeat(2, 1fr)', lg: 'repeat(4, 1fr)' }}
+          templateColumns={{
+            base: "1fr",
+            md: "repeat(2, 1fr)",
+            lg: "repeat(4, 1fr)",
+          }}
           gap={6}
           mb={8}
         >
@@ -119,9 +129,11 @@ const Dashboard = () => {
           <SalesTarget salesTarget={salesTarget} />
         </Box>
 
-        <Grid templateColumns={{ base: '1fr', lg: '2fr 1fr' }} gap={6} mb={8}>
+        <Grid templateColumns={{ base: "1fr", lg: "2fr 1fr" }} gap={6} mb={8}>
           <SalesChart
-            data={timeRange === 'weekly' ? salesTrends.weekly : salesTrends.monthly}
+            data={
+              timeRange === "weekly" ? salesTrends.weekly : salesTrends.monthly
+            }
             timeRange={timeRange}
             onTimeRangeChange={setTimeRange}
           />
@@ -136,9 +148,9 @@ const Dashboard = () => {
   };
 
   return (
-    <Container 
-      maxW="container.xl" 
-      bg={bgColor} 
+    <Container
+      maxW="container.xl"
+      bg={bgColor}
       py={{ base: 4, md: 8 }}
       px={{ base: 2, md: 8 }}
     >
@@ -157,9 +169,7 @@ const Dashboard = () => {
         </Text>
       </Flex>
 
-      <Box px={{ base: 2, md: 8 }}>
-        {renderContent()}
-      </Box>
+      <Box px={{ base: 2, md: 8 }}>{renderContent()}</Box>
     </Container>
   );
 };

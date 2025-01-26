@@ -4,7 +4,7 @@ const initialState = {
   ui: {
     loading: false,
     error: null,
-    success: false
+    success: false,
   },
   data: {
     customers: [],
@@ -12,21 +12,21 @@ const initialState = {
       totalCustomers: 0,
       activeCustomers: 0,
       newCustomers: 0,
-      churnRate: 0
+      churnRate: 0,
     },
     segments: {
       platinum: 0,
       gold: 0,
       silver: 0,
-      bronze: 0
+      bronze: 0,
     },
     recentActivity: [],
     meta: {
       currentPage: 1,
       totalPages: 1,
-      totalItems: 0
-    }
-  }
+      totalItems: 0,
+    },
+  },
 };
 
 export const customerSlice = createSlice({
@@ -48,7 +48,7 @@ export const customerSlice = createSlice({
         customers: action.payload.customers || [],
         metrics: action.payload.metrics || initialState.data.metrics,
         segments: action.payload.segments || initialState.data.segments,
-        meta: action.payload.meta || initialState.data.meta
+        meta: action.payload.meta || initialState.data.meta,
       };
     },
     fetch_customers_error: (state, action) => {
@@ -107,24 +107,24 @@ export const customerSlice = createSlice({
     update_segment_success: (state, action) => {
       state.ui.loading = false;
       state.ui.error = null;
-      
+
       // Update the customer in the list
       const customerIndex = state.data.customers.findIndex(
-        c => c._id === action.payload.customer._id
+        (c) => c._id === action.payload.customer._id,
       );
-      
+
       if (customerIndex !== -1) {
         state.data.customers[customerIndex] = action.payload.customer;
       }
-      
+
       // Update segment counts
       state.data.segments = action.payload.segments;
     },
     update_segment_error: (state, action) => {
       state.ui.loading = false;
       state.ui.error = action.payload;
-    }
-  }
+    },
+  },
 });
 
 export const {
@@ -142,7 +142,7 @@ export const {
   update_segment_error,
   search_customers,
   search_customers_success,
-  search_customers_error
+  search_customers_error,
 } = customerSlice.actions;
 
 export default customerSlice.reducer;

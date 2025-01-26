@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { useSelector } from 'react-redux';
+import { useSelector } from "react-redux";
 import {
   Box,
   FormControl,
@@ -26,15 +26,15 @@ import {
   AlertDialogOverlay,
   FormErrorMessage,
   Heading,
-  Spinner
+  Spinner,
 } from "@chakra-ui/react";
 import { FaImage } from "react-icons/fa";
-import { getLoading } from '../redux/selector';
-import { useColors } from '../../../utils/colors';
+import { getLoading } from "../redux/selector";
+import { useColors } from "../../../utils/colors";
 import toast from "react-hot-toast";
-import { useProductActions } from '../hooks/useProductActions';
-import { validateImage, validateProductData } from '../redux/actions';
-import { convertToPublicUrl } from '../../../utils/supabase';
+import { useProductActions } from "../hooks/useProductActions";
+import { validateImage, validateProductData } from "../redux/actions";
+import { convertToPublicUrl } from "../../../utils/supabase";
 
 const AddProduct = ({ isOpen, onClose, data, action, onSave, onDelete }) => {
   const loading = useSelector(getLoading);
@@ -48,7 +48,7 @@ const AddProduct = ({ isOpen, onClose, data, action, onSave, onDelete }) => {
   const [about, setAbout] = useState("");
   const [engagement, setEngagement] = useState("");
   const [images, setImages] = useState(["", "", "", ""]);
-  const [imagesPreviews, setImagesPreviews] = useState(['', '', '', '']);
+  const [imagesPreviews, setImagesPreviews] = useState(["", "", "", ""]);
   const [averageLikes, setAverageLikes] = useState("");
   const [averageComments, setAverageComments] = useState("");
   const [twoFactorEnabled, setTwoFactorEnabled] = useState(false);
@@ -59,16 +59,20 @@ const AddProduct = ({ isOpen, onClose, data, action, onSave, onDelete }) => {
   const [accountPhoneNumber, setAccountPhoneNumber] = useState("");
   const [additionalInfo, setAdditionalInfo] = useState("");
 
-  const isReadOnly = action === 'view';
+  const isReadOnly = action === "view";
   const colors = useColors();
 
-  const { isOpen: isDeleteOpen, onOpen: onDeleteOpen, onClose: onDeleteClose } = useDisclosure();
+  const {
+    isOpen: isDeleteOpen,
+    onOpen: onDeleteOpen,
+    onClose: onDeleteClose,
+  } = useDisclosure();
   const cancelRef = useRef();
 
   const [formErrors, setFormErrors] = useState({});
 
   const renderImage = (image, preview) => {
-    if (typeof image === 'string' && image.startsWith('http')) {
+    if (typeof image === "string" && image.startsWith("http")) {
       // Convert Supabase URL to public URL
       return convertToPublicUrl(image);
     }
@@ -87,57 +91,60 @@ const AddProduct = ({ isOpen, onClose, data, action, onSave, onDelete }) => {
       if (data.images) {
         if (Array.isArray(data.images)) {
           formattedImages = data.images;
-        } else if (typeof data.images === 'string') {
+        } else if (typeof data.images === "string") {
           formattedImages = [data.images];
         }
-        formattedImages = formattedImages.concat(Array(4 - formattedImages.length).fill(''));
+        formattedImages = formattedImages.concat(
+          Array(4 - formattedImages.length).fill(""),
+        );
       } else {
-        formattedImages = ['', '', '', ''];
+        formattedImages = ["", "", "", ""];
       }
 
-      setUsername(data.username || '');
-      setType(data.type || '');
-      setAge(data.age || '');
-      setFollower(data.followers || '');
-      setStatus(data.status || '');
-      setPrice(data.price || '');
-      setRegion(data.region || '');
-      setAbout(data.about || '');
-      setEngagement(data.engagement || '');
+      setUsername(data.username || "");
+      setType(data.type || "");
+      setAge(data.age || "");
+      setFollower(data.followers || "");
+      setStatus(data.status || "");
+      setPrice(data.price || "");
+      setRegion(data.region || "");
+      setAbout(data.about || "");
+      setEngagement(data.engagement || "");
       setImages(formattedImages);
       setImagesPreviews(formattedImages);
-      setAverageLikes(data.stats?.averageLikes || '');
-      setAverageComments(data.stats?.averageComments || '');
+      setAverageLikes(data.stats?.averageLikes || "");
+      setAverageComments(data.stats?.averageComments || "");
       setTwoFactorEnabled(data.security?.twoFactorEnabled || false);
       setOriginalEmailAvailable(data.security?.originalEmailAvailable || false);
-      setAccountEmail(data.accountCredentials?.accountEmail || '');
-      setAccountPassword(data.accountCredentials?.accountPassword || '');
-      setAccountPhoneNumber(data.accountCredentials?.accountPhoneNumber || '');
-      setAdditionalInfo(data.accountCredentials?.additionalInfo || '');
+      setAccountEmail(data.accountCredentials?.accountEmail || "");
+      setAccountPassword(data.accountCredentials?.accountPassword || "");
+      setAccountPhoneNumber(data.accountCredentials?.accountPhoneNumber || "");
+      setAdditionalInfo(data.accountCredentials?.additionalInfo || "");
     } else {
-      setUsername('');
-      setType('');
-      setAge('');
-      setFollower('');
-      setStatus('');
-      setPrice('');
-      setRegion('');
-      setAbout('');
-      setEngagement('');
-      setImages(['', '', '', '']);
-      setImagesPreviews(['', '', '', '']);
-      setAverageLikes('');
-      setAverageComments('');
+      setUsername("");
+      setType("");
+      setAge("");
+      setFollower("");
+      setStatus("");
+      setPrice("");
+      setRegion("");
+      setAbout("");
+      setEngagement("");
+      setImages(["", "", "", ""]);
+      setImagesPreviews(["", "", "", ""]);
+      setAverageLikes("");
+      setAverageComments("");
       setTwoFactorEnabled(false);
       setOriginalEmailAvailable(false);
-      setAccountEmail('');
-      setAccountPassword('');
-      setAccountPhoneNumber('');
-      setAdditionalInfo('');
+      setAccountEmail("");
+      setAccountPassword("");
+      setAccountPhoneNumber("");
+      setAdditionalInfo("");
     }
   }, [data]);
 
-  const { handleAddProduct, handleUpdateProduct, handleDeleteProduct } = useProductActions();
+  const { handleAddProduct, handleUpdateProduct, handleDeleteProduct } =
+    useProductActions();
 
   const handleSave = async () => {
     try {
@@ -146,61 +153,70 @@ const AddProduct = ({ isOpen, onClose, data, action, onSave, onDelete }) => {
         type,
         ...(username && { username }),
         ...(age && !isNaN(Number(age)) && { age: Number(age) }),
-        ...(follower && !isNaN(Number(follower)) && { followers: Number(follower) }),
-        status: status || 'available',
+        ...(follower &&
+          !isNaN(Number(follower)) && { followers: Number(follower) }),
+        status: status || "available",
         ...(price && !isNaN(Number(price)) && { price: Number(price) }),
         ...(region && { region }),
         ...(about && { about }),
-        ...(engagement && !isNaN(Number(engagement)) && { engagement: Number(engagement) }),
+        ...(engagement &&
+          !isNaN(Number(engagement)) && { engagement: Number(engagement) }),
 
-        ...(accountEmail || accountPassword || accountPhoneNumber || additionalInfo) && {
+        ...((accountEmail ||
+          accountPassword ||
+          accountPhoneNumber ||
+          additionalInfo) && {
           accountEmail,
           accountPassword,
           accountPhoneNumber,
-          additionalInfo
-        },
+          additionalInfo,
+        }),
 
         security: {
           twoFactorEnabled,
-          originalEmailAvailable
+          originalEmailAvailable,
         },
 
         ...((averageLikes || averageComments) && {
           stats: {
-            ...(averageLikes && !isNaN(Number(averageLikes)) && { 
-              averageLikes: Number(averageLikes) 
-            }),
-            ...(averageComments && !isNaN(Number(averageComments)) && { 
-              averageComments: Number(averageComments) 
-            })
-          }
-        })
+            ...(averageLikes &&
+              !isNaN(Number(averageLikes)) && {
+                averageLikes: Number(averageLikes),
+              }),
+            ...(averageComments &&
+              !isNaN(Number(averageComments)) && {
+                averageComments: Number(averageComments),
+              }),
+          },
+        }),
       };
 
-      if (action === 'edit') {
-        const existingImages = images.filter(img => typeof img === 'string');
-        const newImages = images.filter(img => img instanceof File);
-        
+      if (action === "edit") {
+        const existingImages = images.filter((img) => typeof img === "string");
+        const newImages = images.filter((img) => img instanceof File);
+
         productData.existingImages = existingImages;
         productData.newImages = newImages;
       } else {
-        productData.images = images.filter(img => img instanceof File);
+        productData.images = images.filter((img) => img instanceof File);
       }
 
       let success;
-      if (action === 'add') {
+      if (action === "add") {
         success = await handleAddProduct(productData);
-      } else if (action === 'edit') {
+      } else if (action === "edit") {
         success = await handleUpdateProduct(data.id, productData);
       }
 
       if (success) {
         onClose();
-        toast.success(`Product ${action === 'add' ? 'added' : 'updated'} successfully`);
+        toast.success(
+          `Product ${action === "add" ? "added" : "updated"} successfully`,
+        );
       }
     } catch (error) {
-      console.error('Save error:', error);
-      toast.error(error.message || 'Failed to save product');
+      console.error("Save error:", error);
+      toast.error(error.message || "Failed to save product");
     } finally {
       setIsSubmitting(false);
     }
@@ -233,15 +249,15 @@ const AddProduct = ({ isOpen, onClose, data, action, onSave, onDelete }) => {
       setImages(newImages);
       setImagesPreviews(newPreviews);
     } catch (error) {
-      console.error('Image handling error:', error);
-      toast.error('Failed to process image');
+      console.error("Image handling error:", error);
+      toast.error("Failed to process image");
     }
   };
 
   useEffect(() => {
     return () => {
-      imagesPreviews.forEach(preview => {
-        if (preview && preview.startsWith('blob:')) {
+      imagesPreviews.forEach((preview) => {
+        if (preview && preview.startsWith("blob:")) {
           URL.revokeObjectURL(preview);
         }
       });
@@ -253,14 +269,14 @@ const AddProduct = ({ isOpen, onClose, data, action, onSave, onDelete }) => {
       setIsSubmitting(true);
       await onDelete(data.id);
       onDeleteClose();
-      toast.success('Product deleted successfully');
+      toast.success("Product deleted successfully");
     } finally {
       setIsSubmitting(false);
     }
   };
 
   const renderActionButtons = () => {
-    if (action === 'view') {
+    if (action === "view") {
       return (
         <Button colorScheme="blue" onClick={onClose}>
           Close
@@ -270,17 +286,17 @@ const AddProduct = ({ isOpen, onClose, data, action, onSave, onDelete }) => {
 
     return (
       <>
-        <Button 
-          variant="outline" 
-          onClick={onClose} 
+        <Button
+          variant="outline"
+          onClick={onClose}
           mr={3}
           isDisabled={isSubmitting}
         >
           Cancel
         </Button>
-        {action === 'delete' ? (
-          <Button 
-            colorScheme="red" 
+        {action === "delete" ? (
+          <Button
+            colorScheme="red"
             onClick={onDeleteOpen}
             isLoading={isSubmitting}
             loadingText="Deleting..."
@@ -293,10 +309,10 @@ const AddProduct = ({ isOpen, onClose, data, action, onSave, onDelete }) => {
             colorScheme="blue"
             onClick={handleSave}
             isLoading={isSubmitting}
-            loadingText={action === 'add' ? 'Creating...' : 'Saving...'}
+            loadingText={action === "add" ? "Creating..." : "Saving..."}
             spinner={<Spinner size="sm" />}
           >
-            {action === 'add' ? 'Create Product' : 'Save Changes'}
+            {action === "add" ? "Create Product" : "Save Changes"}
           </Button>
         )}
       </>
@@ -305,16 +321,12 @@ const AddProduct = ({ isOpen, onClose, data, action, onSave, onDelete }) => {
 
   const alertDialogButtons = (
     <AlertDialogFooter>
-      <Button 
-        ref={cancelRef} 
-        onClick={onDeleteClose}
-        isDisabled={isSubmitting}
-      >
+      <Button ref={cancelRef} onClick={onDeleteClose} isDisabled={isSubmitting}>
         Cancel
       </Button>
-      <Button 
-        colorScheme="red" 
-        onClick={handleDeleteConfirm} 
+      <Button
+        colorScheme="red"
+        onClick={handleDeleteConfirm}
         ml={3}
         isLoading={isSubmitting}
         loadingText="Deleting..."
@@ -329,9 +341,9 @@ const AddProduct = ({ isOpen, onClose, data, action, onSave, onDelete }) => {
 
   return (
     <>
-      <Modal 
-        isOpen={isOpen} 
-        onClose={onClose} 
+      <Modal
+        isOpen={isOpen}
+        onClose={onClose}
         size="6xl"
         closeOnOverlayClick={!isSubmitting}
         closeOnEsc={!isSubmitting}
@@ -368,9 +380,11 @@ const AddProduct = ({ isOpen, onClose, data, action, onSave, onDelete }) => {
                   size="xl"
                 />
                 <Text fontWeight="medium">
-                  {action === 'add' ? 'Creating product...' :
-                   action === 'edit' ? 'Updating product...' :
-                   'Deleting product...'}
+                  {action === "add"
+                    ? "Creating product..."
+                    : action === "edit"
+                      ? "Updating product..."
+                      : "Deleting product..."}
                 </Text>
               </VStack>
             </Box>
@@ -383,7 +397,11 @@ const AddProduct = ({ isOpen, onClose, data, action, onSave, onDelete }) => {
             {" Product"}
           </ModalHeader>
           <ModalBody>
-            <Box display="flex" flexDirection={["column", "column", "row"]} gap={8}>
+            <Box
+              display="flex"
+              flexDirection={["column", "column", "row"]}
+              gap={8}
+            >
               {/* Left Section */}
               <VStack spacing={4} align="stretch" flex={1}>
                 <FormControl isInvalid={!!formErrors.username}>
@@ -397,7 +415,7 @@ const AddProduct = ({ isOpen, onClose, data, action, onSave, onDelete }) => {
                   />
                   <FormErrorMessage>{formErrors.username}</FormErrorMessage>
                 </FormControl>
-            
+
                 <FormControl isInvalid={!!formErrors.type}>
                   <FormLabel>Product type </FormLabel>
                   <Input
@@ -425,7 +443,7 @@ const AddProduct = ({ isOpen, onClose, data, action, onSave, onDelete }) => {
                   </Select>
                   <FormErrorMessage>{formErrors.type}</FormErrorMessage>
                 </FormControl>
-            
+
                 <HStack spacing={4}>
                   <FormControl flex={1} isInvalid={!!formErrors.age}>
                     <FormLabel>Age</FormLabel>
@@ -450,7 +468,7 @@ const AddProduct = ({ isOpen, onClose, data, action, onSave, onDelete }) => {
                     <FormErrorMessage>{formErrors.follower}</FormErrorMessage>
                   </FormControl>
                 </HStack>
-            
+
                 <HStack spacing={4}>
                   <FormControl flex={1}>
                     <FormLabel>Status</FormLabel>
@@ -477,7 +495,7 @@ const AddProduct = ({ isOpen, onClose, data, action, onSave, onDelete }) => {
                     <FormErrorMessage>{formErrors.price}</FormErrorMessage>
                   </FormControl>
                 </HStack>
-            
+
                 <FormControl isInvalid={!!formErrors.region}>
                   <FormLabel>Region</FormLabel>
                   <Input
@@ -489,7 +507,7 @@ const AddProduct = ({ isOpen, onClose, data, action, onSave, onDelete }) => {
                   />
                   <FormErrorMessage>{formErrors.region}</FormErrorMessage>
                 </FormControl>
-                
+
                 <FormControl>
                   <FormLabel>Engagement Rate (%)</FormLabel>
                   <Input
@@ -564,7 +582,9 @@ const AddProduct = ({ isOpen, onClose, data, action, onSave, onDelete }) => {
 
                 {/* Add Statistics Section */}
                 <Box>
-                  <Heading size="sm" mb={4}>Account Statistics (Optional)</Heading>
+                  <Heading size="sm" mb={4}>
+                    Account Statistics (Optional)
+                  </Heading>
                   <SimpleGrid columns={2} spacing={4}>
                     <FormControl>
                       <FormLabel>Average Likes</FormLabel>
@@ -591,13 +611,17 @@ const AddProduct = ({ isOpen, onClose, data, action, onSave, onDelete }) => {
 
                 {/* Add Security Section */}
                 <Box>
-                  <Heading size="sm" mb={4}>Security Features</Heading>
+                  <Heading size="sm" mb={4}>
+                    Security Features
+                  </Heading>
                   <SimpleGrid columns={2} spacing={4}>
                     <FormControl>
                       <FormLabel>2FA Status</FormLabel>
                       <Select
-                        value={twoFactorEnabled ? 'true' : 'false'}
-                        onChange={(e) => setTwoFactorEnabled(e.target.value === 'true')}
+                        value={twoFactorEnabled ? "true" : "false"}
+                        onChange={(e) =>
+                          setTwoFactorEnabled(e.target.value === "true")
+                        }
                         isDisabled={isReadOnly}
                       >
                         <option value="true">Enabled</option>
@@ -607,8 +631,10 @@ const AddProduct = ({ isOpen, onClose, data, action, onSave, onDelete }) => {
                     <FormControl>
                       <FormLabel>Original Email</FormLabel>
                       <Select
-                        value={originalEmailAvailable ? 'true' : 'false'}
-                        onChange={(e) => setOriginalEmailAvailable(e.target.value === 'true')}
+                        value={originalEmailAvailable ? "true" : "false"}
+                        onChange={(e) =>
+                          setOriginalEmailAvailable(e.target.value === "true")
+                        }
                         isDisabled={isReadOnly}
                       >
                         <option value="true">Available</option>
@@ -627,7 +653,7 @@ const AddProduct = ({ isOpen, onClose, data, action, onSave, onDelete }) => {
                 <Text fontSize="sm" color="gray.500" mb={4}>
                   Note: Format photos SVG, PNG, or JPG (Max size 4MB)
                 </Text>
-            
+
                 {/* Image Grid */}
                 <SimpleGrid columns={4} spacing={4} mb={6}>
                   {images.map((image, index) => (
@@ -644,10 +670,17 @@ const AddProduct = ({ isOpen, onClose, data, action, onSave, onDelete }) => {
                       height="100px"
                       textAlign="center"
                       position="relative"
-                      onClick={isReadOnly ? undefined : () => document.getElementById(`fileInput-${index}`).click()}
+                      onClick={
+                        isReadOnly
+                          ? undefined
+                          : () =>
+                              document
+                                .getElementById(`fileInput-${index}`)
+                                .click()
+                      }
                       cursor={isReadOnly ? "default" : "pointer"}
                     >
-                      {(imagesPreviews[index] || image) ? (
+                      {imagesPreviews[index] || image ? (
                         <>
                           <Image
                             src={renderImage(image, imagesPreviews[index])}
@@ -655,17 +688,24 @@ const AddProduct = ({ isOpen, onClose, data, action, onSave, onDelete }) => {
                             objectFit="contain"
                             boxSize="60px"
                             height="100px"
-                            fallback={<Box>
-                              <FaImage color="#007bff" size={24} />
-                              <Text fontSize="xs" color="gray.600" fontWeight="bold" mt={2}>
-                                Error loading image
-                              </Text>
-                            </Box>}
+                            fallback={
+                              <Box>
+                                <FaImage color="#007bff" size={24} />
+                                <Text
+                                  fontSize="xs"
+                                  color="gray.600"
+                                  fontWeight="bold"
+                                  mt={2}
+                                >
+                                  Error loading image
+                                </Text>
+                              </Box>
+                            }
                             onError={(e) => {
-                              console.error('Image load error:', {
+                              console.error("Image load error:", {
                                 src: e.target.src,
                                 originalImage: image,
-                                preview: imagesPreviews[index]
+                                preview: imagesPreviews[index],
                               });
                             }}
                           />
@@ -688,7 +728,12 @@ const AddProduct = ({ isOpen, onClose, data, action, onSave, onDelete }) => {
                       ) : (
                         <Box>
                           <FaImage color="#007bff" size={24} />
-                          <Text fontSize="xs" color="gray.600" fontWeight="bold" mt={2}>
+                          <Text
+                            fontSize="xs"
+                            color="gray.600"
+                            fontWeight="bold"
+                            mt={2}
+                          >
                             Photo {index + 1}
                           </Text>
                         </Box>
@@ -699,7 +744,9 @@ const AddProduct = ({ isOpen, onClose, data, action, onSave, onDelete }) => {
                           type="file"
                           accept="image/*"
                           display="none"
-                          onChange={(e) => handleImageChange(index, e.target.files[0])}
+                          onChange={(e) =>
+                            handleImageChange(index, e.target.files[0])
+                          }
                         />
                       )}
                     </Box>
@@ -726,7 +773,8 @@ const AddProduct = ({ isOpen, onClose, data, action, onSave, onDelete }) => {
           <AlertDialogContent>
             <AlertDialogHeader>Delete Product</AlertDialogHeader>
             <AlertDialogBody>
-              Are you sure you want to delete this product? This action cannot be undone.
+              Are you sure you want to delete this product? This action cannot
+              be undone.
             </AlertDialogBody>
             {alertDialogButtons}
           </AlertDialogContent>

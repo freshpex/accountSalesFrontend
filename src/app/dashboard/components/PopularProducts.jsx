@@ -1,10 +1,23 @@
 import {
-  Box, Flex, Text, Button, Table, Thead, Tbody, Tr, Th, Td,
-  Image, Badge, Progress, Grid, useColorModeValue
-} from '@chakra-ui/react';
-import { FiDownload, FiPackage } from 'react-icons/fi';
-import DashboardCard from '../../../components/cards/DashboardCard';
-import EmptyStatePage from '../../../components/emptyState';
+  Box,
+  Flex,
+  Text,
+  Button,
+  Table,
+  Thead,
+  Tbody,
+  Tr,
+  Th,
+  Td,
+  Image,
+  Badge,
+  Progress,
+  Grid,
+  useColorModeValue,
+} from "@chakra-ui/react";
+import { FiDownload, FiPackage } from "react-icons/fi";
+import DashboardCard from "../../../components/cards/DashboardCard";
+import EmptyStatePage from "../../../components/emptyState";
 
 const PopularProducts = ({ products }) => {
   if (!products || !products.length) {
@@ -20,13 +33,21 @@ const PopularProducts = ({ products }) => {
   }
 
   const handleExport = () => {
-    console.log('Exporting products data...');
+    console.log("Exporting products data...");
   };
 
   return (
     <DashboardCard>
-      <Flex justify="space-between" align="center" mb={6} flexWrap="wrap" gap={4}>
-        <Text fontSize="lg" fontWeight="medium">Popular Products</Text>
+      <Flex
+        justify="space-between"
+        align="center"
+        mb={6}
+        flexWrap="wrap"
+        gap={4}
+      >
+        <Text fontSize="lg" fontWeight="medium">
+          Popular Products
+        </Text>
         <Button
           leftIcon={<FiDownload />}
           size="sm"
@@ -39,7 +60,7 @@ const PopularProducts = ({ products }) => {
 
       <Box>
         {/* Desktop View */}
-        <Box display={{ base: 'none', lg: 'block' }}>
+        <Box display={{ base: "none", lg: "block" }}>
           <Box overflowX="auto">
             <Table variant="simple" size="sm">
               <Thead>
@@ -62,7 +83,7 @@ const PopularProducts = ({ products }) => {
         </Box>
 
         {/* Mobile View */}
-        <Box display={{ base: 'block', lg: 'none' }}>
+        <Box display={{ base: "block", lg: "none" }}>
           {products.map((product) => (
             <ProductMobileCard key={product._id} product={product} />
           ))}
@@ -87,7 +108,9 @@ const ProductRow = ({ product }) => (
         />
         <Box>
           <Text fontWeight="medium">{product.name}</Text>
-          <Text fontSize="sm" color="gray.500">#{product._id}</Text>
+          <Text fontSize="sm" color="gray.500">
+            #{product._id}
+          </Text>
         </Box>
       </Flex>
     </Td>
@@ -109,13 +132,15 @@ const ProductRow = ({ product }) => (
     </Td>
     <Td>
       <Flex align="center">
-        <Box as="span" color="yellow.400" mr={1}>★</Box>
+        <Box as="span" color="yellow.400" mr={1}>
+          ★
+        </Box>
         <Text>{product.rating}</Text>
       </Flex>
     </Td>
     <Td>
       <Badge
-        colorScheme={product.status === 'available' ? 'green' : 'red'}
+        colorScheme={product.status === "available" ? "green" : "red"}
         borderRadius="full"
         px={3}
         py={1}
@@ -127,12 +152,12 @@ const ProductRow = ({ product }) => (
 );
 
 const ProductMobileCard = ({ product }) => (
-  <Box 
-    p={4} 
-    borderWidth="1px" 
-    borderRadius="lg" 
+  <Box
+    p={4}
+    borderWidth="1px"
+    borderRadius="lg"
     mb={4}
-    bg={useColorModeValue('white', 'gray.800')}
+    bg={useColorModeValue("white", "gray.800")}
   >
     <Flex align="center" mb={3}>
       <Image
@@ -146,10 +171,12 @@ const ProductMobileCard = ({ product }) => (
       />
       <Box flex="1">
         <Text fontWeight="medium">{product.name}</Text>
-        <Text fontSize="sm" color="gray.500">#{product._id}</Text>
+        <Text fontSize="sm" color="gray.500">
+          #{product._id}
+        </Text>
       </Box>
       <Badge
-        colorScheme={product.status === 'available' ? 'green' : 'red'}
+        colorScheme={product.status === "available" ? "green" : "red"}
         borderRadius="full"
         px={3}
         py={1}
@@ -160,15 +187,21 @@ const ProductMobileCard = ({ product }) => (
 
     <Grid templateColumns="repeat(2, 1fr)" gap={4}>
       <Box>
-        <Text fontSize="sm" color="gray.500">Price</Text>
+        <Text fontSize="sm" color="gray.500">
+          Price
+        </Text>
         <Text fontWeight="medium">₦{product.price.toFixed(2)}</Text>
       </Box>
       <Box>
-        <Text fontSize="sm" color="gray.500">Sales</Text>
+        <Text fontSize="sm" color="gray.500">
+          Sales
+        </Text>
         <Text fontWeight="medium">{product.sales?.toLocaleString()}</Text>
       </Box>
       <Box>
-        <Text fontSize="sm" color="gray.500">Inventory</Text>
+        <Text fontSize="sm" color="gray.500">
+          Inventory
+        </Text>
         <Flex align="center">
           <Progress
             value={(product.inventory / 2000) * 100}
@@ -181,9 +214,13 @@ const ProductMobileCard = ({ product }) => (
         </Flex>
       </Box>
       <Box>
-        <Text fontSize="sm" color="gray.500">Rating</Text>
+        <Text fontSize="sm" color="gray.500">
+          Rating
+        </Text>
         <Flex align="center">
-          <Box as="span" color="yellow.400" mr={1}>★</Box>
+          <Box as="span" color="yellow.400" mr={1}>
+            ★
+          </Box>
           <Text>{product.rating}</Text>
         </Flex>
       </Box>

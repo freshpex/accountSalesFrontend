@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { useSelector, useDispatch } from 'react-redux';
+import { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
 import {
   Box,
   Container,
@@ -26,7 +26,7 @@ import {
   Tab,
   TabPanel,
   SimpleGrid,
-} from '@chakra-ui/react';
+} from "@chakra-ui/react";
 import {
   FiUser,
   FiCalendar,
@@ -34,26 +34,32 @@ import {
   FiShield,
   FiUsers,
   FiPercent,
-} from 'react-icons/fi';
-import { fetch_single_product, clear_selected_product, request_escrow, clear_purchase_status, clear_escrow_status } from '../redux/reducer';
-import ImageGallery from '../components/ImageGallery';
-import { motion } from 'framer-motion';
-import { useColors } from '../../../utils/colors';
+} from "react-icons/fi";
+import {
+  fetch_single_product,
+  clear_selected_product,
+  request_escrow,
+  clear_purchase_status,
+  clear_escrow_status,
+} from "../redux/reducer";
+import ImageGallery from "../components/ImageGallery";
+import { motion } from "framer-motion";
+import { useColors } from "../../../utils/colors";
 import {
   getSelectedProduct,
   getProductDetailLoading,
   getProductDetailError,
-  getEscrowStatus
-} from '../redux/selector';
-import { getProfile } from '../../accountSettings.jsx/redux/selector';
-import { fetch_profile } from '../../accountSettings.jsx//redux/reducer';
-import StatBox from '../components/statBox';
-import SecurityFeature from '../components/securityFeature';
-import IncludedItem from '../components/includedItem';
-import StatisticCard from '../components/statisticCard';
-import Alert from '../components/alert';
-import ErrorState from '../components/errorState';
-import LoadingSkeleton from '../components/loadingSkeleton';
+  getEscrowStatus,
+} from "../redux/selector";
+import { getProfile } from "../../accountSettings.jsx/redux/selector";
+import { fetch_profile } from "../../accountSettings.jsx//redux/reducer";
+import StatBox from "../components/statBox";
+import SecurityFeature from "../components/securityFeature";
+import IncludedItem from "../components/includedItem";
+import StatisticCard from "../components/statisticCard";
+import Alert from "../components/alert";
+import ErrorState from "../components/errorState";
+import LoadingSkeleton from "../components/loadingSkeleton";
 
 const MotionBox = motion(Box);
 
@@ -69,10 +75,10 @@ const ProductDetail = () => {
   const colors = useColors();
   const [selectedImage, setSelectedImage] = useState(null);
   const profile = useSelector(getProfile);
-  
+
   useEffect(() => {
-      dispatch(fetch_profile());
-    }, [dispatch]);
+    dispatch(fetch_profile());
+  }, [dispatch]);
 
   useEffect(() => {
     dispatch(fetch_single_product({ id, type }));
@@ -81,16 +87,28 @@ const ProductDetail = () => {
 
   const loadFlutterwaveScript = (retryCount = 3) => {
     return new Promise((resolve, reject) => {
-      const script = document.createElement('script');
-      script.src = 'https://checkout.flutterwave.com/v3.js';
+      const script = document.createElement("script");
+      script.src = "https://checkout.flutterwave.com/v3.js";
       script.async = true;
       script.onload = () => resolve();
       script.onerror = () => {
         if (retryCount > 0) {
-          console.warn(`Flutterwave script load failed. Retrying... (${retryCount} attempts left)`);
-          setTimeout(() => loadFlutterwaveScript(retryCount - 1).then(resolve).catch(reject), 1000);
+          console.warn(
+            `Flutterwave script load failed. Retrying... (${retryCount} attempts left)`,
+          );
+          setTimeout(
+            () =>
+              loadFlutterwaveScript(retryCount - 1)
+                .then(resolve)
+                .catch(reject),
+            1000,
+          );
         } else {
-          reject(new Error('Failed to load payment script. Please check your connection.'));
+          reject(
+            new Error(
+              "Failed to load payment script. Please check your connection.",
+            ),
+          );
         }
       };
       document.body.appendChild(script);
@@ -100,9 +118,9 @@ const ProductDetail = () => {
   const handleBuyNow = async () => {
     try {
       await loadFlutterwaveScript();
-      
+
       const productId = product._id || product.id;
-      
+
       // Store payment data for callback
       const paymentData = {
         productId,
@@ -110,68 +128,68 @@ const ProductDetail = () => {
         customerId: profile._id,
         amount: product.price,
         customerEmail: profile.email,
-        customerName: `${profile.firstName} ${profile.lastName}`.trim()
+        customerName: `${profile.firstName} ${profile.lastName}`.trim(),
       };
-      
-      localStorage.setItem('paymentData', JSON.stringify(paymentData));
+
+      localStorage.setItem("paymentData", JSON.stringify(paymentData));
 
       const config = {
         public_key: import.meta.env.VITE_FLUTTERWAVE_PUBLIC_KEY,
         tx_ref: `TX_${Date.now()}_${Math.floor(Math.random() * 1000)}`,
         amount: product.price,
-        currency: 'NGN',
-        payment_options: 'card,banktransfer,ussd',
+        currency: "NGN",
+        payment_options: "card,banktransfer,ussd",
         redirect_url: `${window.location.origin}/payment/callback`,
         meta: {
           productId: productId,
           productType: product.type,
           userId: profile.userId,
           customerId: profile._id,
-          escrowId: null
+          escrowId: null,
         },
         customer: {
-          email: profile.email || 'customer@example.com',
-          phone_number: profile.phoneNumber || '',
-          name: `${profile.firstName} ${profile.lastName}`.trim() || 'Customer',
-          firstName: profile.firstName || '',
-          lastName: profile.lastName || '',
-          address: profile.address || '',
-          country: profile.country || '',
-          gender: profile.gender || '',
+          email: profile.email || "customer@example.com",
+          phone_number: profile.phoneNumber || "",
+          name: `${profile.firstName} ${profile.lastName}`.trim() || "Customer",
+          firstName: profile.firstName || "",
+          lastName: profile.lastName || "",
+          address: profile.address || "",
+          country: profile.country || "",
+          gender: profile.gender || "",
           birthDate: profile.birthDate || null,
-          profilePicture: profile.profilePicture || '',
+          profilePicture: profile.profilePicture || "",
           userId: profile.userId,
-          profileId: profile._id
+          profileId: profile._id,
         },
         customizations: {
-          title: 'Product Purchase',
+          title: "Product Purchase",
           description: `Payment for ${product.username}`,
           logo: import.meta.env.VITE_LOGO_URL,
         },
         callback: handleFlutterwaveSuccess,
         onclose: () => {
-          console.log('Payment modal closed');
+          console.log("Payment modal closed");
           toast({
-            title: 'Payment Cancelled',
-            description: 'You have cancelled the payment',
-            status: 'warning',
+            title: "Payment Cancelled",
+            description: "You have cancelled the payment",
+            status: "warning",
             duration: 5000,
             isClosable: true,
           });
-        }
+        },
       };
 
-      if (typeof window.FlutterwaveCheckout === 'function') {
+      if (typeof window.FlutterwaveCheckout === "function") {
         window.FlutterwaveCheckout(config);
       } else {
-        throw new Error('Flutterwave not initialized properly');
+        throw new Error("Flutterwave not initialized properly");
       }
     } catch (error) {
-      console.error('Payment initialization error:', error);
+      console.error("Payment initialization error:", error);
       toast({
-        title: 'Payment Error',
-        description: 'Failed to initialize payment. Please try again.',
-        status: 'error',
+        title: "Payment Error",
+        description: "Failed to initialize payment. Please try again.",
+        status: "error",
         duration: 5000,
         isClosable: true,
       });
@@ -180,49 +198,50 @@ const ProductDetail = () => {
 
   const handleFlutterwaveSuccess = async (response) => {
     try {
-
       // Verify payment status
-      const verifyResponse = await fetch('/api/v1/transactions/callback', {
-        method: 'POST',
+      const verifyResponse = await fetch("/api/v1/transactions/callback", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json'
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           transaction_id: response.transaction_id,
-          tx_ref: response.tx_ref
-        })
+          tx_ref: response.tx_ref,
+        }),
       });
 
       const verifyData = await verifyResponse.json();
 
       if (verifyData.success) {
         toast({
-          title: 'Payment Successful',
-          description: 'Your payment has been verified successfully',
-          status: 'success',
+          title: "Payment Successful",
+          description: "Your payment has been verified successfully",
+          status: "success",
           duration: 5000,
           isClosable: true,
         });
 
         // Create escrow after successful payment
-        const escrowAction = await dispatch(request_escrow({
-          productId: product.id,
-          transactionId: response.transaction_id,
-          type: 'product_purchase'
-        }));
+        const escrowAction = await dispatch(
+          request_escrow({
+            productId: product.id,
+            transactionId: response.transaction_id,
+            type: "product_purchase",
+          }),
+        );
 
         if (escrowAction.payload?.escrowId) {
           navigate(`/escrow/${escrowAction.payload.escrowId}`);
         }
       } else {
-        throw new Error(verifyData.error || 'Payment verification failed');
+        throw new Error(verifyData.error || "Payment verification failed");
       }
     } catch (error) {
-      console.error('Payment processing error:', error);
+      console.error("Payment processing error:", error);
       toast({
-        title: 'Payment Error',
-        description: error.message || 'Failed to process payment',
-        status: 'error',
+        title: "Payment Error",
+        description: error.message || "Failed to process payment",
+        status: "error",
         duration: 5000,
         isClosable: true,
       });
@@ -231,16 +250,18 @@ const ProductDetail = () => {
 
   const handleEscrowRequest = async () => {
     try {
-      dispatch(request_escrow({
-        productId: id,
-        type: 'product_purchase'
-      }));
-      
+      dispatch(
+        request_escrow({
+          productId: id,
+          type: "product_purchase",
+        }),
+      );
+
       if (escrowStatus.escrowData?.escrowId) {
         navigate(`/escrow/${escrowStatus.escrowData.escrowId}`);
       }
     } catch (error) {
-      console.error('Escrow request error:', error);
+      console.error("Escrow request error:", error);
     }
   };
 
@@ -262,7 +283,7 @@ const ProductDetail = () => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
-        <Grid templateColumns={{ base: '1fr', lg: '2fr 1fr' }} gap={8}>
+        <Grid templateColumns={{ base: "1fr", lg: "2fr 1fr" }} gap={8}>
           <GridItem>
             <VStack align="stretch" spacing={6}>
               {/* Image Gallery */}
@@ -295,10 +316,10 @@ const ProductDetail = () => {
                     <Tab
                       _selected={{
                         bg: colors.productTabSelected,
-                        color: colors.buttonPrimaryBg
+                        color: colors.buttonPrimaryBg,
                       }}
                       _hover={{
-                        bg: colors.productTabHover
+                        bg: colors.productTabHover,
                       }}
                     >
                       Details
@@ -310,7 +331,9 @@ const ProductDetail = () => {
                   <TabPanels>
                     <TabPanel>
                       <VStack align="stretch" spacing={4}>
-                        <Heading size="md" color={colors.textColor}>Account Information</Heading>
+                        <Heading size="md" color={colors.textColor}>
+                          Account Information
+                        </Heading>
                         <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4}>
                           {/* Update StatBox component */}
                           <Box
@@ -388,7 +411,9 @@ const ProductDetail = () => {
                         <Divider />
 
                         <Box>
-                          <Heading size="md" mb={4}>Description</Heading>
+                          <Heading size="md" mb={4}>
+                            Description
+                          </Heading>
                           <Text>{product.about}</Text>
                         </Box>
                       </VStack>
@@ -400,12 +425,20 @@ const ProductDetail = () => {
                         <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4}>
                           <StatisticCard
                             title="Average Likes"
-                            value={product.stats.averageLikes || Math.floor(product.followers * (product.engagement / 100))}
+                            value={
+                              product.stats.averageLikes ||
+                              Math.floor(
+                                product.followers * (product.engagement / 100),
+                              )
+                            }
                             change="+5%"
                           />
                           <StatisticCard
                             title="Average Comments"
-                            value={product.stats.averageComments || Math.floor(product.followers * 0.01)}
+                            value={
+                              product.stats.averageComments ||
+                              Math.floor(product.followers * 0.01)
+                            }
                             change="+3%"
                           />
                           <StatisticCard
@@ -428,11 +461,15 @@ const ProductDetail = () => {
                         <List spacing={3}>
                           <SecurityFeature
                             text="2FA Enabled"
-                            isAvailable={product.security.twoFactorEnabled || false}
+                            isAvailable={
+                              product.security.twoFactorEnabled || false
+                            }
                           />
                           <SecurityFeature
                             text="Original Email Available"
-                            isAvailable={product.security.originalEmailAvailable || false}
+                            isAvailable={
+                              product.security.originalEmailAvailable || false
+                            }
                           />
                           <SecurityFeature
                             text="Account Recovery Options"
@@ -468,7 +505,9 @@ const ProductDetail = () => {
                   <Heading size="lg">₦{product.price.toLocaleString()}</Heading>
                   <Tag
                     size="lg"
-                    colorScheme={product.status === 'available' ? 'green' : 'red'}
+                    colorScheme={
+                      product.status === "available" ? "green" : "red"
+                    }
                   >
                     {product.status}
                   </Tag>
@@ -478,7 +517,7 @@ const ProductDetail = () => {
                   <Button
                     size="lg"
                     colorScheme="blue"
-                    isDisabled={product.status !== 'available'}
+                    isDisabled={product.status !== "available"}
                     onClick={handleBuyNow}
                   >
                     Buy Now
@@ -517,9 +556,9 @@ const ProductDetail = () => {
       </MotionBox>
 
       {/* Image Preview Modal */}
-      <Modal 
-        isOpen={!!selectedImage} 
-        onClose={() => setSelectedImage(null)} 
+      <Modal
+        isOpen={!!selectedImage}
+        onClose={() => setSelectedImage(null)}
         size="6xl"
         isCentered
       >
@@ -527,15 +566,15 @@ const ProductDetail = () => {
         <ModalContent bg={colors.productCardBg}>
           <ModalBody p={0}>
             <Image
-            src={selectedImage}
-            w="full"
-            h="auto"
-            objectFit="contain"
-            maxH="90vh"
+              src={selectedImage}
+              w="full"
+              h="auto"
+              objectFit="contain"
+              maxH="90vh"
             />
           </ModalBody>
-          </ModalContent>
-        </Modal>      
+        </ModalContent>
+      </Modal>
     </Container>
   );
 };

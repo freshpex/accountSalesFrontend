@@ -1,7 +1,7 @@
-import { useState, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { login_user } from './redux/reducer';
-import { getLoading, getError } from './redux/selector';
+import { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { login_user } from "./redux/reducer";
+import { getLoading, getError } from "./redux/selector";
 import {
   Box,
   Button,
@@ -20,11 +20,11 @@ import {
   VStack,
   useColorModeValue,
   HStack,
-} from '@chakra-ui/react';
-import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons';
-import { FcGoogle } from 'react-icons/fc';
-import { Link as RouterLink } from 'react-router-dom';
-import { useColors } from '../../../utils/colors';
+} from "@chakra-ui/react";
+import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
+import { FcGoogle } from "react-icons/fc";
+import { Link as RouterLink } from "react-router-dom";
+import { useColors } from "../../../utils/colors";
 
 const Login = () => {
   const dispatch = useDispatch();
@@ -32,18 +32,18 @@ const Login = () => {
   const loading = useSelector(getLoading);
   const error = useSelector(getError);
   const [showPassword, setShowPassword] = useState(false);
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const colors = useColors();
-  const borderColor = useColorModeValue('gray.200', 'gray.700');
+  const borderColor = useColorModeValue("gray.200", "gray.700");
 
   const handleGoogleSignIn = () => {
-    window.location.href = `${import.meta.env.VITE_APP_API_URL}/api/v1/user/auth/google`
+    window.location.href = `${import.meta.env.VITE_APP_API_URL}/api/v1/user/auth/google`;
   };
 
   useEffect(() => {
     if (error) {
-      console.log(error)
+      console.log(error);
     }
   }, [error]);
 
@@ -51,8 +51,8 @@ const Login = () => {
     e.preventDefault();
     if (!email || !password) {
       toast({
-        description: 'Please fill in all required fields',
-        status: 'error',
+        description: "Please fill in all required fields",
+        status: "error",
         duration: 3000,
         isClosable: true,
       });
@@ -66,22 +66,22 @@ const Login = () => {
       <VStack spacing={6} align="stretch">
         {/* Logo & Title Section */}
         <VStack spacing={3} align="center">
-          <Box 
-            position="relative" 
-            w="full" 
+          <Box
+            position="relative"
+            w="full"
             h={{ base: "80px", md: "100px" }}
             display="flex"
             justifyContent="center"
           >
-            <Image 
-              src="/logo.svg" 
-              alt="Logo" 
+            <Image
+              src="/logo.svg"
+              alt="Logo"
               h="full"
-              style={{ objectFit: 'contain' }}
+              style={{ objectFit: "contain" }}
             />
           </Box>
           <VStack spacing={2}>
-            <Text 
+            <Text
               fontSize={{ base: "xl", md: "2xl" }}
               fontWeight="bold"
               bgGradient="linear(to-r, blue.400, purple.500)"
@@ -96,9 +96,9 @@ const Login = () => {
         </VStack>
 
         {/* Main Form Box */}
-        <Box 
-          w="full" 
-          p={{ base: 6, md: 8 }} 
+        <Box
+          w="full"
+          p={{ base: 6, md: 8 }}
           borderRadius="2xl"
           bg={colors.bgColor}
           boxShadow="lg"
@@ -114,8 +114,8 @@ const Login = () => {
               leftIcon={<FcGoogle size="24px" />}
               onClick={handleGoogleSignIn}
               _hover={{
-                transform: 'translateY(-2px)',
-                boxShadow: 'md'
+                transform: "translateY(-2px)",
+                boxShadow: "md",
               }}
               transition="all 0.2s"
             >
@@ -145,7 +145,7 @@ const Login = () => {
               <FormControl>
                 <InputGroup size="lg">
                   <Input
-                    type={showPassword ? 'text' : 'password'}
+                    type={showPassword ? "text" : "password"}
                     placeholder="Password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
@@ -158,7 +158,9 @@ const Login = () => {
                       variant="ghost"
                       onClick={() => setShowPassword(!showPassword)}
                       icon={showPassword ? <ViewOffIcon /> : <ViewIcon />}
-                      aria-label={showPassword ? 'Hide password' : 'Show password'}
+                      aria-label={
+                        showPassword ? "Hide password" : "Show password"
+                      }
                     />
                   </InputRightElement>
                 </InputGroup>
@@ -166,12 +168,12 @@ const Login = () => {
 
               <HStack justify="space-between" w="full" py={2}>
                 <Checkbox size="sm">Remember me</Checkbox>
-                <Link 
-                  as={RouterLink} 
-                  to="/forgot-password" 
+                <Link
+                  as={RouterLink}
+                  to="/forgot-password"
                   color="blue.400"
                   fontSize="sm"
-                  _hover={{ color: 'blue.500', textDecoration: 'none' }}
+                  _hover={{ color: "blue.500", textDecoration: "none" }}
                 >
                   Forgot Password?
                 </Link>
@@ -183,9 +185,9 @@ const Login = () => {
                 bg="blue.500"
                 color="white"
                 _hover={{
-                  bg: 'blue.600',
-                  transform: 'translateY(-2px)',
-                  boxShadow: 'lg'
+                  bg: "blue.600",
+                  transform: "translateY(-2px)",
+                  boxShadow: "lg",
                 }}
                 onClick={handleSubmit}
                 isLoading={loading}
@@ -210,7 +212,7 @@ const Login = () => {
             to="/register"
             color="blue.400"
             fontWeight="semibold"
-            _hover={{ color: 'blue.500', textDecoration: 'none' }}
+            _hover={{ color: "blue.500", textDecoration: "none" }}
           >
             Sign Up
           </Link>

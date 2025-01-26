@@ -1,4 +1,4 @@
-import { createContext, useContext, useState } from 'react';
+import { createContext, useContext, useState } from "react";
 
 const FilterContext = createContext();
 
@@ -7,11 +7,11 @@ export const FilterProvider = ({ children }) => {
     status: null,
     date: null,
     type: null,
-    search: '',
+    search: "",
   });
 
   const updateFilters = (newFilters) => {
-    setFilters(prev => ({ ...prev, ...newFilters }));
+    setFilters((prev) => ({ ...prev, ...newFilters }));
   };
 
   return (

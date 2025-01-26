@@ -1,10 +1,4 @@
-import {
-  Box,
-  Flex,
-  Text,
-  Select,
-  useColorModeValue
-} from '@chakra-ui/react';
+import { Box, Flex, Text, Select, useColorModeValue } from "@chakra-ui/react";
 import {
   LineChart,
   Line,
@@ -13,14 +7,14 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
-  Legend
-} from 'recharts';
-import { useState } from 'react';
+  Legend,
+} from "recharts";
+import { useState } from "react";
 
 const CustomerGrowthChart = ({ data }) => {
-  const [timeframe, setTimeframe] = useState('6months');
-  const bgColor = useColorModeValue('white', 'gray.800');
-  const borderColor = useColorModeValue('gray.100', 'gray.700');
+  const [timeframe, setTimeframe] = useState("6months");
+  const bgColor = useColorModeValue("white", "gray.800");
+  const borderColor = useColorModeValue("gray.100", "gray.700");
 
   return (
     <Box
@@ -32,14 +26,16 @@ const CustomerGrowthChart = ({ data }) => {
       shadow="sm"
       w="100%"
     >
-      <Flex 
-        justify="space-between" 
-        align="center" 
+      <Flex
+        justify="space-between"
+        align="center"
         mb={6}
-        flexDirection={{ base: 'column', sm: 'row' }}
+        flexDirection={{ base: "column", sm: "row" }}
         gap={3}
       >
-        <Text fontSize={{ base: "md", md: "lg" }} fontWeight="medium">Customer Growth</Text>
+        <Text fontSize={{ base: "md", md: "lg" }} fontWeight="medium">
+          Customer Growth
+        </Text>
         <Select
           width={{ base: "100%", sm: "150px" }}
           size="sm"
@@ -51,41 +47,41 @@ const CustomerGrowthChart = ({ data }) => {
           <option value="ytd">Year to date</option>
         </Select>
       </Flex>
-      
+
       {data && data.length > 0 ? (
-        <Box 
+        <Box
           h={{ base: "200px", sm: "250px", md: "300px" }}
           mx={{ base: -3, md: 0 }}
           overflow="hidden"
         >
           <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={data} margin={{ 
-              top: 5,
-              right: 10,
-              left: 0,
-              bottom: 30
-            }}>
+            <LineChart
+              data={data}
+              margin={{
+                top: 5,
+                right: 10,
+                left: 0,
+                bottom: 30,
+              }}
+            >
               <CartesianGrid strokeDasharray="3 3" />
-              <XAxis 
-                dataKey="month" 
+              <XAxis
+                dataKey="month"
                 tick={{ fontSize: 10 }}
                 angle={-45}
                 textAnchor="end"
                 height={50}
                 interval="preserveStartEnd"
               />
-              <YAxis 
-                tick={{ fontSize: 10 }}
-                width={30}
+              <YAxis tick={{ fontSize: 10 }} width={30} />
+              <Tooltip
+                contentStyle={{ fontSize: "12px" }}
+                labelStyle={{ fontSize: "12px" }}
               />
-              <Tooltip 
-                contentStyle={{ fontSize: '12px' }}
-                labelStyle={{ fontSize: '12px' }}
-              />
-              <Legend 
+              <Legend
                 verticalAlign="top"
                 height={36}
-                wrapperStyle={{ fontSize: '11px' }}
+                wrapperStyle={{ fontSize: "11px" }}
                 align="center"
               />
               <Line
@@ -116,7 +112,9 @@ const CustomerGrowthChart = ({ data }) => {
           </ResponsiveContainer>
         </Box>
       ) : (
-        <Text textAlign="center" py={10} color="gray.500">No data available</Text>
+        <Text textAlign="center" py={10} color="gray.500">
+          No data available
+        </Text>
       )}
     </Box>
   );

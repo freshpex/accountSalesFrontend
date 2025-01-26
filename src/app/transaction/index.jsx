@@ -1,56 +1,91 @@
-import { useState, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import {
-  Box, Container, Flex, Input, InputGroup, InputLeftElement,
-  Text, Menu, MenuButton, MenuList, MenuItem, Breadcrumb, BreadcrumbItem,
-  BreadcrumbLink, Button, TabList, Tabs, Tab, VStack, Icon, HStack, Grid,
-} from '@chakra-ui/react';
-import { SearchIcon, ChevronDownIcon } from '@chakra-ui/icons';
-import { FiArchive, FiInbox, FiCheckCircle, FiClock, FiXCircle } from 'react-icons/fi';
-import { motion } from 'framer-motion';
-import TransactionModal from './modal/TransactionModal';
-import TransactionTable from './components/tables';
-import { getStatusColor, getPaymentColor } from '../../utils/utils';
-import { useFilters } from '../../context/FilterContext';
-import { exportToCSV } from '../../utils/export';
-import EmptyStatePage from '../../components/emptyState';
-import LoadingSpinner from '../../components/LoadingSpinner';
+  Box,
+  Container,
+  Flex,
+  Input,
+  InputGroup,
+  InputLeftElement,
+  Text,
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  Button,
+  TabList,
+  Tabs,
+  Tab,
+  VStack,
+  Icon,
+  HStack,
+  Grid,
+} from "@chakra-ui/react";
+import { SearchIcon, ChevronDownIcon } from "@chakra-ui/icons";
+import {
+  FiArchive,
+  FiInbox,
+  FiCheckCircle,
+  FiClock,
+  FiXCircle,
+} from "react-icons/fi";
+import { motion } from "framer-motion";
+import TransactionModal from "./modal/TransactionModal";
+import TransactionTable from "./components/tables";
+import { getStatusColor, getPaymentColor } from "../../utils/utils";
+import { useFilters } from "../../context/FilterContext";
+import { exportToCSV } from "../../utils/export";
+import EmptyStatePage from "../../components/emptyState";
+import LoadingSpinner from "../../components/LoadingSpinner";
 import {
   getTransactions,
   getTransactionStats,
   getTransactionMeta,
-  getLoading
-} from './redux/selector';
+  getLoading,
+} from "./redux/selector";
 import {
   fetch_transactions,
   add_transaction,
   update_transaction,
   delete_transaction,
   update_filters,
-  reset_filters
-} from './redux/reducer';
-import { useColors } from '../../utils/colors';
-import TransactionLookup from './components/TransactionLookup';
+  reset_filters,
+} from "./redux/reducer";
+import { useColors } from "../../utils/colors";
+import TransactionLookup from "./components/TransactionLookup";
 
 const TransactionTabs = () => {
   const colors = useColors();
-  const [activeTab, setActiveTab] = useState('all');
+  const [activeTab, setActiveTab] = useState("all");
   const stats = useSelector(getTransactionStats);
 
   const tabs = [
-    { id: 'all', label: 'All', count: stats?.all || 0, icon: FiInbox },
-    { id: 'completed', label: 'Completed', count: stats?.completed || 0, icon: FiCheckCircle },
-    { id: 'pending', label: 'Pending', count: stats?.pending || 0, icon: FiClock },
-    { id: 'failed', label: 'Failed', count: stats?.failed || 0, icon: FiXCircle },
+    { id: "all", label: "All", count: stats?.all || 0, icon: FiInbox },
+    {
+      id: "completed",
+      label: "Completed",
+      count: stats?.completed || 0,
+      icon: FiCheckCircle,
+    },
+    {
+      id: "pending",
+      label: "Pending",
+      count: stats?.pending || 0,
+      icon: FiClock,
+    },
+    {
+      id: "failed",
+      label: "Failed",
+      count: stats?.failed || 0,
+      icon: FiXCircle,
+    },
   ];
 
   return (
-    <Tabs 
-      onChange={setActiveTab} 
-      value={activeTab}
-      variant="unstyled"
-      w="100%"
-    >
+    <Tabs onChange={setActiveTab} value={activeTab} variant="unstyled" w="100%">
       <TabList
         bg={colors.cardBg}
         p={2}
@@ -60,7 +95,7 @@ const TransactionTabs = () => {
         display="flex"
         gap={2}
       >
-        {tabs.map(tab => (
+        {tabs.map((tab) => (
           <Tab
             key={tab.id}
             flex={1}
@@ -77,7 +112,9 @@ const TransactionTabs = () => {
             <VStack spacing={1}>
               <Icon as={tab.icon} boxSize={5} />
               <Text fontSize="sm">{tab.label}</Text>
-              <Text fontSize="xs" fontWeight="bold">{tab.count}</Text>
+              <Text fontSize="xs" fontWeight="bold">
+                {tab.count}
+              </Text>
             </VStack>
           </Tab>
         ))}
@@ -88,15 +125,15 @@ const TransactionTabs = () => {
 
 const Transaction = () => {
   const dispatch = useDispatch();
-  const profile = useSelector(state => state.accountSettings.data.profile);
+  const profile = useSelector((state) => state.accountSettings.data.profile);
   const transactions = useSelector(getTransactions);
   const stats = useSelector(getTransactionStats);
   const meta = useSelector(getTransactionMeta);
   const loading = useSelector(getLoading);
   const [selectedItems, setSelectedItems] = useState([]);
 
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedTab, setSelectedTab] = useState('all');
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedTab, setSelectedTab] = useState("all");
   const [page, setPage] = useState(1);
   const [itemsPerPage] = useState(10);
   const { filters } = useFilters();
@@ -116,18 +153,20 @@ const Transaction = () => {
   };
 
   const handleSaveTransaction = (data) => {
-    if (data.action === 'edit') {
-      dispatch(update_transaction({
-        id: data.id,
-        data: {
-          amount: data.amount,
-          status: data.status,
-          paymentStatus: data.paymentStatus,
-          paymentMethod: data.paymentMethod,
-          notes: data.notes,
-          metadata: data.metadata
-        }
-      }));
+    if (data.action === "edit") {
+      dispatch(
+        update_transaction({
+          id: data.id,
+          data: {
+            amount: data.amount,
+            status: data.status,
+            paymentStatus: data.paymentStatus,
+            paymentMethod: data.paymentMethod,
+            notes: data.notes,
+            metadata: data.metadata,
+          },
+        }),
+      );
     } else {
       dispatch(add_transaction(data));
     }
@@ -136,9 +175,9 @@ const Transaction = () => {
 
   const handleDeleteTransaction = (data) => {
     if (!data?.id && !data?._id) {
-      return 'Invalid transaction ID';
+      return "Invalid transaction ID";
     }
-    
+
     dispatch(delete_transaction(data.id || data._id));
     handleModalClose();
   };
@@ -148,13 +187,15 @@ const Transaction = () => {
   }, [selectedTab, searchQuery, filters]);
 
   useEffect(() => {
-    dispatch(fetch_transactions({ 
-      status: selectedTab,
-      page,
-      limit: itemsPerPage,
-      search: searchQuery,
-      ...filters
-    }));
+    dispatch(
+      fetch_transactions({
+        status: selectedTab,
+        page,
+        limit: itemsPerPage,
+        search: searchQuery,
+        ...filters,
+      }),
+    );
   }, [dispatch, selectedTab, page, itemsPerPage, filters, searchQuery]);
 
   const handleSearch = (value) => {
@@ -167,26 +208,26 @@ const Transaction = () => {
   };
 
   const handleClearFilters = () => {
-    setSearchQuery('');
+    setSearchQuery("");
     dispatch(reset_filters());
   };
 
   const handleExport = () => {
     if (!transactions.length) return;
-    
-    const timestamp = new Date().toISOString().split('T')[0];
+
+    const timestamp = new Date().toISOString().split("T")[0];
     const filename = `transactions-${selectedTab}-${timestamp}`;
-    
-    const dataToExport = transactions.map(item => ({
-      'Transaction ID': item.id,
-      'Product': item.productName,
-      'Customer': item.customer,
-      'Price': `₦${item.price}`,
-      'Date': new Date(item.date).toLocaleString(),
-      'Payment': item.payment,
-      'Status': item.status
+
+    const dataToExport = transactions.map((item) => ({
+      "Transaction ID": item.id,
+      Product: item.productName,
+      Customer: item.customer,
+      Price: `₦${item.price}`,
+      Date: new Date(item.date).toLocaleString(),
+      Payment: item.payment,
+      Status: item.status,
     }));
-    
+
     exportToCSV(dataToExport, filename);
   };
 
@@ -206,7 +247,7 @@ const Transaction = () => {
           sub="Get started by adding your first transaction"
           icon={<FiArchive size={50} />}
           isLink={true}
-          link='/product/instagram'
+          link="/product/instagram"
         />
       );
     }
@@ -214,7 +255,7 @@ const Transaction = () => {
     return (
       <>
         {/* Hide export and bulk actions for non-admin users */}
-        {profile?.role === 'admin' && (
+        {profile?.role === "admin" && (
           <motion.div
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -245,8 +286,8 @@ const Transaction = () => {
 
               <HStack spacing={2}>
                 <Menu>
-                  <MenuButton 
-                    as={Button} 
+                  <MenuButton
+                    as={Button}
                     rightIcon={<ChevronDownIcon />}
                     minW="auto"
                     size="sm"
@@ -261,17 +302,33 @@ const Transaction = () => {
                           Payment Status
                         </MenuButton>
                         <MenuList>
-                          <MenuItem onClick={() => handleFilter('payment', 'Paid')}>Paid</MenuItem>
-                          <MenuItem onClick={() => handleFilter('payment', 'Unpaid')}>Unpaid</MenuItem>
-                          <MenuItem onClick={() => handleFilter('payment', 'Pending')}>Pending</MenuItem>
-                          <MenuItem onClick={() => handleFilter('payment', null)}>Clear</MenuItem>
+                          <MenuItem
+                            onClick={() => handleFilter("payment", "Paid")}
+                          >
+                            Paid
+                          </MenuItem>
+                          <MenuItem
+                            onClick={() => handleFilter("payment", "Unpaid")}
+                          >
+                            Unpaid
+                          </MenuItem>
+                          <MenuItem
+                            onClick={() => handleFilter("payment", "Pending")}
+                          >
+                            Pending
+                          </MenuItem>
+                          <MenuItem
+                            onClick={() => handleFilter("payment", null)}
+                          >
+                            Clear
+                          </MenuItem>
                         </MenuList>
                       </Menu>
                     </MenuItem>
                     <MenuItem>
                       <Input
                         type="date"
-                        onChange={(e) => handleFilter('date', e.target.value)}
+                        onChange={(e) => handleFilter("date", e.target.value)}
                         bg={colors.bgColor}
                         color={colors.textColor}
                       />
@@ -282,8 +339,8 @@ const Transaction = () => {
                   </MenuList>
                 </Menu>
 
-                <Button 
-                  onClick={handleExport} 
+                <Button
+                  onClick={handleExport}
                   leftIcon={<ChevronDownIcon />}
                   isDisabled={!transactions.length}
                   minW="auto"
@@ -297,25 +354,21 @@ const Transaction = () => {
         )}
 
         {/* Tabs */}
-        <Box 
-          overflowX="auto" 
+        <Box
+          overflowX="auto"
           mb={4}
           mx={-3}
           px={3}
           sx={{
-            '::-webkit-scrollbar': {
-              display: 'none'
-            }
+            "::-webkit-scrollbar": {
+              display: "none",
+            },
           }}
         >
           <TransactionTabs />
         </Box>
 
-        <Box 
-          overflowX="hidden"
-          mx={-3}
-          px={3}
-        >
+        <Box overflowX="hidden" mx={-3} px={3}>
           <TransactionTable
             data={transactions}
             selectedItems={selectedItems}
@@ -342,14 +395,14 @@ const Transaction = () => {
     if (selectedItems.length === transactions.length) {
       setSelectedItems([]);
     } else {
-      setSelectedItems(transactions.map(t => t.id || t._id));
+      setSelectedItems(transactions.map((t) => t.id || t._id));
     }
   };
 
   const handleSelectItem = (id) => {
-    setSelectedItems(prev => {
+    setSelectedItems((prev) => {
       if (prev.includes(id)) {
-        return prev.filter(item => item !== id);
+        return prev.filter((item) => item !== id);
       }
       return [...prev, id];
     });
@@ -389,7 +442,7 @@ const Transaction = () => {
 
       <Box p={6}>
         <TransactionLookup />
-        
+
         {renderContent()}
       </Box>
 

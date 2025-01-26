@@ -4,43 +4,43 @@ const transactionState = (state) => state.transaction;
 
 export const getTransactions = createSelector(
   transactionState,
-  (state) => state.data.transactions
+  (state) => state.data.transactions,
 );
 
 export const getTransactionStats = createSelector(
   transactionState,
-  (state) => state.data.stats
+  (state) => state.data.stats,
 );
 
 export const getTransactionMeta = createSelector(
   transactionState,
-  (state) => state.data.meta
+  (state) => state.data.meta,
 );
 
 export const getLoading = createSelector(
   transactionState,
-  (state) => state.ui.loading
+  (state) => state.ui.loading,
 );
 
 export const getError = createSelector(
   transactionState,
-  (state) => state.ui.error
+  (state) => state.ui.error,
 );
 
 export const getSuccess = createSelector(
   transactionState,
-  (state) => state.ui.success
+  (state) => state.ui.success,
 );
 
 export const getFilters = createSelector(
   transactionState,
-  (state) => state.filters
+  (state) => state.filters,
 );
 
 export const getFilteredTransactions = createSelector(
   [getTransactions, getFilters],
   (transactions, filters) => {
-    return transactions.filter(transaction => {
+    return transactions.filter((transaction) => {
       if (filters.search) {
         const searchLower = filters.search.toLowerCase();
         return (
@@ -51,39 +51,41 @@ export const getFilteredTransactions = createSelector(
       }
       return true;
     });
-  }
+  },
 );
 
 export const getTransactionsByStatus = createSelector(
   getTransactions,
   (transactions) => ({
     all: transactions.length,
-    shipping: transactions.filter(t => t.status.toLowerCase() === 'shipping').length,
-    completed: transactions.filter(t => t.status.toLowerCase() === 'completed').length,
-    cancelled: transactions.filter(t => t.status.toLowerCase() === 'cancelled').length
-  })
+    shipping: transactions.filter((t) => t.status.toLowerCase() === "shipping")
+      .length,
+    completed: transactions.filter(
+      (t) => t.status.toLowerCase() === "completed",
+    ).length,
+    cancelled: transactions.filter(
+      (t) => t.status.toLowerCase() === "cancelled",
+    ).length,
+  }),
 );
 
-export const getUpdateStatus = createSelector(
-  transactionState,
-  (state) => ({
-    loading: state.ui.loading,
-    error: state.ui.error,
-    success: state.ui.success
-  })
-);
+export const getUpdateStatus = createSelector(transactionState, (state) => ({
+  loading: state.ui.loading,
+  error: state.ui.error,
+  success: state.ui.success,
+}));
 
 export const getTransactionProducts = createSelector(
   transactionState,
-  (state) => state.transactionProducts
+  (state) => state.transactionProducts,
 );
 
 export const getProductLoading = createSelector(
   transactionState,
-  (state) => state.productLoading
+  (state) => state.productLoading,
 );
 
 export const getProductError = createSelector(
   transactionState,
-  (state) => state.productError
+  (state) => state.productError,
 );

@@ -4,7 +4,7 @@ const initialState = {
   ui: {
     loading: false,
     error: null,
-    success: false
+    success: false,
   },
   data: {
     summary: {
@@ -15,16 +15,16 @@ const initialState = {
       totalTarget: 0,
       revenueGrowth: 0,
       customerGrowth: 0,
-      productGrowth: 0
+      productGrowth: 0,
     },
     monthlySales: [],
     regionalData: [],
-    popularProducts: []
+    popularProducts: [],
   },
   filters: {
-    dateRange: 'month',
-    region: 'all'
-  }
+    dateRange: "month",
+    region: "all",
+  },
 };
 
 export const salesReportSlice = createSlice({
@@ -56,8 +56,8 @@ export const salesReportSlice = createSlice({
     fetch_regional_data_error: (state, action) => {
       state.ui.loading = false;
       state.ui.error = action.payload;
-    }
-  }
+    },
+  },
 });
 
 export const {
@@ -67,7 +67,7 @@ export const {
   update_filters,
   fetch_regional_data,
   fetch_regional_data_success,
-  fetch_regional_data_error
+  fetch_regional_data_error,
 } = salesReportSlice.actions;
 
 export default salesReportSlice.reducer;

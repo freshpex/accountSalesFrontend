@@ -1,15 +1,9 @@
-import {
-  Box,
-  Flex,
-  Text,
-  Badge,
-  useColorModeValue
-} from '@chakra-ui/react';
+import { Box, Flex, Text, Badge, useColorModeValue } from "@chakra-ui/react";
 
 const StatCard = ({ title, value, trend, icon: Icon, subtitle }) => {
-  const bgColor = useColorModeValue('white', 'gray.800');
-  const borderColor = useColorModeValue('gray.100', 'gray.700');
-  const iconBg = useColorModeValue('blue.50', 'blue.900');
+  const bgColor = useColorModeValue("white", "gray.800");
+  const borderColor = useColorModeValue("gray.100", "gray.700");
+  const iconBg = useColorModeValue("blue.50", "blue.900");
 
   return (
     <Box
@@ -20,9 +14,15 @@ const StatCard = ({ title, value, trend, icon: Icon, subtitle }) => {
       borderColor={borderColor}
       shadow="sm"
     >
-      <Flex justify="space-between" align="flex-start" direction={{ base: 'column', md: 'row' }}>
+      <Flex
+        justify="space-between"
+        align="flex-start"
+        direction={{ base: "column", md: "row" }}
+      >
         <Box>
-          <Text color="gray.500" fontSize="sm">{title}</Text>
+          <Text color="gray.500" fontSize="sm">
+            {title}
+          </Text>
           <Text fontSize="2xl" fontWeight="bold" mt={2}>
             {value}
           </Text>
@@ -32,7 +32,13 @@ const StatCard = ({ title, value, trend, icon: Icon, subtitle }) => {
             </Text>
           )}
         </Box>
-        <Box p={3} bg={iconBg} borderRadius="full" color="blue.500" mt={{ base: 4, md: 0 }}>
+        <Box
+          p={3}
+          bg={iconBg}
+          borderRadius="full"
+          color="blue.500"
+          mt={{ base: 4, md: 0 }}
+        >
           <Icon size={20} />
         </Box>
       </Flex>

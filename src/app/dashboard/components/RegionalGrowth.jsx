@@ -1,11 +1,7 @@
-import {
-  Grid, Text, Box
-} from '@chakra-ui/react';
-import {
-  FiUsers
-} from 'react-icons/fi';
-import EmptyStatePage from '../../../components/emptyState';
-import RegionCard from './RegionCard';
+import { Grid, Text, Box } from "@chakra-ui/react";
+import { FiUsers } from "react-icons/fi";
+import EmptyStatePage from "../../../components/emptyState";
+import RegionCard from "./RegionCard";
 
 const RegionalGrowth = ({ regions }) => {
   if (!regions || !regions.length) {
@@ -23,7 +19,14 @@ const RegionalGrowth = ({ regions }) => {
       <Text fontSize="lg" fontWeight="bold" mb={4}>
         Regional Growth
       </Text>
-      <Grid templateColumns={{ base: '1fr', md: 'repeat(2, 1fr)', lg: 'repeat(3, 1fr)' }} gap={6}>
+      <Grid
+        templateColumns={{
+          base: "1fr",
+          md: "repeat(2, 1fr)",
+          lg: "repeat(3, 1fr)",
+        }}
+        gap={6}
+      >
         {regions.map((region) => (
           <RegionCard key={region.region} region={region} />
         ))}

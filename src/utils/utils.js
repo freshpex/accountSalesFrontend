@@ -1,46 +1,46 @@
 export const getStatusColor = (status) => {
-  if (!status) return { colorScheme: 'gray' };
-  
+  if (!status) return { colorScheme: "gray" };
+
   switch (status.toLowerCase()) {
-    case 'completed':
-      return { colorScheme: 'green' };
-    case 'shipping':
-      return { colorScheme: 'blue' };
-    case 'cancelled':
-      return { colorScheme: 'red' };
-    case 'pending':
-      return { colorScheme: 'yellow' };
+    case "completed":
+      return { colorScheme: "green" };
+    case "shipping":
+      return { colorScheme: "blue" };
+    case "cancelled":
+      return { colorScheme: "red" };
+    case "pending":
+      return { colorScheme: "yellow" };
     default:
-      return { colorScheme: 'gray' };
+      return { colorScheme: "gray" };
   }
 };
 
 export const getPaymentColor = (payment) => {
-  if (!payment) return { colorScheme: 'gray' };
-  
+  if (!payment) return { colorScheme: "gray" };
+
   switch (payment.toLowerCase()) {
-    case 'paid':
-      return { colorScheme: 'green' };
-    case 'unpaid':
-      return { colorScheme: 'red' };
-    case 'pending':
-      return { colorScheme: 'yellow' };
+    case "paid":
+      return { colorScheme: "green" };
+    case "unpaid":
+      return { colorScheme: "red" };
+    case "pending":
+      return { colorScheme: "yellow" };
     default:
-      return { colorScheme: 'gray' };
+      return { colorScheme: "gray" };
   }
 };
 
 export const validateProduct = (product) => {
   const errors = {};
-  
-  if (!product.username) errors.username = 'Username is required';
-  if (!product.type) errors.type = 'Type is required';
-  if (!product.price) errors.price = 'Price is required';
-  if (!product.status) errors.status = 'Status is required';
-  
+
+  if (!product.username) errors.username = "Username is required";
+  if (!product.type) errors.type = "Type is required";
+  if (!product.price) errors.price = "Price is required";
+  if (!product.status) errors.status = "Status is required";
+
   return {
     isValid: Object.keys(errors).length === 0,
-    errors
+    errors,
   };
 };
 
@@ -51,16 +51,16 @@ export const formatProductData = (data) => {
     follower: Number(data.follower),
     age: Number(data.age),
     createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString()
+    updatedAt: new Date().toISOString(),
   };
 };
 
 export const getProductTypeColor = (type) => {
   const colors = {
-    instagram: 'pink',
-    facebook: 'blue',
-    twitter: 'twitter',
-    whatsapp: 'green'
+    instagram: "pink",
+    facebook: "blue",
+    twitter: "twitter",
+    whatsapp: "green",
   };
-  return colors[type.toLowerCase()] || 'gray';
+  return colors[type.toLowerCase()] || "gray";
 };

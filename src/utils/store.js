@@ -29,6 +29,6 @@ export const removeWithExpiry = (key) => {
 };
 
 export const isAuthenticated = () => {
-  const token = getWithExpiry('x-access-token');
+  const token = getWithExpiry("x-access-token");
   return !!token;
 };

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState } from "react";
 import {
   Modal,
   ModalOverlay,
@@ -14,16 +14,23 @@ import {
   useToast,
   VStack,
   Text,
-} from '@chakra-ui/react';
+} from "@chakra-ui/react";
 
-const PaymentModal = ({ isOpen, onClose, product, onSubmit, isLoading, error }) => {
+const PaymentModal = ({
+  isOpen,
+  onClose,
+  product,
+  onSubmit,
+  isLoading,
+  error,
+}) => {
   const [paymentDetails, setPaymentDetails] = useState({
-    paymentMethod: 'card',
-    email: '',
-    name: '',
-    phone: ''
+    paymentMethod: "card",
+    email: "",
+    name: "",
+    phone: "",
   });
-  
+
   const vat = 200;
   const amountInNaira = Math.ceil(product?.price + vat);
 
@@ -33,29 +40,33 @@ const PaymentModal = ({ isOpen, onClose, product, onSubmit, isLoading, error }) 
     const { name, value } = e.target;
     setPaymentDetails((prevDetails) => ({
       ...prevDetails,
-      [name]: value
+      [name]: value,
     }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!paymentDetails.email || !paymentDetails.name || !paymentDetails.phone) {
+    if (
+      !paymentDetails.email ||
+      !paymentDetails.name ||
+      !paymentDetails.phone
+    ) {
       toast({
-        title: 'Error',
-        description: 'Please fill in all payment details',
-        status: 'error',
+        title: "Error",
+        description: "Please fill in all payment details",
+        status: "error",
         duration: 5000,
         isClosable: true,
       });
       return;
     }
-    console.log("payment details", paymentDetails)
+    console.log("payment details", paymentDetails);
     onSubmit({
       productId: product.id,
       paymentMethod: paymentDetails.paymentMethod,
       email: paymentDetails.email,
       name: paymentDetails.name,
-      phone: paymentDetails.phone
+      phone: paymentDetails.phone,
     });
   };
 
@@ -69,7 +80,7 @@ const PaymentModal = ({ isOpen, onClose, product, onSubmit, isLoading, error }) 
             <FormControl>
               <FormLabel>Amount</FormLabel>
               <Text fontSize="2xl" fontWeight="bold">
-                ₦{amountInNaira.toLocaleString()} 
+                ₦{amountInNaira.toLocaleString()}
                 <Text as="span" fontSize="sm" color="gray.500" ml={2}>
                   (₦{product?.price})
                 </Text>
@@ -115,9 +126,11 @@ const PaymentModal = ({ isOpen, onClose, product, onSubmit, isLoading, error }) 
           </VStack>
         </ModalBody>
         <ModalFooter>
-          <Button variant="ghost" onClick={onClose}>Cancel</Button>
-          <Button 
-            colorScheme="blue" 
+          <Button variant="ghost" onClick={onClose}>
+            Cancel
+          </Button>
+          <Button
+            colorScheme="blue"
             onClick={handleSubmit}
             isLoading={isLoading}
           >

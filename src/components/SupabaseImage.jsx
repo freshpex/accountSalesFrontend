@@ -1,8 +1,14 @@
-import { Image, Skeleton, Box, Text } from '@chakra-ui/react';
-import { useState } from 'react';
-import { convertToPublicUrl } from '../utils/supabase';
+import { Image, Skeleton, Box, Text } from "@chakra-ui/react";
+import { useState } from "react";
+import { convertToPublicUrl } from "../utils/supabase";
 
-const SupabaseImage = ({ src, alt, boxSize = '50px', objectFit = 'cover', ...props }) => {
+const SupabaseImage = ({
+  src,
+  alt,
+  boxSize = "50px",
+  objectFit = "cover",
+  ...props
+}) => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(false);
 
@@ -20,7 +26,9 @@ const SupabaseImage = ({ src, alt, boxSize = '50px', objectFit = 'cover', ...pro
         alignItems="center"
         justifyContent="center"
       >
-        <Text fontSize="xs" color="gray.500">No image</Text>
+        <Text fontSize="xs" color="gray.500">
+          No image
+        </Text>
       </Box>
     );
   }
@@ -66,7 +74,9 @@ const SupabaseImage = ({ src, alt, boxSize = '50px', objectFit = 'cover', ...pro
           alignItems="center"
           justifyContent="center"
         >
-          <Text fontSize="xs" color="gray.500">Error</Text>
+          <Text fontSize="xs" color="gray.500">
+            Error
+          </Text>
         </Box>
       )}
     </Box>

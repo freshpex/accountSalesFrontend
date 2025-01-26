@@ -4,42 +4,42 @@ const initialState = {
   ui: {
     loading: false,
     error: null,
-    success: false
+    success: false,
   },
   overview: {
     data: null,
     loading: false,
-    error: null
+    error: null,
   },
   metrics: {
     data: {
       totalSpent: 0,
       totalTransactions: 0,
       averageSpend: 0,
-      lastTransaction: null
+      lastTransaction: null,
     },
     loading: false,
-    error: null
+    error: null,
   },
   spendingChart: {
     data: {
       labels: [],
-      datasets: []
+      datasets: [],
     },
     loading: false,
-    error: null
+    error: null,
   },
   recentActivity: {
     data: [],
     loading: false,
-    error: null
+    error: null,
   },
   userActivity: {
     lastActive: null,
     currentPage: null,
     preferences: {},
-    deviceInfo: null
-  }
+    deviceInfo: null,
+  },
 };
 
 export const userDashboardSlice = createSlice({
@@ -54,7 +54,6 @@ export const userDashboardSlice = createSlice({
       state.overview.loading = false;
       state.overview.error = null;
       state.overview.data = action.payload;
-      
     },
     fetch_overview_error: (state, action) => {
       state.overview.loading = false;
@@ -91,7 +90,9 @@ export const userDashboardSlice = createSlice({
     fetch_recent_activity_success: (state, action) => {
       state.recentActivity.loading = false;
       state.recentActivity.error = null;
-      state.recentActivity.data = Array.isArray(action.payload) ? action.payload : [];
+      state.recentActivity.data = Array.isArray(action.payload)
+        ? action.payload
+        : [];
     },
     fetch_recent_activity_error: (state, action) => {
       state.recentActivity.loading = false;
@@ -102,16 +103,16 @@ export const userDashboardSlice = createSlice({
         ...state.userActivity,
         lastActive: new Date().toISOString(),
         currentPage: action.payload.page,
-        deviceInfo: action.payload.deviceInfo
+        deviceInfo: action.payload.deviceInfo,
       };
     },
     update_preferences: (state, action) => {
       state.userActivity.preferences = {
         ...state.userActivity.preferences,
-        ...action.payload
+        ...action.payload,
       };
-    }
-  }
+    },
+  },
 });
 
 // Export slice actions
@@ -129,7 +130,7 @@ export const {
   fetch_recent_activity_success,
   fetch_recent_activity_error,
   track_activity,
-  update_preferences
+  update_preferences,
 } = userDashboardSlice.actions;
 
 export const fetchDashboardOverview = () => fetch_overview();
@@ -137,8 +138,8 @@ export const fetchDashboardMetrics = () => fetch_metrics();
 export const fetchDashboardSpendingChart = () => fetch_spending_chart();
 export const fetchDashboardRecentActivity = () => fetch_recent_activity();
 export const updateLastSeen = (payload) => ({
-  type: 'userDashboard/update_last_seen',
-  payload
+  type: "userDashboard/update_last_seen",
+  payload,
 });
 
 export default userDashboardSlice.reducer;

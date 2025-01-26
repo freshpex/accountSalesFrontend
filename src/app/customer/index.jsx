@@ -1,32 +1,54 @@
-import { useState, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import {
-  Box, Flex, Grid, Text, Button, Input, InputGroup, InputLeftElement,
-  Table, Thead, Tbody, Tr, Th, Td, Avatar, Badge, Select, useDisclosure
-} from '@chakra-ui/react';
-import { FiSearch, FiUsers, FiUserPlus, FiUserCheck, FiUserX } from 'react-icons/fi';
-import StatCard from './components/StatCard';
-import CustomerSegmentCard from './components/CustomerSegmentCard';
-import CustomerGrowthChart from './components/CustomerGrowthChart';
-import RecentActivityList from './components/RecentActivityList';
-import AddCustomerModal from './components/AddCustomerModal';
-import EmptyStatePage from '../../components/emptyState';
+  Box,
+  Flex,
+  Grid,
+  Text,
+  Button,
+  Input,
+  InputGroup,
+  InputLeftElement,
+  Table,
+  Thead,
+  Tbody,
+  Tr,
+  Th,
+  Td,
+  Avatar,
+  Badge,
+  Select,
+  useDisclosure,
+} from "@chakra-ui/react";
+import {
+  FiSearch,
+  FiUsers,
+  FiUserPlus,
+  FiUserCheck,
+  FiUserX,
+} from "react-icons/fi";
+import StatCard from "./components/StatCard";
+import CustomerSegmentCard from "./components/CustomerSegmentCard";
+import CustomerGrowthChart from "./components/CustomerGrowthChart";
+import RecentActivityList from "./components/RecentActivityList";
+import AddCustomerModal from "./components/AddCustomerModal";
+import EmptyStatePage from "../../components/emptyState";
 import {
   getCustomers,
   getCustomerMetrics,
   getCustomerSegments,
   getRecentActivity,
-  getLoading
-} from './redux/selector';
+  getLoading,
+} from "./redux/selector";
 import {
   fetch_customers,
   fetch_customer_activity,
   add_customer,
-  update_customer_segment
-} from './redux/reducer';
-import LoadingSpinner from '../../components/LoadingSpinner';
-import { useColors } from '../../utils/colors';
-import CustomerActionMenu from './components/CustomerActionMenu';
+  update_customer_segment,
+} from "./redux/reducer";
+import LoadingSpinner from "../../components/LoadingSpinner";
+import { useColors } from "../../utils/colors";
+import CustomerActionMenu from "./components/CustomerActionMenu";
 
 const Customers = () => {
   const dispatch = useDispatch();
@@ -35,8 +57,12 @@ const Customers = () => {
   const segments = useSelector(getCustomerSegments);
   const recentActivity = useSelector(getRecentActivity) || [];
   const loading = useSelector(getLoading);
-  
-  const [filters, setFilters] = useState({ status: 'all', search: '', segment: 'all' });
+
+  const [filters, setFilters] = useState({
+    status: "all",
+    search: "",
+    segment: "all",
+  });
   const { isOpen, onOpen, onClose } = useDisclosure();
   const colors = useColors();
 
@@ -45,7 +71,7 @@ const Customers = () => {
   }, [dispatch, filters]);
 
   const [selectedCustomerId, setSelectedCustomerId] = useState(null);
-  
+
   useEffect(() => {
     if (selectedCustomerId) {
       dispatch(fetch_customer_activity(selectedCustomerId));
@@ -58,15 +84,17 @@ const Customers = () => {
   };
 
   const handleSegmentUpdate = (customerId, oldSegment, newSegment) => {
-    dispatch(update_customer_segment({ 
-      customerId, 
-      oldSegment: oldSegment.toLowerCase(), 
-      newSegment: newSegment.toLowerCase() 
-    }));
+    dispatch(
+      update_customer_segment({
+        customerId,
+        oldSegment: oldSegment.toLowerCase(),
+        newSegment: newSegment.toLowerCase(),
+      }),
+    );
   };
 
   const handleFilterChange = (type, value) => {
-    setFilters(prev => ({ ...prev, [type]: value }));
+    setFilters((prev) => ({ ...prev, [type]: value }));
   };
 
   const handleCustomerSelect = (customerId) => {
@@ -77,37 +105,44 @@ const Customers = () => {
     }
   };
 
-  const filteredCustomers = Array.isArray(customers) ? customers.filter(customer => {
-    if (!customer) return false;
-    if (filters.status !== 'all' && customer.status !== filters.status) return false;
-    if (filters.segment !== 'all' && customer.segment?.toLowerCase() !== filters.segment) return false;
-    if (filters.search) {
-      const searchLower = filters.search.toLowerCase();
-      return (
-        customer.name?.toLowerCase().includes(searchLower) ||
-        customer.email?.toLowerCase().includes(searchLower)
-      );
-    }
-    return true;
-  }) : [];
+  const filteredCustomers = Array.isArray(customers)
+    ? customers.filter((customer) => {
+        if (!customer) return false;
+        if (filters.status !== "all" && customer.status !== filters.status)
+          return false;
+        if (
+          filters.segment !== "all" &&
+          customer.segment?.toLowerCase() !== filters.segment
+        )
+          return false;
+        if (filters.search) {
+          const searchLower = filters.search.toLowerCase();
+          return (
+            customer.name?.toLowerCase().includes(searchLower) ||
+            customer.email?.toLowerCase().includes(searchLower)
+          );
+        }
+        return true;
+      })
+    : [];
 
   if (loading) {
     return <LoadingSpinner />;
   }
 
   const renderCustomerRow = (customer) => (
-    <Tr 
+    <Tr
       key={customer._id}
-      bg={selectedCustomerId === customer._id ? 'blue.50' : 'transparent'}
-      _hover={{ bg: 'gray.50' }}
+      bg={selectedCustomerId === customer._id ? "blue.50" : "transparent"}
+      _hover={{ bg: "gray.50" }}
       onClick={() => handleCustomerSelect(customer._id)}
     >
       <Td>
         <Flex align="center">
-          <Avatar 
-            size="sm" 
-            name={`${customer.firstName} ${customer.lastName}`} 
-            mr={3} 
+          <Avatar
+            size="sm"
+            name={`${customer.firstName} ${customer.lastName}`}
+            mr={3}
           />
           <Box>
             <Text fontWeight="medium">
@@ -119,23 +154,29 @@ const Customers = () => {
           </Box>
         </Flex>
       </Td>
-      <Td display={{ base: 'none', md: 'table-cell' }}>
+      <Td display={{ base: "none", md: "table-cell" }}>
         <Text>{customer.businessName}</Text>
         <Text fontSize="sm" color="gray.500">
           {customer.businessType}
         </Text>
       </Td>
       <Td>
-        <Badge colorScheme={customer.status === 'active' ? 'green' : 'red'}>
+        <Badge colorScheme={customer.status === "active" ? "green" : "red"}>
           {customer.status}
         </Badge>
       </Td>
       <Td>
-        <Badge colorScheme="purple">{customer.segment || 'Unknown'}</Badge>
+        <Badge colorScheme="purple">{customer.segment || "Unknown"}</Badge>
       </Td>
-      <Td display={{ base: 'none', md: 'table-cell' }}>{new Date(customer.createdAt).toLocaleDateString()}</Td>
-      <Td display={{ base: 'none', md: 'table-cell' }}>{customer.metrics?.totalOrders || 0}</Td>
-      <Td display={{ base: 'none', md: 'table-cell' }}>${customer.metrics?.totalSpent?.toLocaleString() || '0'}</Td>
+      <Td display={{ base: "none", md: "table-cell" }}>
+        {new Date(customer.createdAt).toLocaleDateString()}
+      </Td>
+      <Td display={{ base: "none", md: "table-cell" }}>
+        {customer.metrics?.totalOrders || 0}
+      </Td>
+      <Td display={{ base: "none", md: "table-cell" }}>
+        ${customer.metrics?.totalSpent?.toLocaleString() || "0"}
+      </Td>
       <Td>
         <CustomerActionMenu
           customer={customer}
@@ -161,10 +202,16 @@ const Customers = () => {
     >
       <Flex justify="space-between" align="center" mb={3}>
         <Flex align="center">
-          <Avatar size="sm" name={`${customer.firstName} ${customer.lastName}`} mr={3} />
+          <Avatar
+            size="sm"
+            name={`${customer.firstName} ${customer.lastName}`}
+            mr={3}
+          />
           <Box>
             <Text fontWeight="medium">{`${customer.firstName} ${customer.lastName}`}</Text>
-            <Text fontSize="sm" color="gray.500">{customer.email}</Text>
+            <Text fontSize="sm" color="gray.500">
+              {customer.email}
+            </Text>
           </Box>
         </Flex>
         <CustomerActionMenu
@@ -176,30 +223,44 @@ const Customers = () => {
 
       <Grid templateColumns="repeat(2, 1fr)" gap={3} mt={3}>
         <Box>
-          <Text fontSize="sm" color="gray.500">Business</Text>
+          <Text fontSize="sm" color="gray.500">
+            Business
+          </Text>
           <Text fontSize="sm">{customer.businessName}</Text>
         </Box>
         <Box>
-          <Text fontSize="sm" color="gray.500">Type</Text>
+          <Text fontSize="sm" color="gray.500">
+            Type
+          </Text>
           <Text fontSize="sm">{customer.businessType}</Text>
         </Box>
         <Box>
-          <Text fontSize="sm" color="gray.500">Status</Text>
-          <Badge colorScheme={customer.status === 'active' ? 'green' : 'red'}>
+          <Text fontSize="sm" color="gray.500">
+            Status
+          </Text>
+          <Badge colorScheme={customer.status === "active" ? "green" : "red"}>
             {customer.status}
           </Badge>
         </Box>
         <Box>
-          <Text fontSize="sm" color="gray.500">Segment</Text>
+          <Text fontSize="sm" color="gray.500">
+            Segment
+          </Text>
           <Badge colorScheme="purple">{customer.segment}</Badge>
         </Box>
         <Box>
-          <Text fontSize="sm" color="gray.500">Orders</Text>
+          <Text fontSize="sm" color="gray.500">
+            Orders
+          </Text>
           <Text fontSize="sm">{customer.metrics?.totalOrders || 0}</Text>
         </Box>
         <Box>
-          <Text fontSize="sm" color="gray.500">Total Spent</Text>
-          <Text fontSize="sm">${customer.metrics?.totalSpent?.toLocaleString() || '0'}</Text>
+          <Text fontSize="sm" color="gray.500">
+            Total Spent
+          </Text>
+          <Text fontSize="sm">
+            ${customer.metrics?.totalSpent?.toLocaleString() || "0"}
+          </Text>
         </Box>
       </Grid>
     </Box>
@@ -208,18 +269,20 @@ const Customers = () => {
   const renderFilters = () => (
     <Box mb={6}>
       <InputGroup mb={4}>
-        <InputLeftElement><FiSearch color="gray.400" /></InputLeftElement>
+        <InputLeftElement>
+          <FiSearch color="gray.400" />
+        </InputLeftElement>
         <Input
           placeholder="Search customers..."
           value={filters.search}
-          onChange={(e) => handleFilterChange('search', e.target.value)}
+          onChange={(e) => handleFilterChange("search", e.target.value)}
         />
       </InputGroup>
       <Flex gap={4} flexWrap="wrap">
         <Select
           flex={{ base: "1 1 100%", md: "1" }}
           value={filters.status}
-          onChange={(e) => handleFilterChange('status', e.target.value)}
+          onChange={(e) => handleFilterChange("status", e.target.value)}
           mb={{ base: 2, md: 0 }}
         >
           <option value="all">All Status</option>
@@ -229,7 +292,7 @@ const Customers = () => {
         <Select
           flex={{ base: "1 1 100%", md: "1" }}
           value={filters.segment}
-          onChange={(e) => handleFilterChange('segment', e.target.value)}
+          onChange={(e) => handleFilterChange("segment", e.target.value)}
         >
           <option value="all">All Segments</option>
           <option value="platinum">Platinum</option>
@@ -242,9 +305,9 @@ const Customers = () => {
   );
 
   const renderStats = () => (
-    <Grid 
-      templateColumns={{ base: 'repeat(2, 1fr)', md: 'repeat(4, 1fr)' }} 
-      gap={4} 
+    <Grid
+      templateColumns={{ base: "repeat(2, 1fr)", md: "repeat(4, 1fr)" }}
+      gap={4}
       mb={6}
       overflowX="auto"
       px={2}
@@ -255,29 +318,29 @@ const Customers = () => {
           value: metrics.totalCustomers,
           trend: metrics.totalGrowth,
           icon: FiUsers,
-          subtitle: "Active accounts"
+          subtitle: "Active accounts",
         },
         {
           title: "New Customers",
           value: metrics.newCustomers,
           trend: metrics.newGrowth,
           icon: FiUserPlus,
-          subtitle: "This month"
+          subtitle: "This month",
         },
         {
           title: "Active Customers",
           value: metrics.activeCustomers,
           trend: metrics.activeGrowth,
           icon: FiUserCheck,
-          subtitle: "Last 30 days"
+          subtitle: "Last 30 days",
         },
         {
           title: "Churn Rate",
           value: `${metrics.churnRate}%`,
           trend: metrics.churnRateChange,
           icon: FiUserX,
-          subtitle: "This month"
-        }
+          subtitle: "This month",
+        },
       ].map((stat, index) => (
         <StatCard key={`stat-${index}`} {...stat} />
       ))}
@@ -288,19 +351,21 @@ const Customers = () => {
     if (loading) return <LoadingSpinner />;
 
     if (!Array.isArray(customers) || customers.length === 0) {
-      return <EmptyStatePage
-        title="No Customers Found"
-        sub="Get started by adding your first customer"
-        icon={<FiUsers size={50} />}
-        btnText="Add Customer"
-        handleClick={onOpen}
-      />;
+      return (
+        <EmptyStatePage
+          title="No Customers Found"
+          sub="Get started by adding your first customer"
+          icon={<FiUsers size={50} />}
+          btnText="Add Customer"
+          handleClick={onOpen}
+        />
+      );
     }
 
     return (
       <Box>
         {renderStats()}
-        
+
         {/* Mobile-optimized charts section */}
         <Box mb={6} overflowX="auto">
           <Box minW={{ base: "700px", md: "auto" }}>
@@ -324,31 +389,28 @@ const Customers = () => {
         {/* Responsive customer list */}
         <Box>
           {/* Desktop view */}
-          <Box display={{ base: 'none', lg: 'block' }}>
+          <Box display={{ base: "none", lg: "block" }}>
             <Table variant="simple">
               <Thead>
                 <Tr>
                   <Th>Customer</Th>
-                  <Th display={{ base: 'none', md: 'table-cell' }}>Business</Th>
+                  <Th display={{ base: "none", md: "table-cell" }}>Business</Th>
                   <Th>Status</Th>
                   <Th>Segment</Th>
-                  <Th display={{ base: 'none', md: 'table-cell' }}>Joined</Th>
-                  <Th display={{ base: 'none', md: 'table-cell' }}>Orders</Th>
-                  <Th display={{ base: 'none', md: 'table-cell' }}>Spent</Th>
+                  <Th display={{ base: "none", md: "table-cell" }}>Joined</Th>
+                  <Th display={{ base: "none", md: "table-cell" }}>Orders</Th>
+                  <Th display={{ base: "none", md: "table-cell" }}>Spent</Th>
                   <Th></Th>
                 </Tr>
               </Thead>
-              <Tbody>
-                {filteredCustomers.map(renderCustomerRow)}
-              </Tbody>
+              <Tbody>{filteredCustomers.map(renderCustomerRow)}</Tbody>
             </Table>
-            
           </Box>
 
           {/* Mobile view */}
-          <Box display={{ base: 'block', lg: 'none' }}>
+          <Box display={{ base: "block", lg: "none" }}>
             {filteredCustomers.map(renderCustomerCard)}
-            <RecentActivityList 
+            <RecentActivityList
               activities={recentActivity}
               maxH="500px"
               overflowY="auto"
@@ -360,22 +422,24 @@ const Customers = () => {
   };
 
   return (
-    <Box 
-      minH="100vh" 
-      bg={colors.bgColor} 
+    <Box
+      minH="100vh"
+      bg={colors.bgColor}
       p={{ base: 4, md: 8 }}
       maxW="100vw"
       overflow="hidden"
     >
-      <Flex 
-        justify="space-between" 
-        align="center" 
-        mb={8} 
-        flexDirection={{ base: 'column', md: 'row' }}
+      <Flex
+        justify="space-between"
+        align="center"
+        mb={8}
+        flexDirection={{ base: "column", md: "row" }}
         gap={4}
       >
         <Box>
-          <Text fontSize={{ base: "xl", md: "2xl" }} fontWeight="bold">Customers</Text>
+          <Text fontSize={{ base: "xl", md: "2xl" }} fontWeight="bold">
+            Customers
+          </Text>
           <Text color="gray.500">Manage and analyze your customer base</Text>
         </Box>
         <Button

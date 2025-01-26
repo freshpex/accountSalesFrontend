@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState } from "react";
 import {
   Modal,
   ModalOverlay,
@@ -16,26 +16,28 @@ import {
   Textarea,
   Divider,
   Select,
-} from '@chakra-ui/react';
-import { useSelector } from 'react-redux';
-import { ticketStatusColors, ticketPriorityColors } from '../data';
-import { useColors } from '../../../utils/colors';
+} from "@chakra-ui/react";
+import { useSelector } from "react-redux";
+import { ticketStatusColors, ticketPriorityColors } from "../data";
+import { useColors } from "../../../utils/colors";
 
-const TicketDetail = ({ 
-  isOpen, 
-  onClose, 
-  ticket, 
-  onStatusUpdate, 
+const TicketDetail = ({
+  isOpen,
+  onClose,
+  ticket,
+  onStatusUpdate,
   onAddResponse,
-  onDelete 
+  onDelete,
 }) => {
-  const [reply, setReply] = useState('');
+  const [reply, setReply] = useState("");
   const [status, setStatus] = useState(ticket?.status);
   const colors = useColors();
-  const currentUser = useSelector(state => state.accountSettings.data.profile);
-  const isAdmin = currentUser?.role === 'admin';
+  const currentUser = useSelector(
+    (state) => state.accountSettings.data.profile,
+  );
+  const isAdmin = currentUser?.role === "admin";
 
-  const customerName = ticket?.customerDetails?.name || 'Anonymous User';
+  const customerName = ticket?.customerDetails?.name || "Anonymous User";
   const customerEmail = ticket?.customerDetails?.email;
   const customerAvatar = ticket?.customerDetails?.profilePicture;
 
@@ -43,15 +45,15 @@ const TicketDetail = ({
     onAddResponse(ticket._id, {
       message: reply,
       timestamp: new Date().toISOString(),
-      sender: isAdmin ? 'admin' : 'customer',
+      sender: isAdmin ? "admin" : "customer",
       senderDetails: {
         id: currentUser._id,
         name: `${currentUser.firstName} ${currentUser.lastName}`,
         email: currentUser.email,
-        role: currentUser.role
-      }
+        role: currentUser.role,
+      },
     });
-    setReply('');
+    setReply("");
   };
 
   const handleStatusChange = (e) => {
@@ -61,7 +63,7 @@ const TicketDetail = ({
   };
 
   const handleDelete = () => {
-    if (window.confirm('Are you sure you want to delete this ticket?')) {
+    if (window.confirm("Are you sure you want to delete this ticket?")) {
       onDelete(ticket._id);
       onClose();
     }
@@ -91,11 +93,7 @@ const TicketDetail = ({
                   {ticket?.status}
                 </Badge>
               )}
-              <Button
-                colorScheme="red"
-                size="sm"
-                onClick={handleDelete}
-              >
+              <Button colorScheme="red" size="sm" onClick={handleDelete}>
                 Delete
               </Button>
             </HStack>
@@ -105,14 +103,12 @@ const TicketDetail = ({
         <ModalBody pb={6}>
           <VStack spacing={4} align="stretch">
             <HStack spacing={4}>
-              <Avatar 
-                size="lg" 
-                name={customerName}
-                src={customerAvatar}
-              />
+              <Avatar size="lg" name={customerName} src={customerAvatar} />
               <Box>
                 <HStack spacing={2}>
-                  <Text fontSize="xl" fontWeight="bold">{ticket?.subject}</Text>
+                  <Text fontSize="xl" fontWeight="bold">
+                    {ticket?.subject}
+                  </Text>
                   <Badge {...ticketStatusColors[ticket?.status]}>
                     {ticket?.status}
                   </Badge>
@@ -121,7 +117,8 @@ const TicketDetail = ({
                   </Badge>
                 </HStack>
                 <Text color="gray.600">
-                  {customerName} ({customerEmail}) - {new Date(ticket?.createdAt).toLocaleString()}
+                  {customerName} ({customerEmail}) -{" "}
+                  {new Date(ticket?.createdAt).toLocaleString()}
                 </Text>
               </Box>
             </HStack>
@@ -133,22 +130,32 @@ const TicketDetail = ({
             <Divider />
 
             {ticket?.responses?.map((response) => (
-              <Box 
+              <Box
                 key={response._id || response.timestamp}
                 p={4}
-                bg={response.sender === 'admin' ? 'blue.50' : 'gray.50'}
+                bg={response.sender === "admin" ? "blue.50" : "gray.50"}
                 borderRadius="md"
               >
                 <HStack spacing={4} mb={2}>
-                  <Avatar 
-                    size="sm" 
-                    name={response.senderDetails?.name || (response.sender === 'admin' ? 'Support Team' : customerName)}
+                  <Avatar
+                    size="sm"
+                    name={
+                      response.senderDetails?.name ||
+                      (response.sender === "admin"
+                        ? "Support Team"
+                        : customerName)
+                    }
                   />
                   <Text fontWeight="bold">
-                    {response.senderDetails?.name || (response.sender === 'admin' ? 'Support Team' : customerName)}
+                    {response.senderDetails?.name ||
+                      (response.sender === "admin"
+                        ? "Support Team"
+                        : customerName)}
                   </Text>
                   <Text color="gray.600" fontSize="sm">
-                    {new Date(response.timestamp || response.createdAt).toLocaleString()}
+                    {new Date(
+                      response.timestamp || response.createdAt,
+                    ).toLocaleString()}
                   </Text>
                 </HStack>
                 <Text ml={12}>{response.message}</Text>
@@ -167,8 +174,8 @@ const TicketDetail = ({
                 <Button variant="ghost" onClick={onClose}>
                   Cancel
                 </Button>
-                <Button 
-                  colorScheme="blue" 
+                <Button
+                  colorScheme="blue"
                   isDisabled={!reply.trim()}
                   onClick={handleReply}
                 >

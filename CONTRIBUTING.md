@@ -33,21 +33,25 @@ This project and everyone participating in it is governed by our [Code of Conduc
 ## Development Process
 
 1. Clone the repo
+
 ```bash
 git clone https://github.com/freshpex/accountSales.git
 ```
 
 2. Create a branch
+
 ```bash
 git checkout -b feature/your-feature-name
 ```
 
 3. Commit your changes
+
 ```bash
 git commit -m "Add some feature"
 ```
 
 4. Push to your fork
+
 ```bash
 git push origin feature/your-feature-name
 ```

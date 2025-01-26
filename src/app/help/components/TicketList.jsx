@@ -6,20 +6,20 @@ import {
   Avatar,
   Text,
   Badge,
-  useDisclosure
-} from '@chakra-ui/react';
-import { ChevronRightIcon } from '@chakra-ui/icons';
-import TicketDetail from '../tabs/ticketDetail';
-import { useState } from 'react';
-import { useColors } from '../../../utils/colors';
+  useDisclosure,
+} from "@chakra-ui/react";
+import { ChevronRightIcon } from "@chakra-ui/icons";
+import TicketDetail from "../tabs/ticketDetail";
+import { useState } from "react";
+import { useColors } from "../../../utils/colors";
 
-const TicketList = ({ 
-  tickets = [], 
-  onStatusUpdate, 
-  onAddResponse, 
+const TicketList = ({
+  tickets = [],
+  onStatusUpdate,
+  onAddResponse,
   onDelete,
-  statusColors, 
-  priorityColors 
+  statusColors,
+  priorityColors,
 }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [selectedTicket, setSelectedTicket] = useState(null);
@@ -46,8 +46,8 @@ const TicketList = ({
           >
             <Flex justify="space-between" align="start">
               <HStack spacing={4}>
-                <Avatar 
-                  size="md" 
+                <Avatar
+                  size="md"
                   name="Anonymous User"
                   src={ticket?.customer?.avatar}
                 />
@@ -62,7 +62,8 @@ const TicketList = ({
                     </Badge>
                   </HStack>
                   <Text color="gray.600" fontSize="sm">
-                    {ticket?.customer?.name || 'Anonymous User'} - {new Date(ticket.createdAt).toLocaleString()}
+                    {ticket?.customer?.name || "Anonymous User"} -{" "}
+                    {new Date(ticket.createdAt).toLocaleString()}
                   </Text>
                   <Text noOfLines={2} mt={2}>
                     {ticket.message}

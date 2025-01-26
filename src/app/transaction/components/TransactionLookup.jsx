@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Box,
   Input,
@@ -11,14 +11,14 @@ import {
   InputRightElement,
   ScaleFade,
   SlideFade,
-} from '@chakra-ui/react';
-import { motion } from 'framer-motion';
-import { FiSearch, FiArrowRight } from 'react-icons/fi';
+} from "@chakra-ui/react";
+import { motion } from "framer-motion";
+import { FiSearch, FiArrowRight } from "react-icons/fi";
 
 const MotionBox = motion(Box);
 
 const TransactionLookup = () => {
-  const [transactionId, setTransactionId] = useState('');
+  const [transactionId, setTransactionId] = useState("");
   const [isHovered, setIsHovered] = useState(false);
   const navigate = useNavigate();
   const toast = useToast();
@@ -26,9 +26,9 @@ const TransactionLookup = () => {
   const handleCheck = () => {
     if (!transactionId.trim()) {
       toast({
-        title: 'Error',
-        description: 'Please enter a transaction ID',
-        status: 'error',
+        title: "Error",
+        description: "Please enter a transaction ID",
+        status: "error",
         duration: 3000,
         isClosable: true,
       });
@@ -59,7 +59,7 @@ const TransactionLookup = () => {
         p={8}
         _before={{
           content: '""',
-          position: 'absolute',
+          position: "absolute",
           top: 0,
           left: 0,
           right: 0,
@@ -114,10 +114,10 @@ const TransactionLookup = () => {
 
           <Button
             rightIcon={
-              <FiArrowRight 
+              <FiArrowRight
                 style={{
-                  transform: isHovered ? 'translateX(4px)' : 'translateX(0)',
-                  transition: 'transform 0.2s'
+                  transform: isHovered ? "translateX(4px)" : "translateX(0)",
+                  transition: "transform 0.2s",
                 }}
               />
             }
@@ -139,23 +139,18 @@ const TransactionLookup = () => {
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
           >
-            <Text 
+            <Text
               mr={2}
               style={{
-                transform: isHovered ? 'scale(1.05)' : 'scale(1)',
-                transition: 'transform 0.2s'
+                transform: isHovered ? "scale(1.05)" : "scale(1)",
+                transition: "transform 0.2s",
               }}
             >
-              {isHovered ? 'Check Now' : 'View Credentials'}
+              {isHovered ? "Check Now" : "View Credentials"}
             </Text>
           </Button>
 
-          <Text
-            fontSize="sm"
-            color="gray.500"
-            mt={4}
-            textAlign="center"
-          >
+          <Text fontSize="sm" color="gray.500" mt={4} textAlign="center">
             Your credentials will be displayed securely
           </Text>
         </VStack>

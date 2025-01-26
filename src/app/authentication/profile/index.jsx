@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import axios from 'axios';
+import { useState } from "react";
+import axios from "axios";
 import {
   Box,
   Button,
@@ -8,11 +8,11 @@ import {
   Input,
   useToast,
   Image,
-} from '@chakra-ui/react';
-import { useSelector } from 'react-redux';
-import { getUser } from './redux/selector';
-import { useColors } from '../../../utils/colors';
-import { convertToPublicUrl } from '../../../utils/supabase';
+} from "@chakra-ui/react";
+import { useSelector } from "react-redux";
+import { getUser } from "./redux/selector";
+import { useColors } from "../../../utils/colors";
+import { convertToPublicUrl } from "../../../utils/supabase";
 
 const Profile = () => {
   const user = useSelector(getUser);
@@ -27,8 +27,8 @@ const Profile = () => {
   const handleUpload = async () => {
     if (!selectedFile) {
       toast({
-        title: 'No file selected',
-        status: 'error',
+        title: "No file selected",
+        status: "error",
         duration: 3000,
         isClosable: true,
       });
@@ -36,27 +36,31 @@ const Profile = () => {
     }
 
     const formData = new FormData();
-    formData.append('avatar', selectedFile);
+    formData.append("avatar", selectedFile);
 
     try {
-      const response = await axios.post('/api/v1/user/profile/upload-avatar', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-          Authorization: `Bearer ${user.token}`,
+      const response = await axios.post(
+        "/api/v1/user/profile/upload-avatar",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${user.token}`,
+          },
         },
-      });
+      );
 
       toast({
-        title: 'Upload successful',
-        status: 'success',
+        title: "Upload successful",
+        status: "success",
         duration: 3000,
         isClosable: true,
       });
     } catch (error) {
       toast({
-        title: 'Upload failed',
+        title: "Upload failed",
         description: error.response?.data?.error || error.message,
-        status: 'error',
+        status: "error",
         duration: 3000,
         isClosable: true,
       });
@@ -73,11 +77,11 @@ const Profile = () => {
         </Button>
       </FormControl>
       {user.profilePicture && (
-        <Image 
-          src={convertToPublicUrl(user.profilePicture)} 
-          alt="Profile Picture" 
-          boxSize="150px" 
-          mt={4} 
+        <Image
+          src={convertToPublicUrl(user.profilePicture)}
+          alt="Profile Picture"
+          boxSize="150px"
+          mt={4}
         />
       )}
     </Box>

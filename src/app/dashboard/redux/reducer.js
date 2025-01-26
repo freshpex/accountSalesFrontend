@@ -5,47 +5,47 @@ const defaultMetrics = {
     current: 0,
     target: 0,
     percentage: 0,
-    timeLeft: ""
+    timeLeft: "",
   },
   revenue: {
     value: 0,
     growth: 0,
     trend: "neutral",
-    previousValue: 0
+    previousValue: 0,
   },
   customers: {
     value: 0,
     growth: 0,
-    newCustomers: 0
+    newCustomers: 0,
   },
   transactions: {
     value: 0,
     growth: 0,
-    avgTicketSize: 0
+    avgTicketSize: 0,
   },
   products: {
     value: 0,
     growth: 0,
-    outOfStock: 0
-  }
+    outOfStock: 0,
+  },
 };
 
 const initialState = {
   ui: {
     loading: false,
     error: null,
-    success: false
+    success: false,
   },
   data: {
     metrics: defaultMetrics,
     salesTrends: {
       weekly: [],
-      monthly: []
+      monthly: [],
     },
     customerGrowth: [],
     productPopular: [],
-    recentActivities: []
-  }
+    recentActivities: [],
+  },
 };
 
 export const dashboardSlice = createSlice({
@@ -64,8 +64,8 @@ export const dashboardSlice = createSlice({
         ...action.payload,
         metrics: {
           ...defaultMetrics,
-          ...(action.payload.metrics || {})
-        }
+          ...(action.payload.metrics || {}),
+        },
       };
     },
     fetch_dashboard_error: (state, action) => {
@@ -82,7 +82,7 @@ export const dashboardSlice = createSlice({
       state.ui.success = true;
       state.data.metrics = {
         ...state.data.metrics,
-        ...action.payload.data
+        ...action.payload.data,
       };
     },
     fetch_sales_metrics_error: (state, action) => {
@@ -109,8 +109,8 @@ export const dashboardSlice = createSlice({
     },
     update_filters: (state, action) => {
       state.filters = { ...state.filters, ...action.payload };
-    }
-  }
+    },
+  },
 });
 
 export const {
@@ -124,7 +124,7 @@ export const {
   fetch_sales_report,
   fetch_sales_report_success,
   fetch_sales_report_error,
-  update_filters
+  update_filters,
 } = dashboardSlice.actions;
 
 export default dashboardSlice.reducer;

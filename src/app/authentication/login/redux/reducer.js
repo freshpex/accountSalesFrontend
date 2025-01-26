@@ -4,12 +4,12 @@ const initialState = {
   ui: {
     loading: false,
     error: null,
-    success: false
+    success: false,
   },
   data: {
     user: null,
-    userToken: null
-  }
+    userToken: null,
+  },
 };
 
 export const loginReducerSlice = createSlice({
@@ -26,7 +26,7 @@ export const loginReducerSlice = createSlice({
       state.ui.success = true;
       state.data = {
         user: action.payload?.user ?? null,
-        userToken: action.payload?.userToken ?? null
+        userToken: action.payload?.userToken ?? null,
       };
     },
     login_error: (state, action) => {
@@ -36,10 +36,11 @@ export const loginReducerSlice = createSlice({
     },
     logout: () => {
       return initialState;
-    }
+    },
   },
 });
 
-export const { login_user, login_success, login_error, logout } = loginReducerSlice.actions;
+export const { login_user, login_success, login_error, logout } =
+  loginReducerSlice.actions;
 
 export default loginReducerSlice.reducer;

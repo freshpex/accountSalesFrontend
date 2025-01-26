@@ -12,23 +12,23 @@ import {
   FormLabel,
   Input,
   Select,
-  Textarea
-} from '@chakra-ui/react';
-import { useState } from 'react';
-import { useColors } from '../../../utils/colors';
+  Textarea,
+} from "@chakra-ui/react";
+import { useState } from "react";
+import { useColors } from "../../../utils/colors";
 
 const NewTicketModal = ({ isOpen, onClose, onSubmit }) => {
   const [ticket, setTicket] = useState({
-    subject: '',
-    message: '',
-    priority: 'medium'
+    subject: "",
+    message: "",
+    priority: "medium",
   });
 
   const colors = useColors();
 
   const handleSubmit = () => {
     onSubmit(ticket);
-    setTicket({ subject: '', message: '', priority: 'medium' });
+    setTicket({ subject: "", message: "", priority: "medium" });
   };
 
   return (
@@ -43,7 +43,9 @@ const NewTicketModal = ({ isOpen, onClose, onSubmit }) => {
               <FormLabel>Subject</FormLabel>
               <Input
                 value={ticket.subject}
-                onChange={(e) => setTicket(prev => ({...prev, subject: e.target.value}))}
+                onChange={(e) =>
+                  setTicket((prev) => ({ ...prev, subject: e.target.value }))
+                }
                 placeholder="Brief description of your issue"
               />
             </FormControl>
@@ -52,7 +54,9 @@ const NewTicketModal = ({ isOpen, onClose, onSubmit }) => {
               <FormLabel>Priority</FormLabel>
               <Select
                 value={ticket.priority}
-                onChange={(e) => setTicket(prev => ({...prev, priority: e.target.value}))}
+                onChange={(e) =>
+                  setTicket((prev) => ({ ...prev, priority: e.target.value }))
+                }
               >
                 <option value="low">Low</option>
                 <option value="medium">Medium</option>
@@ -64,7 +68,9 @@ const NewTicketModal = ({ isOpen, onClose, onSubmit }) => {
               <FormLabel>Message</FormLabel>
               <Textarea
                 value={ticket.message}
-                onChange={(e) => setTicket(prev => ({...prev, message: e.target.value}))}
+                onChange={(e) =>
+                  setTicket((prev) => ({ ...prev, message: e.target.value }))
+                }
                 placeholder="Describe your issue in detail"
                 rows={5}
               />
@@ -76,8 +82,8 @@ const NewTicketModal = ({ isOpen, onClose, onSubmit }) => {
           <Button variant="ghost" mr={3} onClick={onClose}>
             Cancel
           </Button>
-          <Button 
-            colorScheme="blue" 
+          <Button
+            colorScheme="blue"
             onClick={handleSubmit}
             isDisabled={!ticket.subject || !ticket.message}
           >

@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import {
   Box,
   Button,
@@ -25,22 +25,22 @@ import {
   ModalCloseButton,
   useDisclosure,
   FormErrorMessage,
-} from '@chakra-ui/react';
-import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons';
-import { FiShieldOff } from 'react-icons/fi';
-import EmptyStatePage from '../../../components/emptyState';
+} from "@chakra-ui/react";
+import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
+import { FiShieldOff } from "react-icons/fi";
+import EmptyStatePage from "../../../components/emptyState";
 import {
   getSecuritySettings,
   getLoginHistory,
-  getLoading
-} from '../redux/selector';
+  getLoading,
+} from "../redux/selector";
 import {
   toggle_two_factor,
   update_password,
-  fetch_login_history
-} from '../redux/reducer';
-import LoadingSpinner from '../../../components/LoadingSpinner';
-import { validatePassword } from '../../../utils/validation';
+  fetch_login_history,
+} from "../redux/reducer";
+import LoadingSpinner from "../../../components/LoadingSpinner";
+import { validatePassword } from "../../../utils/validation";
 
 const Security = () => {
   const dispatch = useDispatch();
@@ -52,9 +52,9 @@ const Security = () => {
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [passwordForm, setPasswordForm] = useState({
-    currentPassword: '',
-    newPassword: '',
-    confirmPassword: ''
+    currentPassword: "",
+    newPassword: "",
+    confirmPassword: "",
   });
   const [errors, setErrors] = useState({});
 
@@ -79,7 +79,7 @@ const Security = () => {
     const passwordValidation = validatePassword(passwordForm.newPassword);
 
     if (!passwordForm.currentPassword) {
-      newErrors.currentPassword = 'Current password is required';
+      newErrors.currentPassword = "Current password is required";
     }
 
     if (!passwordValidation.isValid) {
@@ -87,7 +87,7 @@ const Security = () => {
     }
 
     if (passwordForm.newPassword !== passwordForm.confirmPassword) {
-      newErrors.confirmPassword = 'Passwords do not match';
+      newErrors.confirmPassword = "Passwords do not match";
     }
 
     return newErrors;
@@ -95,14 +95,14 @@ const Security = () => {
 
   const handlePasswordChange = (e) => {
     const { name, value } = e.target;
-    setPasswordForm(prev => ({
+    setPasswordForm((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
     if (errors[name]) {
-      setErrors(prev => ({
+      setErrors((prev) => ({
         ...prev,
-        [name]: ''
+        [name]: "",
       }));
     }
   };
@@ -117,9 +117,9 @@ const Security = () => {
     dispatch(update_password(passwordForm));
     onClose();
     setPasswordForm({
-      currentPassword: '',
-      newPassword: '',
-      confirmPassword: ''
+      currentPassword: "",
+      newPassword: "",
+      confirmPassword: "",
     });
     setErrors({});
   };
@@ -142,7 +142,9 @@ const Security = () => {
     <Stack spacing={8}>
       {/* Two-Factor Authentication */}
       <Box>
-        <Heading size="md" mb={4}>Two-Factor Authentication</Heading>
+        <Heading size="md" mb={4}>
+          Two-Factor Authentication
+        </Heading>
         <Flex justify="space-between" align="center">
           <Box>
             <Text fontWeight="medium">Enable 2FA</Text>
@@ -162,13 +164,18 @@ const Security = () => {
 
       {/* Password Section */}
       <Box>
-        <Heading size="md" mb={4}>Password</Heading>
+        <Heading size="md" mb={4}>
+          Password
+        </Heading>
         <VStack align="stretch" spacing={4}>
           <Flex justify="space-between" align="center">
             <Box>
               <Text fontWeight="medium">Change Password</Text>
               <Text color="gray.600" fontSize="sm">
-                Last changed: {new Date(securitySettings.lastPasswordChange).toLocaleDateString()}
+                Last changed:{" "}
+                {new Date(
+                  securitySettings.lastPasswordChange,
+                ).toLocaleDateString()}
               </Text>
             </Box>
             <Button colorScheme="blue" variant="outline" onClick={onOpen}>
@@ -182,7 +189,9 @@ const Security = () => {
 
       {/* Login History */}
       <Box>
-        <Heading size="md" mb={4}>Login History</Heading>
+        <Heading size="md" mb={4}>
+          Login History
+        </Heading>
         {loginHistory.length > 0 ? (
           <VStack align="stretch" spacing={4}>
             {loginHistory.map((login, index) => (
@@ -209,16 +218,17 @@ const Security = () => {
       </Box>
 
       {/* Change Password Modal */}
-      <Modal isOpen={isOpen} onClose={onClose} size={{ base: "sm", md: "md", lg: "lg" }}>
+      <Modal
+        isOpen={isOpen}
+        onClose={onClose}
+        size={{ base: "sm", md: "md", lg: "lg" }}
+      >
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>Change Password</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <Grid
-              templateColumns={{ base: "1fr", md: "1fr 1fr" }}
-              gap={6}
-            >
+            <Grid templateColumns={{ base: "1fr", md: "1fr 1fr" }} gap={6}>
               <FormControl isInvalid={errors.currentPassword}>
                 <FormLabel>Current Password</FormLabel>
                 <InputGroup>
@@ -231,7 +241,9 @@ const Security = () => {
                   <InputRightElement>
                     <Button
                       variant="ghost"
-                      onClick={() => setShowCurrentPassword(!showCurrentPassword)}
+                      onClick={() =>
+                        setShowCurrentPassword(!showCurrentPassword)
+                      }
                       size="sm"
                     >
                       {showCurrentPassword ? <ViewOffIcon /> : <ViewIcon />}
@@ -275,7 +287,9 @@ const Security = () => {
                   <InputRightElement>
                     <Button
                       variant="ghost"
-                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                      onClick={() =>
+                        setShowConfirmPassword(!showConfirmPassword)
+                      }
                       size="sm"
                     >
                       {showConfirmPassword ? <ViewOffIcon /> : <ViewIcon />}

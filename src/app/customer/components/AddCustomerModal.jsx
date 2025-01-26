@@ -12,30 +12,30 @@ import {
   Input,
   Select,
   VStack,
-} from '@chakra-ui/react';
-import { useState } from 'react';
-import toast from 'react-hot-toast';
+} from "@chakra-ui/react";
+import { useState } from "react";
+import toast from "react-hot-toast";
 
 const AddCustomerModal = ({ isOpen, onClose, onSubmit }) => {
   const [formData, setFormData] = useState({
-    email: '',
-    password: '',
-    firstName: '',
-    lastName: '',
-    businessName: '',
-    businessType: 'retail',
-    phoneNumber: '',
-    segment: 'bronze',
-    status: 'active',
-    role: 'user'
+    email: "",
+    password: "",
+    firstName: "",
+    lastName: "",
+    businessName: "",
+    businessType: "retail",
+    phoneNumber: "",
+    segment: "bronze",
+    status: "active",
+    role: "user",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
   };
 
@@ -170,7 +170,13 @@ const AddCustomerModal = ({ isOpen, onClose, onSubmit }) => {
           <Button
             colorScheme="blue"
             onClick={handleSubmit}
-            isDisabled={!formData.firstName || !formData.lastName || !formData.email || !formData.password || !formData.businessName}
+            isDisabled={
+              !formData.firstName ||
+              !formData.lastName ||
+              !formData.email ||
+              !formData.password ||
+              !formData.businessName
+            }
             isLoading={isSubmitting}
           >
             Add Customer

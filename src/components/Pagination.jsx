@@ -1,4 +1,4 @@
-import { HStack, Button } from '@chakra-ui/react';
+import { HStack, Button } from "@chakra-ui/react";
 
 const Pagination = ({ currentPage, totalPages, onPageChange }) => {
   return (

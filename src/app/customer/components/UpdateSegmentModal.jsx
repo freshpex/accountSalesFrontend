@@ -11,17 +11,19 @@ import {
   Radio,
   ModalFooter,
   Button,
-} from '@chakra-ui/react';
-import { useState } from 'react';
-import toast from 'react-hot-toast';
+} from "@chakra-ui/react";
+import { useState } from "react";
+import toast from "react-hot-toast";
 
 const UpdateSegmentModal = ({ isOpen, onClose, customer, onUpdate }) => {
-  const [selectedSegment, setSelectedSegment] = useState(customer?.segment?.toLowerCase() || 'bronze');
+  const [selectedSegment, setSelectedSegment] = useState(
+    customer?.segment?.toLowerCase() || "bronze",
+  );
 
   const handleUpdate = () => {
     if (!customer?._id) {
-      console.error('No customer ID available');
-      toast.error('Unable to update segment: Invalid customer ID');
+      console.error("No customer ID available");
+      toast.error("Unable to update segment: Invalid customer ID");
       return;
     }
 
@@ -50,8 +52,8 @@ const UpdateSegmentModal = ({ isOpen, onClose, customer, onUpdate }) => {
           <Button variant="ghost" mr={3} onClick={onClose}>
             Cancel
           </Button>
-          <Button 
-            colorScheme="blue" 
+          <Button
+            colorScheme="blue"
             onClick={handleUpdate}
             isDisabled={selectedSegment === customer?.segment?.toLowerCase()}
           >

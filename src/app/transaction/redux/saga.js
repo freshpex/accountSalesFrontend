@@ -14,7 +14,7 @@ import {
   delete_transaction_error,
   fetch_transaction_products,
   fetch_transaction_products_success,
-  fetch_transaction_products_error
+  fetch_transaction_products_error,
 } from "./reducer";
 import { ApiEndpoints } from "../../../store/types";
 import api from "../../../services/DataService";
@@ -22,37 +22,37 @@ import toast from "react-hot-toast";
 
 function* fetchTransactionsSaga({ payload }) {
   try {
-    const state = yield select(state => state.transaction.filters);
+    const state = yield select((state) => state.transaction.filters);
     const params = { ...state, ...payload };
-    
-    const response = yield call(api.get, ApiEndpoints.TRANSACTIONS, { 
+
+    const response = yield call(api.get, ApiEndpoints.TRANSACTIONS, {
       params: {
         ...params,
-        status: params.status === 'all' ? undefined : params.status
-      }
+        status: params.status === "all" ? undefined : params.status,
+      },
     });
 
     // Ensure we handle both possible response structures
     const responseData = response.data?.data || response.data;
-    
+
     const formattedData = {
       items: responseData?.items || [],
-      meta: responseData?.meta || { 
+      meta: responseData?.meta || {
         currentPage: Number(params.page || 1),
         totalPages: 1,
-        totalItems: responseData?.items?.length || 0
+        totalItems: responseData?.items?.length || 0,
       },
-      stats: responseData?.stats || { 
+      stats: responseData?.stats || {
         all: responseData?.items?.length || 0,
         pending: 0,
         completed: 0,
-        cancelled: 0
-      }
+        cancelled: 0,
+      },
     };
 
     yield put(fetch_transactions_success(formattedData));
   } catch (error) {
-    console.error('Fetch transactions error:', error);
+    console.error("Fetch transactions error:", error);
     const errorMessage = error.response?.data?.error || error.message;
     yield put(fetch_transactions_error(errorMessage));
     toast.error(`Failed to fetch transactions: ${errorMessage}`);
@@ -80,17 +80,21 @@ function* addTransactionSaga({ payload }) {
       metadata: {
         ...payload.metadata,
         customerName: payload.customerDetails.name,
-        customerEmail: payload.customerDetails.email
+        customerEmail: payload.customerDetails.email,
       },
-      notes: payload.notes
+      notes: payload.notes,
     };
 
-    const response = yield call(api.post, ApiEndpoints.TRANSACTIONS, formattedData);
-    
+    const response = yield call(
+      api.post,
+      ApiEndpoints.TRANSACTIONS,
+      formattedData,
+    );
+
     if (response.data.error) {
       throw new Error(response.data.error);
     }
-    
+
     yield put(add_transaction_success(response.data));
     toast.success("Transaction created successfully");
     yield put(fetch_transactions());
@@ -104,19 +108,19 @@ function* addTransactionSaga({ payload }) {
 function* updateTransactionSaga({ payload }) {
   try {
     const { id, data } = payload;
-    
+
     if (!id) {
-      throw new Error('Transaction ID is required for update');
+      throw new Error("Transaction ID is required for update");
     }
 
     const response = yield call(
       api.put,
       `${ApiEndpoints.TRANSACTIONS}/${id}`,
-      data
+      data,
     );
 
     yield put(update_transaction_success(response.data));
-    toast.success('Transaction updated successfully');
+    toast.success("Transaction updated successfully");
     yield put(fetch_transactions());
   } catch (error) {
     const errorMessage = error.response?.data?.error || error.message;
@@ -128,7 +132,7 @@ function* updateTransactionSaga({ payload }) {
 function* deleteTransactionSaga({ payload }) {
   try {
     if (!payload) {
-      throw new Error('Transaction ID is required for deletion');
+      throw new Error("Transaction ID is required for deletion");
     }
 
     yield call(api.delete, `${ApiEndpoints.TRANSACTIONS}/${payload}`);
@@ -147,7 +151,10 @@ function* transactionSagas() {
   yield takeLatest(add_transaction.type, addTransactionSaga);
   yield takeLatest(update_transaction.type, updateTransactionSaga);
   yield takeLatest(delete_transaction.type, deleteTransactionSaga);
-  yield takeLatest(fetch_transaction_products.type, fetchTransactionProductsSaga);
+  yield takeLatest(
+    fetch_transaction_products.type,
+    fetchTransactionProductsSaga,
+  );
 }
 
 export default transactionSagas;

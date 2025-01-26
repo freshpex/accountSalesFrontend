@@ -1,8 +1,8 @@
-import {useState} from 'react';
-import Header from './header';
-import Sidebar from './sideBar';
-import { Box, useColorModeValue } from '@chakra-ui/react';
-import { Outlet } from 'react-router-dom';
+import { useState } from "react";
+import Header from "./header";
+import Sidebar from "./sideBar";
+import { Box, useColorModeValue } from "@chakra-ui/react";
+import { Outlet } from "react-router-dom";
 
 const Layout = () => {
   const [isSidebarOpen, setSidebarOpen] = useState(false);
@@ -14,17 +14,17 @@ const Layout = () => {
 
   return (
     <Box display="flex" w="100vw" h="100vh">
-      <Sidebar 
-        isSidebarOpen={isSidebarOpen} 
+      <Sidebar
+        isSidebarOpen={isSidebarOpen}
         toggleSidebar={toggleSidebar}
         isCollapsed={isCollapsed}
         toggleCollapse={toggleCollapse}
       />
-      <Box 
-        flex="1" 
-        ml={{ 
-          base: 0, 
-          md: isCollapsed ? "16" : "64" 
+      <Box
+        flex="1"
+        ml={{
+          base: 0,
+          md: isCollapsed ? "16" : "64",
         }}
         transition="margin-left 0.2s"
       >
