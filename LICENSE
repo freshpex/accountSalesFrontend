@@ -1,0 +1,44 @@
+MIT License with Commons Clause and Attribution Requirement
+
+Copyright (c) 2024 Freshpex (Enoch Epekipolu)
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+1. Attribution Requirement:
+   - Any use of this Software must provide prominent attribution to the original author
+   - The attribution must include the author's name (Freshpex/Enoch Epekipolu) and the project URL
+   - Attribution must appear in the software's documentation and user interface
+
+2. Commons Clause:
+   - The Software may not be used, in whole or in part, for commercial purposes
+     without explicit written permission from the copyright holder
+   - Commercial purposes include but are not limited to:
+     * Using the Software to provide commercial services
+     * Selling the Software or derivatives of it
+     * Using the Software in a commercial product or service
+
+3. Contribution Terms:
+   - All contributions to this project are welcome and will be subject to these same terms
+   - Contributors retain copyright to their contributions while granting the project
+     the right to use and distribute those contributions under these terms
+
+4. Derivative Works:
+   - Must be distributed under the same license terms
+   - Must include proper attribution to the original work
+   - Source code must remain open and accessible
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.

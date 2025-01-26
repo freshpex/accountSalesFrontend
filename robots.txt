@@ -1,0 +1,14 @@
+
+User-agent: *
+Disallow: /src/
+Disallow: /dist/
+Disallow: /build/
+Disallow: /node_modules/
+Disallow: /.github/
+Disallow: /.git/
+Disallow: /package.json
+Disallow: /package-lock.json
+Disallow: /.env
+Disallow: /.env.*
+Disallow: /README.md
+Disallow: /LICENSE
