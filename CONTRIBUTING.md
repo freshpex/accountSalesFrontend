@@ -35,7 +35,7 @@ This project and everyone participating in it is governed by our [Code of Conduc
 1. Clone the repo
 
 ```bash
-git clone https://github.com/freshpex/accountSales.git
+git clone https://github.com/freshpex/accountSalesFrontend.git
 ```
 
 2. Create a branch

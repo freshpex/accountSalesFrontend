@@ -49,6 +49,7 @@ const initialState = {
     customerGrowth: [],
     productPopular: [],
     recentActivities: [],
+    regionalData: [],
   }
 };
 

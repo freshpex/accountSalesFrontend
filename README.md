@@ -7,6 +7,18 @@ A modern, full-featured social media account marketplace built with React and Ch
 ![React](https://img.shields.io/badge/React-18.3.1-61dafb)
 ![ChakraUI](https://img.shields.io/badge/ChakraUI-2.10.4-319795)
 
+## 🎥 Demo
+
+### Desktop View
+![Desktop Landing](./demo/desktopLanding.gif)
+![Desktop Usage](./demo/desktopUsage.gif)
+
+### Mobile View
+<div align="center">
+  <img src="./demo/mobileLanding.gif" alt="Mobile Landing" width="280px" />
+  <img src="./demo/mobileUsage.gif" alt="Mobile Usage" width="280px" />
+</div>
+
 ## ✨ Features
 
 - 🔐 **Secure Authentication**
@@ -58,8 +70,8 @@ A modern, full-featured social media account marketplace built with React and Ch
 1. Clone the repository:
 
 ```bash
-git clone https://github.com/freshpex/accountSales.git
-cd accountsales
+git clone https://github.com/freshpex/accountSalesFrontend.git
+cd accountsalesFrontend
 ```
 
 2. Install dependencies:
@@ -199,8 +211,24 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 📞 Support
 
-For support, email epekipoluenoch@gmail.com or [Freshpex](https://www.linkedin.com/in/enochepekipolu).
+For support, email epekipoluenoch@gmail.com or [Freshpex](https://github.com/freshpex).
 
 ---
 
 Made with ❤️ by Your Freshpex
+
+# Important Notice
+
+⚠️ **RESTRICTED ACCESS REPOSITORY** ⚠️
+
+This repository is provided for view-only access. The following actions are strictly prohibited without explicit written permission:
+
+- Downloading the source code
+- Copying any portion of the code
+- Creating derivative works
+- Commercial use
+- Redistributing the code in any form
+
+All code and content are protected under copyright law and the license terms. Violations will be pursued to the full extent of the law.
+
+For permission requests, please contact: epekipoluenoch@gmail.com

@@ -34,10 +34,8 @@ function* fetchDashboardDataSaga() {
       })
     ]);
 
-    console.log("Overview Data", overview);
-
     const dashboardData = {
-      salesTrends: overview.data.data.salesTrends || {
+      salesTrends: overview.data.data?.salesTrends || {
         daily: [],
         weekly: [],
         monthly: [],
@@ -48,12 +46,12 @@ function* fetchDashboardDataSaga() {
           growth: { revenue: 0, orders: 0 }
         }
       },
-      customerGrowth: overview.data.data.customerGrowth || [],
-      recentActivities: overview.data.data.recentActivities || [],
-      productPopular: overview.data.data.popularProducts || [],
+      customerGrowth: overview.data.data?.customerGrowth || [],
+      recentActivities: overview.data.data?.recentActivities || [],
+      productPopular: overview.data.data?.popularProducts || [],
+      regionalData: overview.data.data?.regionalData || [],
       metrics: metrics.data.data || {},
     };
-    console.log("Dashboard Data", dashboardData);
 
     yield put(fetch_dashboard_success(dashboardData));
   } catch (error) {

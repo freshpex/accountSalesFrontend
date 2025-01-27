@@ -1,4 +1,4 @@
-MIT License with Commons Clause and Attribution Requirement
+MIT License with Strict Commons Clause and No-Derivatives
 
 Copyright (c) 2024 Freshpex (Enoch Epekipolu)
 
@@ -15,12 +15,11 @@ furnished to do so, subject to the following conditions:
    - Attribution must appear in the software's documentation and user interface
 
 2. Commons Clause:
-   - The Software may not be used, in whole or in part, for commercial purposes
-     without explicit written permission from the copyright holder
-   - Commercial purposes include but are not limited to:
-     * Using the Software to provide commercial services
-     * Selling the Software or derivatives of it
-     * Using the Software in a commercial product or service
+   - The Software and its source code may not be copied, downloaded, forked, modified, merged,
+     published, distributed, sublicensed, and/or sold without explicit written permission
+   - Any attempt to circumvent these restrictions is strictly prohibited
+   - Commercial use is strictly prohibited without explicit written permission
+   - Derivative works are not permitted without explicit written permission
 
 3. Contribution Terms:
    - All contributions to this project are welcome and will be subject to these same terms
