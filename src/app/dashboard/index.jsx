@@ -34,6 +34,8 @@ import {
 import { fetch_dashboard_data, fetch_sales_metrics } from "./redux/reducer";
 import LoadingSpinner from "../../components/LoadingSpinner";
 import SalesTarget from "./components/SalesTarget";
+import RevenueTargets from '../../components/dashboard/RevenueTargets';
+import PerformanceChart from '../../components/dashboard/PerformanceChart';
 
 const Dashboard = () => {
   const dispatch = useDispatch();
@@ -138,6 +140,17 @@ const Dashboard = () => {
             onTimeRangeChange={setTimeRange}
           />
           <RecentActivities activities={recentActivities} />
+        </Grid>
+
+        <Grid templateColumns={{ base: "1fr", lg: "2fr 1fr" }} gap={6} mb={8}>
+          <RevenueTargets 
+            salesTarget={salesTarget}
+            performanceMetrics={metrics.revenue}
+          />
+          <PerformanceChart 
+            data={salesTrends.daily}
+            timeRange={timeRange}
+          />
         </Grid>
 
         <PopularProducts products={popularProducts} />
