@@ -34,14 +34,23 @@ function* fetchDashboardDataSaga() {
       })
     ]);
 
+    console.log("Overview Data", overview);
+
     const dashboardData = {
       salesTrends: overview.data.data.salesTrends || {
+        daily: [],
         weekly: [],
         monthly: [],
+        summary: {
+          totalRevenue: 0,
+          totalProfit: 0,
+          totalOrders: 0,
+          growth: { revenue: 0, orders: 0 }
+        }
       },
       customerGrowth: overview.data.data.customerGrowth || [],
       recentActivities: overview.data.data.recentActivities || [],
-      productPopular: overview.data.data.productPopular || [],
+      productPopular: overview.data.data.popularProducts || [],
       metrics: metrics.data.data || {},
     };
     console.log("Dashboard Data", dashboardData);

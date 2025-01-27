@@ -10,11 +10,8 @@ import {
 import { Box, Text, Flex } from '@chakra-ui/react';
 
 const PerformanceChart = ({ data, timeRange }) => {
-  const formatXAxis = (value) => {
-    const date = new Date(value);
-    return timeRange === 'weekly' ? 
-      date.toLocaleDateString('en-US', { weekday: 'short' }) :
-      date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  const formatXAxis = () => {
+    return timeRange === 'weekly'
   };
 
   return (
