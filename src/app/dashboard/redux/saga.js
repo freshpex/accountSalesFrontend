@@ -1,4 +1,4 @@
-import { put, takeLatest, call, all } from "redux-saga/effects";
+import { put, takeLatest, call, all, select } from "redux-saga/effects";
 import {
   fetch_dashboard_data,
   fetch_dashboard_success,
@@ -16,9 +16,22 @@ import toast from "react-hot-toast";
 
 function* fetchDashboardDataSaga() {
   try {
+    const state = yield select(state => state.dashboard);
+    const filters = state.filters || { region: 'all', timeRange: 'weekly' };
+
     const [overview, metrics] = yield all([
-      call(api.get, ApiEndpoints.DASHBOARD_OVERVIEW),
-      call(api.get, ApiEndpoints.DASHBOARD_METRICS),
+      call(api.get, ApiEndpoints.DASHBOARD_OVERVIEW, {
+        params: { 
+          region: filters.region,
+          timeRange: filters.timeRange 
+        }
+      }),
+      call(api.get, ApiEndpoints.DASHBOARD_METRICS, {
+        params: { 
+          region: filters.region,
+          timeRange: filters.timeRange 
+        }
+      })
     ]);
 
     const dashboardData = {
@@ -31,9 +44,11 @@ function* fetchDashboardDataSaga() {
       productPopular: overview.data.data.productPopular || [],
       metrics: metrics.data.data || {},
     };
+    console.log("Dashboard Data", dashboardData);
 
     yield put(fetch_dashboard_success(dashboardData));
   } catch (error) {
+    console.log("Error fetching dashboard data", error);
     const errorMessage =
       error.response?.data?.error || "Failed to fetch dashboard data";
     toast.error(errorMessage);

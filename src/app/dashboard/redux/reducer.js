@@ -36,6 +36,10 @@ const initialState = {
     error: null,
     success: false,
   },
+  filters: {
+    region: 'all',
+    timeRange: 'weekly'
+  },
   data: {
     metrics: defaultMetrics,
     salesTrends: {
@@ -45,7 +49,7 @@ const initialState = {
     customerGrowth: [],
     productPopular: [],
     recentActivities: [],
-  },
+  }
 };
 
 export const dashboardSlice = createSlice({
@@ -110,6 +114,12 @@ export const dashboardSlice = createSlice({
     update_filters: (state, action) => {
       state.filters = { ...state.filters, ...action.payload };
     },
+    updateFilters: (state, action) => {
+      state.filters = {
+        ...state.filters,
+        ...action.payload
+      };
+    }
   },
 });
 
@@ -125,6 +135,7 @@ export const {
   fetch_sales_report_success,
   fetch_sales_report_error,
   update_filters,
+  updateFilters
 } = dashboardSlice.actions;
 
 export default dashboardSlice.reducer;

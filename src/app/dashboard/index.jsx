@@ -31,7 +31,7 @@ import {
   getRecentActivities,
   getLoading,
 } from "./redux/selector";
-import { fetch_dashboard_data, fetch_sales_metrics } from "./redux/reducer";
+import { fetch_dashboard_data, fetch_sales_metrics, updateFilters } from "./redux/reducer";
 import LoadingSpinner from "../../components/LoadingSpinner";
 import SalesTarget from "./components/SalesTarget";
 import RevenueTargets from '../../components/dashboard/RevenueTargets';
@@ -49,6 +49,14 @@ const Dashboard = () => {
   const recentActivities = useSelector(getRecentActivities);
   const loading = useSelector(getLoading);
 
+  console.log("Metrics", metrics);
+  console.log("Sales Target", salesTarget);
+  console.log("Sales Trends", salesTrends);
+  console.log("Customer Growth", customerGrowth);
+  console.log("Popular Products", popularProducts);
+  console.log("Recent Activities", recentActivities);
+
+
   const [timeRange, setTimeRange] = useState("weekly");
   const bgColor = useColorModeValue("gray.50", "gray.900");
   const headerBgColor = useColorModeValue("white", "gray.800");
@@ -60,12 +68,19 @@ const Dashboard = () => {
       return;
     }
 
+    dispatch(updateFilters({ region: 'all', timeRange }));
     dispatch(fetch_dashboard_data());
-  }, [dispatch, profile, navigate]);
+  }, [dispatch, profile, navigate, timeRange]);
 
   useEffect(() => {
     dispatch(fetch_sales_metrics({ timeRange }));
   }, [dispatch, timeRange]);
+
+  const handleTimeRangeChange = (newTimeRange) => {
+    setTimeRange(newTimeRange);
+    dispatch(updateFilters({ timeRange: newTimeRange }));
+    dispatch(fetch_sales_metrics({ timeRange: newTimeRange }));
+  };
 
   if (loading) {
     return <LoadingSpinner />;
@@ -137,7 +152,7 @@ const Dashboard = () => {
               timeRange === "weekly" ? salesTrends.weekly : salesTrends.monthly
             }
             timeRange={timeRange}
-            onTimeRangeChange={setTimeRange}
+            onTimeRangeChange={handleTimeRangeChange}
           />
           <RecentActivities activities={recentActivities} />
         </Grid>
