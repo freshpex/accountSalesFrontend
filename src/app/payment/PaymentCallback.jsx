@@ -64,7 +64,6 @@ const PaymentCallback = () => {
               "/api/v1/transactions/callback",
               payload,
             );
-            console.log("Verification response:", response.data);
 
             if (response.data?.success) {
               setStatus("success");
