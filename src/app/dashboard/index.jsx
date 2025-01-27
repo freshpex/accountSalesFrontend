@@ -26,7 +26,6 @@ import {
   getDashboardMetrics,
   getSalesTarget,
   getSalesTrends,
-  getCustomerGrowth,
   getPopularProducts,
   getRecentActivities,
   getLoading,
@@ -44,10 +43,10 @@ const Dashboard = () => {
   const profile = useSelector((state) => state.accountSettings.data.profile);
   const salesTarget = useSelector(getSalesTarget);
   const salesTrends = useSelector(getSalesTrends);
-  const customerGrowth = useSelector(getCustomerGrowth);
   const popularProducts = useSelector(getPopularProducts);
   const recentActivities = useSelector(getRecentActivities);
   const loading = useSelector(getLoading);
+  const regionalData = useSelector((state) => state.dashboard.data?.regionalData || []);
 
   const [timeRange, setTimeRange] = useState("weekly");
   const bgColor = useColorModeValue("gray.50", "gray.900");
@@ -161,8 +160,7 @@ const Dashboard = () => {
         </Grid>
 
         <PopularProducts products={popularProducts} />
-
-        <RegionalGrowth regions={customerGrowth} />
+        <RegionalGrowth regions={regionalData} />
       </>
     );
   };

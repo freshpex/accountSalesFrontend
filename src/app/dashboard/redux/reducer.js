@@ -70,6 +70,7 @@ export const dashboardSlice = createSlice({
           ...defaultMetrics,
           ...(action.payload.metrics || {}),
         },
+        regionalData: action.payload.regionalData || [], // Add this line
       };
     },
     fetch_dashboard_error: (state, action) => {

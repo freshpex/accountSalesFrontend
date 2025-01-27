@@ -40,7 +40,7 @@ class ErrorBoundary extends React.Component {
 
   handleReset = () => {
     this.setState({ hasError: false, error: null, errorInfo: null });
-    window.location.href = "/";
+    window.location.href = "/dashboard";
   };
 
   componentDidUpdate(prevProps, prevState) {
@@ -72,7 +72,7 @@ class ErrorBoundary extends React.Component {
         <ChakraProvider>
           <Box
             minH="100vh"
-            bgGradient="linear(to-r, purple.400, pink.400)"
+            bgGradient="linear(to-r, blue.400, gray.400)"
             display="flex"
             alignItems="center"
             justifyContent="center"
@@ -98,10 +98,10 @@ class ErrorBoundary extends React.Component {
               <Box position="relative">
                 <Heading
                   size="2xl"
-                  bgGradient="linear(to-r, purple.500, pink.500)"
+                  bgGradient="linear(to-r, blue.500, gray.500)"
                   bgClip="text"
                 >
-                  Oops! System Hiccup
+                  Oops! System Hiccup, We will be right back.
                 </Heading>
                 <Text
                   position="absolute"
@@ -119,10 +119,10 @@ class ErrorBoundary extends React.Component {
               </Text>
               <Button
                 size="lg"
-                bgGradient="linear(to-r, purple.500, pink.500)"
+                bgGradient="linear(to-r, blue.500, gray.500)"
                 color="white"
                 _hover={{
-                  bgGradient: "linear(to-r, purple.600, pink.600)",
+                  bgGradient: "linear(to-r, blue.600, gray.600)",
                   transform: "translateY(-2px)",
                   boxShadow: "lg",
                 }}
