@@ -82,16 +82,16 @@
   "author": {
     "name": "Freshpex (Enoch EpekiPolu)",
     "email": "epekipoluenoch@gmail.com",
-    "url": "https://www.linkedin.com/in/enochepekipolu"
+    "url": "https://www.github.com/freshpex"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/freshpex/accountSales.git"
+    "url": "https://github.com/freshpex/accountSalesFrontend.git"
   },
   "bugs": {
-    "url": "https://github.com/freshpex/accountSales/issues"
+    "url": "https://github.com/freshpex/accountSalesFrontend/issues"
   },
-  "homepage": "https://github.com/freshpex/accountsales#readme",
+  "homepage": "https://github.com/freshpex/accountSalesFrontend#readme",
   "engines": {
     "node": ">=16.0.0",
     "npm": ">=8.0.0"
