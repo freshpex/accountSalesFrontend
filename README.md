@@ -124,17 +124,17 @@ src/
 
 ## 🛠️ Tech Stack
 
-- **Frontend Framework:** React 18
-- **State Management:** Redux Toolkit + Redux Saga
-- **UI Framework:** Chakra UI
-- **Routing:** React Router v7
-- **Forms:** Formik + Yup
-- **HTTP Client:** Axios
-- **Charts:** Recharts
-- **Payment:** Flutterwave
-- **Storage:** Supabase
-- **Build Tool:** Vite
-- **Styling:** Emotion + TailwindCSS
+- **Frontend Framework:** [React 18](https://react.dev/)
+- **State Management:** [Redux Toolkit](https://redux-toolkit.js.org/) + [Redux Saga](https://redux-saga.js.org/)
+- **UI Framework:** [Chakra UI](https://chakra-ui.com/)
+- **Routing:** [React Router v7](https://reactrouter.com/)
+- **Forms:** [Formik](https://formik.org/) + [Yup](https://github.com/jquense/yup)
+- **HTTP Client:** [Axios](https://axios-http.com/)
+- **Charts:** [Recharts](https://recharts.org/)
+- **Payment:** [Flutterwave](https://developer.flutterwave.com/)
+- **Storage:** [Supabase](https://supabase.com/docs)
+- **Build Tool:** [Vite](https://vitejs.dev/)
+- **Styling:** [Emotion](https://emotion.sh/) + [TailwindCSS](https://tailwindcss.com/)
 
 ## 📱 Features Breakdown
 
