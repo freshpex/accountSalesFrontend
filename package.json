@@ -21,7 +21,7 @@
     "@tanstack/react-virtual": "^3.11.2",
     "aos": "^2.3.4",
     "autoprefixer": "^10.4.20",
-    "axios": "^1.7.9",
+    "axios": "^1.8.2",
     "chart.js": "^4.4.1",
     "comma-number": "^2.1.0",
     "country-state-picker": "^1.1.5",
