@@ -30,7 +30,7 @@
     "formik": "^2.4.6",
     "framer-motion": "^11.18.0",
     "html2canvas": "^1.4.1",
-    "jspdf": "^2.5.2",
+    "jspdf": "^3.0.1",
     "moment": "^2.30.1",
     "postcss": "^8.4.49",
     "prop-types": "^15.8.1",
