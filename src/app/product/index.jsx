@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
@@ -24,6 +24,7 @@ import {
   useBreakpointValue,
   TagLabel,
   TagRightIcon,
+  Divider
 } from "@chakra-ui/react";
 import { SearchIcon, ChevronDownIcon, AddIcon } from "@chakra-ui/icons";
 import { motion, AnimatePresence } from "framer-motion";
@@ -102,7 +103,7 @@ const Product = () => {
   const [selectedCategory, setSelectedCategory] = useState(null);
   const navigate = useNavigate();
 
-  const validCategories = [
+  const validCategories = useMemo(() => [
     "instagram",
     "facebook",
     "twitter",
@@ -111,13 +112,9 @@ const Product = () => {
     "tiktok",
     "foreignnumber",
     "whatsappnumber",
-  ];
+  ], []);
 
   useEffect(() => {
-    if (selectedCategory) {
-      navigate(`/product/${selectedCategory}`);
-    }
-
     const path = location.pathname.split("/").pop();
     if (validCategories.includes(path)) {
       setSelectedCategory(path);
@@ -137,7 +134,14 @@ const Product = () => {
       whatsappnumber: 8,
     };
     setTabIndex(tabMap[path] || 0);
-  }, [location.pathname]);
+  }, [location.pathname, validCategories]);
+
+  // Separate effect for navigation to avoid circular dependency
+  useEffect(() => {
+    if (selectedCategory) {
+      navigate(`/product/${selectedCategory}`);
+    }
+  }, [selectedCategory, navigate]);
 
   useEffect(() => {
     if (selectedCategory) {
@@ -198,7 +202,7 @@ const Product = () => {
   const getCurrentPlatform = useCallback(() => {
     const platform = location.pathname.split("/").pop();
     return validCategories.includes(platform) ? platform : "all";
-  }, [location]);
+  }, [location, validCategories]);
 
   const applyFilters = useCallback(
     (data) => {
@@ -304,43 +308,56 @@ const Product = () => {
     );
 
   const CategoryChips = () => {
-    const columns = useBreakpointValue({ base: 2, sm: 3, md: 8 });
-
     return (
-      <Box overflowX={{ base: "hidden", md: "auto" }} py={2}>
-        <SimpleGrid columns={columns} spacing={2} mx={{ base: -2, md: 0 }}>
-          {categories.map((category) => {
-            const Icon = category.icon;
-            return (
-              <Tag
-                key={category.id}
-                size="lg"
-                variant={selectedCategory === category.id ? "solid" : "outline"}
-                colorScheme="blue"
-                cursor="pointer"
-                onClick={() => setSelectedCategory(category.id)}
-                display="flex"
-                alignItems="center"
-                justifyContent="center"
-                px={3}
-                py={2}
-                borderRadius="full"
-                whiteSpace="nowrap"
-                transition="all 0.2s"
-                _hover={{
-                  bg: "blue.50",
-                  color: "blue.600",
-                }}
-              >
-                {Icon && <Icon size={16} style={{ marginRight: "8px" }} />}
-                <TagLabel>{category.label}</TagLabel>
-                {selectedCategory === category.id && (
-                  <TagRightIcon as={CheckIcon} color="currentColor" />
-                )}
-              </Tag>
-            );
-          })}
-        </SimpleGrid>
+      <Box py={2}>
+        <Menu closeOnSelect={false}>
+          <MenuButton
+            as={Button}
+            rightIcon={<ChevronDownIcon />}
+            colorScheme="blue"
+            variant="outline"
+            w={{ base: "full", md: "auto" }}
+            fontWeight="medium"
+            size={{ base: "sm", md: "md" }}
+            borderRadius="md"
+            _hover={{ bg: "blue.50" }}
+          >
+            {selectedCategory === "all" ? "Select Category" : 
+              categories.find(cat => cat.id === selectedCategory)?.label || "Select Category"}
+          </MenuButton>
+          <MenuList 
+            maxH="300px" 
+            overflowY="auto"
+            boxShadow="lg"
+            p={2}
+            borderRadius="md"
+            bg={colors.bgColor}
+          >
+            {categories.map((category) => {
+              const Icon = category.icon;
+              const isSelected = selectedCategory === category.id;
+              
+              return (
+                <MenuItem
+                  key={category.id}
+                  onClick={() => setSelectedCategory(category.id)}
+                  icon={<Icon size={18} />}
+                  borderRadius="md"
+                  mb={1}
+                  bg={isSelected ? "blue.50" : "transparent"}
+                  color={isSelected ? "blue.600" : colors.textColor}
+                  _hover={{ bg: "blue.50", color: "blue.600" }}
+                  transition="all 0.2s"
+                >
+                  <Flex justify="space-between" align="center" w="full">
+                    <Text>{category.label}</Text>
+                    {isSelected && <CheckIcon color="blue.500" boxSize={4} />}
+                  </Flex>
+                </MenuItem>
+              );
+            })}
+          </MenuList>
+        </Menu>
       </Box>
     );
   };
@@ -351,13 +368,13 @@ const Product = () => {
 
   return (
     <Container maxW="container.xl" p={0}>
-      {/* Header Section */}
+       {/* Header Section */}
       <Box
         position="sticky"
         top={0}
         bg={colors.bgColor}
         zIndex={10}
-        px={4}
+        px={{ base: 2, md: 4 }}
         py={2}
         borderBottom="1px"
         borderColor={colors.borderColor}
@@ -366,11 +383,11 @@ const Product = () => {
           direction={{ base: "column", md: "row" }}
           justify="space-between"
           align={{ base: "start", md: "center" }}
-          mb={6}
-          gap={4}
+          mb={{ base: 3, md: 4 }}
+          gap={{ base: 2, md: 4 }}
         >
           <Box>
-            <Text fontSize={{ base: "xl", md: "2xl" }} mb={2}>
+            <Text fontSize={{ base: "xl", md: "2xl" }} fontWeight="bold">
               Product
             </Text>
             <Breadcrumb fontSize="sm" color="gray.500">
@@ -378,7 +395,7 @@ const Product = () => {
                 <BreadcrumbLink href="#">Dashboard</BreadcrumbLink>
               </BreadcrumbItem>
               <BreadcrumbItem>
-                <BreadcrumbLink href="#">products</BreadcrumbLink>
+                <BreadcrumbLink href="#">Products</BreadcrumbLink>
               </BreadcrumbItem>
             </Breadcrumb>
           </Box>
@@ -386,11 +403,12 @@ const Product = () => {
           {isAdmin && (
             <Button
               colorScheme="blue"
-              leftIcon={<ChevronDownIcon />}
+              leftIcon={<AddIcon />}
               onClick={() => handleModalOpen("add")}
               w={{ base: "full", md: "auto" }}
+              size={{ base: "sm", md: "md" }}
             >
-              New Post
+              New Product
             </Button>
           )}
         </Flex>
@@ -398,37 +416,39 @@ const Product = () => {
         <Stack
           direction={{ base: "column", md: "row" }}
           justify="space-between"
-          mb={6}
-          spacing={4}
+          mb={3}
+          spacing={{ base: 2, md: 4 }}
         >
           <InputGroup maxW={{ base: "full", md: "400px" }}>
             <InputLeftElement pointerEvents="none">
               <SearchIcon color="gray.400" />
             </InputLeftElement>
             <Input
-              placeholder="Search transactions..."
+              placeholder="Search products..."
               value={searchQuery}
               onChange={(e) => handleSearch(e.target.value)}
               bg={colors.bgColor}
               color={colors.textColor}
+              size={{ base: "sm", md: "md" }}
             />
           </InputGroup>
 
           <Stack
-            direction={{ base: "column", md: "row" }}
-            spacing={4}
+            direction={{ base: "row", md: "row" }}
+            spacing={2}
             w={{ base: "full", md: "auto" }}
+            justify={{ base: "space-between", md: "flex-end" }}
           >
             <Menu>
-              <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>
+              <MenuButton 
+                as={Button} 
+                rightIcon={<ChevronDownIcon />}
+                size={{ base: "sm", md: "md" }}
+                variant="outline"
+              >
                 Filter
               </MenuButton>
               <MenuList>
-                <MenuItem>
-                  <Menu placement="right-start">
-                    <MenuButton w="full">Status</MenuButton>
-                  </Menu>
-                </MenuItem>
                 <MenuItem onClick={() => handleFilter("status", "sold")}>
                   Sold
                 </MenuItem>
@@ -441,6 +461,7 @@ const Product = () => {
                     onChange={(e) => handleFilter("date", e.target.value)}
                     bg={colors.bgColor}
                     color={colors.textColor}
+                    size="sm"
                   />
                 </MenuItem>
                 <MenuItem
@@ -458,21 +479,18 @@ const Product = () => {
               </MenuList>
             </Menu>
 
-            <Button onClick={handleExport} w={{ base: "full", md: "auto" }}>
+            <Button 
+              onClick={handleExport} 
+              size={{ base: "sm", md: "md" }}
+              variant="outline"
+            >
               Export
             </Button>
           </Stack>
         </Stack>
 
-        <Box
-          px={4}
-          pb={2}
-          bg={colors.bgColor}
-          borderBottom="1px"
-          borderColor={colors.borderColor}
-        >
-          <CategoryChips />
-        </Box>
+        <Divider my={2} />
+        <CategoryChips />
       </Box>
 
       <Box px={4}>
